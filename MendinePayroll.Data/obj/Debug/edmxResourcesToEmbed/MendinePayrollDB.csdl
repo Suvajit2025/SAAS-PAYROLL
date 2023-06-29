@@ -1,0 +1,1360 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="esspv2Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Company">
+    <Key>
+      <PropertyRef Name="companyPk" />
+    </Key>
+    <Property Name="companyPk" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Company1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CompnayCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Address1" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Address2" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="State" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="Pincode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Country" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Department">
+    <Key>
+      <PropertyRef Name="DepartmentId" />
+    </Key>
+    <Property Name="DepartmentId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Department1" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="DEPT_CODE" Type="String" MaxLength="3" FixedLength="true" Unicode="true" />
+    <Property Name="Createdby" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="Createdon" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="Designation">
+    <Key>
+      <PropertyRef Name="DesignationPk" />
+    </Key>
+    <Property Name="DesignationPk" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Designation1" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="Empbasic">
+    <Key>
+      <PropertyRef Name="empid" />
+    </Key>
+    <Property Name="empid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="empinitialname" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="empfirstname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="empmiddlename" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="emplastname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="empdob" Type="DateTime" Precision="0" />
+    <Property Name="empgender" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="companycode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="empcategory" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="empno" Type="Int32" Nullable="false" />
+    <Property Name="empcode" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="adharno" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="adahrcardimageid" Type="Int32" />
+    <Property Name="emppersonalcontactno" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="joining" Type="DateTime" Precision="0" />
+    <Property Name="empdept" Type="Int32" />
+    <Property Name="emppost" Type="Int32" />
+    <Property Name="empdesignation" Type="Int32" />
+    <Property Name="empreportto" Type="Int32" />
+    <Property Name="empreporttoperson" Type="Int32" />
+    <Property Name="empstatus" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="closeingdate" Type="DateTime" Precision="0" />
+    <Property Name="postingstateid" Type="Int32" />
+    <Property Name="emppersonalemail" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="empofficialcontactno" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="empemail" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="empaddon" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="empaddby" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="lastupdatedon" Type="DateTime" Precision="3" />
+    <Property Name="lastupdatedby" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+    <Property Name="saleshqid" Type="Int32" />
+    <Property Name="transferdate" Type="DateTime" Precision="0" />
+    <Property Name="IDRole" Type="Int64" />
+  </EntityType>
+  <EntityType Name="ConfigureSalaryComponent">
+    <Key>
+      <PropertyRef Name="ConfigureSalaryID" />
+      <PropertyRef Name="PayConfigId" />
+    </Key>
+    <Property Name="ConfigureSalaryID" Type="Int32" Nullable="false" />
+    <Property Name="PayConfigId" Type="Int32" Nullable="false" />
+    <Property Name="CalculationFormula" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ManualRate" Type="Double" />
+    <Property Name="MasterPayConfigID" Type="Int32" />
+    <Property Name="ISPercentage" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="EmployeeLoan">
+    <Key>
+      <PropertyRef Name="LoanId" />
+      <PropertyRef Name="Empid" />
+      <PropertyRef Name="LoanAmount" />
+    </Key>
+    <Property Name="LoanId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Empid" Type="Int32" Nullable="false" />
+    <Property Name="LoanAmount" Type="Double" Nullable="false" />
+    <Property Name="MonthlyInstallment" Type="Double" />
+    <Property Name="IsStart" Type="Boolean" />
+    <Property Name="LoanDate" Type="DateTime" Precision="0" />
+  </EntityType>
+  <EntityType Name="LoanTransaction">
+    <Key>
+      <PropertyRef Name="LoanTransactionId" />
+    </Key>
+    <Property Name="LoanTransactionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="LoanId" Type="Int32" />
+    <Property Name="Empid" Type="Int32" />
+    <Property Name="InstallmentAmount" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="OpeningBalance" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="ClosingBalance" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="DateOfInStallment" Type="DateTime" Precision="0" />
+  </EntityType>
+  <EntityType Name="PayConfig">
+    <Key>
+      <PropertyRef Name="PayConfigId" />
+    </Key>
+    <Property Name="PayConfigId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PayConfigName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PayConfigType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="IScalculative" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="PayGroup">
+    <Key>
+      <PropertyRef Name="PayGroupID" />
+      <PropertyRef Name="PayGroupName" />
+    </Key>
+    <Property Name="PayGroupID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PayGroupName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+    <Property Name="PayGroupMasterCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ConcernHRPersonnel" Type="Int32" />
+  </EntityType>
+  <EntityType Name="PayGroupEmployeeMapping">
+    <Key>
+      <PropertyRef Name="PayGroupEmployeeID" />
+      <PropertyRef Name="PayGroupID" />
+      <PropertyRef Name="EmployeeID" />
+    </Key>
+    <Property Name="PayGroupEmployeeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PayGroupID" Type="Int32" Nullable="false" />
+    <Property Name="EmployeeID" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Postmaster">
+    <Key>
+      <PropertyRef Name="postid" />
+      <PropertyRef Name="postname" />
+    </Key>
+    <Property Name="postid" Type="Int32" Nullable="false" />
+    <Property Name="postname" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="departmentid" Type="Int32" />
+    <Property Name="deleteflag" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="createdon" Type="DateTime" Precision="3" />
+    <Property Name="createdby" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="SalaryComponent">
+    <Key>
+      <PropertyRef Name="SalaryComponentID" />
+      <PropertyRef Name="SalaryComponent1" />
+      <PropertyRef Name="SalaryComponentCode" />
+      <PropertyRef Name="PayGroupID" />
+    </Key>
+    <Property Name="SalaryComponentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SalaryComponent1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="SalaryComponentCode" Type="Int32" Nullable="false" />
+    <Property Name="SalaryComponentTypeID" Type="Int32" />
+    <Property Name="PayGroupID" Type="Int32" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="SalaryComponentType">
+    <Key>
+      <PropertyRef Name="SalaryComponentTypeID" />
+      <PropertyRef Name="SalaryComponentType1" />
+    </Key>
+    <Property Name="SalaryComponentTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SalaryComponentType1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+  </EntityType>
+  <EntityType Name="SalaryConfigure">
+    <Key>
+      <PropertyRef Name="SalaryConfigureID" />
+    </Key>
+    <Property Name="SalaryConfigureID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SalaryConfigureName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PayGroupID" Type="Int32" />
+    <Property Name="SalaryConfigureType" Type="Int32" />
+  </EntityType>
+  <EntityType Name="tcomactiveworklist">
+    <Key>
+      <PropertyRef Name="activeworklistid" />
+    </Key>
+    <Property Name="activeworklistid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="wrkflwitemkey" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="wrkflwitemactid" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="currentstatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="fromuserid" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="touserid" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="startdatetime" Type="DateTime" Precision="3" />
+    <Property Name="initiatedby" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="activeflag" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="approvaltag" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="targetroleachieved" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="cawactivityname" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="tcomworklisthistory">
+    <Key>
+      <PropertyRef Name="activeworklistid" />
+    </Key>
+    <Property Name="activeworklistid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="wrkflwitemkey" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="wrkflwitemactid" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="currentstatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="fromuserid" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="touserid" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="startdatetime" Type="DateTime" Precision="3" />
+    <Property Name="initiatedby" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="activeflag" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="approvaltag" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="targetroleachieved" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="cawactivityname" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="tleaveappdtl">
+    <Key>
+      <PropertyRef Name="applicationhdrid" />
+    </Key>
+    <Property Name="applicationhdrid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="leaveid" Type="Int32" />
+    <Property Name="leavestartdate" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="startdatehalfind" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="leaveenddate" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="enddayhalfind" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+    <Property Name="noofdays" Type="Decimal" Precision="6" Scale="1" />
+    <Property Name="destinationcode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="contactaddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="contactphoneno" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="outstationpermissionind" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="salaryadvancereqdind" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="advanceamt" Type="Decimal" Precision="10" Scale="2" />
+    <Property Name="leaveappliedfor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ltctypecode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="blockyearid" Type="Decimal" Precision="15" Scale="0" />
+    <Property Name="fitnesscertsubmitind" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="leavereason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="createdby" Type="Int32" />
+    <Property Name="createdon" Type="DateTime" Precision="3" />
+    <Property Name="updatedby" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="updatedon" Type="DateTime" Precision="3" />
+    <Property Name="deleteflag" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="suffixfromdate" Type="DateTime" Precision="0" />
+    <Property Name="suffixtodate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="leaveextendedind" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="prefixfromdate" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="prefixtodate" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="noonindicator" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="prefixindicator" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="suffixindicator" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="maternitytype" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="childid" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="Compoffrequestid" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="tleaveapplicationhrd">
+    <Key>
+      <PropertyRef Name="applicationhdrid" />
+    </Key>
+    <Property Name="applicationhdrid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="requestid" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="applicationdate" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="deleteflag" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="approverempid" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="approvaldate" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Applicationstatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="createdby" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="createdon" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="updatedby" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="updatedon" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="approverremarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityContainer Name="esspEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Companies" EntityType="Self.Company" />
+    <EntitySet Name="Departments" EntityType="Self.Department" />
+    <EntitySet Name="Designations" EntityType="Self.Designation" />
+    <EntitySet Name="Empbasics" EntityType="Self.Empbasic" />
+    <EntitySet Name="ConfigureSalaryComponents" EntityType="Self.ConfigureSalaryComponent" />
+    <EntitySet Name="EmployeeLoans" EntityType="Self.EmployeeLoan" />
+    <EntitySet Name="LoanTransactions" EntityType="Self.LoanTransaction" />
+    <EntitySet Name="PayConfigs" EntityType="Self.PayConfig" />
+    <EntitySet Name="PayGroups" EntityType="Self.PayGroup" />
+    <EntitySet Name="PayGroupEmployeeMappings" EntityType="Self.PayGroupEmployeeMapping" />
+    <EntitySet Name="Postmasters" EntityType="Self.Postmaster" />
+    <EntitySet Name="SalaryComponents" EntityType="Self.SalaryComponent" />
+    <EntitySet Name="SalaryComponentTypes" EntityType="Self.SalaryComponentType" />
+    <EntitySet Name="SalaryConfigures" EntityType="Self.SalaryConfigure" />
+    <EntitySet Name="tcomactiveworklists" EntityType="Self.tcomactiveworklist" />
+    <EntitySet Name="tcomworklisthistories" EntityType="Self.tcomworklisthistory" />
+    <EntitySet Name="tleaveappdtls" EntityType="Self.tleaveappdtl" />
+    <EntitySet Name="tleaveapplicationhrds" EntityType="Self.tleaveapplicationhrd" />
+    <FunctionImport Name="CalculateTotalLeave" ReturnType="Collection(esspv2Model.CalculateTotalLeave_Result)">
+      <Parameter Name="EmployeeID" Mode="In" Type="Int32" />
+      <Parameter Name="fromdate" Mode="In" Type="DateTime" />
+      <Parameter Name="todate" Mode="In" Type="DateTime" />
+      <Parameter Name="MONTH" Mode="In" Type="Int32" />
+      <Parameter Name="YEAR" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="ConfigureSalaryComponent_GetAll" ReturnType="Collection(esspv2Model.ConfigureSalaryComponent_GetAll_Result)" />
+    <FunctionImport Name="ConfigureSalaryComponent_GetBYId" ReturnType="Collection(esspv2Model.ConfigureSalaryComponent_GetBYId_Result)">
+      <Parameter Name="ConfigureSalaryID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="ConfigureSalaryComponent_Save">
+      <Parameter Name="ConfigureSalaryID" Mode="In" Type="Int32" />
+      <Parameter Name="PayConfigId" Mode="In" Type="Int32" />
+      <Parameter Name="CalculationFormula" Mode="In" Type="String" />
+      <Parameter Name="ManualRate" Mode="In" Type="Double" />
+      <Parameter Name="MasterPayConfigID" Mode="In" Type="Int32" />
+      <Parameter Name="ISPercentage" Mode="In" Type="Boolean" />
+    </FunctionImport>
+    <FunctionImport Name="Employee_GetByDesignationID" ReturnType="Collection(esspv2Model.Employee_GetByDesignationID_Result)">
+      <Parameter Name="empdesignation" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeLoan_GetByID" ReturnType="Collection(esspv2Model.EmployeeLoan_GetByID_Result)">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeLoan_save">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="LoanAmount" Mode="In" Type="Double" />
+      <Parameter Name="MonthlyInstallment" Mode="In" Type="Double" />
+      <Parameter Name="IsStart" Mode="In" Type="Boolean" />
+    </FunctionImport>
+    <FunctionImport Name="LoanTransaction_GetByID" ReturnType="Collection(esspv2Model.LoanTransaction_GetByID_Result)">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="LoanTransaction_save">
+      <Parameter Name="LoanId" Mode="In" Type="Int32" />
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="InstallmentAmount" Mode="In" Type="Decimal" />
+      <Parameter Name="OpeningBalance" Mode="In" Type="Decimal" />
+      <Parameter Name="ClosingBalance" Mode="In" Type="Decimal" />
+    </FunctionImport>
+    <FunctionImport Name="PayConfig_GetAll" ReturnType="Collection(esspv2Model.PayConfig_GetAll_Result)" />
+    <FunctionImport Name="PayConfig_GetById" ReturnType="Collection(esspv2Model.PayConfig_GetById_Result)">
+      <Parameter Name="PayConfigId" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="PayConfig_GetByType" ReturnType="Collection(esspv2Model.PayConfig_GetByType_Result)">
+      <Parameter Name="PayConfigType" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="PayConfig_Save">
+      <Parameter Name="PayConfigId" Mode="In" Type="Int32" />
+      <Parameter Name="PayConfigName" Mode="In" Type="String" />
+      <Parameter Name="PayConfigType" Mode="In" Type="String" />
+      <Parameter Name="IScalculative" Mode="In" Type="Boolean" />
+    </FunctionImport>
+    <FunctionImport Name="PayGroup_Delete">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="PayGroup_GetAll" ReturnType="Collection(esspv2Model.PayGroup_GetAll_Result)" />
+    <FunctionImport Name="PayGroup_Save" ReturnType="Collection(esspv2Model.PayGroup_Save_Result)">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+      <Parameter Name="PayGroupName" Mode="In" Type="String" />
+      <Parameter Name="Description" Mode="In" Type="String" />
+      <Parameter Name="PayGroupMasterCode" Mode="In" Type="String" />
+      <Parameter Name="ConcernHRPersonnel" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="PayGroupEmployeeMapping_Delete">
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+      <Parameter Name="EmployeeID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="PayGroupEmployeeMapping_GetAll" ReturnType="Collection(esspv2Model.PayGroupEmployeeMapping_GetAll_Result)">
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="PayGroupEmployeeMapping_Save" ReturnType="Collection(esspv2Model.PayGroupEmployeeMapping_Save_Result)">
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+      <Parameter Name="EmployeeID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryComponent_Delete">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryComponent_GetAll" ReturnType="Collection(esspv2Model.SalaryComponent_GetAll_Result)" />
+    <FunctionImport Name="SalaryComponent_GetById" ReturnType="Collection(esspv2Model.SalaryComponent_GetById_Result)">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryComponent_Save">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+      <Parameter Name="SalaryComponent" Mode="In" Type="String" />
+      <Parameter Name="SalaryComponentCode" Mode="In" Type="Int32" />
+      <Parameter Name="SalaryComponentTypeID" Mode="In" Type="Int32" />
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+      <Parameter Name="Description" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryComponentType_Delete">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryComponentType_GetAll" ReturnType="Collection(esspv2Model.SalaryComponentType_GetAll_Result)" />
+    <FunctionImport Name="SalaryComponentType_GetById" ReturnType="Collection(esspv2Model.SalaryComponentType_GetById_Result)">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryComponentType_Save">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+      <Parameter Name="SalaryComponentType" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryConfigure_GetAll" ReturnType="Collection(esspv2Model.SalaryConfigure_GetAll_Result)" />
+    <FunctionImport Name="SalaryConfigure_GetById" ReturnType="Collection(esspv2Model.SalaryConfigure_GetById_Result)">
+      <Parameter Name="SalaryConfigureID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryConfigure_Save" ReturnType="Collection(esspv2Model.SalaryConfigure_Save_Result)">
+      <Parameter Name="SalaryConfigureID" Mode="In" Type="Int32" />
+      <Parameter Name="SalaryConfigureName" Mode="In" Type="String" />
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+      <Parameter Name="SalaryConfigureType" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="Sp_CreatePayGroup">
+      <Parameter Name="PayGroupName" Mode="In" Type="String" />
+      <Parameter Name="Description" Mode="In" Type="String" />
+      <Parameter Name="PayGroupMasterCode" Mode="In" Type="String" />
+      <Parameter Name="ConcernHRPersonnel" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="Sp_DeletePayGroup">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="Sp_GetPayGroupById" ReturnType="Collection(esspv2Model.Sp_GetPayGroupById_Result)">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="Sp_ListPayGroup" ReturnType="Collection(esspv2Model.Sp_ListPayGroup_Result)" />
+    <FunctionImport Name="Sp_UpdatePayGroup">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+      <Parameter Name="PayGroupName" Mode="In" Type="String" />
+      <Parameter Name="Description" Mode="In" Type="String" />
+      <Parameter Name="PayGroupMasterCode" Mode="In" Type="String" />
+      <Parameter Name="ConcernHRPersonnel" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <EntitySet Name="PayGroupBonus" EntityType="esspv2Model.PayGroupBonu" />
+    <FunctionImport Name="PayGroupBonus_GetAllByID" ReturnType="Collection(esspv2Model.PayGroupBonus_GetAllByID_Result)">
+      <Parameter Name="PaygroupID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="PayGroupBonus_GetById" ReturnType="Collection(esspv2Model.PayGroupBonus_GetById_Result)">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="PayGroupBonus_GetByMonthandPaygroupId" ReturnType="Collection(esspv2Model.PayGroupBonus_GetByMonthandPaygroupId_Result)">
+      <Parameter Name="PayGroupId" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeSalary_duplicateCheck" ReturnType="Collection(esspv2Model.EmployeeSalary_duplicateCheck_Result)">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="ConfigureSalaryComponent_Update">
+      <Parameter Name="ConfigureSalaryID" Mode="In" Type="Int32" />
+      <Parameter Name="PayConfigId" Mode="In" Type="Int32" />
+      <Parameter Name="CalculationFormula" Mode="In" Type="String" />
+      <Parameter Name="ManualRate" Mode="In" Type="Double" />
+      <Parameter Name="MasterPayConfigID" Mode="In" Type="Int32" />
+      <Parameter Name="ISPercentage" Mode="In" Type="Boolean" />
+    </FunctionImport>
+    <FunctionImport Name="PayGroupBonus_Save" ReturnType="Collection(esspv2Model.PayGroupBonus_Save_Result)">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="OverTimeHours" Mode="In" Type="Double" />
+      <Parameter Name="ProductionBonus" Mode="In" Type="Double" />
+      <Parameter Name="TargetAchieved" Mode="In" Type="Double" />
+    </FunctionImport>
+    <EntitySet Name="EmployeeSalaries" EntityType="esspv2Model.EmployeeSalary" />
+    <FunctionImport Name="EmployeeSalary_TotalnoByMonth" ReturnType="Collection(esspv2Model.EmployeeSalary_TotalnoByMonth_Result)">
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="ExcelReport_GetaAll" ReturnType="Collection(esspv2Model.ExcelReport_GetaAll_Result)">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="fromdate" Mode="In" Type="String" />
+      <Parameter Name="todate" Mode="In" Type="String" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="TotalDays" Mode="In" Type="Int32" />
+      <Parameter Name="empno" Mode="In" Type="Int32" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeSalary_save">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="Empno" Mode="In" Type="Int32" />
+      <Parameter Name="PaygroupId" Mode="In" Type="Int32" />
+      <Parameter Name="Basic" Mode="In" Type="Double" />
+      <Parameter Name="HRA" Mode="In" Type="Double" />
+      <Parameter Name="AttireAllowance" Mode="In" Type="Double" />
+      <Parameter Name="InternetAllowance" Mode="In" Type="Double" />
+      <Parameter Name="MobileAllowance" Mode="In" Type="Double" />
+      <Parameter Name="PF" Mode="In" Type="Double" />
+      <Parameter Name="ESI" Mode="In" Type="Double" />
+      <Parameter Name="PTax" Mode="In" Type="Double" />
+      <Parameter Name="EducationAllowances" Mode="In" Type="Double" />
+      <Parameter Name="MedicalAllowances" Mode="In" Type="Double" />
+      <Parameter Name="LTA" Mode="In" Type="Double" />
+      <Parameter Name="GrossAmount" Mode="In" Type="Double" />
+      <Parameter Name="LoanInstallment" Mode="In" Type="Double" />
+      <Parameter Name="ContinuousAttendanceAllowance" Mode="In" Type="Double" />
+      <Parameter Name="OvertimeAllowance" Mode="In" Type="Double" />
+      <Parameter Name="LodgingAllowance" Mode="In" Type="Double" />
+      <Parameter Name="ProductionBonus" Mode="In" Type="Double" />
+      <Parameter Name="Leaveamount" Mode="In" Type="Double" />
+      <Parameter Name="TotalAllowances" Mode="In" Type="Double" />
+      <Parameter Name="TotalDeduction" Mode="In" Type="Double" />
+      <Parameter Name="NetPayableAmount" Mode="In" Type="Double" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+      <Parameter Name="Stipend" Mode="In" Type="Double" />
+      <Parameter Name="Arrears" Mode="In" Type="Double" />
+      <Parameter Name="performanceallowance" Mode="In" Type="Double" />
+      <Parameter Name="Specialallowance" Mode="In" Type="Double" />
+      <Parameter Name="BooksPeriodical" Mode="In" Type="Double" />
+      <Parameter Name="ConveyenceAllowance" Mode="In" Type="Double" />
+      <Parameter Name="TrainingAllowance" Mode="In" Type="Double" />
+      <Parameter Name="VehicalAllowance" Mode="In" Type="Double" />
+      <Parameter Name="FoodAllowance" Mode="In" Type="Double" />
+      <Parameter Name="TDS" Mode="In" Type="Double" />
+    </FunctionImport>
+    <FunctionImport Name="PayGroup_GetById" ReturnType="Collection(esspv2Model.PayGroup_GetById_Result)">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeLoginCheck" ReturnType="Collection(esspv2Model.EmployeeLoginCheck_Result)">
+      <Parameter Name="empemail" Mode="In" Type="String" />
+      <Parameter Name="empcode" Mode="In" Type="String" />
+    </FunctionImport>
+    <EntitySet Name="Designationmasters" EntityType="esspv2Model.Designationmaster" />
+    <EntitySet Name="ManualSalaryConfigs" EntityType="esspv2Model.ManualSalaryConfig" />
+    <FunctionImport Name="ManualSalaryConfig_GetByPayGroupID" ReturnType="Collection(esspv2Model.ManualSalaryConfig_GetByPayGroupID_Result)">
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="ManualSalaryConfig_save">
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+      <Parameter Name="ManualPayConfigId" Mode="In" Type="Int32" />
+      <Parameter Name="ISActive" Mode="In" Type="Boolean" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryConfigure_PaygroupDuplicatecheck" ReturnType="Collection(esspv2Model.SalaryConfigure_PaygroupDuplicatecheck_Result)">
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="PayConfig_Delete">
+      <Parameter Name="Payconfigid" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeList_Get" ReturnType="Collection(esspv2Model.EmployeeList_Get_Result)" />
+    <EntitySet Name="EmpoloyeeSalaryConfigManualValues" EntityType="esspv2Model.EmpoloyeeSalaryConfigManualValue" />
+    <EntitySet Name="EmployeeSalaryConfigs" EntityType="esspv2Model.EmployeeSalaryConfig" />
+    <FunctionImport Name="EmployeeSalaryConfig_Save" ReturnType="Collection(esspv2Model.EmployeeSalaryConfig_Save_Result)">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+      <Parameter Name="EmpId" Mode="In" Type="Int32" />
+      <Parameter Name="PayGroupId" Mode="In" Type="Int32" />
+      <Parameter Name="IsPTaxActive" Mode="In" Type="Boolean" />
+      <Parameter Name="ContinuousAllowance" Mode="In" Type="String" />
+      <Parameter Name="Productionbonus" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeSalaryConfig_GetByID" ReturnType="Collection(esspv2Model.EmployeeSalaryConfig_GetByID_Result)">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmpoloyeeSalaryConfigManualValues_Save">
+      <Parameter Name="EmployeeSalaryConfigid" Mode="In" Type="Int32" />
+      <Parameter Name="PayConfigID" Mode="In" Type="String" />
+      <Parameter Name="Values" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="EmpoloyeeSalaryConfigManualValues_Update">
+      <Parameter Name="PayConfigIDs" Mode="In" Type="String" />
+      <Parameter Name="PayConfigValues" Mode="In" Type="String" />
+      <Parameter Name="SalaryConfigID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="splitstring" IsComposable="true" ReturnType="Collection(String)">
+      <Parameter Name="stringToSplit" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeList_GetInActive" ReturnType="Collection(esspv2Model.EmployeeList_GetInActive_Result)" />
+    <FunctionImport Name="GetEmmployeeDetails_ById" ReturnType="Collection(esspv2Model.GetEmmployeeDetails_ById_Result)">
+      <Parameter Name="empid" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeList_GetbyID" ReturnType="Collection(esspv2Model.EmployeeList_GetbyID_Result)">
+      <Parameter Name="empid" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeSalary_UpdatePayment">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="month" Mode="In" Type="String" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeBonus_GetAllByEmpid" ReturnType="Collection(esspv2Model.EmployeeBonus_GetAllByEmpid_Result)">
+      <Parameter Name="ID" Mode="In" Type="Int32" />
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeBonus_GetByMonth" ReturnType="Collection(esspv2Model.EmployeeBonus_GetByMonth_Result)">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeBonus_Save" ReturnType="Collection(Int32)">
+      <Parameter Name="Id" Mode="In" Type="Int32" />
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="PayGroupID" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="OverTimeHours" Mode="In" Type="Double" />
+      <Parameter Name="ProductionBonus" Mode="In" Type="Double" />
+      <Parameter Name="TargetAchieved" Mode="In" Type="Double" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeSalary_DeleteAllByMonth">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="Employee_TDSReport" ReturnType="Collection(esspv2Model.Employee_TDSReport_Result)" />
+    <FunctionImport Name="ExcelReport_GetAll" ReturnType="Collection(esspv2Model.ExcelReport_GetAll_Result)">
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="fromdate" Mode="In" Type="DateTime" />
+      <Parameter Name="todate" Mode="In" Type="DateTime" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="TotalDays" Mode="In" Type="Int32" />
+      <Parameter Name="empno" Mode="In" Type="Int32" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="SalaryConfigure_Delete">
+      <Parameter Name="ConfigureSalaryId" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="LeaveDetails_GetByEmpno" ReturnType="Collection(esspv2Model.LeaveDetails_GetByEmpno_Result)">
+      <Parameter Name="Empno" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="LeaveDetails_Save" ReturnType="Collection(Int32)">
+      <Parameter Name="Empno" Mode="In" Type="Int32" />
+      <Parameter Name="LeaveDays" Mode="In" Type="Double" />
+      <Parameter Name="LateLeaveDays" Mode="In" Type="Double" />
+      <Parameter Name="CreatedBy" Mode="In" Type="Int32" />
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="Year" Mode="In" Type="Int32" />
+      <Parameter Name="Noofdaysabsent" Mode="In" Type="Double" />
+      <Parameter Name="Type" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeList_Get_Count" ReturnType="Collection(Int32)">
+      <Parameter Name="Searchval" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeList_Get_List" ReturnType="Collection(esspv2Model.EmployeeList_Get_List_Result)">
+      <Parameter Name="PageNumber" Mode="In" Type="Int32" />
+      <Parameter Name="RowsOfPage" Mode="In" Type="Int32" />
+      <Parameter Name="Searchval" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="Employeesalary_viewAllByMonth_Count" ReturnType="Collection(Int32)">
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="Status" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="Employeesalary_view_PageWise_ByMonth" ReturnType="Collection(esspv2Model.Employeesalary_view_PageWise_ByMonth_Result)">
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="Status" Mode="In" Type="String" />
+      <Parameter Name="PageNumber" Mode="In" Type="Int32" />
+      <Parameter Name="RowsOfPage" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="Employeesalary_viewAllByMonth" ReturnType="Collection(esspv2Model.Employeesalary_viewAllByMonth_Result)">
+      <Parameter Name="Month" Mode="In" Type="String" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+      <Parameter Name="Empid" Mode="In" Type="Int32" />
+      <Parameter Name="Status" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="EmployeeSalary_ById" ReturnType="Collection(esspv2Model.EmployeeSalary_ById_Result)">
+      <Parameter Name="empid" Mode="In" Type="Int32" />
+      <Parameter Name="month" Mode="In" Type="String" />
+      <Parameter Name="year" Mode="In" Type="Int32" />
+      <Parameter Name="fromdate" Mode="In" Type="DateTime" />
+      <Parameter Name="todate" Mode="In" Type="DateTime" />
+    </FunctionImport>
+  </EntityContainer>
+  <ComplexType Name="CalculateTotalLeave_Result">
+    <Property Type="Int32" Name="applicationhdrid" Nullable="false" />
+    <Property Type="Decimal" Name="noofdays" Nullable="true" Precision="6" Scale="1" />
+    <Property Type="String" Name="prefixfromdate" Nullable="true" MaxLength="20" />
+    <Property Type="String" Name="suffixtodate" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="enddayhalfind" Nullable="true" MaxLength="6" />
+    <Property Type="String" Name="Applicationstatus" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="lateleave" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="ConfigureSalaryComponent_GetAll_Result">
+    <Property Type="Int32" Name="ConfigureSalaryID" Nullable="false" />
+    <Property Type="Int32" Name="PayConfigId" Nullable="false" />
+    <Property Type="String" Name="CalculationFormula" Nullable="true" />
+    <Property Type="Double" Name="ManualRate" Nullable="true" />
+    <Property Type="Int32" Name="MasterPayConfigID" Nullable="true" />
+    <Property Type="Boolean" Name="ISPercentage" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="ConfigureSalaryComponent_GetBYId_Result">
+    <Property Type="Int32" Name="ConfigureSalaryID" Nullable="false" />
+    <Property Type="Int32" Name="PayConfigId" Nullable="false" />
+    <Property Type="String" Name="CalculationFormula" Nullable="true" />
+    <Property Type="Double" Name="ManualRate" Nullable="true" />
+    <Property Type="Int32" Name="MasterPayConfigID" Nullable="true" />
+    <Property Type="Boolean" Name="ISPercentage" Nullable="true" />
+    <Property Type="String" Name="PayConfigType" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="PayConfigName" Nullable="true" MaxLength="50" />
+    <Property Type="Boolean" Name="IScalculative" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="Employee_GetByDesignationID_Result">
+    <Property Type="Int32" Name="empid" Nullable="false" />
+    <Property Type="String" Name="empinitialname" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="empfirstname" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="empmiddlename" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="emplastname" Nullable="false" MaxLength="50" />
+    <Property Type="DateTime" Name="empdob" Nullable="true" />
+    <Property Type="String" Name="empgender" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="companycode" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="empcategory" Nullable="true" MaxLength="200" />
+    <Property Type="Int32" Name="empno" Nullable="false" />
+    <Property Type="String" Name="empcode" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="adharno" Nullable="true" MaxLength="100" />
+    <Property Type="Int32" Name="adahrcardimageid" Nullable="true" />
+    <Property Type="String" Name="emppersonalcontactno" Nullable="true" MaxLength="15" />
+    <Property Type="DateTime" Name="joining" Nullable="true" />
+    <Property Type="Int32" Name="empdept" Nullable="true" />
+    <Property Type="Int32" Name="emppost" Nullable="true" />
+    <Property Type="Int32" Name="empdesignation" Nullable="true" />
+    <Property Type="Int32" Name="empreportto" Nullable="true" />
+    <Property Type="Int32" Name="empreporttoperson" Nullable="true" />
+    <Property Type="String" Name="empstatus" Nullable="true" MaxLength="100" />
+    <Property Type="DateTime" Name="closeingdate" Nullable="true" />
+    <Property Type="Int32" Name="postingstateid" Nullable="true" />
+    <Property Type="String" Name="emppersonalemail" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empofficialcontactno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empemail" Nullable="true" MaxLength="255" />
+    <Property Type="DateTime" Name="empaddon" Nullable="false" Precision="23" />
+    <Property Type="String" Name="empaddby" Nullable="false" />
+    <Property Type="DateTime" Name="lastupdatedon" Nullable="true" Precision="23" />
+    <Property Type="String" Name="lastupdatedby" Nullable="true" MaxLength="200" />
+  </ComplexType>
+  <ComplexType Name="EmployeeLoan_GetByID_Result">
+    <Property Type="Int32" Name="LoanId" Nullable="false" />
+    <Property Type="Int32" Name="Empid" Nullable="false" />
+    <Property Type="Double" Name="LoanAmount" Nullable="false" />
+    <Property Type="Double" Name="MonthlyInstallment" Nullable="true" />
+    <Property Type="Boolean" Name="IsStart" Nullable="true" />
+    <Property Type="DateTime" Name="LoanDate" Nullable="true" />
+    <Property Type="Decimal" Name="OpeningBalance" Nullable="true" Precision="18" Scale="0" />
+    <Property Type="Decimal" Name="ClosingBalance" Nullable="true" Precision="18" Scale="0" />
+    <Property Type="Int32" Name="LoanTransactionId" Nullable="false" />
+  </ComplexType>
+  <ComplexType Name="LoanTransaction_GetByID_Result">
+    <Property Type="Int32" Name="LoanTransactionId" Nullable="false" />
+    <Property Type="Int32" Name="LoanId" Nullable="true" />
+    <Property Type="Int32" Name="Empid" Nullable="true" />
+    <Property Type="Decimal" Name="InstallmentAmount" Nullable="true" Precision="18" Scale="0" />
+    <Property Type="Decimal" Name="OpeningBalance" Nullable="true" Precision="18" Scale="0" />
+    <Property Type="Decimal" Name="ClosingBalance" Nullable="true" Precision="18" Scale="0" />
+    <Property Type="DateTime" Name="DateOfInStallment" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayConfig_GetAll_Result">
+    <Property Type="Int32" Name="PayConfigId" Nullable="false" />
+    <Property Type="String" Name="PayConfigName" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="PayConfigType" Nullable="true" MaxLength="50" />
+    <Property Type="Boolean" Name="IScalculative" Nullable="true" />
+    <Property Type="String" Name="EntryType" Nullable="true" MaxLength="11" />
+  </ComplexType>
+  <ComplexType Name="PayConfig_GetById_Result">
+    <Property Type="Int32" Name="PayConfigId" Nullable="false" />
+    <Property Type="String" Name="PayConfigName" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="PayConfigType" Nullable="true" MaxLength="50" />
+    <Property Type="Boolean" Name="IScalculative" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayConfig_GetByType_Result">
+    <Property Type="Int32" Name="PayConfigId" Nullable="false" />
+    <Property Type="String" Name="PayConfigName" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="PayConfigType" Nullable="true" MaxLength="50" />
+    <Property Type="Boolean" Name="IScalculative" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayGroup_GetAll_Result">
+    <Property Type="Int32" Name="PayGroupID" Nullable="false" />
+    <Property Type="String" Name="PayGroupName" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Description" Nullable="true" MaxLength="250" />
+    <Property Type="String" Name="PayGroupMasterCode" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="ConcernHRPersonnel" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayGroupEmployeeMapping_GetAll_Result">
+    <Property Type="Int32" Name="PayGroupID" Nullable="false" />
+    <Property Type="Int32" Name="EmployeeID" Nullable="false" />
+    <Property Type="String" Name="PayGroupName" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Description" Nullable="true" MaxLength="250" />
+    <Property Type="String" Name="PayGroupMasterCode" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="ConcernHRPersonnel" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="SalaryComponent_GetAll_Result">
+    <Property Type="Int32" Name="SalaryComponentID" Nullable="false" />
+    <Property Type="Int32" Name="SalaryComponentTypeID" Nullable="true" />
+    <Property Type="String" Name="SalaryComponent" Nullable="false" MaxLength="50" />
+    <Property Type="Int32" Name="SalaryComponentCode" Nullable="false" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="false" />
+    <Property Type="String" Name="SalaryComponentType" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="PayGroupName" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Description" Nullable="true" MaxLength="250" />
+  </ComplexType>
+  <ComplexType Name="SalaryComponent_GetById_Result">
+    <Property Type="Int32" Name="SalaryComponentID" Nullable="false" />
+    <Property Type="Int32" Name="SalaryComponentTypeID" Nullable="true" />
+    <Property Type="String" Name="SalaryComponent" Nullable="false" MaxLength="50" />
+    <Property Type="Int32" Name="SalaryComponentCode" Nullable="false" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="false" />
+    <Property Type="String" Name="SalaryComponentType" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="PayGroupName" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Description" Nullable="true" MaxLength="250" />
+  </ComplexType>
+  <ComplexType Name="SalaryComponentType_GetAll_Result">
+    <Property Type="Int32" Name="SalaryComponentTypeID" Nullable="false" />
+    <Property Type="String" Name="SalaryComponentType" Nullable="false" MaxLength="50" />
+  </ComplexType>
+  <ComplexType Name="SalaryComponentType_GetById_Result">
+    <Property Type="Int32" Name="SalaryComponentTypeID" Nullable="false" />
+    <Property Type="String" Name="SalaryComponentType" Nullable="false" MaxLength="50" />
+  </ComplexType>
+  <ComplexType Name="SalaryConfigure_GetAll_Result">
+    <Property Type="Int32" Name="SalaryConfigureID" Nullable="false" />
+    <Property Type="String" Name="SalaryConfigureName" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+    <Property Type="String" Name="PayGroupName" Nullable="false" MaxLength="50" />
+  </ComplexType>
+  <ComplexType Name="SalaryConfigure_GetById_Result">
+    <Property Type="Int32" Name="SalaryConfigureID" Nullable="false" />
+    <Property Type="String" Name="SalaryConfigureName" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+    <Property Type="Int32" Name="SalaryConfigureType" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="Sp_GetPayGroupById_Result">
+    <Property Type="Int32" Name="PayGroupID" Nullable="false" />
+    <Property Type="String" Name="PayGroupName" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Description" Nullable="true" MaxLength="250" />
+    <Property Type="String" Name="PayGroupMasterCode" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="ConcernHRPersonnel" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="Sp_ListPayGroup_Result">
+    <Property Type="Int32" Name="PayGroupID" Nullable="false" />
+    <Property Type="String" Name="PayGroupName" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Description" Nullable="true" MaxLength="250" />
+    <Property Type="String" Name="PayGroupMasterCode" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="ConcernHRPersonnel" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayGroup_Save_Result">
+    <Property Type="Int32" Name="ReturnStatus" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="SalaryConfigure_Save_Result">
+    <Property Type="Int32" Name="ReturnStatus" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayGroupEmployeeMapping_Save_Result">
+    <Property Type="Int32" Name="ReturnStatus" Nullable="true" />
+  </ComplexType>
+  <EntityType Name="PayGroupBonu">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PayGroupId" Type="Int32" Nullable="false" />
+    <Property Name="Month" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Year" Type="Int32" />
+    <Property Name="OverTimeHours" Type="Double" />
+    <Property Name="ProductionBonus" Type="Double" />
+    <Property Name="TargetAchieved" Type="Double" />
+  </EntityType>
+  <ComplexType Name="PayGroupBonus_GetAllByID_Result">
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="Int32" Name="PayGroupId" Nullable="false" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+    <Property Type="Double" Name="OverTimeHours" Nullable="true" />
+    <Property Type="Double" Name="ProductionBonus" Nullable="true" />
+    <Property Type="Double" Name="TargetAchieved" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayGroupBonus_GetById_Result">
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="Int32" Name="PayGroupId" Nullable="false" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+    <Property Type="Double" Name="OverTimeHours" Nullable="true" />
+    <Property Type="Double" Name="ProductionBonus" Nullable="true" />
+    <Property Type="Double" Name="TargetAchieved" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayGroupBonus_GetByMonthandPaygroupId_Result">
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="Int32" Name="PayGroupId" Nullable="false" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+    <Property Type="Double" Name="OverTimeHours" Nullable="true" />
+    <Property Type="Double" Name="ProductionBonus" Nullable="true" />
+    <Property Type="Double" Name="TargetAchieved" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="EmployeeSalary_duplicateCheck_Result">
+    <Property Type="Int32" Name="Rowid" Nullable="false" />
+    <Property Type="Int32" Name="Empid" Nullable="true" />
+    <Property Type="Int32" Name="Empno" Nullable="true" />
+    <Property Type="Int32" Name="PayGroupId" Nullable="true" />
+    <Property Type="Double" Name="Basic" Nullable="true" />
+    <Property Type="Double" Name="HRA" Nullable="true" />
+    <Property Type="Double" Name="Attire_Allowance" Nullable="true" />
+    <Property Type="Double" Name="Internet_Allowance" Nullable="true" />
+    <Property Type="Double" Name="Mobile_Allowance" Nullable="true" />
+    <Property Type="Double" Name="PF" Nullable="true" />
+    <Property Type="Double" Name="ESI" Nullable="true" />
+    <Property Type="Double" Name="P_Tax" Nullable="true" />
+    <Property Type="Double" Name="Education_Allowances" Nullable="true" />
+    <Property Type="Double" Name="Medical_Allowances" Nullable="true" />
+    <Property Type="Double" Name="LTA" Nullable="true" />
+    <Property Type="Double" Name="Gross_Amount" Nullable="true" />
+    <Property Type="Double" Name="Loan_Installment" Nullable="true" />
+    <Property Type="Double" Name="Continuous_Attendance_Allowance" Nullable="true" />
+    <Property Type="Double" Name="Overtime_Allowance" Nullable="true" />
+    <Property Type="Double" Name="Lodging_Allowance" Nullable="true" />
+    <Property Type="Double" Name="ProductionBonus" Nullable="true" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="10" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayGroupBonus_Save_Result">
+    <Property Type="Int32" Name="ReturnStatus" Nullable="true" />
+  </ComplexType>
+  <EntityType Name="EmployeeSalary">
+    <Key>
+      <PropertyRef Name="Rowid" />
+    </Key>
+    <Property Name="Rowid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Empid" Type="Int32" />
+    <Property Name="Empno" Type="Int32" />
+    <Property Name="PayGroupId" Type="Int32" />
+    <Property Name="Basic" Type="Double" />
+    <Property Name="HRA" Type="Double" />
+    <Property Name="Attire_Allowance" Type="Double" />
+    <Property Name="Internet_Allowance" Type="Double" />
+    <Property Name="Mobile_Allowance" Type="Double" />
+    <Property Name="PF" Type="Double" />
+    <Property Name="ESI" Type="Double" />
+    <Property Name="P_Tax" Type="Double" />
+    <Property Name="Education_Allowances" Type="Double" />
+    <Property Name="Medical_Allowances" Type="Double" />
+    <Property Name="LTA" Type="Double" />
+    <Property Name="Gross_Amount" Type="Double" />
+    <Property Name="Loan_Installment" Type="Double" />
+    <Property Name="Continuous_Attendance_Allowance" Type="Double" />
+    <Property Name="Overtime_Allowance" Type="Double" />
+    <Property Name="Lodging_Allowance" Type="Double" />
+    <Property Name="ProductionBonus" Type="Double" />
+    <Property Name="Total_Allowances" Type="Double" />
+    <Property Name="Total_Deduction" Type="Double" />
+    <Property Name="Net_Payable_Amount" Type="Double" />
+    <Property Name="Month" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="Year" Type="Int32" />
+    <Property Name="Leave_Amount" Type="Double" />
+    <Property Name="Stipend" Type="Double" />
+    <Property Name="PerformanceAllowance" Type="Double" />
+    <Property Name="SpecialAllowances" Type="Double" />
+    <Property Name="Arrears" Type="Double" />
+    <Property Name="IsPaid" Type="Boolean" />
+    <Property Name="Books___Periodical" Type="Double" />
+    <Property Name="Training__Allowance" Type="Double" />
+    <Property Name="Conveyence_Allowance" Type="Double" />
+    <Property Name="Vehical_Allownce" Type="Double" />
+    <Property Name="Food_Allowance" Type="Double" />
+    <Property Name="TDS" Type="Double" />
+    <Property Name="Paid_Date" Type="DateTime" Precision="0" />
+  </EntityType>
+  <ComplexType Name="EmployeeSalary_TotalnoByMonth_Result">
+    <Property Type="Int32" Name="ReturnStatus" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="ExcelReport_GetaAll_Result">
+    <Property Type="Int32" Name="SLNO" Nullable="false" />
+    <Property Type="String" Name="EMPLOYEECODE" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="NAME_OF_EMPLOYEES" Nullable="true" MaxLength="152" />
+    <Property Type="String" Name="SITE" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="W" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="O" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Designation" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="E" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="T_D" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="BASIC" Nullable="true" />
+    <Property Type="String" Name="BASIC_EARNED" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="STIPEND" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="WORKING_DAYS" Nullable="true" />
+    <Property Type="Decimal" Name="DAY_S_ABSENT" Nullable="true" Precision="38" Scale="1" />
+    <Property Type="Double" Name="DEDUCTION_AGAINST_ABSENSE" Nullable="true" />
+    <Property Type="Decimal" Name="E_L_" Nullable="true" Precision="38" Scale="1" />
+    <Property Type="Double" Name="PAYMENT_AGAINST_E_L_" Nullable="true" />
+    <Property Type="Double" Name="GROSS_AMOUNT" Nullable="true" />
+    <Property Type="String" Name="GROSS_AMOUNT_EARNED" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="HRA" Nullable="true" />
+    <Property Type="Double" Name="LODGING_ALLOWANCE" Nullable="true" />
+    <Property Type="String" Name="LODGING_ALLOWANCE_ACHIEVED" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="TRAINING_ALLOWANCE" Nullable="true" />
+    <Property Type="String" Name="TRAINING_ALLOWANCE_ACHIEVED" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="MOBILE" Nullable="true" />
+    <Property Type="String" Name="BOOKS_AND_PERIODICALS_ALLOWANCE" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="BOOKS_AND_PERIODICALS_ALLOWANCE_ACHIEVED" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="INTERNET_ALLOWANCE" Nullable="true" />
+    <Property Type="Double" Name="CONINUOUS_ATTENDENCE_ALLOWANCE" Nullable="true" />
+    <Property Type="Double" Name="CONINUOUS_ATTENDENCE_ALLOWANCE_ACHIEVED" Nullable="true" />
+    <Property Type="Double" Name="PRODUCTION_BONUS" Nullable="true" />
+    <Property Type="Double" Name="PRODUCTION_BONUS_ACHIEVED" Nullable="true" />
+    <Property Type="Double" Name="OVERTIME" Nullable="true" />
+    <Property Type="Double" Name="OVERTIME_AMOUNT" Nullable="true" />
+    <Property Type="Double" Name="MEDICAL_ALLOWANCES" Nullable="true" />
+    <Property Type="String" Name="MEDICAL_ALLOWANCES_ACHIEVED" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="LTA" Nullable="true" />
+    <Property Type="String" Name="LTA_ACHIEVED" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="EDUCATION_ALLOWANCES" Nullable="true" />
+    <Property Type="String" Name="EDUCATION_ALLOWANCES_ACHIEVED" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="TOTAL_ALLOWANCES" Nullable="true" />
+    <Property Type="Double" Name="GROSS_AMOUNT_WITH_ALL_ALLOWANCES" Nullable="true" />
+    <Property Type="Double" Name="GROSS_PAYABLE_WITH_ALL_INCENTIVE" Nullable="true" />
+    <Property Type="Double" Name="E_S_I" Nullable="true" />
+    <Property Type="Double" Name="P_F_" Nullable="true" />
+    <Property Type="Double" Name="PROF_TAX" Nullable="true" />
+    <Property Type="Double" Name="TOTAL_DEDUCTION" Nullable="true" />
+    <Property Type="Double" Name="PAYABLE_AMOUNT" Nullable="true" />
+    <Property Type="Decimal" Name="OPENING_BALANCE" Nullable="true" Precision="18" Scale="0" />
+    <Property Type="Double" Name="DEDUCTION" Nullable="true" />
+    <Property Type="Decimal" Name="CLOSING_BALANCE" Nullable="true" Precision="18" Scale="0" />
+    <Property Type="String" Name="NET_AMOUNT" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="PAYABLEAMOUNT" Nullable="true" />
+    <Property Type="String" Name="TDS" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="EXTRA" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="FINAL_AMOUNT_PAYABLE" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="PayGroup_GetById_Result">
+    <Property Type="Int32" Name="PayGroupID" Nullable="false" />
+    <Property Type="String" Name="PayGroupName" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Description" Nullable="true" MaxLength="250" />
+    <Property Type="String" Name="PayGroupMasterCode" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="ConcernHRPersonnel" Nullable="true" />
+    <Property Type="String" Name="EMPLOYEENAME" Nullable="true" MaxLength="152" />
+  </ComplexType>
+  <ComplexType Name="EmployeeLoginCheck_Result">
+    <Property Type="String" Name="EmployeeName" Nullable="true" MaxLength="152" />
+  </ComplexType>
+  <EntityType Name="Designationmaster">
+    <Key>
+      <PropertyRef Name="designationid" />
+    </Key>
+    <Property Name="designationid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="designationname" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="postid" Type="Int32" />
+    <Property Name="deleteflag" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="ceratedon" Type="DateTime" Precision="3" />
+    <Property Name="createdby" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="designationshortform" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="ManualSalaryConfig">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PayGroupID" Type="Int32" />
+    <Property Name="ManualPayConfigId" Type="Int32" />
+    <Property Name="ISActive" Type="Boolean" />
+  </EntityType>
+  <ComplexType Name="ManualSalaryConfig_GetByPayGroupID_Result">
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+    <Property Type="Int32" Name="ManualPayConfigId" Nullable="true" />
+    <Property Type="Boolean" Name="ISActive" Nullable="true" />
+    <Property Type="String" Name="PayConfigName" Nullable="true" MaxLength="50" />
+  </ComplexType>
+  <ComplexType Name="SalaryConfigure_PaygroupDuplicatecheck_Result">
+    <Property Type="Int32" Name="SalaryConfigureID" Nullable="false" />
+    <Property Type="String" Name="SalaryConfigureName" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="EmployeeList_Get_Result">
+    <Property Type="Int32" Name="empid" Nullable="false" />
+    <Property Type="Int32" Name="empno" Nullable="false" />
+    <Property Type="String" Name="EmployeeName" Nullable="true" MaxLength="152" />
+    <Property Type="String" Name="empcode" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="postname" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="Designation" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="Department" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="PayGroupName" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+  </ComplexType>
+  <EntityType Name="EmpoloyeeSalaryConfigManualValue">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EmployeeSalaryConfigid" Type="Int32" />
+    <Property Name="PayConfigID" Type="Int32" />
+    <Property Name="Values" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="EmployeeSalaryConfig">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EmpId" Type="Int32" />
+    <Property Name="PayGroupId" Type="Int32" />
+    <Property Name="IsPTaxActive" Type="Boolean" />
+    <Property Name="ContinuousAttendanceAllowance" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ProductionBonus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <ComplexType Name="EmployeeSalaryConfig_Save_Result">
+    <Property Type="Int32" Name="ReturnStatus" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="EmployeeSalaryConfig_GetByID_Result">
+    <Property Type="Int32" Name="Id" Nullable="false" />
+    <Property Type="Int32" Name="EmpId" Nullable="true" />
+    <Property Type="Int32" Name="PayGroupId" Nullable="true" />
+    <Property Type="Int32" Name="PayConfigID" Nullable="true" />
+    <Property Type="String" Name="Values" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="PayConfigName" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="PayConfigType" Nullable="true" MaxLength="50" />
+    <Property Type="Boolean" Name="IsPTaxActive" Nullable="true" />
+    <Property Type="String" Name="ContinuousAttendanceAllowance" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="ProductionBonus" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="SalaryConfigureID" Nullable="true" />
+    <Property Type="String" Name="SalaryConfigureName" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="SalaryConfigureType" Nullable="true" />
+    <Property Type="Boolean" Name="IScalculative" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="EmployeeList_GetInActive_Result">
+    <Property Type="Int32" Name="empid" Nullable="false" />
+    <Property Type="Int32" Name="empno" Nullable="false" />
+    <Property Type="String" Name="EmployeeName" Nullable="true" MaxLength="152" />
+    <Property Type="String" Name="empcode" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="postname" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="Designation" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="Department" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="PayGroupName" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="GetEmmployeeDetails_ById_Result">
+    <Property Type="Int32" Name="empid" Nullable="false" />
+    <Property Type="String" Name="empinitialname" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="empfirstname" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="empmiddlename" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="emplastname" Nullable="false" MaxLength="50" />
+    <Property Type="String" Name="Empdofb" Nullable="true" MaxLength="30" />
+    <Property Type="DateTime" Name="empdob" Nullable="true" />
+    <Property Type="String" Name="empgender" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="companycode" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="empcategory" Nullable="true" MaxLength="200" />
+    <Property Type="Int32" Name="empno" Nullable="false" />
+    <Property Type="String" Name="empcode" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="adharno" Nullable="true" MaxLength="100" />
+    <Property Type="Int32" Name="adahrcardimageid" Nullable="true" />
+    <Property Type="String" Name="emppersonalcontactno" Nullable="true" MaxLength="15" />
+    <Property Type="String" Name="Joiningdate" Nullable="true" MaxLength="30" />
+    <Property Type="DateTime" Name="joining" Nullable="true" />
+    <Property Type="Int32" Name="empdept" Nullable="true" />
+    <Property Type="Int32" Name="emppost" Nullable="true" />
+    <Property Type="Int32" Name="empdesignation" Nullable="true" />
+    <Property Type="Int32" Name="empreportto" Nullable="true" />
+    <Property Type="Int32" Name="empreporttoperson" Nullable="true" />
+    <Property Type="String" Name="empstatus" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="Closeingdateof" Nullable="true" MaxLength="30" />
+    <Property Type="DateTime" Name="closeingdate" Nullable="true" />
+    <Property Type="Int32" Name="postingstateid" Nullable="true" />
+    <Property Type="String" Name="emppersonalemail" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empofficialcontactno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empemail" Nullable="true" MaxLength="255" />
+    <Property Type="DateTime" Name="empaddon" Nullable="false" Precision="23" />
+    <Property Type="String" Name="empaddby" Nullable="false" />
+    <Property Type="DateTime" Name="lastupdatedon" Nullable="true" Precision="23" />
+    <Property Type="String" Name="lastupdatedby" Nullable="true" MaxLength="200" />
+    <Property Type="String" Name="postname" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="DesignationName" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="Department" Nullable="true" MaxLength="100" />
+  </ComplexType>
+  <ComplexType Name="EmployeeList_GetbyID_Result">
+    <Property Type="Int32" Name="empid" Nullable="false" />
+    <Property Type="Int32" Name="empno" Nullable="false" />
+    <Property Type="String" Name="EmployeeName" Nullable="true" MaxLength="152" />
+    <Property Type="String" Name="empcode" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="postname" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="Designation" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="Department" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="PayGroupName" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+    <Property Type="Int32" Name="SalaryConfigureID" Nullable="true" />
+    <Property Type="String" Name="SalaryConfigureName" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="empaccountno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empuanno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empemail" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="Company" Nullable="true" />
+    <Property Type="DateTime" Name="joining" Nullable="true" />
+    <Property Type="Int32" Name="empbankid" Nullable="true" />
+    <Property Type="String" Name="empbankbranchname" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empbankbranchifsccode" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empepfno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empesicno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="emppancardno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="bankname" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="EmployeeBonus_GetAllByEmpid_Result">
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="Int32" Name="Empid" Nullable="true" />
+    <Property Type="Int32" Name="PayGroupId" Nullable="true" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+    <Property Type="Double" Name="OverTimeHours" Nullable="true" />
+    <Property Type="Double" Name="ProductionBonus" Nullable="true" />
+    <Property Type="Double" Name="TargetAchieved" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="EmployeeBonus_GetByMonth_Result">
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="Int32" Name="Empid" Nullable="true" />
+    <Property Type="Int32" Name="PayGroupId" Nullable="true" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+    <Property Type="Double" Name="OverTimeHours" Nullable="true" />
+    <Property Type="Double" Name="ProductionBonus" Nullable="true" />
+    <Property Type="Double" Name="TargetAchieved" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="Employee_TDSReport_Result">
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+    <Property Type="Int32" Name="ManualPayConfigId" Nullable="true" />
+    <Property Type="Boolean" Name="ISActive" Nullable="true" />
+    <Property Type="Int32" Name="PayConfigId" Nullable="false" />
+    <Property Type="String" Name="PayConfigName" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="PayConfigType" Nullable="true" MaxLength="50" />
+    <Property Type="Boolean" Name="IScalculative" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="ExcelReport_GetAll_Result">
+    <Property Type="Int32" Name="SLNO" Nullable="false" />
+    <Property Type="String" Name="EMPLOYEECODE" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="NAME_OF_EMPLOYEES" Nullable="true" MaxLength="152" />
+    <Property Type="String" Name="SITE" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="W" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="O" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Designation" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="E" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="T_D" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="BASIC" Nullable="true" />
+    <Property Type="Double" Name="STIPEND" Nullable="true" />
+    <Property Type="Int32" Name="WORKING_DAYS" Nullable="true" />
+    <Property Type="Double" Name="DAY_S_ABSENT" Nullable="true" />
+    <Property Type="Double" Name="DEDUCTION_AGAINST_ABSENSE" Nullable="true" />
+    <Property Type="Double" Name="E_L_" Nullable="true" />
+    <Property Type="Double" Name="PAYMENT_AGAINST_E_L_" Nullable="true" />
+    <Property Type="Double" Name="GROSS_AMOUNT" Nullable="true" />
+    <Property Type="Double" Name="HRA" Nullable="true" />
+    <Property Type="Double" Name="LODGING_ALLOWANCE" Nullable="true" />
+    <Property Type="Double" Name="Attire_Allowance" Nullable="true" />
+    <Property Type="Double" Name="TRAINING_ALLOWANCE_ACHIEVED" Nullable="true" />
+    <Property Type="Double" Name="MOBILE" Nullable="true" />
+    <Property Type="Double" Name="BOOKS_AND_PERIODICALS_ALLOWANCE" Nullable="true" />
+    <Property Type="Double" Name="INTERNET_ALLOWANCE" Nullable="true" />
+    <Property Type="Double" Name="CONINUOUS_ATTENDENCE_ALLOWANCE" Nullable="true" />
+    <Property Type="Double" Name="PRODUCTION_BONUS" Nullable="true" />
+    <Property Type="Double" Name="PRODUCTION_BONUS_ACHIEVED" Nullable="true" />
+    <Property Type="Double" Name="OVERTIME" Nullable="true" />
+    <Property Type="Double" Name="OVERTIME_AMOUNT" Nullable="true" />
+    <Property Type="Double" Name="MEDICAL_ALLOWANCES" Nullable="true" />
+    <Property Type="Double" Name="LTA" Nullable="true" />
+    <Property Type="Double" Name="EDUCATION_ALLOWANCES" Nullable="true" />
+    <Property Type="Double" Name="TOTAL_ALLOWANCES" Nullable="true" />
+    <Property Type="Double" Name="PF" Nullable="true" />
+    <Property Type="Double" Name="PTAX" Nullable="true" />
+    <Property Type="Double" Name="E_S_I" Nullable="true" />
+    <Property Type="Double" Name="TOTAL_DEDUCTION" Nullable="true" />
+    <Property Type="Decimal" Name="OPENING_BALANCE" Nullable="true" Precision="18" Scale="0" />
+    <Property Type="Double" Name="DEDUCTION" Nullable="true" />
+    <Property Type="Decimal" Name="CLOSING_BALANCE" Nullable="true" Precision="18" Scale="0" />
+    <Property Type="Double" Name="NET_AMOUNT" Nullable="true" />
+    <Property Type="String" Name="PAID_DATE" Nullable="true" MaxLength="30" />
+  </ComplexType>
+  <ComplexType Name="LeaveDetails_GetByEmpno_Result">
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="Int32" Name="Empno" Nullable="true" />
+    <Property Type="Double" Name="LeaveDays" Nullable="true" />
+    <Property Type="Double" Name="LateLeaveDays" Nullable="true" />
+    <Property Type="Int32" Name="CreatedBy" Nullable="true" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+    <Property Type="Double" Name="Noofdaysabsent" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="EmployeeList_Get_List_Result">
+    <Property Type="Int32" Name="empid" Nullable="false" />
+    <Property Type="Int32" Name="empno" Nullable="false" />
+    <Property Type="String" Name="EmployeeName" Nullable="true" MaxLength="152" />
+    <Property Type="String" Name="empcode" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="postname" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="Designation" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="Department" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="PayGroupName" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="Employeesalary_view_PageWise_ByMonth_Result">
+    <Property Type="Int32" Name="empid" Nullable="false" />
+    <Property Type="Int32" Name="empno" Nullable="false" />
+    <Property Type="String" Name="EmployeeName" Nullable="true" MaxLength="152" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+    <Property Type="String" Name="PayGroupName" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="Basic" Nullable="true" />
+    <Property Type="Double" Name="Gross_Amount" Nullable="true" />
+    <Property Type="Double" Name="Total_Allowances" Nullable="true" />
+    <Property Type="Double" Name="Total_Deduction" Nullable="true" />
+    <Property Type="Double" Name="Net_Payable_Amount" Nullable="true" />
+    <Property Type="Boolean" Name="IsPaid" Nullable="true" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="10" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="Employeesalary_viewAllByMonth_Result">
+    <Property Type="Int32" Name="empid" Nullable="false" />
+    <Property Type="Int32" Name="empno" Nullable="false" />
+    <Property Type="String" Name="EmployeeName" Nullable="true" MaxLength="152" />
+    <Property Type="Int32" Name="PayGroupID" Nullable="true" />
+    <Property Type="String" Name="PayGroupName" Nullable="true" MaxLength="50" />
+    <Property Type="Double" Name="Basic" Nullable="true" />
+    <Property Type="Double" Name="Gross_Amount" Nullable="true" />
+    <Property Type="Double" Name="Total_Allowances" Nullable="true" />
+    <Property Type="Double" Name="Total_Deduction" Nullable="true" />
+    <Property Type="Double" Name="Net_Payable_Amount" Nullable="true" />
+    <Property Type="Boolean" Name="IsPaid" Nullable="true" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="10" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="EmployeeSalary_ById_Result">
+    <Property Type="String" Name="EmployeeName" Nullable="true" MaxLength="152" />
+    <Property Type="DateTime" Name="joining" Nullable="true" />
+    <Property Type="DateTime" Name="empdob" Nullable="true" />
+    <Property Type="String" Name="empcode" Nullable="true" MaxLength="100" />
+    <Property Type="String" Name="postname" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="Designation" Nullable="false" MaxLength="255" />
+    <Property Type="String" Name="Department" Nullable="true" MaxLength="100" />
+    <Property Type="Int32" Name="Rowid" Nullable="false" />
+    <Property Type="Int32" Name="Empid" Nullable="true" />
+    <Property Type="Int32" Name="Empno" Nullable="true" />
+    <Property Type="Int32" Name="PayGroupId" Nullable="true" />
+    <Property Type="Double" Name="Basic" Nullable="true" />
+    <Property Type="Double" Name="HRA" Nullable="true" />
+    <Property Type="Double" Name="Attire_Allowance" Nullable="true" />
+    <Property Type="Double" Name="Internet_Allowance" Nullable="true" />
+    <Property Type="Double" Name="Mobile_Allowance" Nullable="true" />
+    <Property Type="Double" Name="PF" Nullable="true" />
+    <Property Type="Double" Name="ESI" Nullable="true" />
+    <Property Type="Double" Name="P_Tax" Nullable="true" />
+    <Property Type="Double" Name="Education_Allowances" Nullable="true" />
+    <Property Type="Double" Name="Medical_Allowances" Nullable="true" />
+    <Property Type="Double" Name="LTA" Nullable="true" />
+    <Property Type="Double" Name="Gross_Amount" Nullable="true" />
+    <Property Type="Double" Name="Loan_Installment" Nullable="true" />
+    <Property Type="Double" Name="Continuous_Attendance_Allowance" Nullable="true" />
+    <Property Type="Double" Name="Overtime_Allowance" Nullable="true" />
+    <Property Type="Double" Name="Lodging_Allowance" Nullable="true" />
+    <Property Type="Double" Name="ProductionBonus" Nullable="true" />
+    <Property Type="Double" Name="Leave_Amount" Nullable="true" />
+    <Property Type="Double" Name="Total_Allowances" Nullable="true" />
+    <Property Type="Double" Name="Total_Deduction" Nullable="true" />
+    <Property Type="Double" Name="Net_Payable_Amount" Nullable="true" />
+    <Property Type="String" Name="Month" Nullable="true" MaxLength="10" />
+    <Property Type="Int32" Name="Year" Nullable="true" />
+    <Property Type="Double" Name="Stipend" Nullable="true" />
+    <Property Type="Double" Name="PerformanceAllowance" Nullable="true" />
+    <Property Type="Double" Name="SpecialAllowances" Nullable="true" />
+    <Property Type="Double" Name="Arrears" Nullable="true" />
+    <Property Type="Boolean" Name="IsPaid" Nullable="true" />
+    <Property Type="Double" Name="Books___Periodical" Nullable="true" />
+    <Property Type="Double" Name="Training__Allowance" Nullable="true" />
+    <Property Type="Double" Name="Conveyence_Allowance" Nullable="true" />
+    <Property Type="Double" Name="Vehical_Allownce" Nullable="true" />
+    <Property Type="Double" Name="Food_Allowance" Nullable="true" />
+    <Property Type="Double" Name="TDS" Nullable="true" />
+    <Property Type="DateTime" Name="Paid_Date" Nullable="true" />
+    <Property Type="String" Name="empaccountno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empepfno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empesicno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="empuanno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="emppancardno" Nullable="true" MaxLength="255" />
+    <Property Type="String" Name="Company" Nullable="true" />
+    <Property Type="String" Name="Address" Nullable="true" MaxLength="212" />
+    <Property Type="Double" Name="AbsentDays" Nullable="true" />
+    <Property Type="Double" Name="EarnedLeave" Nullable="true" />
+    <Property Type="Double" Name="TotalLeave" Nullable="true" />
+    <Property Type="Double" Name="lateleave" Nullable="true" />
+  </ComplexType>
+</Schema>

@@ -1,0 +1,990 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="esspv2Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Company">
+    <Key>
+      <PropertyRef Name="companyPk" />
+    </Key>
+    <Property Name="companyPk" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Company" Type="nvarchar(max)" />
+    <Property Name="CompnayCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address1" Type="varchar" MaxLength="100" />
+    <Property Name="Address2" Type="varchar" MaxLength="100" />
+    <Property Name="State" Type="varchar" MaxLength="100" />
+    <Property Name="Pincode" Type="varchar" MaxLength="10" />
+    <Property Name="Country" Type="varchar" MaxLength="100" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.ConfigureSalaryComponent' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="ConfigureSalaryComponent">
+    <Key>
+      <PropertyRef Name="ConfigureSalaryID" />
+      <PropertyRef Name="PayConfigId" />
+    </Key>
+    <Property Name="ConfigureSalaryID" Type="int" Nullable="false" />
+    <Property Name="PayConfigId" Type="int" Nullable="false" />
+    <Property Name="CalculationFormula" Type="nvarchar(max)" />
+    <Property Name="ManualRate" Type="float" />
+    <Property Name="MasterPayConfigID" Type="int" />
+    <Property Name="ISPercentage" Type="bit" />
+  </EntityType>
+  <EntityType Name="Department">
+    <Key>
+      <PropertyRef Name="DepartmentId" />
+    </Key>
+    <Property Name="DepartmentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Department" Type="nvarchar" MaxLength="100" />
+    <Property Name="DEPT_CODE" Type="nchar" MaxLength="3" />
+    <Property Name="Createdby" Type="varchar" MaxLength="200" />
+    <Property Name="Createdon" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Designation">
+    <Key>
+      <PropertyRef Name="DesignationPk" />
+    </Key>
+    <Property Name="DesignationPk" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Designation" Type="nvarchar" MaxLength="100" />
+  </EntityType>
+  <EntityType Name="Designationmaster">
+    <Key>
+      <PropertyRef Name="designationid" />
+    </Key>
+    <Property Name="designationid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="designationname" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="designationshortform" Type="varchar" MaxLength="50" />
+    <Property Name="postid" Type="int" />
+    <Property Name="deleteflag" Type="varchar" MaxLength="10" />
+    <Property Name="ceratedon" Type="datetime" />
+    <Property Name="createdby" Type="nvarchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="Empbasic">
+    <Key>
+      <PropertyRef Name="empid" />
+    </Key>
+    <Property Name="empid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="empinitialname" Type="nvarchar" MaxLength="10" />
+    <Property Name="empfirstname" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="empmiddlename" Type="nvarchar" MaxLength="50" />
+    <Property Name="emplastname" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="empdob" Type="date" />
+    <Property Name="empgender" Type="varchar" MaxLength="10" />
+    <Property Name="companycode" Type="varchar" MaxLength="10" />
+    <Property Name="empcategory" Type="varchar" MaxLength="200" />
+    <Property Name="empno" Type="int" Nullable="false" />
+    <Property Name="empcode" Type="varchar" MaxLength="100" />
+    <Property Name="adharno" Type="varchar" MaxLength="100" />
+    <Property Name="adahrcardimageid" Type="int" />
+    <Property Name="emppersonalcontactno" Type="varchar" MaxLength="15" />
+    <Property Name="joining" Type="date" />
+    <Property Name="empdept" Type="int" />
+    <Property Name="emppost" Type="int" />
+    <Property Name="empdesignation" Type="int" />
+    <Property Name="empreportto" Type="int" />
+    <Property Name="empreporttoperson" Type="int" />
+    <Property Name="empstatus" Type="varchar" MaxLength="100" />
+    <Property Name="closeingdate" Type="date" />
+    <Property Name="postingstateid" Type="int" />
+    <Property Name="emppersonalemail" Type="nvarchar" MaxLength="255" />
+    <Property Name="empofficialcontactno" Type="nvarchar" MaxLength="255" />
+    <Property Name="empemail" Type="nvarchar" MaxLength="255" />
+    <Property Name="saleshqid" Type="int" />
+    <Property Name="empaddon" Type="datetime" Nullable="false" />
+    <Property Name="empaddby" Type="varchar(max)" Nullable="false" />
+    <Property Name="lastupdatedon" Type="datetime" />
+    <Property Name="lastupdatedby" Type="nvarchar" MaxLength="200" />
+    <Property Name="transferdate" Type="date" />
+    <Property Name="IDRole" Type="bigint" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.EmployeeLoan' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="EmployeeLoan">
+    <Key>
+      <PropertyRef Name="LoanId" />
+      <PropertyRef Name="Empid" />
+      <PropertyRef Name="LoanAmount" />
+    </Key>
+    <Property Name="LoanId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Empid" Type="int" Nullable="false" />
+    <Property Name="LoanAmount" Type="float" Nullable="false" />
+    <Property Name="MonthlyInstallment" Type="float" />
+    <Property Name="IsStart" Type="bit" />
+    <Property Name="LoanDate" Type="date" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.EmployeeSalary' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="EmployeeSalary">
+    <Key>
+      <PropertyRef Name="Rowid" />
+    </Key>
+    <Property Name="Rowid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Empid" Type="int" />
+    <Property Name="Empno" Type="int" />
+    <Property Name="PayGroupId" Type="int" />
+    <Property Name="Basic" Type="float" />
+    <Property Name="HRA" Type="float" />
+    <Property Name="Attire Allowance" Type="float" />
+    <Property Name="Internet Allowance" Type="float" />
+    <Property Name="Mobile Allowance" Type="float" />
+    <Property Name="PF" Type="float" />
+    <Property Name="ESI" Type="float" />
+    <Property Name="P Tax" Type="float" />
+    <Property Name="Education Allowances" Type="float" />
+    <Property Name="Medical Allowances" Type="float" />
+    <Property Name="LTA" Type="float" />
+    <Property Name="Gross Amount" Type="float" />
+    <Property Name="Loan Installment" Type="float" />
+    <Property Name="Continuous Attendance Allowance" Type="float" />
+    <Property Name="Overtime Allowance" Type="float" />
+    <Property Name="Lodging Allowance" Type="float" />
+    <Property Name="ProductionBonus" Type="float" />
+    <Property Name="Leave Amount" Type="float" />
+    <Property Name="Total Allowances" Type="float" />
+    <Property Name="Total Deduction" Type="float" />
+    <Property Name="Net Payable Amount" Type="float" />
+    <Property Name="Month" Type="nchar" MaxLength="10" />
+    <Property Name="Year" Type="int" />
+    <Property Name="Stipend" Type="float" />
+    <Property Name="PerformanceAllowance" Type="float" />
+    <Property Name="SpecialAllowances" Type="float" />
+    <Property Name="Arrears" Type="float" />
+    <Property Name="IsPaid" Type="bit" />
+    <Property Name="Books &amp; Periodical" Type="float" />
+    <Property Name="Training  Allowance" Type="float" />
+    <Property Name="Conveyence Allowance" Type="float" />
+    <Property Name="Vehical Allownce" Type="float" />
+    <Property Name="Food Allowance" Type="float" />
+    <Property Name="TDS" Type="float" />
+    <Property Name="Paid_Date" Type="date" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.EmployeeSalaryConfig' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="EmployeeSalaryConfig">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EmpId" Type="int" />
+    <Property Name="PayGroupId" Type="int" />
+    <Property Name="IsPTaxActive" Type="bit" />
+    <Property Name="ContinuousAttendanceAllowance" Type="nvarchar" MaxLength="50" />
+    <Property Name="ProductionBonus" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="EmpoloyeeSalaryConfigManualValues">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EmployeeSalaryConfigid" Type="int" />
+    <Property Name="PayConfigID" Type="int" />
+    <Property Name="Values" Type="nvarchar" MaxLength="255" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.LoanTransaction' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="LoanTransaction">
+    <Key>
+      <PropertyRef Name="LoanTransactionId" />
+    </Key>
+    <Property Name="LoanTransactionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="LoanId" Type="int" />
+    <Property Name="Empid" Type="int" />
+    <Property Name="InstallmentAmount" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="OpeningBalance" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="ClosingBalance" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="DateOfInStallment" Type="date" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.ManualSalaryConfig' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="ManualSalaryConfig">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PayGroupID" Type="int" />
+    <Property Name="ManualPayConfigId" Type="int" />
+    <Property Name="ISActive" Type="bit" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.PayConfig' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="PayConfig">
+    <Key>
+      <PropertyRef Name="PayConfigId" />
+    </Key>
+    <Property Name="PayConfigId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PayConfigName" Type="nvarchar" MaxLength="50" />
+    <Property Name="PayConfigType" Type="nvarchar" MaxLength="50" />
+    <Property Name="IScalculative" Type="bit" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.PayGroup' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="PayGroup">
+    <Key>
+      <PropertyRef Name="PayGroupID" />
+      <PropertyRef Name="PayGroupName" />
+    </Key>
+    <Property Name="PayGroupID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PayGroupName" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="250" />
+    <Property Name="PayGroupMasterCode" Type="varchar" MaxLength="50" />
+    <Property Name="ConcernHRPersonnel" Type="int" />
+  </EntityType>
+  <EntityType Name="PayGroupBonus">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PayGroupId" Type="int" Nullable="false" />
+    <Property Name="Month" Type="nvarchar" MaxLength="50" />
+    <Property Name="Year" Type="int" />
+    <Property Name="OverTimeHours" Type="float" />
+    <Property Name="ProductionBonus" Type="float" />
+    <Property Name="TargetAchieved" Type="float" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.PayGroupEmployeeMapping' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="PayGroupEmployeeMapping">
+    <Key>
+      <PropertyRef Name="PayGroupEmployeeID" />
+      <PropertyRef Name="PayGroupID" />
+      <PropertyRef Name="EmployeeID" />
+    </Key>
+    <Property Name="PayGroupEmployeeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PayGroupID" Type="int" Nullable="false" />
+    <Property Name="EmployeeID" Type="int" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.Postmaster' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="Postmaster">
+    <Key>
+      <PropertyRef Name="postid" />
+      <PropertyRef Name="postname" />
+    </Key>
+    <Property Name="postid" Type="int" Nullable="false" />
+    <Property Name="postname" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="departmentid" Type="int" />
+    <Property Name="deleteflag" Type="varchar" MaxLength="50" />
+    <Property Name="createdon" Type="datetime" />
+    <Property Name="createdby" Type="varchar" MaxLength="255" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.SalaryComponent' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="SalaryComponent">
+    <Key>
+      <PropertyRef Name="SalaryComponentID" />
+      <PropertyRef Name="SalaryComponent" />
+      <PropertyRef Name="SalaryComponentCode" />
+      <PropertyRef Name="PayGroupID" />
+    </Key>
+    <Property Name="SalaryComponentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SalaryComponent" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="SalaryComponentCode" Type="int" Nullable="false" />
+    <Property Name="SalaryComponentTypeID" Type="int" />
+    <Property Name="PayGroupID" Type="int" Nullable="false" />
+    <Property Name="Description" Type="varchar" MaxLength="250" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.SalaryComponentType' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="SalaryComponentType">
+    <Key>
+      <PropertyRef Name="SalaryComponentTypeID" />
+      <PropertyRef Name="SalaryComponentType" />
+    </Key>
+    <Property Name="SalaryComponentTypeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SalaryComponentType" Type="varchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.SalaryConfigure' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="SalaryConfigure">
+    <Key>
+      <PropertyRef Name="SalaryConfigureID" />
+    </Key>
+    <Property Name="SalaryConfigureID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="SalaryConfigureName" Type="nvarchar" MaxLength="50" />
+    <Property Name="PayGroupID" Type="int" />
+    <Property Name="SalaryConfigureType" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.tcomactiveworklist' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="tcomactiveworklist">
+    <Key>
+      <PropertyRef Name="activeworklistid" />
+    </Key>
+    <Property Name="activeworklistid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="wrkflwitemkey" Type="varchar" MaxLength="20" />
+    <Property Name="wrkflwitemactid" Type="varchar" MaxLength="50" />
+    <Property Name="currentstatus" Type="varchar" MaxLength="20" />
+    <Property Name="fromuserid" Type="varchar" MaxLength="20" />
+    <Property Name="touserid" Type="varchar" MaxLength="20" />
+    <Property Name="startdatetime" Type="datetime" />
+    <Property Name="initiatedby" Type="varchar" MaxLength="20" />
+    <Property Name="activeflag" Type="varchar" MaxLength="20" />
+    <Property Name="approvaltag" Type="varchar" MaxLength="20" />
+    <Property Name="targetroleachieved" Type="varchar" MaxLength="20" />
+    <Property Name="cawactivityname" Type="varchar" MaxLength="20" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.tcomworklisthistory' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="tcomworklisthistory">
+    <Key>
+      <PropertyRef Name="activeworklistid" />
+    </Key>
+    <Property Name="activeworklistid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="wrkflwitemkey" Type="varchar" MaxLength="20" />
+    <Property Name="wrkflwitemactid" Type="varchar" MaxLength="50" />
+    <Property Name="currentstatus" Type="varchar" MaxLength="20" />
+    <Property Name="fromuserid" Type="varchar" MaxLength="20" />
+    <Property Name="touserid" Type="varchar" MaxLength="20" />
+    <Property Name="startdatetime" Type="datetime" />
+    <Property Name="initiatedby" Type="varchar" MaxLength="20" />
+    <Property Name="activeflag" Type="varchar" MaxLength="20" />
+    <Property Name="approvaltag" Type="varchar" MaxLength="20" />
+    <Property Name="targetroleachieved" Type="varchar" MaxLength="20" />
+    <Property Name="cawactivityname" Type="varchar" MaxLength="20" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.tleaveappdtls' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="tleaveappdtls">
+    <Key>
+      <PropertyRef Name="applicationhdrid" />
+    </Key>
+    <Property Name="applicationhdrid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="leaveid" Type="int" />
+    <Property Name="leavestartdate" Type="varchar" MaxLength="20" />
+    <Property Name="startdatehalfind" Type="varchar" MaxLength="10" />
+    <Property Name="leaveenddate" Type="varchar" MaxLength="20" />
+    <Property Name="enddayhalfind" Type="varchar" MaxLength="6" />
+    <Property Name="noofdays" Type="numeric" Precision="6" Scale="1" />
+    <Property Name="destinationcode" Type="varchar" MaxLength="5" />
+    <Property Name="contactaddress" Type="varchar(max)" />
+    <Property Name="contactphoneno" Type="varchar" MaxLength="20" />
+    <Property Name="outstationpermissionind" Type="varchar" MaxLength="10" />
+    <Property Name="salaryadvancereqdind" Type="varchar" MaxLength="10" />
+    <Property Name="advanceamt" Type="numeric" Precision="10" Scale="2" />
+    <Property Name="leaveappliedfor" Type="varchar" MaxLength="50" />
+    <Property Name="ltctypecode" Type="varchar" MaxLength="5" />
+    <Property Name="blockyearid" Type="numeric" Precision="15" Scale="0" />
+    <Property Name="fitnesscertsubmitind" Type="varchar" MaxLength="10" />
+    <Property Name="leavereason" Type="varchar(max)" />
+    <Property Name="createdby" Type="int" />
+    <Property Name="createdon" Type="datetime" />
+    <Property Name="updatedby" Type="varchar" MaxLength="10" />
+    <Property Name="updatedon" Type="datetime" />
+    <Property Name="deleteflag" Type="varchar" MaxLength="10" />
+    <Property Name="suffixfromdate" Type="date" />
+    <Property Name="suffixtodate" Type="varchar" MaxLength="50" />
+    <Property Name="leaveextendedind" Type="varchar" MaxLength="10" />
+    <Property Name="prefixfromdate" Type="varchar" MaxLength="20" />
+    <Property Name="prefixtodate" Type="varchar" MaxLength="20" />
+    <Property Name="noonindicator" Type="varchar" MaxLength="5" />
+    <Property Name="prefixindicator" Type="varchar" MaxLength="10" />
+    <Property Name="suffixindicator" Type="varchar" MaxLength="10" />
+    <Property Name="maternitytype" Type="varchar" MaxLength="25" />
+    <Property Name="childid" Type="varchar" MaxLength="15" />
+    <Property Name="Compoffrequestid" Type="varchar" MaxLength="25" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'essp.dbo.tleaveapplicationhrd' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="tleaveapplicationhrd">
+    <Key>
+      <PropertyRef Name="applicationhdrid" />
+    </Key>
+    <Property Name="applicationhdrid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="requestid" Type="varchar" MaxLength="10" />
+    <Property Name="applicationdate" Type="varchar" MaxLength="20" />
+    <Property Name="deleteflag" Type="varchar" MaxLength="5" />
+    <Property Name="approverempid" Type="varchar" MaxLength="20" />
+    <Property Name="approvaldate" Type="varchar" MaxLength="20" />
+    <Property Name="Applicationstatus" Type="varchar" MaxLength="50" />
+    <Property Name="createdby" Type="varchar" MaxLength="10" />
+    <Property Name="createdon" Type="varchar" MaxLength="20" />
+    <Property Name="updatedby" Type="varchar" MaxLength="20" />
+    <Property Name="updatedon" Type="varchar" MaxLength="20" />
+    <Property Name="approverremarks" Type="varchar(max)" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6035: The relationship 'FK_tleaveappdtls_Empbasic' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
+        <Association Name="FK_tleaveappdtls_Empbasic" />-->
+  <Function Name="CalculateTotalLeave" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="EmployeeID" Type="int" Mode="In" />
+    <Parameter Name="fromdate" Type="datetime" Mode="In" />
+    <Parameter Name="todate" Type="datetime" Mode="In" />
+    <Parameter Name="MONTH" Type="int" Mode="In" />
+    <Parameter Name="YEAR" Type="int" Mode="In" />
+  </Function>
+  <Function Name="ConfigureSalaryComponent_GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="ConfigureSalaryComponent_GetBYId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="ConfigureSalaryID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="ConfigureSalaryComponent_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="ConfigureSalaryID" Type="int" Mode="In" />
+    <Parameter Name="PayConfigId" Type="int" Mode="In" />
+    <Parameter Name="CalculationFormula" Type="nvarchar(max)" Mode="In" />
+    <Parameter Name="ManualRate" Type="float" Mode="In" />
+    <Parameter Name="MasterPayConfigID" Type="int" Mode="In" />
+    <Parameter Name="ISPercentage" Type="bit" Mode="In" />
+  </Function>
+  <Function Name="ConfigureSalaryComponent_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="ConfigureSalaryID" Type="int" Mode="In" />
+    <Parameter Name="PayConfigId" Type="int" Mode="In" />
+    <Parameter Name="CalculationFormula" Type="nvarchar(max)" Mode="In" />
+    <Parameter Name="ManualRate" Type="float" Mode="In" />
+    <Parameter Name="MasterPayConfigID" Type="int" Mode="In" />
+    <Parameter Name="ISPercentage" Type="bit" Mode="In" />
+  </Function>
+  <Function Name="Employee_GetByDesignationID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="empdesignation" Type="int" Mode="In" />
+  </Function>
+  <Function Name="Employee_TDSReport" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="EmployeeBonus_GetAllByEmpid" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="ID" Type="int" Mode="In" />
+    <Parameter Name="Empid" Type="int" Mode="In" />
+  </Function>
+  <Function Name="EmployeeBonus_GetByMonth" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="EmployeeBonus_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="OverTimeHours" Type="float" Mode="In" />
+    <Parameter Name="ProductionBonus" Type="float" Mode="In" />
+    <Parameter Name="TargetAchieved" Type="float" Mode="In" />
+  </Function>
+  <Function Name="EmployeeList_Get" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="EmployeeList_Get_Count" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Searchval" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="EmployeeList_Get_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PageNumber" Type="int" Mode="In" />
+    <Parameter Name="RowsOfPage" Type="int" Mode="In" />
+    <Parameter Name="Searchval" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="EmployeeList_GetbyID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="empid" Type="int" Mode="In" />
+  </Function>
+  <Function Name="EmployeeList_GetInActive" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="EmployeeLoan_GetByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+  </Function>
+  <Function Name="EmployeeLoan_save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="LoanAmount" Type="float" Mode="In" />
+    <Parameter Name="MonthlyInstallment" Type="float" Mode="In" />
+    <Parameter Name="IsStart" Type="bit" Mode="In" />
+  </Function>
+  <Function Name="EmployeeSalary_ById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="empid" Type="int" Mode="In" />
+    <Parameter Name="month" Type="nvarchar" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+    <Parameter Name="fromdate" Type="datetime" Mode="In" />
+    <Parameter Name="todate" Type="datetime" Mode="In" />
+  </Function>
+  <Function Name="EmployeeSalary_DeleteAllByMonth" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="EmployeeSalary_duplicateCheck" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="EmployeeSalary_save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="Empno" Type="int" Mode="In" />
+    <Parameter Name="PaygroupId" Type="int" Mode="In" />
+    <Parameter Name="Basic" Type="float" Mode="In" />
+    <Parameter Name="HRA" Type="float" Mode="In" />
+    <Parameter Name="AttireAllowance" Type="float" Mode="In" />
+    <Parameter Name="InternetAllowance" Type="float" Mode="In" />
+    <Parameter Name="MobileAllowance" Type="float" Mode="In" />
+    <Parameter Name="PF" Type="float" Mode="In" />
+    <Parameter Name="ESI" Type="float" Mode="In" />
+    <Parameter Name="PTax" Type="float" Mode="In" />
+    <Parameter Name="EducationAllowances" Type="float" Mode="In" />
+    <Parameter Name="MedicalAllowances" Type="float" Mode="In" />
+    <Parameter Name="LTA" Type="float" Mode="In" />
+    <Parameter Name="GrossAmount" Type="float" Mode="In" />
+    <Parameter Name="LoanInstallment" Type="float" Mode="In" />
+    <Parameter Name="ContinuousAttendanceAllowance" Type="float" Mode="In" />
+    <Parameter Name="OvertimeAllowance" Type="float" Mode="In" />
+    <Parameter Name="LodgingAllowance" Type="float" Mode="In" />
+    <Parameter Name="ProductionBonus" Type="float" Mode="In" />
+    <Parameter Name="Leaveamount" Type="float" Mode="In" />
+    <Parameter Name="TotalAllowances" Type="float" Mode="In" />
+    <Parameter Name="TotalDeduction" Type="float" Mode="In" />
+    <Parameter Name="NetPayableAmount" Type="float" Mode="In" />
+    <Parameter Name="Month" Type="nchar" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+    <Parameter Name="Stipend" Type="float" Mode="In" />
+    <Parameter Name="Arrears" Type="float" Mode="In" />
+    <Parameter Name="performanceallowance" Type="float" Mode="In" />
+    <Parameter Name="Specialallowance" Type="float" Mode="In" />
+    <Parameter Name="BooksPeriodical" Type="float" Mode="In" />
+    <Parameter Name="ConveyenceAllowance" Type="float" Mode="In" />
+    <Parameter Name="TrainingAllowance" Type="float" Mode="In" />
+    <Parameter Name="VehicalAllowance" Type="float" Mode="In" />
+    <Parameter Name="FoodAllowance" Type="float" Mode="In" />
+    <Parameter Name="TDS" Type="float" Mode="In" />
+  </Function>
+  <Function Name="EmployeeSalary_TotalnoByMonth" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="EmployeeSalary_UpdatePayment" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="month" Type="nvarchar" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="Employeesalary_view_PageWise_ByMonth" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="Status" Type="nvarchar" Mode="In" />
+    <Parameter Name="PageNumber" Type="int" Mode="In" />
+    <Parameter Name="RowsOfPage" Type="int" Mode="In" />
+  </Function>
+  <Function Name="Employeesalary_viewAllByMonth" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="Status" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="Employeesalary_viewAllByMonth_Count" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="Status" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="EmployeeSalaryConfig_GetByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+  </Function>
+  <Function Name="EmployeeSalaryConfig_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+    <Parameter Name="EmpId" Type="int" Mode="In" />
+    <Parameter Name="PayGroupId" Type="int" Mode="In" />
+    <Parameter Name="IsPTaxActive" Type="bit" Mode="In" />
+    <Parameter Name="ContinuousAllowance" Type="nvarchar" Mode="In" />
+    <Parameter Name="Productionbonus" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="EmpoloyeeSalaryConfigManualValues_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayConfigIDs" Type="varchar" Mode="In" />
+    <Parameter Name="PayConfigValues" Type="varchar" Mode="In" />
+    <Parameter Name="SalaryConfigID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="ExcelReport_GetaAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="fromdate" Type="nvarchar" Mode="In" />
+    <Parameter Name="todate" Type="nvarchar" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="TotalDays" Type="int" Mode="In" />
+    <Parameter Name="empno" Type="int" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="ExcelReport_GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="fromdate" Type="datetime" Mode="In" />
+    <Parameter Name="todate" Type="datetime" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="TotalDays" Type="int" Mode="In" />
+    <Parameter Name="empno" Type="int" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="GetEmmployeeDetails_ById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="empid" Type="int" Mode="In" />
+  </Function>
+  <Function Name="LeaveDetails_GetByEmpno" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empno" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="LeaveDetails_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empno" Type="int" Mode="In" />
+    <Parameter Name="LeaveDays" Type="float" Mode="In" />
+    <Parameter Name="LateLeaveDays" Type="float" Mode="In" />
+    <Parameter Name="CreatedBy" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="Noofdaysabsent" Type="float" Mode="In" />
+    <Parameter Name="Type" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="LoanTransaction_GetByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Empid" Type="int" Mode="In" />
+  </Function>
+  <Function Name="LoanTransaction_save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="LoanId" Type="int" Mode="In" />
+    <Parameter Name="Empid" Type="int" Mode="In" />
+    <Parameter Name="InstallmentAmount" Type="decimal" Mode="In" />
+    <Parameter Name="OpeningBalance" Type="decimal" Mode="In" />
+    <Parameter Name="ClosingBalance" Type="decimal" Mode="In" />
+  </Function>
+  <Function Name="ManualSalaryConfig_GetByPayGroupID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="ManualSalaryConfig_save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+    <Parameter Name="ManualPayConfigId" Type="int" Mode="In" />
+    <Parameter Name="ISActive" Type="bit" Mode="In" />
+  </Function>
+  <Function Name="PayConfig_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Payconfigid" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayConfig_GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="PayConfig_GetById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayConfigId" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayConfig_GetByType" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayConfigType" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="PayConfig_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayConfigId" Type="int" Mode="In" />
+    <Parameter Name="PayConfigName" Type="nvarchar" Mode="In" />
+    <Parameter Name="PayConfigType" Type="nvarchar" Mode="In" />
+    <Parameter Name="IScalculative" Type="bit" Mode="In" />
+  </Function>
+  <Function Name="PayGroup_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayGroup_GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="PayGroup_GetById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayGroup_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+    <Parameter Name="PayGroupName" Type="nvarchar" Mode="In" />
+    <Parameter Name="Description" Type="nvarchar" Mode="In" />
+    <Parameter Name="PayGroupMasterCode" Type="nvarchar" Mode="In" />
+    <Parameter Name="ConcernHRPersonnel" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayGroupBonus_GetAllByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PaygroupID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayGroupBonus_GetById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayGroupBonus_GetByMonthandPaygroupId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayGroupId" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayGroupBonus_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+    <Parameter Name="Month" Type="nvarchar" Mode="In" />
+    <Parameter Name="Year" Type="int" Mode="In" />
+    <Parameter Name="OverTimeHours" Type="float" Mode="In" />
+    <Parameter Name="ProductionBonus" Type="float" Mode="In" />
+    <Parameter Name="TargetAchieved" Type="float" Mode="In" />
+  </Function>
+  <Function Name="PayGroupEmployeeMapping_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+    <Parameter Name="EmployeeID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayGroupEmployeeMapping_GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="PayGroupEmployeeMapping_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+    <Parameter Name="EmployeeID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="SalaryComponent_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="SalaryComponent_GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="SalaryComponent_GetById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="SalaryComponent_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+    <Parameter Name="SalaryComponent" Type="nvarchar" Mode="In" />
+    <Parameter Name="SalaryComponentCode" Type="int" Mode="In" />
+    <Parameter Name="SalaryComponentTypeID" Type="int" Mode="In" />
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+    <Parameter Name="Description" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="SalaryComponentType_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="SalaryComponentType_GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="SalaryComponentType_GetById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="SalaryComponentType_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Id" Type="int" Mode="In" />
+    <Parameter Name="SalaryComponentType" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="SalaryConfigure_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="ConfigureSalaryId" Type="int" Mode="In" />
+  </Function>
+  <Function Name="SalaryConfigure_GetAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <Function Name="SalaryConfigure_GetById" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SalaryConfigureID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="SalaryConfigure_PaygroupDuplicatecheck" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+  </Function>
+  <Function Name="SalaryConfigure_Save" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="SalaryConfigureID" Type="int" Mode="In" />
+    <Parameter Name="SalaryConfigureName" Type="nvarchar" Mode="In" />
+    <Parameter Name="PayGroupID" Type="int" Mode="In" />
+    <Parameter Name="SalaryConfigureType" Type="int" Mode="In" />
+  </Function>
+  <Function Name="splitstring" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="stringToSplit" Type="varchar(max)" Mode="In" />
+    <ReturnType>
+      <CollectionType>
+        <RowType>
+          <Property Name="Name" Type="nvarchar" MaxLength="500" />
+        </RowType>
+      </CollectionType>
+    </ReturnType>
+  </Function>
+  <EntityContainer Name="esspv2ModelStoreContainer">
+    <EntitySet Name="Company" EntityType="Self.Company" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Department" EntityType="Self.Department" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Designation" EntityType="Self.Designation" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Designationmaster" EntityType="Self.Designationmaster" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Empbasic" EntityType="Self.Empbasic" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="EmpoloyeeSalaryConfigManualValues" EntityType="Self.EmpoloyeeSalaryConfigManualValues" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PayGroupBonus" EntityType="Self.PayGroupBonus" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="ConfigureSalaryComponent" EntityType="Self.ConfigureSalaryComponent" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [ConfigureSalaryComponent].[ConfigureSalaryID] AS [ConfigureSalaryID], 
+    [ConfigureSalaryComponent].[PayConfigId] AS [PayConfigId], 
+    [ConfigureSalaryComponent].[CalculationFormula] AS [CalculationFormula], 
+    [ConfigureSalaryComponent].[ManualRate] AS [ManualRate], 
+    [ConfigureSalaryComponent].[MasterPayConfigID] AS [MasterPayConfigID], 
+    [ConfigureSalaryComponent].[ISPercentage] AS [ISPercentage]
+    FROM [dbo].[ConfigureSalaryComponent] AS [ConfigureSalaryComponent]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="EmployeeLoan" EntityType="Self.EmployeeLoan" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [EmployeeLoan].[LoanId] AS [LoanId], 
+    [EmployeeLoan].[Empid] AS [Empid], 
+    [EmployeeLoan].[LoanAmount] AS [LoanAmount], 
+    [EmployeeLoan].[MonthlyInstallment] AS [MonthlyInstallment], 
+    [EmployeeLoan].[IsStart] AS [IsStart], 
+    [EmployeeLoan].[LoanDate] AS [LoanDate]
+    FROM [dbo].[EmployeeLoan] AS [EmployeeLoan]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="EmployeeSalary" EntityType="Self.EmployeeSalary" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [EmployeeSalary].[Rowid] AS [Rowid], 
+    [EmployeeSalary].[Empid] AS [Empid], 
+    [EmployeeSalary].[Empno] AS [Empno], 
+    [EmployeeSalary].[PayGroupId] AS [PayGroupId], 
+    [EmployeeSalary].[Basic] AS [Basic], 
+    [EmployeeSalary].[HRA] AS [HRA], 
+    [EmployeeSalary].[Attire Allowance] AS [Attire Allowance], 
+    [EmployeeSalary].[Internet Allowance] AS [Internet Allowance], 
+    [EmployeeSalary].[Mobile Allowance] AS [Mobile Allowance], 
+    [EmployeeSalary].[PF] AS [PF], 
+    [EmployeeSalary].[ESI] AS [ESI], 
+    [EmployeeSalary].[P Tax] AS [P Tax], 
+    [EmployeeSalary].[Education Allowances] AS [Education Allowances], 
+    [EmployeeSalary].[Medical Allowances] AS [Medical Allowances], 
+    [EmployeeSalary].[LTA] AS [LTA], 
+    [EmployeeSalary].[Gross Amount] AS [Gross Amount], 
+    [EmployeeSalary].[Loan Installment] AS [Loan Installment], 
+    [EmployeeSalary].[Continuous Attendance Allowance] AS [Continuous Attendance Allowance], 
+    [EmployeeSalary].[Overtime Allowance] AS [Overtime Allowance], 
+    [EmployeeSalary].[Lodging Allowance] AS [Lodging Allowance], 
+    [EmployeeSalary].[ProductionBonus] AS [ProductionBonus], 
+    [EmployeeSalary].[Leave Amount] AS [Leave Amount], 
+    [EmployeeSalary].[Total Allowances] AS [Total Allowances], 
+    [EmployeeSalary].[Total Deduction] AS [Total Deduction], 
+    [EmployeeSalary].[Net Payable Amount] AS [Net Payable Amount], 
+    [EmployeeSalary].[Month] AS [Month], 
+    [EmployeeSalary].[Year] AS [Year], 
+    [EmployeeSalary].[Stipend] AS [Stipend], 
+    [EmployeeSalary].[PerformanceAllowance] AS [PerformanceAllowance], 
+    [EmployeeSalary].[SpecialAllowances] AS [SpecialAllowances], 
+    [EmployeeSalary].[Arrears] AS [Arrears], 
+    [EmployeeSalary].[IsPaid] AS [IsPaid], 
+    [EmployeeSalary].[Books &amp; Periodical] AS [Books &amp; Periodical], 
+    [EmployeeSalary].[Training  Allowance] AS [Training  Allowance], 
+    [EmployeeSalary].[Conveyence Allowance] AS [Conveyence Allowance], 
+    [EmployeeSalary].[Vehical Allownce] AS [Vehical Allownce], 
+    [EmployeeSalary].[Food Allowance] AS [Food Allowance], 
+    [EmployeeSalary].[TDS] AS [TDS], 
+    [EmployeeSalary].[Paid_Date] AS [Paid_Date]
+    FROM [dbo].[EmployeeSalary] AS [EmployeeSalary]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="EmployeeSalaryConfig" EntityType="Self.EmployeeSalaryConfig" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [EmployeeSalaryConfig].[Id] AS [Id], 
+    [EmployeeSalaryConfig].[EmpId] AS [EmpId], 
+    [EmployeeSalaryConfig].[PayGroupId] AS [PayGroupId], 
+    [EmployeeSalaryConfig].[IsPTaxActive] AS [IsPTaxActive], 
+    [EmployeeSalaryConfig].[ContinuousAttendanceAllowance] AS [ContinuousAttendanceAllowance], 
+    [EmployeeSalaryConfig].[ProductionBonus] AS [ProductionBonus]
+    FROM [dbo].[EmployeeSalaryConfig] AS [EmployeeSalaryConfig]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="LoanTransaction" EntityType="Self.LoanTransaction" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [LoanTransaction].[LoanTransactionId] AS [LoanTransactionId], 
+    [LoanTransaction].[LoanId] AS [LoanId], 
+    [LoanTransaction].[Empid] AS [Empid], 
+    [LoanTransaction].[InstallmentAmount] AS [InstallmentAmount], 
+    [LoanTransaction].[OpeningBalance] AS [OpeningBalance], 
+    [LoanTransaction].[ClosingBalance] AS [ClosingBalance], 
+    [LoanTransaction].[DateOfInStallment] AS [DateOfInStallment]
+    FROM [dbo].[LoanTransaction] AS [LoanTransaction]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="ManualSalaryConfig" EntityType="Self.ManualSalaryConfig" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [ManualSalaryConfig].[ID] AS [ID], 
+    [ManualSalaryConfig].[PayGroupID] AS [PayGroupID], 
+    [ManualSalaryConfig].[ManualPayConfigId] AS [ManualPayConfigId], 
+    [ManualSalaryConfig].[ISActive] AS [ISActive]
+    FROM [dbo].[ManualSalaryConfig] AS [ManualSalaryConfig]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="PayConfig" EntityType="Self.PayConfig" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [PayConfig].[PayConfigId] AS [PayConfigId], 
+    [PayConfig].[PayConfigName] AS [PayConfigName], 
+    [PayConfig].[PayConfigType] AS [PayConfigType], 
+    [PayConfig].[IScalculative] AS [IScalculative]
+    FROM [dbo].[PayConfig] AS [PayConfig]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="PayGroup" EntityType="Self.PayGroup" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [PayGroup].[PayGroupID] AS [PayGroupID], 
+    [PayGroup].[PayGroupName] AS [PayGroupName], 
+    [PayGroup].[Description] AS [Description], 
+    [PayGroup].[PayGroupMasterCode] AS [PayGroupMasterCode], 
+    [PayGroup].[ConcernHRPersonnel] AS [ConcernHRPersonnel]
+    FROM [dbo].[PayGroup] AS [PayGroup]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="PayGroupEmployeeMapping" EntityType="Self.PayGroupEmployeeMapping" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [PayGroupEmployeeMapping].[PayGroupEmployeeID] AS [PayGroupEmployeeID], 
+    [PayGroupEmployeeMapping].[PayGroupID] AS [PayGroupID], 
+    [PayGroupEmployeeMapping].[EmployeeID] AS [EmployeeID]
+    FROM [dbo].[PayGroupEmployeeMapping] AS [PayGroupEmployeeMapping]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="Postmaster" EntityType="Self.Postmaster" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [Postmaster].[postid] AS [postid], 
+    [Postmaster].[postname] AS [postname], 
+    [Postmaster].[departmentid] AS [departmentid], 
+    [Postmaster].[deleteflag] AS [deleteflag], 
+    [Postmaster].[createdon] AS [createdon], 
+    [Postmaster].[createdby] AS [createdby]
+    FROM [dbo].[Postmaster] AS [Postmaster]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="SalaryComponent" EntityType="Self.SalaryComponent" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [SalaryComponent].[SalaryComponentID] AS [SalaryComponentID], 
+    [SalaryComponent].[SalaryComponent] AS [SalaryComponent], 
+    [SalaryComponent].[SalaryComponentCode] AS [SalaryComponentCode], 
+    [SalaryComponent].[SalaryComponentTypeID] AS [SalaryComponentTypeID], 
+    [SalaryComponent].[PayGroupID] AS [PayGroupID], 
+    [SalaryComponent].[Description] AS [Description]
+    FROM [dbo].[SalaryComponent] AS [SalaryComponent]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="SalaryComponentType" EntityType="Self.SalaryComponentType" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [SalaryComponentType].[SalaryComponentTypeID] AS [SalaryComponentTypeID], 
+    [SalaryComponentType].[SalaryComponentType] AS [SalaryComponentType]
+    FROM [dbo].[SalaryComponentType] AS [SalaryComponentType]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="SalaryConfigure" EntityType="Self.SalaryConfigure" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [SalaryConfigure].[SalaryConfigureID] AS [SalaryConfigureID], 
+    [SalaryConfigure].[SalaryConfigureName] AS [SalaryConfigureName], 
+    [SalaryConfigure].[PayGroupID] AS [PayGroupID], 
+    [SalaryConfigure].[SalaryConfigureType] AS [SalaryConfigureType]
+    FROM [dbo].[SalaryConfigure] AS [SalaryConfigure]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="tcomactiveworklist" EntityType="Self.tcomactiveworklist" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [tcomactiveworklist].[activeworklistid] AS [activeworklistid], 
+    [tcomactiveworklist].[wrkflwitemkey] AS [wrkflwitemkey], 
+    [tcomactiveworklist].[wrkflwitemactid] AS [wrkflwitemactid], 
+    [tcomactiveworklist].[currentstatus] AS [currentstatus], 
+    [tcomactiveworklist].[fromuserid] AS [fromuserid], 
+    [tcomactiveworklist].[touserid] AS [touserid], 
+    [tcomactiveworklist].[startdatetime] AS [startdatetime], 
+    [tcomactiveworklist].[initiatedby] AS [initiatedby], 
+    [tcomactiveworklist].[activeflag] AS [activeflag], 
+    [tcomactiveworklist].[approvaltag] AS [approvaltag], 
+    [tcomactiveworklist].[targetroleachieved] AS [targetroleachieved], 
+    [tcomactiveworklist].[cawactivityname] AS [cawactivityname]
+    FROM [dbo].[tcomactiveworklist] AS [tcomactiveworklist]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="tcomworklisthistory" EntityType="Self.tcomworklisthistory" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [tcomworklisthistory].[activeworklistid] AS [activeworklistid], 
+    [tcomworklisthistory].[wrkflwitemkey] AS [wrkflwitemkey], 
+    [tcomworklisthistory].[wrkflwitemactid] AS [wrkflwitemactid], 
+    [tcomworklisthistory].[currentstatus] AS [currentstatus], 
+    [tcomworklisthistory].[fromuserid] AS [fromuserid], 
+    [tcomworklisthistory].[touserid] AS [touserid], 
+    [tcomworklisthistory].[startdatetime] AS [startdatetime], 
+    [tcomworklisthistory].[initiatedby] AS [initiatedby], 
+    [tcomworklisthistory].[activeflag] AS [activeflag], 
+    [tcomworklisthistory].[approvaltag] AS [approvaltag], 
+    [tcomworklisthistory].[targetroleachieved] AS [targetroleachieved], 
+    [tcomworklisthistory].[cawactivityname] AS [cawactivityname]
+    FROM [dbo].[tcomworklisthistory] AS [tcomworklisthistory]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="tleaveappdtls" EntityType="Self.tleaveappdtls" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [tleaveappdtls].[applicationhdrid] AS [applicationhdrid], 
+    [tleaveappdtls].[leaveid] AS [leaveid], 
+    [tleaveappdtls].[leavestartdate] AS [leavestartdate], 
+    [tleaveappdtls].[startdatehalfind] AS [startdatehalfind], 
+    [tleaveappdtls].[leaveenddate] AS [leaveenddate], 
+    [tleaveappdtls].[enddayhalfind] AS [enddayhalfind], 
+    [tleaveappdtls].[noofdays] AS [noofdays], 
+    [tleaveappdtls].[destinationcode] AS [destinationcode], 
+    [tleaveappdtls].[contactaddress] AS [contactaddress], 
+    [tleaveappdtls].[contactphoneno] AS [contactphoneno], 
+    [tleaveappdtls].[outstationpermissionind] AS [outstationpermissionind], 
+    [tleaveappdtls].[salaryadvancereqdind] AS [salaryadvancereqdind], 
+    [tleaveappdtls].[advanceamt] AS [advanceamt], 
+    [tleaveappdtls].[leaveappliedfor] AS [leaveappliedfor], 
+    [tleaveappdtls].[ltctypecode] AS [ltctypecode], 
+    [tleaveappdtls].[blockyearid] AS [blockyearid], 
+    [tleaveappdtls].[fitnesscertsubmitind] AS [fitnesscertsubmitind], 
+    [tleaveappdtls].[leavereason] AS [leavereason], 
+    [tleaveappdtls].[createdby] AS [createdby], 
+    [tleaveappdtls].[createdon] AS [createdon], 
+    [tleaveappdtls].[updatedby] AS [updatedby], 
+    [tleaveappdtls].[updatedon] AS [updatedon], 
+    [tleaveappdtls].[deleteflag] AS [deleteflag], 
+    [tleaveappdtls].[suffixfromdate] AS [suffixfromdate], 
+    [tleaveappdtls].[suffixtodate] AS [suffixtodate], 
+    [tleaveappdtls].[leaveextendedind] AS [leaveextendedind], 
+    [tleaveappdtls].[prefixfromdate] AS [prefixfromdate], 
+    [tleaveappdtls].[prefixtodate] AS [prefixtodate], 
+    [tleaveappdtls].[noonindicator] AS [noonindicator], 
+    [tleaveappdtls].[prefixindicator] AS [prefixindicator], 
+    [tleaveappdtls].[suffixindicator] AS [suffixindicator], 
+    [tleaveappdtls].[maternitytype] AS [maternitytype], 
+    [tleaveappdtls].[childid] AS [childid], 
+    [tleaveappdtls].[Compoffrequestid] AS [Compoffrequestid]
+    FROM [dbo].[tleaveappdtls] AS [tleaveappdtls]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="tleaveapplicationhrd" EntityType="Self.tleaveapplicationhrd" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [tleaveapplicationhrd].[applicationhdrid] AS [applicationhdrid], 
+    [tleaveapplicationhrd].[requestid] AS [requestid], 
+    [tleaveapplicationhrd].[applicationdate] AS [applicationdate], 
+    [tleaveapplicationhrd].[deleteflag] AS [deleteflag], 
+    [tleaveapplicationhrd].[approverempid] AS [approverempid], 
+    [tleaveapplicationhrd].[approvaldate] AS [approvaldate], 
+    [tleaveapplicationhrd].[Applicationstatus] AS [Applicationstatus], 
+    [tleaveapplicationhrd].[createdby] AS [createdby], 
+    [tleaveapplicationhrd].[createdon] AS [createdon], 
+    [tleaveapplicationhrd].[updatedby] AS [updatedby], 
+    [tleaveapplicationhrd].[updatedon] AS [updatedon], 
+    [tleaveapplicationhrd].[approverremarks] AS [approverremarks]
+    FROM [dbo].[tleaveapplicationhrd] AS [tleaveapplicationhrd]</DefiningQuery>
+    </EntitySet>
+  </EntityContainer>
+</Schema>

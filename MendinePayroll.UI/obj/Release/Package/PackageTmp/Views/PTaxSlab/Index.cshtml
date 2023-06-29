@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/ProjectJS/PTaxSlab.js"></script>
+<section role="main" class="content-body">
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button id="btnSave" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Save Slab<i class="fa fa-plus ml-lg"></i></button>
+            </div>
+            <h2 class="panel-title">PTax Slab</h2>
+        </header>
+        <div class="panel-body">
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>State</label>
+                </div>
+                <div class="col-md-4">
+                    @*@Html.DropDownList("mlist","Select State Name");*@
+                    <select Id="ddlState" class="form-control"></select>
+
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label>Year</label>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <input type="number" maxlength="4" class="form-control" id="txtYear" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+                    <input type="button" id="btnSearch" class="btn btn-sm btn-success" value="Search" style="background-color: #0026ff; height: 35px" />
+                </div>
+
+                <div class="col-md-2 mb-3">
+                    <input type="button" id="btnNewRow" class="btn btn-sm btn-success" value="Add New Row" />
+                </div>
+
+
+                <table class="table table-responsive" id="tblPTaxSlab">
+                    <thead>
+                        <tr>
+                            <th>Range From</th>
+                            <th>Range To </th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyPTaxSlab">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</section>
+

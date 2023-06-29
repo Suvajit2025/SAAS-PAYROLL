@@ -1,0 +1,406 @@
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+C:\Mohan\MendinePayroll\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.Razor.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.WebPages.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.Mvc.xml
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.Razor.xml
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.xml
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.WebPages.xml
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.xml
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.xml
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+E:\Dipankar\MendinePayroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.xml
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.xml
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.xml
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.xml
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.xml
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.xml
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+E:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+C:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.xml
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.xml
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.xml
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.xml
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.xml
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+F:\Dipankar\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.dll
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.xml
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.xml
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.xml
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.xml
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.xml
+F:\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.xml
+F:\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+F:\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+F:\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+F:\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+F:\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.xml
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.xml
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.xml
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.xml
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.xml
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.xml
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+F:\AssetProject\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Razor.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Razor.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\Microsoft.Web.Infrastructure.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.WebPages.Deployment.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+F:\Projects\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+E:\Mayukh-Mendin\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+C:\Chinmoy\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csprojAssemblyReference.cache
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+C:\Chinmoy\Changes-Payroll\live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.AssemblyReference.cache
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.AssemblyReference.cache
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-Live\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.AssemblyReference.cache
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.AssemblyReference.cache
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+C:\Users\Pallab das\Desktop\Live-Payroll-Last-Pallav\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll.config
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.dll
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\MendinePayroll.Core.pdb
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\EntityFramework.dll
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.dll
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.dll
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\System.Web.Mvc.dll
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.pdb
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\MendinePayroll.Data.dll.config
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\MendinePayroll.Models.pdb
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\EntityFramework.xml
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\bin\Debug\EntityFramework.SqlServer.xml
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.AssemblyReference.cache
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.csproj.CopyComplete
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.dll
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\obj\Debug\MendinePayroll.Core.pdb

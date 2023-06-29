@@ -1,0 +1,814 @@
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\csc.exe
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\csc.exe.config
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\csc.rsp
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\csi.exe
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\csi.rsp
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\vbc.exe
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\vbc.rsp
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\EntityFramework.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Helpers.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Http.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Mvc.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Optimization.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Razor.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.WebPages.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\WebGrease.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\EntityFramework.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Helpers.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Http.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Mvc.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Optimization.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.Razor.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.WebPages.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csprojAssemblyReference.cache
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+E:\Dipankar\MendinePayroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe.config
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.rsp
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.exe
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.rsp
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.rsp
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\WebGrease.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csprojAssemblyReference.cache
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+E:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe.config
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.rsp
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.exe
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.rsp
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.rsp
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\WebGrease.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csprojAssemblyReference.cache
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+C:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe.config
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.rsp
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.exe
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.rsp
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.rsp
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\WebGrease.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csprojAssemblyReference.cache
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+F:\Dipankar\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe.config
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.rsp
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.exe
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.rsp
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.rsp
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\WebGrease.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csprojAssemblyReference.cache
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+F:\AssetProject\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe.config
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.rsp
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.exe
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.rsp
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.rsp
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\WebGrease.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csprojAssemblyReference.cache
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+C:\Users\udalk\Desktop\Mendine Payroll\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe.config
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.rsp
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.exe
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.rsp
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.rsp
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\WebGrease.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csprojAssemblyReference.cache
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+F:\Projects\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.exe.config
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csc.rsp
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.exe
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\csi.rsp
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\vbc.rsp
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\WebGrease.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Helpers.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Mvc.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Optimization.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.Razor.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csprojAssemblyReference.cache
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+C:\Users\Rahul Roy\Downloads\MendinePayrollv205.11.2021-Mayukh\MendinePayrollv2\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\csc.exe
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\csc.exe.config
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\csc.rsp
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\csi.exe
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\csi.rsp
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\vbc.exe
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\vbc.rsp
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\EntityFramework.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Helpers.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Http.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Mvc.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Optimization.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Razor.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\WebGrease.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\EntityFramework.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Helpers.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Http.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Mvc.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Optimization.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.Razor.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csprojAssemblyReference.cache
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+E:\Mayukh-Projects\live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\csc.exe
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\csc.exe.config
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\csc.rsp
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\csi.exe
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\csi.rsp
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\vbc.exe
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\vbc.rsp
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\EntityFramework.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Helpers.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Http.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Mvc.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Optimization.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Razor.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\WebGrease.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\EntityFramework.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Helpers.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Http.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Mvc.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Optimization.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.Razor.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.AssemblyReference.cache
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+D:\Mayukh-Mendine-Project\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\csc.exe
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\csc.exe.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\csc.rsp
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\csi.exe
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\csi.rsp
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\vbc.exe
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\vbc.rsp
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\EntityFramework.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Helpers.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Http.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Mvc.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Optimization.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Razor.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\WebGrease.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\EntityFramework.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Helpers.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Http.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Mvc.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Optimization.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.Razor.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.AssemblyReference.cache
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.csproj.CopyComplete
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.dll
+D:\COMPANY\MENDINE PAYROLL\Mendine-Payroll-OLD\Live-Payroll\MendinePayrollAPI\obj\Release\MendinePayrollAPI.pdb

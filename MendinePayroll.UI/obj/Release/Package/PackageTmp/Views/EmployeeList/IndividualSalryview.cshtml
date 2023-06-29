@@ -1,0 +1,688 @@
+﻿@model MendinePayroll.Models.IndividualSalryModel
+@{
+    ViewBag.Title = "IndividualSalryview";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table-new > tbody > tr:nth-of-type(even) {
+        background-color: #f9f9f9;
+    }
+    body{
+        background-color:white;
+    }
+</style>
+
+<section role="main" class="content-body">
+
+    <header class="page-header">
+        <h2>Employee  Salary List </h2>
+        @*<link href="~/plugins/select2/select2.css" rel="stylesheet" />*@
+    </header>
+    <!-- start: page -->
+    <section class="panel">
+        <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+        <button id="" type ="button" onclick="ExportToPDF();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold" style="float:right;"><i class="text-danger fa fa-file-pdf-o  ml-lg"></i>Download In PDF</button>
+
+        @*<header class="panel-heading">
+            <div class="panel-actions">
+
+                <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+            <h2 class="panel-title">Employee Salary List</h2>
+        </header>*@
+        <div class="modal-body" id="tab">
+            <form>
+                <div class="row col-md-12">
+                    <table style="width:50%; margin:auto; margin-bottom:10px;">
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="4" style="text-align:center;">
+                                    <p>
+                                        <h2 >@Model.Company</h2>
+                                         
+                                            @Model.CompanyAddress
+                                        
+
+                                    </p>
+
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="row col-md-12">
+                    <table style="width:50%; margin:auto; margin-bottom:10px;" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="4" style="text-align:center;">
+                                    <p>
+                                        <h4>Payslip</h4>
+                                        <h5>For @Model.Month'@Model.Year</h5>
+                                        <h3>@Model.EmployeeName</h3>
+                                    </p>
+
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="row col-md-12">
+                    <table style="width:100%; margin:auto; margin-bottom:10px;" class="table table-new table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="4" style="background-color:grey;color:white">Employee Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" style="width:25%;">Employee Number</th>
+                                <td scope="col" style="width:25%;">@Model.EmployeeNo</td>
+                                <th scope="row" style="width:25%;">Income Tax Number (PAN)</th>
+                                <td scope="col" style="width:25%;">@Model.emppancardno</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" style="width:25%;">Department</th>
+                                <td scope="col" style="width:25%;">@Model.Department</td>
+                                <th scope="row" style="width:25%;">Universal Account Number (UAN)</th>
+                                <td scope="col" style="width:25%;">@Model.empuanno</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" style="width:25%;">Designation</th>
+                                <td scope="col" style="width:25%;">@Model.Designation</td>
+                                <th scope="row" style="width:25%;">PF Account Number</th>
+                                <td scope="col" style="width:25%;">@Model.empepfno</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" style="width:25%;">Location</th>
+                                <td scope="col" style="width:25%;"></td>
+                                <th scope="row" style="width:25%;">ESIC Number</th>
+                                <td scope="col" style="width:25%;">@Model.empesicno</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" style="width:25%;">Bank Details</th>
+                                <td scope="col" style="width:25%;">@Model.empaccountno</td>
+                                <th scope="row" style="width:25%;">PR Account Number (PRAN)</th>
+                                <td scope="col" style="width:25%;"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row" style="width:25%;">Date of Joining</th>
+                                <td scope="col" style="width:25%;">@Convert.ToDateTime(Model.joining).ToString("dd/MM/yyy")</td>
+                                <th scope="row" style="width:25%;"></th>
+                                <td scope="col" style="width:25%;"></td>
+                            </tr>
+                        </tbody>
+
+
+                    </table>
+                </div>
+                <div class="row col-md-12">
+                    <table style="width:100%; margin:auto; margin-bottom:10px;" class="table table-new table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="4" style="background-color:grey;color:white">Leave Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" style="width:25%;">Working Day</th>
+                                <td scope="col" style="width:25%;">@Model.WorkingDays</td>
+                                <th scope="row" style="width:25%;">Earned Leave</th>
+                                <td scope="col" style="width:25%;">@Model.EarnedLeaveDays</td>
+
+
+                            </tr>
+
+                            <tr>
+
+                                <th scope="row" style="width:25%;">Leave Without Pay</th>
+                                <td scope="col" style="width:25%;">@Model.TotalLeaveDays</td>
+                                <th scope="row" style="width:25%;">Leave Without Pay Amount</th>
+                                <td scope="col" style="width:25%;">@Model.LeaveAmount</td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" style="width:25%;">Days Due To Late </th>
+                                <td scope="col" style="width:25%;">@Model.LateLeave</td>
+                                <th scope="row" style="width:25%;">Deduct Amount Due To Late</th>
+                                <td scope="col" style="width:25%;">@Model.LateLeaveAmount</td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" style="width:25%;">Day’s Absent</th>
+                                <td scope="col" style="width:25%;">@Model.AbsentDays</td>
+                                <th scope="row" style="width:25%;">Total Leave Amount</th>
+                                <td scope="col" style="width:25%;">@Model.Leave_Amount</td>
+                            </tr>
+
+                        </tbody>
+
+
+                    </table>
+                </div>
+                <div class="row col-md-12">
+                    <table style="width:100%; margin:auto; margin-bottom:10px;" class="table table-bordered">
+                        <tr>
+                            <td>
+                                <table class="table table-bordered table-striped" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" style="background-color:grey;color:white">Earnings</th>
+                                            <th scope="col" style="background-color:grey;color:white">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Basic > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Basic</th>
+                                                <td scope="col" style="width:25%;">@Model.Basic</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Mobile_Allowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Mobile Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Mobile_Allowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Internet_Allowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Internet Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Internet_Allowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.HRA > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">House Rent Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.HRA</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Education_Allowances > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Education Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Education_Allowances</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Medical_Allowances > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Medical Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Medical_Allowances</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Lodging_Allowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Lodging Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Lodging_Allowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Books___Periodical > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Books & Periodical</th>
+                                                <td scope="col" style="width:25%;">@Model.Books___Periodical</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Attire_Allowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Attire Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Attire_Allowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.LTA > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">LTA</th>
+                                                <td scope="col" style="width:25%;">@Model.LTA</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Training__Allowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Training Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Training__Allowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Food_Allowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Food Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Food_Allowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Vehical_Allownce > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Vehical Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Vehical_Allownce</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Conveyence_Allowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Conveyence Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Conveyence_Allowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.PerformanceAllowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Performance Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.PerformanceAllowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.SpecialAllowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Special Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.SpecialAllowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Continuous_Attendance_Allowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Continuous Attendance Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Continuous_Attendance_Allowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Overtime_Allowance > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Overtime Allowance</th>
+                                                <td scope="col" style="width:25%;">@Model.Overtime_Allowance</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.ProductionBonus > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Production Bonus</th>
+                                                <td scope="col" style="width:25%;">@Model.ProductionBonus</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Arrears > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Arrears</th>
+                                                <td scope="col" style="width:25%;">@Model.Arrears</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.Gross_Amount > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Gross Amount</th>
+                                                <td scope="col" style="width:25%;">@Model.Gross_Amount</td>
+
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td>
+                                <table class="table table-bordered table-new" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" style="background-color:grey;color:white">Deductions</th>
+                                            <th scope="col" style="background-color:grey;color:white">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.PF > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">PF</th>
+                                                <td scope="col" style="width:25%;">@Model.PF</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.ESI > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">ESI</th>
+                                                <td scope="col" style="width:25%;">@Model.ESI</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.P_Tax > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">PTAX</th>
+                                                <td scope="col" style="width:25%;">@Model.P_Tax</td>
+
+                                            </tr>
+                                        }
+                                        @if (Model.TDS > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">TDS</th>
+                                                <td scope="col" style="width:25%;">@Model.TDS</td>
+
+                                            </tr>
+                                        }
+                                        @if (Convert.ToDouble(Model.Leave_Amount) > 0)
+                                        {
+                                            <tr>
+
+                                                <th scope="row" style="width:25%;">Deduction Due to Leave and Late</th>
+                                                <td scope="col" style="width:25%;">@Model.Leave_Amount</td>
+
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th scope="row" style="width:25%;">Total Deduction</th>
+                                            <td scope="col" style="width:25%;">@Model.Total_Deduction</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <th scope="row" style="width:25%;font-size: 18px;">Net Amount</th>
+                            <td scope="col" style="width:25%;font-size: 20px;">@Model.Net_Payable_Amount</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" style="width:25%;font-size: 18px;">Loan Amount</th>
+                            <td scope="col" style="width:25%;font-size: 20px;">@Model.Loan_Installment</td>
+                        </tr>
+                        <tr>
+                            <th scope="row" style="width:25%;font-size: 18px;">Amount in Words</th>
+                            <td scope="row" style="width:25%;font-size: 20px;font-weight:bolder" colspan="2">@Model.Amountinwords</td>
+                        </tr>
+                    </table>
+
+                </div>
+
+                @*<div class="row col-md-12" style="margin:auto;">*@
+                @*<div class="col-md-6">
+                    <table class="table table-bordered" style="width:100%; margin:auto; margin-bottom:10px;">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="background-color:greenyellow">Earnings</th>
+                                <th scope="col" style="background-color:greenyellow">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allowances"></tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-bordered" style="width:100%; margin:auto; margin-bottom:10px;">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="background-color:greenyellow">Earnings</th>
+                                <th scope="col" style="background-color:greenyellow">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="Deductions"></tbody>
+                    </table>
+                </div>*@
+                @*</div>*@
+
+            </form>
+        </div>
+
+
+    </section>
+    <!-- end: page -->
+</section>
+<script>
+    //$(document).ready(function () {
+    //    loadallowances();
+
+
+    //});
+</script>
+<script>
+    function BacktoEmpList() {
+                window.location.href = "/EmployeeList/ViewSalary";
+    }
+    
+</script>
+<script>
+    function ExportToPDF() {
+        
+        var qsparam = new Array(10);
+        var query = window.location.search.substring(1);
+        var parms = query.split('&&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsparam[i] = val;
+            }
+        }
+        var name ='@Model.EmployeeName.ToString()';
+        var model = { SEmpid: qsparam[0], Month: qsparam[1], Year: qsparam[2], EmployeeName: name }
+        var jsonData = JSON.stringify(model);
+        $.ajax({
+
+            url: '/EmployeeList/GeneratePdf',
+            type: 'POST',
+            data: function () {
+                var data = new FormData();
+                data.append("modelParameter", jsonData);
+                return data;
+            }(),
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.fileName != "") {
+                    
+                window.location.href = "/EmployeeList/DownloadPdf?fileName=" + data.fileName + "";
+                //$("#ImgExportLoader").hide();
+                }
+            }
+        });
+        //}).done(function (data) {
+        //    
+        //    if (data.fileName != "") {
+        //        window.location.href = "/EmployeeList/DownloadPdf?fileName=" + data.fileName + "";
+        //        //$("#ImgExportLoader").hide();
+        //    }
+        //});
+        // CREATE A WINDOW OBJECT.
+        //var win = window.open('', '', 'height=700,width=700');
+
+        //win.document.write('<html><head>');
+        //win.document.write('<title>Profile</title>');   // <title> FOR PDF HEADER.
+        //win.document.write(style);          // ADD STYLE INSIDE THE HEAD TAG.
+        //win.document.write('</head>');
+        //win.document.write('<body>');
+        //win.document.write(sTable);         // THE TABLE CONTENTS INSIDE THE BODY TAG.
+        //win.document.write('</body></html>');
+
+        //win.document.close(); 	// CLOSE THE CURRENT WINDOW.
+
+        //win.print();    // PRINT THE CONTENTS.
+    }
+</script>
+@*<script>
+    function loadallowances() {
+        var ID = 0;
+        var id = 0;
+        $.ajax({
+            type: "POST",
+            url: '/ConfigureSalaryComponent/GetPayConfigbyTypeAllowances',
+            success: function (response) {
+                
+                RecordLength = response.length;
+                $("#allowances").empty();
+                for (ID; ID < RecordLength; ID++) {
+                    if (response[ID].IScalculative == true) {
+                        var newrow =
+                            '<tr>' +
+                            '<th scope="row" style="width:25%;">' + response[ID].PayConfigName + '</th>' +
+                            ' <td scope="col" style="width:25%;" id="lbl_' + response[ID].PayConfigId + '">' + '</td>' +
+                            '</tr>';
+                    }
+                    else {
+                        var newrow =
+                            '<tr>' +
+                            '<th scope="row" style="width:25%;">' + response[ID].PayConfigName + '</th>' +
+                            ' <td scope="col" style="width:25%;" id="lbl_' + response[ID].PayConfigId + '">' + '</td>' +
+                            '</tr>';
+                    }
+                    $("#allowances").append(newrow);
+                    
+                    //document.getElementById('divallowancesID').value = ID + 1;
+
+
+
+
+                }
+                //loaddata();
+                loaddeducation();
+                //
+
+                var newrow =
+                    '<tr>' +
+                    '<th scope="row" style="width:25%;">ContinuousAttendanceAllowance</th>' +
+                    ' <td scope="col" style="width:25%;" id="lbl_Continuous">' + '</td></tr>' +
+
+                    '<tr><th scope="row" style="width:25%;">OverTime Allowance</th>' +
+                    ' <td scope="col" style="width:25%;" id="lbl_OverTime">' + '</td></tr>' +
+
+                    '<tr><th scope="row" style="width:25%;">ProductionBonus</th>' +
+                    ' <td scope="col" style="width:25%;" id="lbl_ProductionBonus">' + '</td>' +
+                    '</tr>';
+                $("#allowances").append(newrow);
+
+
+
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+
+    function loaddeducation() {
+        var ID = 0;
+        var id = 0;
+        $.ajax({
+            type: "POST",
+            url: '/ConfigureSalaryComponent/GetPayConfigbyTypeDeducation',
+            success: function (response) {
+                // 
+                RecordLength = response.length;
+
+                $("#Deductions").empty();
+                for (ID; ID < RecordLength; ID++) {
+                    
+
+                    var newrow =
+                        '<tr>' +
+                        '<th scope="row" style="width:25%;">' + response[ID].PayConfigName + '</th>' +
+                        ' <td scope="col" style="width:25%;" id="lbl_' + response[ID].PayConfigId + '">' + '</td>' +
+                        '</tr>';
+                
+               
+                    $("#Deductions").append(newrow);
+
+                    
+
+
+                }
+                var newrow =
+                    '<tr>' +
+                    '<th scope="row" style="width:25%;">Deduction Due to Leave & Late</th>' +
+                    ' <td scope="col" style="width:25%;" id="lbl_Deduction">' + '</td>' +
+                    '</tr>';
+                $("#Deductions").append(newrow);
+                document.getElementById('lbl_1').innerHTML = "Some text to enter";
+                //getearningdata(SalaryConfigureType);
+                LoadData();
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+    function LoadData() {
+        var qsparam = new Array(10);
+        var query = window.location.search.substring(1);
+        var parms = query.split('&&');
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsparam[i] = val;
+            }
+        }
+        var jq = jQuery.noConflict();
+        jq.ajax({
+            type: "POST",
+            url: '/EmployeeList/GetIndividualSalaryDetails',
+            data: {
+                "Empid": qsparam[0], "Month": qsparam[1], "year": qsparam[2]
+            },
+            datatype: JSON,
+            success: function (response) {
+                
+            },
+            error: function (er) {
+
+                console.log(er);
+            }
+        });
+    }
+</script>*@
+
+
+
