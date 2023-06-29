@@ -1,0 +1,290 @@
+﻿@model MendinePayroll.Models.EmployeeSalaryModel
+@{
+    ViewBag.Title = "ViewInActiveSalary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section role="main" class="content-body">
+
+    <header class="page-header">
+        <h2>Employee  Salary List </h2>
+        @*<link href="~/plugins/select2/select2.css" rel="stylesheet" />*@
+    </header>
+    <!-- start: page -->
+    <style>
+        .Pagenum {
+            padding: 6px !important;
+            height: 31px !important;
+            width: 88px !important;
+            border: 1px solid #a89d9d;
+            float: right;
+        }
+    </style>
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+
+                <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+            <h2 class="panel-title">Employee Salary List</h2>
+        </header>
+        <div class="modal-body">
+            <form class="form-inline">
+                <label>Month</label>
+                @Html.DropDownListFor(M => M.Month, Model.MonthList, new { @class = "foem-control", @id = "ddlmonth", @onchange = "return ViewAllEmployeeSalarySalarySearch(1);" })
+                @*<select name="month" id="ddlmonth">
+                        <option value="0">Select Month</option>
+                    </select>*@
+                <label>Year</label>
+                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                    @*<select name="month" id="ddlyear">
+                            <option value="0">Select Year</option>
+                        </select>*@
+                    @Html.DropDownListFor(M => M.Year, Model.YearList, new { @class = "form-control", @id = "ddlyear", @onchange = "return ViewAllEmployeeSalarySalarySearch(1);" })
+
+                </div>
+                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                    @*<select name="month" id="ddlyear">
+                            <option value="0">Select Year</option>
+                        </select>*@
+                    @Html.DropDownListFor(M => M.EmployeeName, Model.masterModel.selectListItems, new { @class = "form-control", @onchange = "return ViewAllEmployeeSalarySalarySearch(1);" })
+
+                </div>
+
+
+                @*<button type="button" class="btn btn-primary" id="btnSearch" onclick="return ViewAllEmployeeSalarySalary();">Search</button>*@
+                <button id="btnExportToExcel" onclick="return exportToExcel();" class="btn btn-primary" >Export to Excel</button>
+                 
+                    <select  class="Pagenum" onchange="GetSearchbypagenumberResult(1);" id="Pagrow" name="Numberofrow">
+                        <option selected value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <label style="float:right;" for="PageRow">PageRow&emsp;</label>
+                <div class="panel-body table-responsive" id="d1">
+
+                    <table class="table  mb-none" id="users">
+                        <thead>
+                            <tr>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>EmpNO</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Employee Name</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>PayGroup Name</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Basic</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Gross Amount</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Total Allowances</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Total Deduction</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Net Amount</th>
+                                <th class="Center">More</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listVehicle"></tbody>
+                    </table>
+                    <label style="float:left" id="Showing_no_Row" class="mt-md"></label>
+                    <table style="float:right" id="#pagination">
+                        <tr>
+                            <td colspan="12" align="right" style="text-align:right;">
+                                <div>
+                                    <div id="divPageNumbers">
+                                        <ul id="pagination" class="pagination-sm"></ul>
+                                    </div>
+                                </div>
+                            </td>
+                            @*<td colspan="2" align="left">
+                                    &nbsp;
+                                </td>*@
+                        </tr>
+                    </table>
+                </div>
+
+            </form>
+        </div>
+
+
+    </section>
+    <!-- end: page -->
+</section>
+@*<script src="~/Content/SELECT2/select2.min.js"></script>*@
+@*<script src="~/Content/CHOSEN/chosen.jquery.min.js"></script>*@
+<script src="~/plugins/cdnjs/jquery.twbsPagination.min.js"></script>
+<script>
+    $(document).ready(function () {
+        //$("#ddlmonth").select({
+        //    placeholder: "Select a programming language",
+        //    allowClear: true
+        //});
+
+
+        $("#d1").hide();
+        //var thisYear = (new Date()).getFullYear();
+        $pagination.twbsPagination('destroy');
+        ViewAllEmployeeSalarySalary(1);
+        $("#ddlmonth").select2();
+        $("#ddlyear").select2();
+        $("#EmployeeName").select2();
+    });
+</script>
+<script>
+    function ViewAllEmployeeSalarySalary(pagnumber) {
+        
+        var month = $("#ddlmonth option:selected").text();
+        var year = $("#ddlyear").val();
+        var Employeename = $("#EmployeeName").val();
+        var Status = 0
+        var numberofRow = $("#Pagrow").val();
+        var pagenumber = pagnumber;
+        //var month = $("#ddlmonth").val();
+        
+        $.ajax({
+            type: "POST",
+            url: '/EmployeeList/GetAllEmployeeSalary',
+
+            data: {
+                "Month": month, "Year": year, "Empid": Employeename, "Status": Status,"numberofRow": numberofRow, "pagenumber": pagenumber
+            },
+            datatype: "JSON",
+            success: function (data) {
+                $("#d1").show();
+                
+                //$("#datatable-users tbody").empty();
+
+                //$.each(data, function (Index, value) {
+                //    $("#datatable-users tbody").append('<tr><td>' + value.Empno + '</td><td>' + value.EmployeeName + '</td><td>' + value.PayGroupeName + '</td><td>' + value.Basic + '</td><td>' + value.Gross_Amount + '</td><td>' + value.Total_Allowances + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount + '</td></tr>');
+                //});
+                //var table = $("#users").DataTable();
+                //if (table) {
+                //    table.destroy();
+                //}
+                $("#users tbody").empty();
+                $("#Showing_no_Row").text("");
+                var Coutntotlloop = 0;
+                $.each(data, function (Index, value) {
+                    Coutntotlloop++;
+                    $("#users tbody").append('<tr><td>' + value.Empno + '</td><td>' + value.EmployeeName + '</td><td>' + value.PayGroupeName + '</td><td>' + value.Basic + '</td><td>' + value.Gross_Amount +
+                        '</td><td>' + value.Total_Allowances + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount +
+                        '</td><td>'
+                        + '<a href="#" onclick="return GetIndivdualSalary(' + "'" + value.sEmpid + "'" + ');" data-toggle="modal" data-target="#detail">' +
+                        '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a>' +
+                        '</td></tr>');
+                });
+                $("#pagination").show();
+                
+                if (data.length > 0) {
+                    $("#Showing_no_Row").text("Showing " + (((pagnumber - 1) * numberofRow) + 1) + " to " + (((pagnumber - 1) * numberofRow) + Coutntotlloop) + " of " + data[0].TotalCount + " entries");
+
+                    apply_pagination(data[0].TotalCount, numberofRow);
+                }
+                else {
+                    $("#Showing_no_Row").text(" " + "NO" + " Records Found");
+                }
+                //$("#users").DataTable({
+                //    "searching": false
+
+                //});
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+
+    function ViewAllEmployeeSalarySalarySearch(page) {
+        $pagination.twbsPagination('destroy');
+        ViewAllEmployeeSalarySalary(page);
+    }
+
+    function GetSearchbypagenumberResult(page) {
+        $pagination.twbsPagination('destroy');
+        ViewAllEmployeeSalarySalary(page);
+    }
+
+    function GetIndivdualSalary(Empid) {
+        var jq = jQuery.noConflict();
+        
+        var month = jq("#ddlmonth option:selected").text();
+        var Months = jq("#ddlmonth").val();
+        var year = jq("#ddlyear").val();
+        window.location.href = '/EmployeeList/IndividualSalryview?Empid=' + Empid + '&&Month=' + month + '&&Year=' + year + '';
+    }
+
+</script>
+
+<script>
+    var $pagination = $('#pagination'),
+        totalRecords = 0,
+        records = [],
+        displayRecords = [],
+        recPerPage = 10,
+        page = 1,
+        totalPages = 0;
+    function apply_pagination(Datarecords, pagerow) {
+        
+
+        var jq = jQuery.noConflict();
+        recPerPage = pagerow;
+
+        totalRecords = Datarecords
+        var totalPages = Math.ceil(totalRecords / recPerPage);
+        var LimitvisiblePages = 1;
+        if (totalPages > 10) {
+            LimitvisiblePages = 6;
+        }
+        else {
+            LimitvisiblePages = parseInt(totalPages);
+
+        }
+        $pagination.twbsPagination({
+            totalPages: totalPages,
+            visiblePages: LimitvisiblePages,
+            initiateStartPageClick: false,
+            onPageClick: function (event, page) {
+                
+                displayRecordsIndex = Math.max(page - 1, 0) * recPerPage;
+                ViewAllEmployeeSalarySalary(page);
+
+            }
+
+        });
+    }
+</script>
+
+
+<script type="text/javascript">
+
+    
+    function exportToExcel() {
+        
+        var month = $("#ddlmonth option:selected").text();
+        var year = $("#ddlyear").val();
+        
+    $.ajax({
+    type: "Post",
+
+        url: '@Url.Action("ExcelAllEmployeeSalary", "EmployeeList")',
+        data: {
+            "MonthName": month, "Year": year
+        },
+        datatype: "JSON",
+
+        success: function (response) {
+            
+    var blob = new Blob([response], { type: 'application/ms-excel' });
+    var downloadUrl = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+                a.href = downloadUrl;
+                a.download = "ReportFile.xls"; document.body.appendChild(a); a.click();
+        },
+
+    }); return false;
+}
+
+
+
+</script>
+<script>
+    function BacktoEmpList() {
+        
+
+        window.location.href = "/EmployeeList/Index?Searchvalue="+"";
+    }
+</script>
+

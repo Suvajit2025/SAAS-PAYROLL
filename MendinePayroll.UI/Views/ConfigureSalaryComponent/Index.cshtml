@@ -1,0 +1,276 @@
+﻿@model MendinePayroll.Models.SalaryConfigureModel
+@{
+    ViewBag.Title = "SalaryConfigure";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*Add*@
+<div class="modal fade modal-header-color zoom-anim-dialog" id="AddConfigureSalaryComponent" tabindex="-1" role="dialog" aria-labelledby="" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <section class="">
+                <header class="panel-heading bg-tertiary">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="panel-title  text-white">Configure salaryComponenet</h2>
+                </header>
+            </section>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-6'>
+                            
+                            <table class="table" style="margin-bottom:0px;">
+                                <thead>
+                                    <tr>
+                                        <td>
+                                            Allowances
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td >
+
+                                           
+                                            
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+
+                        </div>
+                        <div class='col-sm-6'>
+                            <table class="table" style="margin-bottom:0px;">
+                                <thead>
+                                    <tr>
+                                        <td>
+                                            Deducations
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+
+                                            
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table> 
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" id="btnSalaryComponent" class="btn btn-tertiary" onclick="return SaveConfigureSalaryComponent()">
+                    <i class="fa fa-plus-square space-right"></i> Add Salary Component
+                </button>
+            </div>
+
+            <div id="progress" style="display:none;">
+                <div class="col-md-12 text-center">
+                    <img src="~/Contents/images/ajax-loader.gif" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*Salary Component List*@
+<section role="main" class="content-body">
+    <input type="hidden" id="hdnConfigureSalaryComponentId" value="0" />
+    <header class="page-header">
+        <h2>Configure Salary Component</h2>
+    </header>
+    <!-- start: page -->
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button id="" onclick="return AddconfigureSalaryComponentLoad();"   class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Add Configure Salary Component<i class="fa fa-plus ml-lg"></i></button>
+            </div>
+            <h2 class="panel-title">Configure SalaryComponent List</h2>
+        </header>
+        <div class="panel-body">
+
+            <table class="table table-responsive mb-none" id="datatable-users">
+                <thead>
+                    <tr>
+                        <th><i class="fa fa-credit-card text-muted space-right"></i>NAME</th>
+                        <th><i class="fa fa-credit-card text-muted space-right"></i>Paygroup NAME</th>
+                        <th class="center">MORE</th>
+                        <th class="center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="listVehicle">
+                    @foreach (var items in Model.SalaryConfigureList)
+                    {
+                        <tr class="gradeX">
+                           <td>
+                                @items.SalaryConfigureName
+                            </td>
+                            <td>
+                                @items.PayGroupName
+                            </td>
+                            
+
+                            <td class="center">
+                                    <a href="#" onclick="return GetConfigureSalaryComponent(@items.SalaryConfigureID);" data-toggle="modal" data-target="#detail">
+                                        <i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i>
+                                    </a>
+                            </td>
+                            <td class="center">
+                                <a href="#" onclick="return DeleteConfigureSalaryComponent(@items.SalaryConfigureID);" data-toggle="" data-target="">
+                                    <i class="bg-gradient-danger text-danger fa fa-trash fa-lg"></i>
+                                </a>
+                            </td>
+                       </tr>
+                    }
+
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+    <!-- end: page -->
+</section>
+
+
+@* Save Salary Component*@
+<script>
+    function AddconfigureSalaryComponentLoad() {
+        var jq = jQuery.noConflict();
+        
+        document.location.href = "/ConfigureSalaryComponent/NewConfigureSalary";
+    }
+</script>
+<script type="text/javascript">
+    function SaveConfigureSalaryComponent() {
+        var jq = jQuery.noConflict();
+        var Basic = jq("#Basic").val();
+        var HRA = jq("#HRA").val();
+        var AttireAllowance = jq("#AttireAllowance").val();
+        var PF = jq("#PF").val();
+        var ESI = jq("#ESI").val();
+        var PTax = jq("#PTax").val();
+        var AddAllowances = jq("#AddAllowances").val();
+        if (Basic == "") {
+            jq("#msgBasic").html("Please Enter Basic");
+        }
+        else {
+            jq("#msgBasic").html("");
+        }
+        if (HRA == "") {
+            jq("#msgHRA").html("Please Enter HRA");
+        }
+        else {
+            jq("#msgHRA").html("");
+        }
+        if (AttireAllowance == "") {
+            jq("#msgAttireAllowance").html("Please Enter AttireAllowancee");
+        }
+        else {
+            jq("#msgAttireAllowance").html("")
+        }
+        if (PF == "") {
+            jq("#msgPF").html("Please Enter PF")
+        }
+        else {
+            jq("#msgPF").html("")
+        }
+        if (ESI == "") {
+            jq("#msgESI").html("Please Enter ESI")
+        }
+        else {
+            jq("#msgESI").html("")
+        }
+        if (PTax == "") {
+            jq("#msgPTax").html("Please Enter PTax")
+        }
+        else {
+            jq("#msgPTax").html("")
+        }
+        if (AddAllowances == "") {
+            jq("#msgAddAllowances").html("Please Enter AddAllowances")
+        }
+        else {
+            jq("#msgAddAllowances").html("")
+        }
+        jq.ajax({
+            type: "POST",
+            url: '/ConfigureSalaryComponent/SaveConfigureSalaryComponent',
+            
+            data: {
+                "Basic": Basic, "HRA": HRA, "AttireAllowance": AttireAllowance,
+                "PF": PF, "ESI": ESI, "PTax": PTax, "AddAllowances": AddAllowances
+            },
+            datatype: "JSON",
+            success: function (data) {
+                
+                if (data == "Save Successfully") {
+
+                    swal({
+                        title: "Success!",
+                        text: "Salary Component has been Added Successfully!",
+                        type: "success"
+                    }).then(function () {
+                        window.location.href = "/ConfigureSalaryComponent";
+                    });
+                }
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+</script>
+<script>
+    function GetConfigureSalaryComponent(SalaryConfigureID) {
+
+      window.location.href = "/ConfigureSalaryComponent/UpdateSalaryConfigure?cal=" + SalaryConfigureID + "";
+    }
+</script>
+
+@*Test*@
+<script>
+    function DeleteConfigureSalaryComponent(ConfigureSalaryComponentID) {
+        var jq = jQuery.noConflict();
+       
+
+        var result = confirm("Do you want to delete");
+        if (result == true) {
+            jq.ajax({
+                type: "POST",
+                url: '/ConfigureSalaryComponent/DeleteConfigureSalaryComponent',
+                data: { "SalaryConfigureID": ConfigureSalaryComponentID },
+                datatype: JSON,
+                success: function (response) {
+                    if (response == "Delete Successfull") {
+                        swal({
+                            title: "Success!",
+                            text: "ConfigureSalaryComponent has been Deleted Successfully!",
+                            type: "success"
+                        }).then(function () {
+                            window.location.href = "/ConfigureSalaryComponent";
+                        });
+                    }
+
+                },
+                error: function (er) {
+
+                    console.log(er);
+                }
+            });
+        }
+    }
+
+</script>

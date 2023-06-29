@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <!--<link href="../Contents/CustomCSS/Tabledesign.css" rel="stylesheet" />-->
+    <title></title>
+    <style>
+        .addsize{
+           font-size:13px;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        /*table, th, td {
+            border: 1px solid black;
+        }*/
+        /*.trclass {
+            background-color: red;
+        }*/
+
+        .table-bordered {
+            border: 1px solid #ddd;
+        }
+
+        td, th {
+            border: 1px solid #ddd;
+        }
+        .table-new > tbody > tr:nth-child(even) {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <form>
+
+        <table style="width:50%;margin-bottom:10px;" align="center">
+            <tr>
+                <td scope="col" colspan="4" style="text-align:center;border:0px;">
+                    <p>
+                        <h2>{Company}</h2>
+                        <p class="addsize">{CompanyAddress}</p>
+
+
+                    </p>
+                    <!-- C:\Dipankar\MendinePayrollv2\MendinePayroll.UI\Contents\images\status\-->
+                </td>
+            </tr>
+
+
+            <tr>
+                <td scope="col" colspan="4" style="text-align:center;border:0px;">
+                    <p>
+                        <h4>Payslip</h4>
+                        <h5> For {Month}'{Year}</h5>
+                        <h3>{EName}</h3>
+                    </p>
+
+                </td>
+            </tr>
+
+        </table>
+
+
+        <table style="margin-bottom:10px;width:80%;" class="table table-new table-bordered" align="center">
+            <thead>
+                <tr>
+                    <td scope="col" colspan="4" style="background-color:gray;color:white;">Employee Details</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background-color:#f9f9f9;height:25px;">
+                    <th scope="row" style="width:25%;">Employee Number</th>
+                    <td scope="col" style="width:25%;">{EMPNO}</td>
+                    <th scope="row" style="width:25%;">Income Tax Number (PAN)</th>
+                    <td scope="col" style="width:25%;">{Pan}</td>
+                </tr>
+                <tr style="height:25px;">
+                    <th scope="row" style="width:25%;">Department</th>
+                    <td scope="col" style="width:25%;">{Department}</td>
+                    <th scope="row" style="width:25%;">Universal Account Number (UAN)</th>
+                    <td scope="col" style="width:25%;">{UAN}</td>
+                </tr>
+                <tr style="background-color:#f9f9f9;height:25px;">
+                    <th scope="row" style="width:25%;">Designation</th>
+                    <td scope="col" style="width:25%;">{Designation}</td>
+                    <th scope="row" style="width:25%;">PF Account Number</th>
+                    <td scope="col" style="width:25%;">{PFACNO}</td>
+                </tr>
+                <tr style="height:25px;">
+                    <th scope="row" style="width:25%;">Location</th>
+                    <td scope="col" style="width:25%;">{Location}</td>
+                    <th scope="row" style="width:25%;">ESIC Number</th>
+                    <td scope="col" style="width:25%;">{ESICNO}</td>
+                </tr>
+                <tr style="background-color:#f9f9f9;height:25px;">
+                    <th scope="row" style="width:25%;">Bank Details</th>
+                    <td scope="col" style="width:25%;">{BANK}</td>
+                    <th scope="row" style="width:25%;">PR Account Number (PRAN)</th>
+                    <td scope="col" style="width:25%;"></td>
+                </tr>
+                <tr style="height:25px;">
+                    <th scope="row" style="width:25%;">Date of Joining</th>
+                    <td scope="col" style="width:25%;">{Joining}</td>
+                    <th scope="row" style="width:25%;"></th>
+                    <td scope="col" style="width:25%;"></td>
+                </tr>
+            </tbody>
+
+        </table>
+
+
+
+        <table style="margin-bottom:10px;width:80%;" align="center" class="table-bordered table-new">
+            <thead>
+                <tr>
+                    <td scope="col" colspan="4" style="background-color:gray;color:white;">Leave Details</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background-color:#f9f9f9;height:25px;">
+                    <th scope="row" style="width:25%;">Working Day</th>
+                    <td scope="col" style="width:25%;">{WorkingDays}</td>
+                    <th scope="row" style="width:25%;">Earned Leave</th>
+                    <td scope="col" style="width:25%;">{EarnedLeave}</td>
+
+                    <!--<td scope="row" style="width:25%;">Day’s Absent</td>
+                <td style="width:25%;">{AbsentDays}</td>-->
+                </tr>
+                <tr style="height:25px;">
+
+                    <th scope="row" style="width:25%;">Leave Without Pay</th>
+                    <td scope="col" style="width:25%;">{TotalLeave}</td>
+
+                    <th scope="row" style="width:25%;">Leave Without Pay Amount</th>
+                    <td scope="col" style="width:25%;">{TotalLeaveAmount}</td>
+                </tr>
+
+                <tr style="background-color:#f9f9f9;height:25px;">
+                    <th scope="row" style="width:25%;">Days Due To Late </th>
+                    <td scope="col" style="width:25%;">{Latedays}</td>
+                    <th scope="row" style="width:25%;">Deduct Amount Due To Late</th>
+                    <td scope="col" style="width:25%;">{LateAmount}</td>
+                </tr>
+
+                <tr style="height:25px;">
+                    <th scope="row" style="width:25%;">Day’s Absent</th>
+                    <td scope="col" style="width:25%;">{AbsentDays}</td>
+                    <th scope="row" style="width:25%;">Total Leave Amount</th>
+                    <td scope="col" style="width:25%;">{Leave}</td>
+                </tr>
+
+            </tbody>
+
+
+
+        </table>
+        {Content}
+        <br />
+        <br />
+        <p style="text-align:center; margin-top:50px;">
+            "This is a system generated payslip and hence no signature is required."
+        </p>
+
+
+    </form>
+</body>
+</html>
+
+
+

@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{20CE4627-C20C-4069-A3FC-FBFF2B08985F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MendinePayroll.Data</RootNamespace>
+    <AssemblyName>MendinePayroll.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CalculateTotalLeave_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Company.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConfigureSalaryComponent.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConfigureSalaryComponent_GetAll_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConfigureSalaryComponent_GetBYId_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Department.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Designation.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Designationmaster.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Empbasic.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeBonus_GetAllByEmpid_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeBonus_GetByMonth_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeList_GetbyID_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeList_GetInActive_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeList_Get_List_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeList_Get_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeLoan.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeLoan_GetByID_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeLoginCheck_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeSalary.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeSalaryConfig.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeSalaryConfig_GetByID_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeSalaryConfig_Save_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeSalary_ById_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeSalary_duplicateCheck_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeSalary_TotalnoByMonth_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Employeesalary_viewAllByMonth_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Employeesalary_view_PageWise_ByMonth_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Employee_GetByDesignationID_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Employee_TDSReport_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmpoloyeeSalaryConfigManualValue.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExcelReport_GetaAll_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ExcelReport_GetAll_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GetEmmployeeDetails_ById_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LeaveDetails_GetByEmpno_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LoanTransaction.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="LoanTransaction_GetByID_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ManualSalaryConfig.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ManualSalaryConfig_GetByPayGroupID_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MendinePayrollDB.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MendinePayrollDB.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MendinePayrollDB.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MendinePayrollDB.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MendinePayrollDB.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="PayConfig.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayConfig_GetAll_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayConfig_GetById_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayConfig_GetByType_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroup.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroupBonu.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroupBonus_GetAllByID_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroupBonus_GetById_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroupBonus_GetByMonthandPaygroupId_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroupBonus_Save_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroupEmployeeMapping.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroupEmployeeMapping_GetAll_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroupEmployeeMapping_Save_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroup_GetAll_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroup_GetById_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PayGroup_Save_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Postmaster.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SalaryComponent.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryComponentType.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryComponentType_GetAll_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryComponentType_GetById_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryComponent_GetAll_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryComponent_GetById_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryConfigure.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryConfigure_GetAll_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryConfigure_GetById_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryConfigure_PaygroupDuplicatecheck_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SalaryConfigure_Save_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Sp_GetPayGroupById_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Sp_ListPayGroup_Result.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tcomactiveworklist.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tcomworklisthistory.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tleaveappdtl.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tleaveapplicationhrd.cs">
+      <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
+    <EntityDeploy Include="MendinePayrollDB.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>MendinePayrollDB.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="MendinePayrollDB.edmx.diagram">
+      <DependentUpon>MendinePayrollDB.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MendinePayrollDB.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>MendinePayrollDB.edmx</DependentUpon>
+      <LastGenOutput>MendinePayrollDB.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="MendinePayrollDB.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>MendinePayrollDB.edmx</DependentUpon>
+      <LastGenOutput>MendinePayrollDB.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

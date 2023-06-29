@@ -1,0 +1,532 @@
+﻿@model MendinePayroll.Models.SalaryComponentModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*Add*@
+<div class="modal fade modal-header-color zoom-anim-dialog" id="AddSalaryComponent" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <section class="">
+                <header class="panel-heading bg-tertiary">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="panel-title  text-white">Add New salaryComponenet</h2>
+                </header>
+            </section>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">Salary Component <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M => M.SalaryComponent, new { @class = "form-control" })
+                                </div>
+                                <span id="msgSalaryComponent" class="ms-error" style="color:red;"></span>
+
+                            </div>
+                        </div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">Salary Component code <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M => M.SalaryComponentCode, new { @class = "form-control" })
+                                </div>
+                                <span id="msgSalaryComponentcode" class="ms-error" style="color:red;"></span>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">Salary Component TypeID <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.DropDownListFor(M => M.SalaryComponentTypeID, Model.MasterModel.selectListItems, new { @class = "form-control" })
+
+                                </div>
+                                <span id="msgSalaryComponentTypeID" class="ms-error" style="color:red;"></span>
+                            </div>
+                        </div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">PayGroup Name <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.DropDownListFor(M => M.PayGroupsID,Model.mastermodel.selectListItems, new { @class = "form-control" })
+                                </div>
+                                <span id="msgPayGroupID" style="color:red;"></span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-12'>
+                            <div class="form-group">
+                                <label class="control-label">Description <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M => M.Description, new { @class = "form-control" })
+
+                                </div>
+                                <span id="msgDescription" class="ms-error" style="color:red;"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" id="btnSalaryComponent" class="btn btn-tertiary" onclick="return SaveSalaryComponent()">
+                    <i class="fa fa-plus-square space-right"></i> Add Salary Component
+                </button>
+            </div>
+
+            <div id="progress" style="display:none;">
+                <div class="col-md-12 text-center">
+                    <img src="~/Contents/images/ajax-loader.gif" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*Edit*@
+<div class="modal fade modal-header-color zoom-anim-dialog" id="editSalaryComponent" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <section class="">
+                <header class="panel-heading bg-tertiary">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="panel-title  text-white">Edit Salary Component</h2>
+                </header>
+            </section>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">Salary Component <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M=>M.SalaryComponent, new { @class = "form-control", @id = "txtSalaryComponent" })
+                                </div>
+                                <span id="msgSalaryComponentedit" class="ms-error" style="color:red;"></span>
+
+                            </div>
+                        </div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">Salary Component Code<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M=>M.SalaryComponentCode, new { @class = "form-control", @id = "txtSalaryComponentCode" })
+                                </div>
+                                <span id="msgSalaryComponentCodeedit" style="color:red;"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">Salary Component TypeID <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.DropDownListFor(M => M.SalaryComponentTypeID, Model.MasterModel.selectListItems, new { @class = "form-control", @id = "txtSalaryComponentTypeID" })
+
+                                </div>
+                                <span id="msgSalaryComponentTypeIDedit" class="ms-error" style="color:red;"></span>
+                            </div>
+                        </div>
+
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">PayGroup Name <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.DropDownListFor(M => M.PayGroupsID, Model.mastermodel.selectListItems, new { @class = "form-control", @id = "txtPayGroupID" })
+                                </div>
+                                <span id="msgPayGroupIDedit" style="color:red;"></span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-12'>
+                            <div class="form-group">
+                                <label class="control-label">Description <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M=>M.Description, new { @class = "form-control", @id = "txtDescription" })
+
+                                </div>
+                                <span id="msgDescriptionedit" class="ms-error" style="color:red;"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" id="btnUpdateProduct" class="btn btn-tertiary" onclick="return UpdateSalaryComponent()">
+                    <i class="fa fa-plus-square space-right"></i> Update Salary Component
+                </button>
+            </div>
+
+            <div id="progress" style="display:none;">
+                <div class="col-md-12 text-center">
+                    <img src="~/Contents/images/ajax-loader.gif" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*Salary Component List*@
+<section role="main" class="content-body">
+    <input type="hidden" id="hdnSalaryComponentId" value="0" />
+    <header class="page-header">
+        <h2>Salary Component</h2>
+    </header>
+    <!-- start: page -->
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button id="" onclick="AddSalaryComponentLoad();" data-toggle="modal" data-target="#AddSalaryComponent" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Add Salary Component<i class="fa fa-plus ml-lg"></i></button>
+            </div>
+            <h2 class="panel-title">SalaryComponent List</h2>
+        </header>
+        <div class="panel-body">
+
+            <table class="table table-responsive mb-none" id="datatable-users">
+                <thead>
+                    <tr>
+                       
+                        <th><i class="fa fa-credit-card text-muted space-right"></i>Salary Component</th>
+                        <th><i class="fa fa-credit-card text-muted space-right"></i>Description</th>
+
+                        <th class="center">MORE</th>
+                        <th class="center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="listVehicle">
+                    @foreach (var item in Model.SalaryComponentList)
+                    {
+                        <tr class="gradeX">
+                            
+                            <td>
+                                @item.SalaryComponent
+                            </td>
+                            <td>
+                                @item.Description
+                            </td>
+
+                            <td class="center">
+                                <a href="#" onclick="return GetSalaryComponent(@item.SalaryComponentId);" data-toggle="modal" data-target="#detail">
+                                    <i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i>
+                                </a>
+                            </td>
+                            <td class="center">
+                                <a href="#" onclick="return DeleteSalaryComponent(@item.SalaryComponentId);" data-toggle="" data-target="">
+                                    <i class="bg-gradient-danger text-danger fa fa-trash fa-lg"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </section>
+    <!-- end: page -->
+</section>
+
+@*Salary Component Details*@
+<div class="modal fade modal-header-color zoom-anim-dialog" id="detail" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="">
+        <div class="modal-content">
+            <section class="">
+                <header class="panel-heading bg-quartenary">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="panel-title  text-white">Salary Component Details</h2>
+                </header>
+            </section>
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Salary Component </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblSalaryComponent"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Salary Component Code </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblSalaryComponentCode"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Salary Component Type </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblSalaryComponentTypeID"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">PayGroup Name </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblPayGroupID"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Description </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblDescription"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-quartenary" data-toggle="modal" data-target="#editSalaryComponent" data-dismiss="modal">
+                    <i class="fa fa-pencil-square-o space-right"></i> Edit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="Output"></div>
+@*Get Salary Component By Id*@
+<script>
+    function GetSalaryComponent(SalaryComponentId) {
+        
+        var jq = jQuery.noConflict();
+        jq.ajax({
+            type: "POST",
+            url: '/SalaryComponent/GetSalaryComponent',
+            data: { "SalaryComponentId": SalaryComponentId },
+            datatype: JSON,
+            success: function (response) {
+                
+                RecordLength = response.length;
+                jq("#hdnSalaryComponentId").val(response[0].SalaryComponentId);
+                jq("#lblSalaryComponent").text(response[0].SalaryComponent);
+                jq("#lblSalaryComponentCode").text(response[0].SalaryComponentCode);
+                jq("#lblSalaryComponentTypeID").text(response[0].SalaryComponentType);
+                jq("#lblPayGroupID").text(response[0].PayGroupName);
+                jq("#lblDescription").text(response[0].Description);
+                jq("#txtSalaryComponent").val(response[0].SalaryComponent);
+                jq("#txtSalaryComponentCode").val(response[0].SalaryComponentCode);
+                jq("#txtSalaryComponentTypeID").val(response[0].SalaryComponentTypeID);
+                jq("#txtPayGroupID").val(response[0].PayGroupsID);
+                jq("#txtDescription").val(response[0].Description)
+            },
+            error: function (er) {
+
+                console.log(er);
+            }
+        });
+    }
+</script>
+@*Delete Salary Component*@
+<script>
+    function DeleteSalaryComponent
+        (SalaryComponentId) {
+        
+        var jq = jQuery.noConflict();
+        jq.ajax({
+            type: "POST",
+            url: '/SalaryComponent/DeleteSalaryComponent',
+            data: { "SalaryComponentId": SalaryComponentId },
+            datatype: JSON,
+            success: function (response) {
+                
+                if (response == "Delete Successfull") {
+                    swal({
+                        title: "Success!",
+                        text: "Salary Component has been Deleted Successfully!",
+                        type: "success"
+                    }).then(function () {
+                        window.location.href = "/SalaryComponent";
+                    });
+                }
+            },
+            error: function (er) {
+
+                console.log(er);
+            }
+        });
+
+    }
+</script>
+
+<script>
+
+    function AddSalaryComponentLoad() {
+        var jq = jQuery.noConflict();
+
+        jq("#SalaryComponent").val('');
+        jq("#SalaryComponentCode").val('')
+        jq("#SalaryComponentTypeID").val('0');
+        jq("#PayGroupsID").val('0');
+        jq("#Description").val('');
+    }
+
+</script>
+@* Save Salary Component*@
+<script type="text/javascript">
+    function SaveSalaryComponent() {
+        var jq = jQuery.noConflict();
+        var SalaryComponent = jq("#SalaryComponent").val();
+        var SalaryComponentCode = jq("#SalaryComponentCode").val();
+        var SalaryComponentTypeID = jq("#SalaryComponentTypeID").val();
+        var PayGroupsID = jq("#PayGroupsID").val();
+        var Description = jq("#Description").val();
+        if (SalaryComponent == "") {
+            jq("#msgSalaryComponent").html("Please Enter PayGroupName");
+        }
+        else {
+            jq("#msgSalaryComponent").html("");
+        }
+        if (SalaryComponentCode == "") {
+            jq("#msgSalaryComponentcode").html("Please Enter Description");
+        }
+        else {
+            jq("#msgSalaryComponentcode").html("");
+        }
+        if (SalaryComponentTypeID == "") {
+            jq("#msgSalaryComponentTypeID").html("Please Enter Master Code");
+        }
+        else {
+            jq("#msgSalaryComponentTypeID").html("")
+        }
+        if (PayGroupsID == "") {
+            jq("#msgPayGroupID").html("Please Enter ConcernHRPersonnel")
+        }
+        else {
+            jq("#msgPayGroupID").html("")
+        }
+        if (Description == "") {
+            jq("#msgDescription").html("Please Enter ConcernHRPersonnel")
+        }
+        else {
+            jq("#msgDescription").html("")
+        }
+        jq.ajax({
+            type: "POST",
+            url: '/SalaryComponent/SaveSalaryComponent',
+            data: {
+                "SalaryComponent": SalaryComponent, "SalaryComponentCode": SalaryComponentCode, "SalaryComponentTypeID": SalaryComponentTypeID,
+                "PayGroupsID": PayGroupsID, "Description": Description
+            },
+            datatype: "JSON",
+            success: function (data) {
+                
+                if (data == "Save Successfully") {
+
+                    swal({
+                        title: "Success!",
+                        text: "Salary Component has been Added Successfully!",
+                        type: "success"
+                    }).then(function () {
+                        window.location.href = "/SalaryComponent";
+                    });
+                }
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+</script>
+@* Update Salary Component*@
+<script type="text/javascript">
+    function UpdateSalaryComponent() {
+        var jq = jQuery.noConflict();
+        
+        var SalaryComponentID = jq("#hdnSalaryComponentId").val();
+        var SalaryComponent = jq("#txtSalaryComponent").val();
+        var SalaryComponentCode = jq("#txtSalaryComponentCode").val();
+        var SalaryComponentTypeID = jq("#txtSalaryComponentTypeID").val();
+        var PayGroupsID = jq("#txtPayGroupID").val();
+        var Description = jq("#txtDescription").val();
+        if (SalaryComponent == "") {
+            jq("#msgSalaryComponentedit").html("Please Enter PayGroupName");
+        }
+        else {
+            jq("#msgSalaryComponentedit").html("");
+        }
+        if (SalaryComponentCode == "") {
+            jq("#msgSalaryComponentedit").html("Please Enter Description");
+        }
+        else {
+            jq("#msgSalaryComponentedit").html("");
+        }
+        if (SalaryComponentTypeID == "") {
+            jq("#msgSalaryComponentTypeIDedit").html("Please Enter Master Code");
+        }
+        else {
+            jq("#msgSalaryComponentTypeIDedit").html("")
+        }
+        if (PayGroupsID == "") {
+            jq("#msgPayGroupIDedit").html("Please Enter ConcernHRPersonnel")
+        }
+        else {
+            jq("#msgPayGroupIDedit").html("")
+        }
+        if (Description == "") {
+            jq("#msgDescriptionedit").html("Please Enter ConcernHRPersonnel")
+        }
+        else {
+            jq("#msgDescriptionedit").html("")
+        }
+        jq.ajax({
+            type: "POST",
+            url: '/SalaryComponent/UpdateSalaryComponent',
+            data: {
+                "SalaryComponentID": SalaryComponentID,
+                "SalaryComponent": SalaryComponent, "SalaryComponentCode": SalaryComponentCode, "SalaryComponentTypeID": SalaryComponentTypeID,
+                "PayGroupsID": PayGroupsID, "Description": Description
+            },
+            datatype: "JSON",
+            success: function (data) {
+                
+                if (data == "Save Successfully") {
+
+                    swal({
+                        title: "Success!",
+                        text: "Salary Component has been Added Successfully!",
+                        type: "success"
+                    }).then(function () {
+                        window.location.href = "/SalaryComponent";
+                    });
+                }
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+</script>
+
+
+

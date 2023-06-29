@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <section role="main" class="content-body">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Employee Revised Loan</h2>
+            </header>
+            <div class="panel-body listpanel">
+                <div class="form-group row">
+                    <div class="col-md-2 mb-3">
+                        <label>Employee Name</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="txtempname">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label>Employee No</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" id="txtempno">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <button id="btnSearch" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Search<i class="fa fa-search ml-lg"></i></button>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <table class="table table-responsive mb-none" id="tblLoanDetails">
+                        <thead>
+                            <tr>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Loan Date</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Loan No</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Employee Name</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Loan Type</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Loan Amount</th>
+                                <th><i class="fa fa-credit-card text-muted space-right" ></i>Received Amount</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Closing Amount</th>
+                                <th><i class="fa fa-credit-card text-muted space-right" ></i>Status</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listEmployeeLoanList">
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </section>
+    </section>
+
+    <!--Modal Employee Loan Details-->
+    <div class="modal" tabindex="-1" role="dialog" id="modalEmpLoanDtls">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title bold" id="modalTitle"></h4>
+                    <input type="hidden" id="hdIDLoan" />
+                </div>
+                <div class="modal-body">
+                    <div class="from-group row mb-2">
+                        <div class="col-md-12">
+                            <div style="min-height:400px;overflow-y:auto">
+                                <table id="tblModalLoanDetails" class="table table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th class="small" style="width:10%">Month</th>
+                                            <th class="small" style="width:10%">Year</th>
+                                            <th class="small" style="width:10%">Opening</th>
+                                            <th class="small" style="width:10%">Installment</th>
+                                            <th class="small" style="width:10%">Interest</th>
+                                            <th class="small" style="width:10%">Closing</th>
+                                            <th class="small" style="width:10%">Loan Processed</th>
+                                            <th class="small" style="width:10%">Processed Date</th>
+                                            <th class="small" style="width:10%">Salary Processed</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblModalLoanDetailsBody" style="border-top: 1px solid currentColor"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="from-group row mt-3" style="display:flex; justify-content:end;">
+                        <div class="col-md-2"><label>Revised Amount </label></div>
+                        <div class="col-md-2"><input type="number" id="txtInsAmount" class="form-control form-control-sm text-right" /></div>
+                        <div class="col-md-1"><label>Months</label></div>
+                        <div class="col-md-3">
+                            <select id="ddlMonth" class="form-control form-control-sm"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="btn btn-sm btn-warning" id="btnChangeLoan">Change Loan</button>
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/ProjectJS/LoanList.js"></script>

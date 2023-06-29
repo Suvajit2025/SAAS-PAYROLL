@@ -1,0 +1,134 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <section role="main" class="content-body">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Employee Loan Application</h2>
+            </header>
+            <div class="panel-body listpanel">
+                <div id="Entry">
+                    <div class="form-group row mb-2">
+                        <div class="col-md-2">
+                            <label>App No</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control form-control-sm" id="txtAppNo" readonly>
+                            <input type="hidden" id="hdIDApplication" />
+                        </div>
+                        <div class="col-md-2">
+                            <label>App Date</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control form-control-sm" id="txtAppDate">
+                        </div>
+                    </div>
+                    <div class="form-group row mb-2">
+                        <div class="col-md-2">
+                            <label>Employee Nmae</label>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="ddlEmployee" class="form-control  form-control-sm"></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label>Employee No</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control form-control-sm" id="txtEmpno" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group row mb-2">
+                        <div class="col-md-2">
+                            <label>Loan Amount</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control form-control-sm" id="txtAmount">
+                        </div>
+                        <div class="col-md-2">
+                            <label>Installment Amount </label>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control form-control-sm" id="txtInstallment">
+                        </div>
+                    </div>
+                    <div class="form-group row mb-4">
+                        <div class="col-md-2">
+                            <label>Reason</label>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control form-control-sm" id="txtReason">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body listpanel">
+                <div id="List" style="display:none">
+                    <div class="form-group mb-2">
+                        <table id="tblData" class="table tabl-dm small table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width:5%">APP Date</th>
+                                    <th style="width:12%">APP No</th>
+                                    <th style="width:5%">No</th>
+                                    <th style="width:18%">Name</th>
+                                    <th style="width:5%">Amount</th>
+                                    <th style="width:5%">Installment</th>
+                                    <th style="width:5%">Self </th>
+                                    <th style="width:10%">Approval 1</th>
+                                    <th style="width:10%">Approval 2</th>
+                                    <th style="width:10%">Approval 3</th>
+                                    <th style="width:15%">
+                                        Action
+
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="tblBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body listpanel">
+                <div class="form-group row mt-3">
+                    <div class="col-md-12 text-right">
+                        <input type="button" id="btnAdd" class="btn btn-sm btn-primary" value="Add" />
+                        <input type="button" id="btnSave" class="btn btn-sm btn-primary" value="Save" />
+                        <input type="button" id="btnList" class="btn btn-sm btn-primary" value="List" />
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- Modal Download Preview Data -->
+    <div class="modal" tabindex="-1" role="dialog" id="modalPreview">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title bold" id="modalTitle"></h4>
+                   
+                </div>
+                <div class="modal-body">
+                    <div class="from-group row mb-2">
+                        <div class="col-md-12">
+                            <div class="card card-body pl-2 mt-3" id="divPrint">
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnPrint">Print</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/ProjectJS/LoanApplication.js"></script>

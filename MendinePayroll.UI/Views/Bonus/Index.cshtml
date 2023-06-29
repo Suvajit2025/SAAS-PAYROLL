@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .center-block {
+        align-items: center;
+    }
+</style>
+<h2>Bonus</h2>
+<section role="main" class="content-body">
+    
+    <header class="page-header">
+        <h2>Bonus</h2>
+    </header>
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <input type="button" id="btnAdd" value="New" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold" />
+                <input type="button" id="btnSave" value="Save" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold" />
+                <input type="button" id="btnList" value="List" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold" />
+            </div>
+            <h2 class="panel-title">Bonus</h2>
+        </header>
+        <div class="panel-body ">
+            <div class="divEntry">
+                <div class="row">
+                    <div class="col-xs-4 col-xs-offset-4">
+                        <div class="row">
+                            <label>Employee</label>
+                            <select id="ddlEmployee" class="form-control"></select>
+                            <input type="hidden" id="hdIDBonus"/>
+                        </div>
+                        <div class="row">
+                            <label>Bonus Date</label>
+                            <input type="text" id="txtDate" class="form-control" max="11" />
+                        </div>
+                        <div class="row">
+                            <label>Amount</label>
+                            <input type="number" id="txtAmount" class="form-control" max="10" />
+                        </div>
+                        <div class="row">
+                            <label>Month</label>
+                            <select id="ddlMonth" class="form-control"></select>
+                        </div>
+                        <div class="row">
+                            <label>Year</label>
+                            <input type="number" id="txtYear" class="form-control" max="4" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="divList" style="display:none">
+                <table class="table table-responsive mb-none" id="datatable-users">
+                    <thead>
+                        <tr>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Date</th>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Employee</th>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Amount</th>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Month</th>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Year</th>
+                            <th class="left">Action
+                            
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBody">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</section>
+<script src="~/ProjectJS/Bonus.js"></script>

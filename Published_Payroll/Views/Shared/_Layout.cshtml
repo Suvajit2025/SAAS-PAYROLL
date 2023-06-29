@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<html class="fixed">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRMS | Payroll | @ViewBag.Title</title>
+    <meta name="keywords" content=" " />
+    <meta name="description" content="uniCONTROL Admin">
+    <meta name="C.G" content="ttms-us.com">
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    @*Add Scripts*@
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800|Shadows+Into+Light" rel="stylesheet" type="text/css">
+
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" href="~/Contents/css/bootstrap.css" />
+    <link href="~/Contents/css/custom-icon-set.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/Contents/fonts/font-awesome/css/font-awesome.css" />
+    <link href="~/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" />
+    <link href="~/plugins/bootstrap-datepicker/css/datepicker3.css" rel="stylesheet" />
+
+    <!-- Specific Page Vendor CSS -->
+    <link href="~/plugins/jquery-ui/css/ui-lightness/jquery-ui-1.10.4.custom.css" rel="stylesheet" />
+    <link href="~/plugins/bootstrap-multiselect/bootstrap-multiselect.css" rel="stylesheet" />
+    <link href="~/plugins/morris/morris.css" rel="stylesheet" />
+    <link href="~/plugins/dropzone/css/dropzone.css" rel="stylesheet" />
+    <link href="~/plugins/jquery-datatables-bs3/assets/css/datatables.css" rel="stylesheet" />
+
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="~/Contents/css/theme.css" />
+    <!-- Skin CSS -->
+    <link href="~/Contents/css/skins/default.css" rel="stylesheet" />
+    <!-- Theme Custom CSS -->
+    <link href="~/Contents/css/theme-custom.css" rel="stylesheet" />
+    @*<link href="~/plugins/select2/select2.css" rel="stylesheet" />*@
+    <link href="~/Content/CHOSEN/chosen.css" rel="stylesheet" />
+    <link href="~/Content/SELECT2/select2.min.css" rel="stylesheet" />
+
+    <!-- Head Libs -->
+    <script src="~/plugins/modernizr/modernizr.js"></script>
+    <script src="~/Contents/SweetAlert/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script src="~/Contents/js/jquery-3.3.1.min.js"></script>
+
+    @*Date Picker*@
+
+    <link href="~/Contents/jquery-ui-datepicker/jquery-ui.min.css" rel="stylesheet" />
+    <script src="~/Contents/jquery-ui-datepicker/external/jquery/jquery.js"></script>
+    <script src="~/Contents/js/jquery-ui-1.12.1.min.js"></script>
+    @*Mobile No*@
+    <script src="~/Contents/js/jquery.validate.js"></script>
+    <script src="~/Contents/js/jquery.validate.unobtrusive.js"></script>
+
+    @*Add*@
+    <script>
+        $(function () {
+            $("#Logout").click(function () {
+                //window.location.href = 'https://www.microsoft.com';
+            });
+        });
+    </script>
+</head>
+<body>
+    <!--------MYCODE STARTS HERE------>
+    <section class="body">
+        <header class="header">
+            <div class="logo-container">
+                <a href="" class="logo">
+                    <span style="font-size: 30px;font-weight: bold; margin-top: 10px;"> PAYROLL</span>
+                </a>
+                <div class="visible-xs toggle-sidebar-left" data-toggle-class="sidebar-left-opened" data-target="html" data-fire-event="sidebar-left-opened">
+                    <i class="fa fa-bars" aria-label="Toggle sidebar">Demo</i>
+                </div>
+            </div>
+            <div class="header-right" style="margin-top: 10px;">
+                <!--<span class="separator"></span>-->
+                <div id="userbox" class="userbox">
+                    <div class="profile-info" data-lock-name="Brian Mackenzie" data-lock-email="brian@unicontrol.com">
+                    </div>
+                    <div class="profile-info" data-lock-name="brian mackenzie" data-lock-email="brian@unicontrol.com">
+                        <span class="name">
+                            <a role="menuitem" id="Logout" href="https://hrms.mendine.co.in/Account/ChoosePortal.aspx"> GO TO MODULE  </a> |
+                            <span class="" id="useremail">@Session["UserName"]</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="inner-wrapper">
+            <aside id="sidebar-left" class="sidebar-left">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        Navigation
+                    </div>
+                    <div class="sidebar-toggle hidden-xs" data-toggle-class="sidebar-left-collapsed" data-target="html" data-fire-event="sidebar-left-toggle">
+                        <i class="fa fa-bars" aria-label="Toggle sidebar"></i>
+                    </div>
+                </div>
+
+                <div class="nano">
+                    <div class="nano-content">
+                        <nav id="menu" class="nav-main" role="navigation">
+                            <ul class="nav nav-main">
+                                <hr class="separator" />
+                                <li class="nav-parent">
+                                    <a>
+                                        <i class="fa fa-database"></i>
+                                        Configuration
+                                    </a>
+                                    <ul class="nav nav-children">
+                                        <li>
+                                            <a href="/PayConfig/">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Pay Config</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/PayGroup/">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Pay Group</span>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="/ConfigureSalaryComponent/">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Configure Salary Component</span>
+                                            </a>
+                                        </li>
+                                        <li style="display:none">
+                                            <a href="/PTaxSlab/">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>PTAX Slab</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/EmployeeList/">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Employee List</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Loan/">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Loan</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Loan/List">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Loan List</span>
+                                            </a>
+                                        </li>
+                                        <hr class="separator" />
+
+                                    </ul>
+                                </li>
+                                <li class="nav-parent">
+                                    <a>
+                                        <i class="fa fa-database"></i>
+                                        Reports
+                                    </a>
+                                    <ul class="nav nav-children">
+
+                                        <li>
+                                            <a href="/EmployeeList/ViewSalary/">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+
+                                                <span>Active Employee Salary Reports</span>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="/EmployeeList/ViewInActiveSalary">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>InActive Employee Salary Reports</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/EmployeeList/ViewAllEmployeeStatutoryReport">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Employee Statutory Reports</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/SalaryReports/SalaryRegister">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Employee Salary Register</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Reports/EmpWiseLoanDetails.aspx">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Employee Loan Register</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </aside>
+            @RenderBody()
+        </div>
+    </section>
+
+    <!--------MYCODE ENDS HERE------>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+@*Add Scripts*@
+<!-- Vendor -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="~/plugins/jquery/jquery.js"></script>
+<script src="~/plugins/jquery-browser-mobile/jquery.browser.mobile.js"></script>
+<script src="~/Contents/js/bootstrap.js"></script>
+<script src="~/plugins/bootstrap-multiselect/bootstrap-multiselect.js"></script>
+<script src="~/plugins/nanoscroller/nanoscroller.js"></script>
+<script src="~/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script src="~/plugins/magnific-popup/magnific-popup.js"></script>
+<script src="~/plugins/jquery-placeholder/jquery.placeholder.js"></script>
+<script src="~/plugins/dropzone/dropzone.js"></script>
+
+<!-- Specific Page Vendor -->
+
+<script src="https://maps.google.com/maps/api/js?sensor=false"></script>
+<script src="~/plugins/gmaps/gmaps.js"></script>
+
+
+<script src="~/plugins/jquery-ui/js/jquery-ui-1.10.4.custom.js"></script>
+<script src="~/plugins/jquery-ui-touch-punch/jquery.ui.touch-punch.js"></script>
+<script src="~/plugins/jquery-appear/jquery.appear.js"></script>
+<script src="~/plugins/bootstrap-multiselect/bootstrap-multiselect.js"></script>
+<script src="~/plugins/jquery-easypiechart/jquery.easypiechart.js"></script>
+<script src="~/plugins/flot/jquery.flot.js"></script>
+<script src="~/plugins/flot-tooltip/jquery.flot.tooltip.js"></script>
+<script src="~/plugins/flot/jquery.flot.stack.js"></script>
+<script src="~/plugins/flot/jquery.flot.categories.js"></script>
+<script src="~/plugins/flot/jquery.flot.resize.js"></script>
+<script src="~/plugins/jquery-sparkline/jquery.sparkline.js"></script>
+<script src="~/plugins/raphael/raphael.js"></script>
+<script src="~/plugins/morris/morris.js"></script>
+<script src="~/plugins/gauge/gauge.js"></script>
+<script src="~/plugins/snap-svg/snap.svg.js"></script>
+<script src="~/plugins/liquid-meter/liquid.meter.js"></script>
+<script src="~/plugins/ios7-switch/ios7-switch.js"></script>
+<script src="~/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+<script src="~/plugins/jquery-maskedinput/jquery.maskedinput.js"></script>
+<script src="~/plugins/jquery-datatables/media/js/jquery.dataTables.js"></script>
+<script src="~/plugins/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js"></script>
+<script src="~/plugins/jquery-datatables-bs3/assets/js/datatables.js"></script>
+<script src="~/plugins/tables/datatables.users.js"></script>
+<script src="~/plugins/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+
+<!-- Theme Base, Components and Settings -->
+<script src="~/Contents/js/theme.js"></script>
+<!-- Theme Custom -->
+<script src="~/Contents/js/theme.custom.js"></script>
+<!-- Theme Initialization Files -->
+<script src="~/Contents/js/theme.init.js"></script>
+
+<script src="plugins/maps/examples.gmap.js"></script>
+<script src="plugins/ui-elements/examples.modals.js"></script>
+@*Add Scripts*@
+@*<script src="~/plugins/select2/select2.min.js"></script>*@
+<script src="~/Content/CHOSEN/chosen.jquery.min.js"></script>
+<script src="~/Content/CHOSEN/chosen.jquery.js"></script>
+<script src="~/Content/SELECT2/select2.min.js"></script>
+
+<script src="~/Scripts/jQueryUI/jquery-ui.min.js"></script>
+<link href="~/Scripts/jQueryUI/jquery-ui.min.css" rel="stylesheet" />

@@ -1,0 +1,545 @@
+﻿@model MendinePayroll.Models.PayGroupModel
+@{
+    ViewBag.Title = "PayGroup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*Add*@
+<div class="modal fade modal-header-color zoom-anim-dialog" id="paygroup" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <section class="">
+                <header class="panel-heading bg-tertiary">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="panel-title  text-white">Add New PayGroup</h2>
+                </header>
+            </section>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">PayGroup Name <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M => M.PayGroupName, new { @class = "form-control" })
+                                </div>
+                                <span id="msgPayGroupName" class="ms-error" style="color:red;"></span>
+
+                            </div>
+                        </div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">Description <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M => M.Description, new { @class = "form-control" })
+                                </div>
+                                <span id="msgDescription" class="ms-error" style="color:red;"></span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">PayGroup Master Code <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M => M.PayGroupMasterCode, new { @class = "form-control" })
+
+                                </div>
+                                <span id="msgMasterCode" class="ms-error" style="color:red;"></span>
+                            </div>
+                        </div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">ConcernHR Personnel <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.DropDownListFor(M => M.ConcernHRPersonnel, Model.masterModel.selectListItems, new { @class = "form-control" })
+                                </div>
+                                <span id="msgConcernHRPersonnel" style="color:red;"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" id="btnPayGroup" class="btn btn-tertiary" onclick="return SavePayGroup()">
+                    <i class="fa fa-plus-square space-right"></i> Add Pay Group
+                </button>
+            </div>
+
+            <div id="progress" style="display:none;">
+                <div class="col-md-12 text-center">
+                    <img src="~/Contents/images/ajax-loader.gif" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*Edit*@
+<div class="modal fade modal-header-color zoom-anim-dialog" id="editpaygroup" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <section class="">
+                <header class="panel-heading bg-tertiary">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="panel-title  text-white">Edit Pay Group</h2>
+                </header>
+            </section>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">PayGroup Name <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M => M.PayGroupName, new { @class = "form-control", @id = "txtPayGroupName" })
+                                </div>
+                                <span id="msgPayGroupNameedit" class="ms-error" style="color:red;"></span>
+
+                            </div>
+                        </div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">Description<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M => M.Description, new { @class = "form-control", @id = "txtDescription" })
+                                </div>
+                                <span id="msgDescriptionedit" style="color:red;"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12 clearfix-height20"></div>
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">PayGroup Master Code <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.TextBoxFor(M => M.PayGroupMasterCode, new { @class = "form-control", @id = "txtMasterCode" })
+
+                                </div>
+                                <span id="msgMastercodeeedit" class="ms-error" style="color:red;"></span>
+                            </div>
+                        </div>
+
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <label class="control-label">ConcernHR Personnel <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    @Html.DropDownListFor(M => M.ConcernHRPersonnel, Model.masterModel.selectListItems, new { @class = "form-control", @id = "txtConcernHRPersonnel" })
+                                </div>
+                                <span id="msgConcernHRPersonneledit" style="color:red;"></span>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" id="btnUpdateProduct" class="btn btn-tertiary" onclick="return UpdatePayGroup()">
+                    <i class="fa fa-plus-square space-right"></i> Update Pay Group
+                </button>
+            </div>
+
+            <div id="progress" style="display:none;">
+                <div class="col-md-12 text-center">
+                    <img src="~/Contents/images/ajax-loader.gif" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*Pay Group List*@
+<section role="main" class="content-body">
+    <input type="hidden" id="hdnPayGroupId" value="0" />
+    <header class="page-header">
+        <h2>Pay Group</h2>
+    </header>
+    <!-- start: page -->
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button id="" onclick="AddPayGroupLoad();" data-toggle="modal" data-target="#paygroup" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Add PayGroup<i class="fa fa-plus ml-lg"></i></button>
+            </div>
+            <h2 class="panel-title">PayGroup List</h2>
+        </header>
+        <div class="panel-body">
+            <table class="table table-responsive mb-none" id="datatable-users">
+                <thead>
+                    <tr>
+                       
+                        <th><i class="fa fa-credit-card text-muted space-right"></i>PayGroup Name</th>
+                        <th><i class="fa fa-credit-card text-muted space-right"></i>Description</th>
+                        @*<th class="center">Paygroup Bonus Details</th>*@
+                        <th class="center">MORE</th>
+                        <th class="center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="listVehicle">
+                    @foreach (var item in Model.PayGroupList)
+                    {
+                        <tr class="gradeX">
+                            
+                            <td>
+                                @item.PayGroupName
+                            </td>
+                            <td>
+                                @item.Description
+                            </td>
+                            @*<td class="center">
+                                <a href="#" onclick="return GetPayGroupBonus(@item.PayGroupID);" data-toggle="modal" data-target="">
+                                    <i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i>
+                                </a>
+                            </td>*@
+                            <td class="center">
+                                <a href="#" onclick="return GetPayGroup(@item.PayGroupID);" data-toggle="modal" data-target="#detail">
+                                    <i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i>
+                                </a>
+                            </td>
+                            <td class="center">
+                                <a href="#" onclick="return DeletePayGroup(@item.PayGroupID);">
+                                    <i class="bg-gradient-danger text-danger fa fa-trash fa-lg"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </section>
+    <!-- end: page -->
+</section>
+
+@*Pay Group Details *@
+<div class="modal fade modal-header-color zoom-anim-dialog" id="detail" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="">
+        <div class="modal-content">
+            <section class="">
+                <header class="panel-heading bg-quartenary">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="panel-title  text-white">Pay Group Details</h2>
+                </header>
+            </section>
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">PayGroup Name </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblPayGroupName"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Description </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblDescription"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">PayGroupMasterCode </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblPayGroupMasterCode"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">ConcernHR Personnel </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblConcernHRPErsonnel"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-quartenary" data-toggle="modal" data-target="#editpaygroup" data-dismiss="modal">
+                    <i class="fa fa-pencil-square-o space-right"></i> Edit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="Output"></div>
+
+
+
+@*Save Pay Group*@
+<script>
+    function SavePayGroup() {
+        var jq = jQuery.noConflict();
+        
+        var PayGroupName = jq("#PayGroupName").val();
+        var Description = jq("#Description").val();
+        var PayGroupMasterCode = jq("#PayGroupMasterCode").val();
+        var ConcernHRPersonnel = jq("#ConcernHRPersonnel").val();
+        if (PayGroupName == "") {
+            jq("#msgPayGroupName").html("Please Enter PayGroupName");
+            return false;
+        }
+        else {
+            jq("#msgPayGroupName").html("");
+        }
+        if (Description == "") {
+            jq("#msgDescription").html("Please Enter Description");
+            return false;
+        }
+        else {
+            jq("#msgDescription").html("");
+        }
+        if (PayGroupMasterCode == "") {
+            jq("#msgMasterCode").html("Please Enter Master Code");
+            return false;
+        }
+        else {
+            jq("#msgMasterCode").html("")
+        }
+        if (ConcernHRPersonnel == "0") {
+            jq("#msgConcernHRPersonnel").html("Please Choose ConcernHRPersonnel");
+            return false;
+        }
+        else {
+            jq("#msgConcernHRPersonnel").html("")
+        }
+        
+        jq.ajax({
+            type: "POST",
+            url: '/PayGroup/SavePayGroup',
+            
+            data: {
+                "PayGroupName": PayGroupName, "Description": Description, "PayGroupMasterCode": PayGroupMasterCode,
+                "ConcernHRPersonnel": ConcernHRPersonnel
+            },
+            datatype: "JSON",
+            success: function (data) {
+                
+                if (data == "saved successfully") {
+
+                    swal({
+                        title: "Success!",
+                        text: "Pay Group has been Added Successfully!",
+                        type: "success"
+                    }).then(function () {
+                        window.location.href = "/PayGroup";
+                    });
+                }
+                else if (data == "PayGroup Already taken , please try with different name") {
+                    jq("#msgPayGroupName").html("PayGroup Already taken, please try with different name");
+                }
+                else if (data == "PayGroup Master Code Already taken , please try with different Code") {
+                    jq("#msgMasterCode").html("This Master Code Already taken , please try with different Code");
+                }
+
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+</script>
+@*Get Pay Group By Id*@
+<script>
+    function GetPayGroup(PayGroupID) {
+        
+        var jq = jQuery.noConflict();
+        jq.ajax({
+            type: "POST",
+            url: '/PayGroup/GetPayGroup',
+            data: { "PayGroupID": PayGroupID },
+            datatype: JSON,
+            success: function (response) {
+                
+                RecordLength = response.length;
+                jq("#hdnPayGroupId").val(response[0].PayGroupID);
+                jq("#lblPayGroupName").text(response[0].PayGroupName);
+                jq("#lblDescription").text(response[0].Description);
+                jq("#lblPayGroupMasterCode").text(response[0].PayGroupMasterCode);
+                jq("#lblConcernHRPErsonnel").text(response[0].EMPLOYEENAME);
+                jq("#txtPayGroupName").val(response[0].PayGroupName);
+                jq("#txtDescription").val(response[0].Description);
+                jq("#txtMasterCode").val(response[0].PayGroupMasterCode);
+                jq("#txtConcernHRPersonnel").val(response[0].ConcernHRPersonnel);
+            },
+            error: function (er) {
+
+                console.log(er);
+            }
+        });
+    }
+</script>
+@*Update Pay Group*@
+<script>
+    function UpdatePayGroup() {
+        var jq = jQuery.noConflict();
+        
+        var PayGroupName = jq("#txtPayGroupName").val();
+        var Description = jq("#txtDescription").val();
+        var PayGroupMasterCode = jq("#txtMasterCode").val();
+        var ConcernHRPersonnel = jq("#txtConcernHRPersonnel").val();
+        var PayGroupId = jq("#hdnPayGroupId").val();
+        if (PayGroupName == "") {
+            jq("#msgPayGroupNameedit").html("Please Enter PayGroupName");
+            return false;
+        }
+        else {
+            jq("#msgPayGroupNameedit").html("");
+        }
+        if (Description == "") {
+            jq("#msgDescriptionedit").html("Please Enter Description");
+            return false;
+        }
+        else {
+            jq("#msgDescriptionedit").html("");
+        }
+        if (PayGroupMasterCode == "") {
+            jq("#msgMastercodeeedit").html("Please Enter Master Code");
+            return false;
+        }
+        else {
+            jq("#msgMastercodeeedit").html("")
+        }
+        if (ConcernHRPersonnel == "0") {
+            jq("#msgConcernHRPersonneledit").html("Please Choose ConcernHRPersonnel");
+            return false;
+        }
+        else {
+            jq("#msgConcernHRPersonneledit").html("")
+        }
+        
+        jq.ajax({
+            type: "POST",
+            url: '/PayGroup/UpdatePayGroup',
+            
+            data: {
+                "PayGroupId": PayGroupId, "PayGroupName": PayGroupName, "Description": Description, "PayGroupMasterCode": PayGroupMasterCode,
+                "ConcernHRPersonnel": ConcernHRPersonnel
+            },
+            datatype: "JSON",
+            success: function (data) {
+                
+                if (data == "saved successfully") {
+
+                    swal({
+                        title: "Success!",
+                        text: "Pay Group has been Updated Successfully!",
+                        type: "success"
+                    }).then(function () {
+                        window.location.href = "/PayGroup";
+                    });
+                }
+                else if (data == "PayGroup Already taken , please try with different name") {
+                    jq("#msgPayGroupNameedit").html("This Master Code Already taken , please try with different Code");
+                }
+                else if (data == "PayGroup Master Code Already taken , please try with different Code") {
+                    jq("#msgMastercodeeedit").html("This Master Code Already taken , please try with different Code");
+                }
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+
+</script>
+@*Delete Pay Group*@
+<script>
+    function DeletePayGroup(PayGroupID) {
+        
+        var jq = jQuery.noConflict();
+        var result = confirm("Do you want to delete");
+        if (result == true) {
+            jq.ajax({
+                type: "POST",
+                url: '/PayGroup/DeletePayGroup',
+                data: { "PayGroupID": PayGroupID },
+                datatype: JSON,
+                success: function (response) {
+                    
+                    if (response == "Delete Successfull") {
+                        swal({
+                            title: "Success!",
+                            text: "Pay Group has been Deleted Successfully!",
+                            type: "success"
+                        }).then(function () {
+                            window.location.href = "/PayGroup";
+                        });
+                    }
+                },
+                error: function (er) {
+
+                    console.log(er);
+                }
+            });
+        }
+
+    }
+</script>
+
+<script>
+    function GetPayGroupBonus(PayGroupID) {
+
+        
+        window.location.href = "/PayGroup/PayGroupBonusDetails?cal=" + PayGroupID + "";
+    }
+
+    function SavePayGroupBonus() {
+        
+        var paygroupid = $("#hdnPaygroupidf").val();
+        var month = $("#ddlmonth option:selected").text();
+        var year = $("#ddlyear").val();
+        var overtime = $("#txtOvertimehours").val();
+        var productionbonus = $("#txtProductionbonus").val();
+        var TargetAchieved = $("#txtTargetAchieved").val();
+        $.ajax({
+            type: "POST",
+            url: '/PayGroup/SavePayGroupBonus',
+
+            data: {
+                "PayGroupId": paygroupid, "Month": month, "Year": year, "OverTime": overtime,
+                "ProductionBonus": productionbonus, "TargetAchieved": TargetAchieved
+            },
+            datatype: "JSON",
+            success: function (data) {
+                
+                if (data == "saved successfully") {
+
+                    swal({
+                        title: "Success!",
+                        text: "Pay Group has been Updated Successfully!",
+                        type: "success"
+                    }).then(function () {
+                        window.location.href = "/PayGroup";
+                    });
+                }
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+</script>
+

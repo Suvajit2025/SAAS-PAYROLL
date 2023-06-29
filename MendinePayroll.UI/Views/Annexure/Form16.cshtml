@@ -1,0 +1,116 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .payrolltable {
+        font-size: 11px;
+    }
+
+    .form-control {
+        min-height: calc(1.5em + (0.5rem + 2px));
+        display: block;
+        width: 100%;
+        /* height: 34px; */
+        padding: 0.25rem 0.5rem;
+        font-size: 12px;
+        /* line-height: 1.42857143; */
+        color: #555555;
+        background-color: #ffffff;
+        background-image: none;
+        border: 1px solid #cccccc;
+        border-radius: 0.2rem;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+</style>
+<script>
+    function SearchData() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("txtSearch");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("tblForm16");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[2];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+<div>
+    <section role="main" class="content-body">
+        <section class="panel">
+            <header class="panel-heading">
+                <h2 class="panel-title">Form 16 Upload</h2>
+            </header>
+            <form id="frmform16" method="post" enctype="multipart/form-data">
+                <div class="panel-body listpanel">
+                    <div class="form-group row">
+                        <div class="col-md-1 mb-3">
+                            <label>Year</label>
+                        </div>
+                        <div class="col-md-2">
+                            <select id="ddlYear" class="form-control"></select>
+                        </div>
+                        <div class="col-md-1 mb-3">
+                            <label>Company</label>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="ddlCompany" class="form-control"></select>
+                        </div>
+                        <div class="col-md-1 mb-3">
+                            <label>Employee</label>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="ddlEmployee" class="form-control"></select>
+                        </div>
+                        <div class="col-md-1 mb-3">
+                            <input type="button" id="btnShow" class="mb-sm mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold" value="Show" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-8">
+                        </div>
+                        <div class="col-md-1 text-right">
+                            <label>Search</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="txtSearch" class="form-control" maxlength="50"  onkeyup="SearchData()" placeholder="Search by PAN"/>
+                        </div>
+                    </div>
+                    <div class="mt-5 table-responsive" id="tblData">
+                        <table class="table mb-none payrolltable" id="tblForm16">
+                            <thead>
+                                <tr>
+                                    <th style="width:5%">No</th>
+                                    <th style="width:15%">Name</th>
+                                    <th style="width:8%">PAN NO</th>
+                                    <th style="width:5%">Status</th>
+                                    <th style="width:24%">File (Part A)</th>
+                                    <th style="width:5%">Status</th>
+                                    <th style="width:24%">File (Part B)</th>
+                                    <th style="width:3%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblForm16Body">
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </form>
+        </section>
+    </section>
+</div>
+<script src="~/ProjectJS/Form16.js"></script>

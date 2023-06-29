@@ -1,0 +1,324 @@
+﻿
+@{
+    ViewBag.Title = "SalaryRegister";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+
+    <header class="page-header">
+        <h2>Employee Salary Register</h2>
+    </header>
+    <section class="panel">
+        <div >
+            <form class="form-inline">
+                <div class="row">
+                    <div class="col-md-1"><label>Employee</label></div>
+                    <div class="col-md-4"><select id="ddlEmployee" class="form-control form-control-sm"></select></div>
+                    <div class="col-md-2"><label>Start Date</label></div>
+                    <div class="col-md-2"><input type="date" id="txtSDate" class="form-control form-control-sm" /></div>
+                    <div class="col-md-1"><label>End Date</label></div>
+                    <div class="col-md-2"><input type="date" id="txtEDate" class="form-control form-control-sm" /></div>
+                </div>
+                <button type="button" id="bthShow" onclick="ReportSalaryRegister();" class="mb-sm mt-xs mr-xs btn btn-sm btn-primary">Show Report</button>
+                <button type="button" id="btnExportToPDF" onclick="PrintDiv();" class="mb-sm mt-xs mr-xs btn btn-sm btn-primary">Export to PDF</button>
+                
+                <button type="button" id="btnExportToExcel" class="mb-sm mt-xs mr-xs btn btn-sm btn-primary">Export to Excel</button>
+                <div class="col-md-12" style="overflow-x:auto" id="DivPrint">
+                    <table  id="tblReport"class="table table-sm table-border table-responsive small"  >
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Month </th>
+                                <th>Employee Name</th>
+                                <th>Basic</th>
+                                <th>HRA</th>
+                                <th>Attir Allowance</th>
+                                <th>Internet Allowance</th>
+                                <th>Mobile Allowance</th>
+                                <th>Education Allowance</th>
+                                <th>Medical Allowance</th>
+                                <th>LTA</th>
+                                <th>Continous Attendance Allwoance</th>
+                                <th>Overtime Allowance</th>
+                                <th>Production Bonus</th>
+                                <th>Stipned</th>
+                                <th>Arrear</th>
+                                <th>Trainning Allowance</th>
+                                <th>Conveynance Allowance</th>
+                                <th>Vehical Allowance</th>
+                                <th>Food Allowance</th>
+                                <th>Stripned</th>
+                                <th>Arrear</th>
+                                <th>Production</th>
+                                <th>Gross</th>
+                                <th>PF</th>
+                                <th>ESI</th>
+                                <th>PTax</th>
+                                <th>TDS</th>
+                                <th>Loan</th>
+                                <th>Total Deduction</th>
+                                <th>Net Payable</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblReportBody">
+
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </section>
+</section>
+<script type="text/javascript">
+    function PrintDiv() {
+        var printContents = document.getElementById('DivPrint').innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+    $(function () {
+        var jq = jQuery.noConflict();
+        jq.ajax({
+            type: "GET",
+            url: '/SalaryReports/EmployeeList',
+            datatype: JSON,
+            success: function (res) {
+                $("#ddlEmployee").empty();
+                $("#ddlEmployee").append("<option value=''> Select</option>");
+                jq.each(res, function (index, value) {
+                    $("#ddlEmployee").append("<option value=" + res[index].EmployeeNo + ">" + res[index].EmployeeName + "</option>");
+                });
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+        $("#btnExportToExcel").on("click", function () {
+            let employee = $("#ddlEmployee").val();
+            let sdate = $("#txtSDate").val();
+            let edate = $("#txtEDate").val();
+            let param = { "EmployeeNo": employee, "StartDate": sdate, "EndDate": edate };
+            jq.ajax({
+                type: "POST",
+                url: '/SalaryReports/ExportSalaryToExcel',
+                datatype: JSON,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                success: function (res) {
+                    
+                },
+                error: function (er) {
+                    console.log(er);
+                }
+            });
+        });
+        
+
+    });
+    function ReportSalaryRegister() {
+        var jq = jQuery.noConflict();
+        let employee = $("#ddlEmployee").val();
+        let sdate = $("#txtSDate").val();
+        let edate = $("#txtEDate").val();
+        let param = { "EmployeeNo": employee, "StartDate": sdate, "EndDate": edate };
+        jq.ajax({
+            type: "POST",
+            url: '/SalaryReports/ReportSalaryRegister',
+            datatype: JSON,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(param),
+            success: function (res) {
+                let rowtext = '';
+                $("#tblReportBody").empty()
+                $.each(res, function (index, value) {
+                    rowtext = '<tr>'
+
+                    // Salary Year
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].SalaryYear + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Salary Month
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].SalaryMonth + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Employee Name
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].EmployeeName + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Basic
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Basic + '</label>';
+                    rowtext = rowtext + '</td>';
+
+
+                    // HRA
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].HRA + '</label>';
+                    rowtext = rowtext + '</td>';
+
+
+                    // Attir
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Attir + '</label>';
+                    rowtext = rowtext + '</td>';
+
+
+                    // Internet
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Internet + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Mobile
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Mobile + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Education
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Education + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Medical
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Medical + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // LTA
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].LTA + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // ContinousAttendance
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].ContinousAttendance + '</label>';
+                    rowtext = rowtext + '</td>';
+
+
+                    // Overtime
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Overtime + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Production
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Production + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Stipned
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Stipned + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Arrear
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Arrear + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Trainning
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Trainning + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Convenyence
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Convenyence + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Vehical
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Vehical + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Fooding
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Fooding + '</label>';
+                    rowtext = rowtext + '</td>';
+
+
+                    // Lodging
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Lodging + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    
+                    
+
+
+                    // BooksPeriodicals
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].BooksPeriodicals + '</label>';
+                    rowtext = rowtext + '</td>';
+
+
+                    
+
+                    
+
+                    // TDS
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].TDS + '</label>';
+                    rowtext = rowtext + '</td>';
+
+
+                   
+
+
+                    
+
+
+                   
+
+                    // Vehical
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].PF + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                  
+
+
+
+
+                    // TDS
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].ESI + '</label>';
+                    rowtext = rowtext + '</td>';
+
+
+                    // PTAX
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].PTax + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // ESI
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].ESI + '</label>';
+                    rowtext = rowtext + '</td>';
+
+
+                    // Loan
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Loan + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    // Other
+                    rowtext = rowtext + '<td>';
+                    rowtext = rowtext + '<label> ' + res[index].Other + '</label>';
+                    rowtext = rowtext + '</td>';
+
+                    rowtext = rowtext + '</tr>';
+                    $("#tblReportBody").append(rowtext);
+                });s
+            },
+            error: function (er) {
+
+                console.log(er);
+            }
+        });
+    }
+</script>
+

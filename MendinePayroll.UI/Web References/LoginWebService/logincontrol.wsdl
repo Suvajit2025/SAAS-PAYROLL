@@ -1,0 +1,1587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="UserNamePwdcheck">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pwd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UserNamePwdcheckResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserNamePwdcheckResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Userlogin">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="pwd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UserloginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserloginResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RetriveAppStatusNo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RetriveAppStatusNoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetriveAppStatusNoResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RetriveHolidayList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RetriveHolidayListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetriveHolidayListResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Retrivelapplication">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RetrivelapplicationResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetrivelapplicationResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RetriveLBalance">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RetriveLBalanceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetriveLBalanceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SUBordinateleaveData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SUBordinateleaveDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SUBordinateleaveDataResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Leaveapplicationhist">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="year" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveapplicationhistResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LeaveapplicationhistResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Leaveapplicationyear">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveapplicationyearResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LeaveapplicationyearResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveApplicationCancel">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="appid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveApplicationCancelResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LeaveApplicationCancelResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PrejoinRetriveData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="appid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PrejoinRetriveDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PrejoinRetriveDataResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="leaveReqRetriveEmp">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="leaveReqRetriveEmpResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="leaveReqRetriveEmpResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="leaveReqRetriveData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="start" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="end" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="leaveReqRetriveDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="leaveReqRetriveDataResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Leavereqsearch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="monthid" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="year" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="subempcode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeavereqsearchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LeavereqsearchResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Userrolechecking">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UserrolecheckingResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UserrolecheckingResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="leaveRequestStatus">
+        <s:complexType />
+      </s:element>
+      <s:element name="leaveRequestStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="leaveRequestStatusResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveRequeStstatusUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="appid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="statusid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="remarks" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveRequeStstatusUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LeaveRequeStstatusUpdateResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="leaveReqRetriveSubmitted">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="start" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="end" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="leaveReqRetriveSubmittedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="leaveReqRetriveSubmittedResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveappliSave_full">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leaveid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavestartdate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leaveenddate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavereason" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveappliSave_fullResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LeaveappliSave_fullResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveappliSave_half">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavestartdate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavereason" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveappliSave_halfResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LeaveappliSave_halfResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Selectleavetype">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SelectleavetypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SelectleavetypeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveApply">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavetype" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fromdate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="todate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="noofdays" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavereason" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="duration" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sufixtodate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="prefixfromdate" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LeaveApplyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LeaveApplyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CompoffRetriveSubmitted">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="start" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="Submitted_not" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CompoffRetriveSubmittedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CompoffRetriveSubmittedResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="compoffRequeStstatusUpdate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="statusid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="approverremarks" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="compoffRequeStstatusUpdateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="compoffRequeStstatusUpdateResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckReportingAuthority">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckReportingAuthorityResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckReportingAuthorityResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckEmployeeMD">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckEmployeeMDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckEmployeeMDResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AvilCompoffApply">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="compoffrequestid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavestartdate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leaveenddate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="noofdays" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavereason" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AvilCompoffApplyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AvilCompoffApplyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Compoffbalanceapply">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="compoffstartdate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="compoffreasone" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="selfdeclaration" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CompoffbalanceapplyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CompoffbalanceapplyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RetriveCompoffDate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="RetriveCompoffDateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetriveCompoffDateResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AvailCompoffSave">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="compoffrequestid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="offdate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavereason" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AvailCompoffSaveResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AvailCompoffSaveResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MonthlyLeave">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MonthlyLeaveResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MonthlyLeaveResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LateattendaceRetrive">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LateattendaceRetriveResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LateattendaceRetriveResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MonthlyLeavetype">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MonthlyLeavetypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MonthlyLeavetypeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="prejoinsave">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="leavestartdat" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leaveenddate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leaveid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavereason" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="apphdrid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="prejoinsaveResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="prejoinsaveResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="prejoinApply">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="leavetype" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavestartdate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leaveenddate" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="noofdays" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="leavereason" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="apphdrid" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="prefixfromdatein" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="suffixtodatein" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="prejoinApplyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="prejoinApplyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CompoffBalanceApplyHistory">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="uname" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CompoffBalanceApplyHistoryResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CompoffBalanceApplyHistoryResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="UserNamePwdcheckSoapIn">
+    <wsdl:part name="parameters" element="tns:UserNamePwdcheck" />
+  </wsdl:message>
+  <wsdl:message name="UserNamePwdcheckSoapOut">
+    <wsdl:part name="parameters" element="tns:UserNamePwdcheckResponse" />
+  </wsdl:message>
+  <wsdl:message name="UserloginSoapIn">
+    <wsdl:part name="parameters" element="tns:Userlogin" />
+  </wsdl:message>
+  <wsdl:message name="UserloginSoapOut">
+    <wsdl:part name="parameters" element="tns:UserloginResponse" />
+  </wsdl:message>
+  <wsdl:message name="RetriveAppStatusNoSoapIn">
+    <wsdl:part name="parameters" element="tns:RetriveAppStatusNo" />
+  </wsdl:message>
+  <wsdl:message name="RetriveAppStatusNoSoapOut">
+    <wsdl:part name="parameters" element="tns:RetriveAppStatusNoResponse" />
+  </wsdl:message>
+  <wsdl:message name="RetriveHolidayListSoapIn">
+    <wsdl:part name="parameters" element="tns:RetriveHolidayList" />
+  </wsdl:message>
+  <wsdl:message name="RetriveHolidayListSoapOut">
+    <wsdl:part name="parameters" element="tns:RetriveHolidayListResponse" />
+  </wsdl:message>
+  <wsdl:message name="RetrivelapplicationSoapIn">
+    <wsdl:part name="parameters" element="tns:Retrivelapplication" />
+  </wsdl:message>
+  <wsdl:message name="RetrivelapplicationSoapOut">
+    <wsdl:part name="parameters" element="tns:RetrivelapplicationResponse" />
+  </wsdl:message>
+  <wsdl:message name="RetriveLBalanceSoapIn">
+    <wsdl:part name="parameters" element="tns:RetriveLBalance" />
+  </wsdl:message>
+  <wsdl:message name="RetriveLBalanceSoapOut">
+    <wsdl:part name="parameters" element="tns:RetriveLBalanceResponse" />
+  </wsdl:message>
+  <wsdl:message name="SUBordinateleaveDataSoapIn">
+    <wsdl:part name="parameters" element="tns:SUBordinateleaveData" />
+  </wsdl:message>
+  <wsdl:message name="SUBordinateleaveDataSoapOut">
+    <wsdl:part name="parameters" element="tns:SUBordinateleaveDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="LeaveapplicationhistSoapIn">
+    <wsdl:part name="parameters" element="tns:Leaveapplicationhist" />
+  </wsdl:message>
+  <wsdl:message name="LeaveapplicationhistSoapOut">
+    <wsdl:part name="parameters" element="tns:LeaveapplicationhistResponse" />
+  </wsdl:message>
+  <wsdl:message name="LeaveapplicationyearSoapIn">
+    <wsdl:part name="parameters" element="tns:Leaveapplicationyear" />
+  </wsdl:message>
+  <wsdl:message name="LeaveapplicationyearSoapOut">
+    <wsdl:part name="parameters" element="tns:LeaveapplicationyearResponse" />
+  </wsdl:message>
+  <wsdl:message name="LeaveApplicationCancelSoapIn">
+    <wsdl:part name="parameters" element="tns:LeaveApplicationCancel" />
+  </wsdl:message>
+  <wsdl:message name="LeaveApplicationCancelSoapOut">
+    <wsdl:part name="parameters" element="tns:LeaveApplicationCancelResponse" />
+  </wsdl:message>
+  <wsdl:message name="PrejoinRetriveDataSoapIn">
+    <wsdl:part name="parameters" element="tns:PrejoinRetriveData" />
+  </wsdl:message>
+  <wsdl:message name="PrejoinRetriveDataSoapOut">
+    <wsdl:part name="parameters" element="tns:PrejoinRetriveDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="leaveReqRetriveEmpSoapIn">
+    <wsdl:part name="parameters" element="tns:leaveReqRetriveEmp" />
+  </wsdl:message>
+  <wsdl:message name="leaveReqRetriveEmpSoapOut">
+    <wsdl:part name="parameters" element="tns:leaveReqRetriveEmpResponse" />
+  </wsdl:message>
+  <wsdl:message name="leaveReqRetriveDataSoapIn">
+    <wsdl:part name="parameters" element="tns:leaveReqRetriveData" />
+  </wsdl:message>
+  <wsdl:message name="leaveReqRetriveDataSoapOut">
+    <wsdl:part name="parameters" element="tns:leaveReqRetriveDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="LeavereqsearchSoapIn">
+    <wsdl:part name="parameters" element="tns:Leavereqsearch" />
+  </wsdl:message>
+  <wsdl:message name="LeavereqsearchSoapOut">
+    <wsdl:part name="parameters" element="tns:LeavereqsearchResponse" />
+  </wsdl:message>
+  <wsdl:message name="UserrolecheckingSoapIn">
+    <wsdl:part name="parameters" element="tns:Userrolechecking" />
+  </wsdl:message>
+  <wsdl:message name="UserrolecheckingSoapOut">
+    <wsdl:part name="parameters" element="tns:UserrolecheckingResponse" />
+  </wsdl:message>
+  <wsdl:message name="leaveRequestStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:leaveRequestStatus" />
+  </wsdl:message>
+  <wsdl:message name="leaveRequestStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:leaveRequestStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="LeaveRequeStstatusUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:LeaveRequeStstatusUpdate" />
+  </wsdl:message>
+  <wsdl:message name="LeaveRequeStstatusUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:LeaveRequeStstatusUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="leaveReqRetriveSubmittedSoapIn">
+    <wsdl:part name="parameters" element="tns:leaveReqRetriveSubmitted" />
+  </wsdl:message>
+  <wsdl:message name="leaveReqRetriveSubmittedSoapOut">
+    <wsdl:part name="parameters" element="tns:leaveReqRetriveSubmittedResponse" />
+  </wsdl:message>
+  <wsdl:message name="LeaveappliSave_fullSoapIn">
+    <wsdl:part name="parameters" element="tns:LeaveappliSave_full" />
+  </wsdl:message>
+  <wsdl:message name="LeaveappliSave_fullSoapOut">
+    <wsdl:part name="parameters" element="tns:LeaveappliSave_fullResponse" />
+  </wsdl:message>
+  <wsdl:message name="LeaveappliSave_halfSoapIn">
+    <wsdl:part name="parameters" element="tns:LeaveappliSave_half" />
+  </wsdl:message>
+  <wsdl:message name="LeaveappliSave_halfSoapOut">
+    <wsdl:part name="parameters" element="tns:LeaveappliSave_halfResponse" />
+  </wsdl:message>
+  <wsdl:message name="SelectleavetypeSoapIn">
+    <wsdl:part name="parameters" element="tns:Selectleavetype" />
+  </wsdl:message>
+  <wsdl:message name="SelectleavetypeSoapOut">
+    <wsdl:part name="parameters" element="tns:SelectleavetypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="LeaveApplySoapIn">
+    <wsdl:part name="parameters" element="tns:LeaveApply" />
+  </wsdl:message>
+  <wsdl:message name="LeaveApplySoapOut">
+    <wsdl:part name="parameters" element="tns:LeaveApplyResponse" />
+  </wsdl:message>
+  <wsdl:message name="CompoffRetriveSubmittedSoapIn">
+    <wsdl:part name="parameters" element="tns:CompoffRetriveSubmitted" />
+  </wsdl:message>
+  <wsdl:message name="CompoffRetriveSubmittedSoapOut">
+    <wsdl:part name="parameters" element="tns:CompoffRetriveSubmittedResponse" />
+  </wsdl:message>
+  <wsdl:message name="compoffRequeStstatusUpdateSoapIn">
+    <wsdl:part name="parameters" element="tns:compoffRequeStstatusUpdate" />
+  </wsdl:message>
+  <wsdl:message name="compoffRequeStstatusUpdateSoapOut">
+    <wsdl:part name="parameters" element="tns:compoffRequeStstatusUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckReportingAuthoritySoapIn">
+    <wsdl:part name="parameters" element="tns:CheckReportingAuthority" />
+  </wsdl:message>
+  <wsdl:message name="CheckReportingAuthoritySoapOut">
+    <wsdl:part name="parameters" element="tns:CheckReportingAuthorityResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckEmployeeMDSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckEmployeeMD" />
+  </wsdl:message>
+  <wsdl:message name="CheckEmployeeMDSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckEmployeeMDResponse" />
+  </wsdl:message>
+  <wsdl:message name="AvilCompoffApplySoapIn">
+    <wsdl:part name="parameters" element="tns:AvilCompoffApply" />
+  </wsdl:message>
+  <wsdl:message name="AvilCompoffApplySoapOut">
+    <wsdl:part name="parameters" element="tns:AvilCompoffApplyResponse" />
+  </wsdl:message>
+  <wsdl:message name="CompoffbalanceapplySoapIn">
+    <wsdl:part name="parameters" element="tns:Compoffbalanceapply" />
+  </wsdl:message>
+  <wsdl:message name="CompoffbalanceapplySoapOut">
+    <wsdl:part name="parameters" element="tns:CompoffbalanceapplyResponse" />
+  </wsdl:message>
+  <wsdl:message name="RetriveCompoffDateSoapIn">
+    <wsdl:part name="parameters" element="tns:RetriveCompoffDate" />
+  </wsdl:message>
+  <wsdl:message name="RetriveCompoffDateSoapOut">
+    <wsdl:part name="parameters" element="tns:RetriveCompoffDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="AvailCompoffSaveSoapIn">
+    <wsdl:part name="parameters" element="tns:AvailCompoffSave" />
+  </wsdl:message>
+  <wsdl:message name="AvailCompoffSaveSoapOut">
+    <wsdl:part name="parameters" element="tns:AvailCompoffSaveResponse" />
+  </wsdl:message>
+  <wsdl:message name="MonthlyLeaveSoapIn">
+    <wsdl:part name="parameters" element="tns:MonthlyLeave" />
+  </wsdl:message>
+  <wsdl:message name="MonthlyLeaveSoapOut">
+    <wsdl:part name="parameters" element="tns:MonthlyLeaveResponse" />
+  </wsdl:message>
+  <wsdl:message name="LateattendaceRetriveSoapIn">
+    <wsdl:part name="parameters" element="tns:LateattendaceRetrive" />
+  </wsdl:message>
+  <wsdl:message name="LateattendaceRetriveSoapOut">
+    <wsdl:part name="parameters" element="tns:LateattendaceRetriveResponse" />
+  </wsdl:message>
+  <wsdl:message name="MonthlyLeavetypeSoapIn">
+    <wsdl:part name="parameters" element="tns:MonthlyLeavetype" />
+  </wsdl:message>
+  <wsdl:message name="MonthlyLeavetypeSoapOut">
+    <wsdl:part name="parameters" element="tns:MonthlyLeavetypeResponse" />
+  </wsdl:message>
+  <wsdl:message name="prejoinsaveSoapIn">
+    <wsdl:part name="parameters" element="tns:prejoinsave" />
+  </wsdl:message>
+  <wsdl:message name="prejoinsaveSoapOut">
+    <wsdl:part name="parameters" element="tns:prejoinsaveResponse" />
+  </wsdl:message>
+  <wsdl:message name="prejoinApplySoapIn">
+    <wsdl:part name="parameters" element="tns:prejoinApply" />
+  </wsdl:message>
+  <wsdl:message name="prejoinApplySoapOut">
+    <wsdl:part name="parameters" element="tns:prejoinApplyResponse" />
+  </wsdl:message>
+  <wsdl:message name="CompoffBalanceApplyHistorySoapIn">
+    <wsdl:part name="parameters" element="tns:CompoffBalanceApplyHistory" />
+  </wsdl:message>
+  <wsdl:message name="CompoffBalanceApplyHistorySoapOut">
+    <wsdl:part name="parameters" element="tns:CompoffBalanceApplyHistoryResponse" />
+  </wsdl:message>
+  <wsdl:portType name="logincontrolSoap">
+    <wsdl:operation name="UserNamePwdcheck">
+      <wsdl:input message="tns:UserNamePwdcheckSoapIn" />
+      <wsdl:output message="tns:UserNamePwdcheckSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Userlogin">
+      <wsdl:input message="tns:UserloginSoapIn" />
+      <wsdl:output message="tns:UserloginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RetriveAppStatusNo">
+      <wsdl:input message="tns:RetriveAppStatusNoSoapIn" />
+      <wsdl:output message="tns:RetriveAppStatusNoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RetriveHolidayList">
+      <wsdl:input message="tns:RetriveHolidayListSoapIn" />
+      <wsdl:output message="tns:RetriveHolidayListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Retrivelapplication">
+      <wsdl:input message="tns:RetrivelapplicationSoapIn" />
+      <wsdl:output message="tns:RetrivelapplicationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RetriveLBalance">
+      <wsdl:input message="tns:RetriveLBalanceSoapIn" />
+      <wsdl:output message="tns:RetriveLBalanceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SUBordinateleaveData">
+      <wsdl:input message="tns:SUBordinateleaveDataSoapIn" />
+      <wsdl:output message="tns:SUBordinateleaveDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Leaveapplicationhist">
+      <wsdl:input message="tns:LeaveapplicationhistSoapIn" />
+      <wsdl:output message="tns:LeaveapplicationhistSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Leaveapplicationyear">
+      <wsdl:input message="tns:LeaveapplicationyearSoapIn" />
+      <wsdl:output message="tns:LeaveapplicationyearSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LeaveApplicationCancel">
+      <wsdl:input message="tns:LeaveApplicationCancelSoapIn" />
+      <wsdl:output message="tns:LeaveApplicationCancelSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PrejoinRetriveData">
+      <wsdl:input message="tns:PrejoinRetriveDataSoapIn" />
+      <wsdl:output message="tns:PrejoinRetriveDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="leaveReqRetriveEmp">
+      <wsdl:input message="tns:leaveReqRetriveEmpSoapIn" />
+      <wsdl:output message="tns:leaveReqRetriveEmpSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="leaveReqRetriveData">
+      <wsdl:input message="tns:leaveReqRetriveDataSoapIn" />
+      <wsdl:output message="tns:leaveReqRetriveDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Leavereqsearch">
+      <wsdl:input message="tns:LeavereqsearchSoapIn" />
+      <wsdl:output message="tns:LeavereqsearchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Userrolechecking">
+      <wsdl:input message="tns:UserrolecheckingSoapIn" />
+      <wsdl:output message="tns:UserrolecheckingSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="leaveRequestStatus">
+      <wsdl:input message="tns:leaveRequestStatusSoapIn" />
+      <wsdl:output message="tns:leaveRequestStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LeaveRequeStstatusUpdate">
+      <wsdl:input message="tns:LeaveRequeStstatusUpdateSoapIn" />
+      <wsdl:output message="tns:LeaveRequeStstatusUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="leaveReqRetriveSubmitted">
+      <wsdl:input message="tns:leaveReqRetriveSubmittedSoapIn" />
+      <wsdl:output message="tns:leaveReqRetriveSubmittedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LeaveappliSave_full">
+      <wsdl:input message="tns:LeaveappliSave_fullSoapIn" />
+      <wsdl:output message="tns:LeaveappliSave_fullSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LeaveappliSave_half">
+      <wsdl:input message="tns:LeaveappliSave_halfSoapIn" />
+      <wsdl:output message="tns:LeaveappliSave_halfSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Selectleavetype">
+      <wsdl:input message="tns:SelectleavetypeSoapIn" />
+      <wsdl:output message="tns:SelectleavetypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LeaveApply">
+      <wsdl:input message="tns:LeaveApplySoapIn" />
+      <wsdl:output message="tns:LeaveApplySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CompoffRetriveSubmitted">
+      <wsdl:input message="tns:CompoffRetriveSubmittedSoapIn" />
+      <wsdl:output message="tns:CompoffRetriveSubmittedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="compoffRequeStstatusUpdate">
+      <wsdl:input message="tns:compoffRequeStstatusUpdateSoapIn" />
+      <wsdl:output message="tns:compoffRequeStstatusUpdateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckReportingAuthority">
+      <wsdl:input message="tns:CheckReportingAuthoritySoapIn" />
+      <wsdl:output message="tns:CheckReportingAuthoritySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmployeeMD">
+      <wsdl:input message="tns:CheckEmployeeMDSoapIn" />
+      <wsdl:output message="tns:CheckEmployeeMDSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AvilCompoffApply">
+      <wsdl:input message="tns:AvilCompoffApplySoapIn" />
+      <wsdl:output message="tns:AvilCompoffApplySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Compoffbalanceapply">
+      <wsdl:input message="tns:CompoffbalanceapplySoapIn" />
+      <wsdl:output message="tns:CompoffbalanceapplySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="RetriveCompoffDate">
+      <wsdl:input message="tns:RetriveCompoffDateSoapIn" />
+      <wsdl:output message="tns:RetriveCompoffDateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AvailCompoffSave">
+      <wsdl:input message="tns:AvailCompoffSaveSoapIn" />
+      <wsdl:output message="tns:AvailCompoffSaveSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MonthlyLeave">
+      <wsdl:input message="tns:MonthlyLeaveSoapIn" />
+      <wsdl:output message="tns:MonthlyLeaveSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LateattendaceRetrive">
+      <wsdl:input message="tns:LateattendaceRetriveSoapIn" />
+      <wsdl:output message="tns:LateattendaceRetriveSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MonthlyLeavetype">
+      <wsdl:input message="tns:MonthlyLeavetypeSoapIn" />
+      <wsdl:output message="tns:MonthlyLeavetypeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="prejoinsave">
+      <wsdl:input message="tns:prejoinsaveSoapIn" />
+      <wsdl:output message="tns:prejoinsaveSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="prejoinApply">
+      <wsdl:input message="tns:prejoinApplySoapIn" />
+      <wsdl:output message="tns:prejoinApplySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CompoffBalanceApplyHistory">
+      <wsdl:input message="tns:CompoffBalanceApplyHistorySoapIn" />
+      <wsdl:output message="tns:CompoffBalanceApplyHistorySoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="logincontrolSoap" type="tns:logincontrolSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="UserNamePwdcheck">
+      <soap:operation soapAction="http://tempuri.org/UserNamePwdcheck" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Userlogin">
+      <soap:operation soapAction="http://tempuri.org/Userlogin" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetriveAppStatusNo">
+      <soap:operation soapAction="http://tempuri.org/RetriveAppStatusNo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetriveHolidayList">
+      <soap:operation soapAction="http://tempuri.org/RetriveHolidayList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Retrivelapplication">
+      <soap:operation soapAction="http://tempuri.org/Retrivelapplication" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetriveLBalance">
+      <soap:operation soapAction="http://tempuri.org/RetriveLBalance" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SUBordinateleaveData">
+      <soap:operation soapAction="http://tempuri.org/SUBordinateleaveData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Leaveapplicationhist">
+      <soap:operation soapAction="http://tempuri.org/Leaveapplicationhist" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Leaveapplicationyear">
+      <soap:operation soapAction="http://tempuri.org/Leaveapplicationyear" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveApplicationCancel">
+      <soap:operation soapAction="http://tempuri.org/LeaveApplicationCancel" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PrejoinRetriveData">
+      <soap:operation soapAction="http://tempuri.org/PrejoinRetriveData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="leaveReqRetriveEmp">
+      <soap:operation soapAction="http://tempuri.org/leaveReqRetriveEmp" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="leaveReqRetriveData">
+      <soap:operation soapAction="http://tempuri.org/leaveReqRetriveData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Leavereqsearch">
+      <soap:operation soapAction="http://tempuri.org/Leavereqsearch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Userrolechecking">
+      <soap:operation soapAction="http://tempuri.org/Userrolechecking" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="leaveRequestStatus">
+      <soap:operation soapAction="http://tempuri.org/leaveRequestStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveRequeStstatusUpdate">
+      <soap:operation soapAction="http://tempuri.org/LeaveRequeStstatusUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="leaveReqRetriveSubmitted">
+      <soap:operation soapAction="http://tempuri.org/leaveReqRetriveSubmitted" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveappliSave_full">
+      <soap:operation soapAction="http://tempuri.org/LeaveappliSave_full" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveappliSave_half">
+      <soap:operation soapAction="http://tempuri.org/LeaveappliSave_half" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Selectleavetype">
+      <soap:operation soapAction="http://tempuri.org/Selectleavetype" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveApply">
+      <soap:operation soapAction="http://tempuri.org/LeaveApply" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CompoffRetriveSubmitted">
+      <soap:operation soapAction="http://tempuri.org/CompoffRetriveSubmitted" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="compoffRequeStstatusUpdate">
+      <soap:operation soapAction="http://tempuri.org/compoffRequeStstatusUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckReportingAuthority">
+      <soap:operation soapAction="http://tempuri.org/CheckReportingAuthority" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmployeeMD">
+      <soap:operation soapAction="http://tempuri.org/CheckEmployeeMD" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AvilCompoffApply">
+      <soap:operation soapAction="http://tempuri.org/AvilCompoffApply" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Compoffbalanceapply">
+      <soap:operation soapAction="http://tempuri.org/Compoffbalanceapply" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetriveCompoffDate">
+      <soap:operation soapAction="http://tempuri.org/RetriveCompoffDate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AvailCompoffSave">
+      <soap:operation soapAction="http://tempuri.org/AvailCompoffSave" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MonthlyLeave">
+      <soap:operation soapAction="http://tempuri.org/MonthlyLeave" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LateattendaceRetrive">
+      <soap:operation soapAction="http://tempuri.org/LateattendaceRetrive" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MonthlyLeavetype">
+      <soap:operation soapAction="http://tempuri.org/MonthlyLeavetype" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="prejoinsave">
+      <soap:operation soapAction="http://tempuri.org/prejoinsave" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="prejoinApply">
+      <soap:operation soapAction="http://tempuri.org/prejoinApply" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CompoffBalanceApplyHistory">
+      <soap:operation soapAction="http://tempuri.org/CompoffBalanceApplyHistory" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="logincontrolSoap12" type="tns:logincontrolSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="UserNamePwdcheck">
+      <soap12:operation soapAction="http://tempuri.org/UserNamePwdcheck" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Userlogin">
+      <soap12:operation soapAction="http://tempuri.org/Userlogin" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetriveAppStatusNo">
+      <soap12:operation soapAction="http://tempuri.org/RetriveAppStatusNo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetriveHolidayList">
+      <soap12:operation soapAction="http://tempuri.org/RetriveHolidayList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Retrivelapplication">
+      <soap12:operation soapAction="http://tempuri.org/Retrivelapplication" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetriveLBalance">
+      <soap12:operation soapAction="http://tempuri.org/RetriveLBalance" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SUBordinateleaveData">
+      <soap12:operation soapAction="http://tempuri.org/SUBordinateleaveData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Leaveapplicationhist">
+      <soap12:operation soapAction="http://tempuri.org/Leaveapplicationhist" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Leaveapplicationyear">
+      <soap12:operation soapAction="http://tempuri.org/Leaveapplicationyear" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveApplicationCancel">
+      <soap12:operation soapAction="http://tempuri.org/LeaveApplicationCancel" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PrejoinRetriveData">
+      <soap12:operation soapAction="http://tempuri.org/PrejoinRetriveData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="leaveReqRetriveEmp">
+      <soap12:operation soapAction="http://tempuri.org/leaveReqRetriveEmp" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="leaveReqRetriveData">
+      <soap12:operation soapAction="http://tempuri.org/leaveReqRetriveData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Leavereqsearch">
+      <soap12:operation soapAction="http://tempuri.org/Leavereqsearch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Userrolechecking">
+      <soap12:operation soapAction="http://tempuri.org/Userrolechecking" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="leaveRequestStatus">
+      <soap12:operation soapAction="http://tempuri.org/leaveRequestStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveRequeStstatusUpdate">
+      <soap12:operation soapAction="http://tempuri.org/LeaveRequeStstatusUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="leaveReqRetriveSubmitted">
+      <soap12:operation soapAction="http://tempuri.org/leaveReqRetriveSubmitted" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveappliSave_full">
+      <soap12:operation soapAction="http://tempuri.org/LeaveappliSave_full" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveappliSave_half">
+      <soap12:operation soapAction="http://tempuri.org/LeaveappliSave_half" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Selectleavetype">
+      <soap12:operation soapAction="http://tempuri.org/Selectleavetype" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveApply">
+      <soap12:operation soapAction="http://tempuri.org/LeaveApply" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CompoffRetriveSubmitted">
+      <soap12:operation soapAction="http://tempuri.org/CompoffRetriveSubmitted" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="compoffRequeStstatusUpdate">
+      <soap12:operation soapAction="http://tempuri.org/compoffRequeStstatusUpdate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckReportingAuthority">
+      <soap12:operation soapAction="http://tempuri.org/CheckReportingAuthority" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmployeeMD">
+      <soap12:operation soapAction="http://tempuri.org/CheckEmployeeMD" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AvilCompoffApply">
+      <soap12:operation soapAction="http://tempuri.org/AvilCompoffApply" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Compoffbalanceapply">
+      <soap12:operation soapAction="http://tempuri.org/Compoffbalanceapply" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RetriveCompoffDate">
+      <soap12:operation soapAction="http://tempuri.org/RetriveCompoffDate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AvailCompoffSave">
+      <soap12:operation soapAction="http://tempuri.org/AvailCompoffSave" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MonthlyLeave">
+      <soap12:operation soapAction="http://tempuri.org/MonthlyLeave" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LateattendaceRetrive">
+      <soap12:operation soapAction="http://tempuri.org/LateattendaceRetrive" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MonthlyLeavetype">
+      <soap12:operation soapAction="http://tempuri.org/MonthlyLeavetype" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="prejoinsave">
+      <soap12:operation soapAction="http://tempuri.org/prejoinsave" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="prejoinApply">
+      <soap12:operation soapAction="http://tempuri.org/prejoinApply" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CompoffBalanceApplyHistory">
+      <soap12:operation soapAction="http://tempuri.org/CompoffBalanceApplyHistory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="logincontrol">
+    <wsdl:port name="logincontrolSoap" binding="tns:logincontrolSoap">
+      <soap:address location="https://hr.mendine.co.in/logincontrol.asmx" />
+    </wsdl:port>
+    <wsdl:port name="logincontrolSoap12" binding="tns:logincontrolSoap12">
+      <soap12:address location="https://hr.mendine.co.in/logincontrol.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

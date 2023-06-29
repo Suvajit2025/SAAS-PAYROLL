@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .center-block {
+        align-items: center;
+    }
+</style>
+<h2>Bonus</h2>
+<section role="main" class="content-body">
+
+    <header class="page-header">
+        <h2>Bonus</h2>
+    </header>
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <input type="button" id="btnSave" value="Save" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold" />
+            </div>
+            <h2 class="panel-title">Salary Configuration</h2>
+        </header>
+        <div class="panel-body ">
+            <div class="divEntry">
+                <div class="row">
+                    <div class="col-xs-4 col-xs-offset-4">
+                        <h4>Component Authentication</h4>
+                        <div class="row">
+                            <label>User Name </label>
+                            <input type="text" id="txtUserName" class="form-control" max="20" />
+                            <input type="hidden" id="hdIDConfiguration" />
+                        </div>
+                        <div class="row">
+                            <label>User Password</label>
+                            <input type="password" id="txtPassword" class="form-control" max="30" />
+                        </div>
+                        <div class="row">
+                            <label>Retype Password</label>
+                            <input type="password" id="txtRetype" class="form-control" max="30" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+</section>
+<script src="~/ProjectJS/SalaryConfiguration.js"></script>

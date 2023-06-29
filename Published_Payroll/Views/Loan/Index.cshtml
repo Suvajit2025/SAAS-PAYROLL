@@ -1,0 +1,151 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<section role="main" class="content-body">
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button id="btnSave" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Save<i class="fa fa-plus ml-lg"></i></button>
+            </div>
+            <h2 class="panel-title">Loan</h2>
+        </header>
+        <div class="panel-body inputpanel">
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>Loan Type (*)</label>
+                </div>
+                <div class="col-md-4">
+                    <select name="type" class="form-control" id="txttype">
+                        <option value="Select Type">Select Type</option>
+                        <option value="OPENING">OPENING</option>
+                        <option value="TRANSACTION">TRANSACTION</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Loan Amount (*)</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" min="0" class="form-control text-right" id="txtloanamount">
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>Loan No (*)</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control " readonly id="txtloanno">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Monthly Installment (P) (*)</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" min="0" class="form-control text-right" id="txtmonthlyinstallment">
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>Loan Date (*)</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" autocomplete="off" onkeydown="return false;" class="form-control" id="txtloandate">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Tenure (Month) (*)</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" min="0" class="form-control text-right" id="txttenure">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>End Date (*)</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" autocomplete="off" onkeydown="return false;" class="form-control" id="txtenddate">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label>Interest (%) / Year</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" min="0" class="form-control text-right" id="txtinterestpcn" />
+                </div>
+
+
+
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>Employee Name (*)</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control " id="txtempname">
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label>Monthly Interest Amount (*)</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" min="0" class="form-control text-right" id="txtinterestmonthly" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>Employee No (*)</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="txtempno">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Total Monthly Loan </label>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" autocomplete="off" onkeydown="return false;" class="form-control text-right" id="txttotalmonthlyloan">
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>Ref. No</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="txtrefno">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Loan Interest</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" autocomplete="off" onkeydown="return false;" class="form-control text-right" id="txtinterest">
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>Ref. Date</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="txtrefdate">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Total Loan</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" autocomplete="off" onkeydown="return false;" class="form-control text-right" id="txttotalloan">
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+<script src="~/ProjectJS/Loan.js"></script>

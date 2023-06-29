@@ -1,0 +1,128 @@
+﻿@model MendinePayroll.Models.EmployeeSalaryModel
+@{
+    ViewBag.Title = "View Salary History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+
+    <header class="page-header">
+        <h2>Employee  Salary List </h2>
+        @*<link href="~/plugins/select2/select2.css" rel="stylesheet" />*@
+    </header>
+    <!-- start: page -->
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+
+                <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+            <h2 class="panel-title">Employee Salary List</h2>
+        </header>
+        <div class="modal-body">
+            <form class="form-inline">
+                
+                <div class="panel-body" id="d1">
+
+                    <table class="table table-responsive mb-none" id="users">
+                        <thead>
+                            <tr>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>EmpNo</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Employee Name</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>PayGroup Name</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Month</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Year</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Basic</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Gross Amount</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Total Allowances</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Total Deduction</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Net Amount</th>
+                                <th class="Center">More</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listVehicle">
+                            
+                            @foreach (var items in Model.SalaryList)
+                             {
+                                <tr>
+                                    <td>
+                                        @Convert.ToInt32(items.Empno)
+                                    </td>
+                                    <td>
+                                        @items.EmployeeName
+                                    </td>
+                                    <td>
+                                        @items.PayGroupeName
+                                    </td>
+                                    <td>
+                                        @items.Month
+                                    </td>
+                                    <td>
+                                        @items.Year
+                                    </td>
+                                    <td>
+                                        @items.Basic
+                                    </td>
+                                    <td>
+                                        @items.Gross_Amount
+                                    </td>
+                                    <td>
+                                        @items.Total_Allowances
+                                    </td>
+                                    <td>
+                                        @items.Total_Deduction
+                                    </td>
+                                    <td>
+                                        @items.Net_Payable_Amount
+                                    </td>
+                                    <td>
+                                        <a href="#" onclick="return GetIndivdualSalary('@items.sEmpid','@items.Month',@items.Year);" data-toggle="modal" data-target="#detail">
+                                            <i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                             }
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </form>
+        </div>
+
+
+    </section>
+    <!-- end: page -->
+</section>
+
+<script>
+    function BacktoEmpList() {
+        
+        
+        var qsparam = new Array(10);
+        var query = window.location.search.substring(1);
+        var parms = query.split('&&');
+
+        for (var i = 0; i < parms.length; i++) {
+            var pos = parms[i].indexOf('=');
+            if (pos > 0) {
+                var key = parms[i].substring(0, pos);
+                var val = parms[i].substring(pos + 1);
+                qsparam[i] = val;
+            }
+        }
+        window.location.href = "/EmployeeList/Index?SearchValue="+qsparam[1];
+    }
+
+   
+</script>
+<script>
+    function GetIndivdualSalary(Empid,Month,year) {
+        
+        //alert(Month);
+        window.location.href = '/EmployeeList/IndividualSalryview?Empid=' + Empid + '&&Month=' + Month + '&&Year=' + year + '';
+    }
+</script>
+
+

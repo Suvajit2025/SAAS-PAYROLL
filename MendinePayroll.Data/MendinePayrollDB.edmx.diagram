@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="9bb51201a6a24f6192418de3d5f6c264" Name="Diagram1" ZoomLevel="101">
+        <EntityTypeShape EntityType="esspv2Model.Company" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.Department" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.Designation" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.Empbasic" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.ConfigureSalaryComponent" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.EmployeeLoan" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.LoanTransaction" Width="1.5" PointX="6.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.PayConfig" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.PayGroup" Width="1.5" PointX="8.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.PayGroupEmployeeMapping" Width="1.5" PointX="8.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.Postmaster" Width="1.5" PointX="8.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.SalaryComponent" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.SalaryComponentType" Width="1.5" PointX="10.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.SalaryConfigure" Width="1.5" PointX="4.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.tcomactiveworklist" Width="1.5" PointX="10.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.tcomworklisthistory" Width="1.5" PointX="0.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.tleaveappdtl" Width="1.5" PointX="10.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.tleaveapplicationhrd" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="esspv2Model.PayGroupBonu" Width="1.75" PointX="7.625" PointY="12.75" />
+        <EntityTypeShape EntityType="esspv2Model.EmployeeSalary" Width="1.5" PointX="3.375" PointY="13.75" />
+        <EntityTypeShape EntityType="esspv2Model.Designationmaster" Width="1.5" PointX="13.375" PointY="8.75" />
+        <EntityTypeShape EntityType="esspv2Model.ManualSalaryConfig" Width="1.5" PointX="13.375" PointY="5.75" />
+        <EntityTypeShape EntityType="esspv2Model.EmpoloyeeSalaryConfigManualValue" Width="1.875" PointX="13.375" PointY="11.75" />
+        <EntityTypeShape EntityType="esspv2Model.EmployeeSalaryConfig" Width="1.875" PointX="13.375" PointY="14.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
