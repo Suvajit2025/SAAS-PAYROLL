@@ -91,6 +91,7 @@
         mdata.append("postedfileB", $(this).closest("tr").find("#txtFileB").prop('files')[0]);
         mdata.append("year", $("#ddlYear :selected").val());
         mdata.append("idform", $(this).closest("tr").find("#hdIDForm").val());
+        mdata.append("companycode", $("#ddlCompany :selected").val());
 
         let fileA = $(this).closest("tr").find("#txtFileA").val();
         let fileB = $(this).closest("tr").find("#txtFileB").val();

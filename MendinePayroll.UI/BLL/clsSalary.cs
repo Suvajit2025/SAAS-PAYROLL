@@ -343,10 +343,10 @@ namespace MendinePayroll.UI.BLL
             }
             return mlist;
         }
-        public static String Form16Upload(long IDForm, int Year, String Employeeno,String FilePathA, String FileNameA, String FilePathB, String FileNameB )
+        public static String Form16Upload(long IDForm, int Year, String Companycode, String Employeeno, String FilePathA, String FileNameA, String FilePathB, String FileNameB)
         {
             string UserName = HttpContext.Current.Session["username"].ToString();
-            return clsDatabase.fnDBOperation("PRC_Form16_Upload", IDForm, Employeeno, Year, FilePathA,FileNameA, FilePathB, FileNameB, UserName);
+            return clsDatabase.fnDBOperation("PRC_Form16_Upload", IDForm, Employeeno, Companycode, Year, FilePathA, FileNameA, FilePathB, FileNameB, UserName);
         }
     }
     public class SalaryRegisterlModel

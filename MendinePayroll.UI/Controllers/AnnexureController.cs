@@ -104,7 +104,7 @@ namespace MendinePayroll.UI.Controllers
         //}
 
         [HttpPost]
-        public JsonResult Form16Upload(FormCollection frm) //String empno, int year, long idform)
+        public JsonResult Form16Upload(FormCollection frm) 
         {
             String Result = "";
             HttpPostedFileBase postedFileA = Request.Files[0];
@@ -112,13 +112,18 @@ namespace MendinePayroll.UI.Controllers
             int year = clsHelper.fnConvert2Int(frm["year"]);
             String empno = frm["empno"].ToString();
             long idform = clsHelper.fnConvert2Long(frm["idform"]);
-            String filenameA = year.ToString() + "_" + empno + "_" + postedFileA.FileName;
-            String filenameB = year.ToString() + "_" + empno + "_" + postedFileB.FileName;
+            string Companycode= frm["companycode"].ToString();
+            //String filenameA = year.ToString() + "_" + empno + "_" + postedFileA.FileName;
+            //String filenameB = year.ToString() + "_" + empno + "_" + postedFileB.FileName;
+
+            String filenameA = postedFileA.FileName;
+            String filenameB = postedFileB.FileName;
+
             String pathA = Path.Combine(Server.MapPath("/Form16Data"), filenameA);
             String pathB = Path.Combine(Server.MapPath("/Form16Data"), filenameB);
             postedFileA.SaveAs(pathA);
             postedFileB.SaveAs(pathB);
-            Result = clsSalary.Form16Upload(idform, year, empno, pathA, filenameA, pathB, filenameB);
+            Result = clsSalary.Form16Upload(idform, year, Companycode, empno, pathA, filenameA, pathB, filenameB);
             if (Result == "")
                 return Json(new { success = "" }, JsonRequestBehavior.AllowGet);
             else
