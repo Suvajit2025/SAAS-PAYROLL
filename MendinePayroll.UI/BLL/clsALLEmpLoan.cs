@@ -13,9 +13,9 @@ namespace MendinePayroll.UI.BLL.Report
         {
             return clsDatabase.fnDataTable( "Payroll_PRC_EmployeeWiseLoan");
         }
-        public static DataTable Employee_Wise_LoanDetails(long IDEmp)
+        public static DataTable Employee_Wise_LoanDetails(long IDEmp,String AsOnDate)
         {
-            return clsDatabase.fnDataTable("Payroll_PRC_Employee_Loan_Register", IDEmp);
+            return clsDatabase.fnDataTable("Payroll_PRC_Employee_Loan_Register", IDEmp, AsOnDate);
         }
         public static DataTable Employee_Loan_Ledger(String IDEmp)
         {

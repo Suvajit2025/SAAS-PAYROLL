@@ -609,6 +609,7 @@
                         $("#hdnDeducation_" + j + "").val(response[id].PayConfigId);
 
                         $("#lblDeducation_" + j + "").text(response[id].PayConfigName);
+                        console.log(response[id].PayConfigName.toUpperCase().replace(/[^a-z\s]/gi, ''));
                         if (response[id].PayConfigName.toUpperCase().replace(/[^a-z\s]/gi, '').replace(/[_\s]/g, '') == "PTAX") {
                             $("#lblDeducation_" + id + "").hide();
                             $("#tPriceeditDeducation_" + id + "").hide();

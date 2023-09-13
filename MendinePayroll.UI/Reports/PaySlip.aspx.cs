@@ -103,7 +103,8 @@ namespace MendinePayroll.UI.Reports
                     byte[] bytes = RVViewer.LocalReport.Render(selectedValue, null, out contentType, out encoding, out extension, out streamIds, out warnings);
 
                     string sEmpIde = Request.QueryString["Empid"];
-                    int empid = Convert.ToInt32(DataEncryption.Decrypt(Convert.ToString(sEmpIde), "passKey"));
+                    //int empid = Convert.ToInt32(DataEncryption.Decrypt(Convert.ToString(sEmpIde), "passKey"));
+                    int empid = Convert.ToInt32(Convert.ToString(sEmpIde));
                     string monthname = Request.QueryString["Month"];
                     int year = int.Parse(Request.QueryString["Year"]);
                     int month = DateTime.ParseExact(monthname, "MMMM", CultureInfo.InvariantCulture).Month;

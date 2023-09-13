@@ -1,5 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LoanRegister.aspx.cs"
     Inherits="MendinePayroll.UI.Report.Loan.LoanRegister" %>
+
 <%@ Register Assembly="Microsoft.ReportViewer.WebForms, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845DCD8080CC91"
     Namespace="Microsoft.Reporting.WebForms" TagPrefix="rsweb" %>
 <!DOCTYPE html>
@@ -31,6 +32,33 @@
                                 </div>
                                 <div class="col-md-5">
                                     <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-select form-select-sm">
+                                    </asp:DropDownList>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <label>Month</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <asp:DropDownList ID="ddlMonth" runat="server" CssClass="form-select form-select-sm">
+                                        <asp:ListItem Value="1" Text="January"></asp:ListItem>
+                                        <asp:ListItem Value="2" Text="February"></asp:ListItem>
+                                        <asp:ListItem Value="3" Text="March"></asp:ListItem>
+                                        <asp:ListItem Value="4" Text="April"></asp:ListItem>
+                                        <asp:ListItem Value="5" Text="May"></asp:ListItem>
+                                        <asp:ListItem Value="6" Text="June"></asp:ListItem>
+                                        <asp:ListItem Value="7" Text="July"></asp:ListItem>
+                                        <asp:ListItem Value="8" Text="August"></asp:ListItem>
+                                        <asp:ListItem Value="9" Text="September"></asp:ListItem>
+                                        <asp:ListItem Value="10" Text="October"></asp:ListItem>
+                                        <asp:ListItem Value="11" Text="November"></asp:ListItem>
+                                        <asp:ListItem Value="12" Text="December"></asp:ListItem>
+                                    </asp:DropDownList>
+                                </div>
+                                <div class="col-md-1">
+                                    <label>Year </label>
+                                </div>
+                                <div class="col-md-2">
+                                    <asp:DropDownList ID="ddlYear" runat="server" CssClass="form-select form-select-sm">
                                     </asp:DropDownList>
                                 </div>
                             </div>

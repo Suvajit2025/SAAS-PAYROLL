@@ -1262,7 +1262,8 @@
             Others: $("#tPriceeditDeducation_47").val(),
             User: users,
             Internet: $("#tPriceedit_16").val(),
-            Lodging: $("#tPriceedit_14").val()
+            Lodging: $("#tPriceedit_14").val(),
+            Stipned: $("#tPriceedit_33").val()
         };
         $.get("/EmployeeList/SalarySave", param, function (data) {
             if (data.a == "") {
