@@ -238,11 +238,23 @@
     <Compile Include="Reports\AllEmployeeSalaryDetails.aspx.designer.cs">
       <DependentUpon>AllEmployeeSalaryDetails.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\BonusReport.aspx.cs">
+      <DependentUpon>BonusReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\BonusReport.aspx.designer.cs">
+      <DependentUpon>BonusReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\Dataset\AllEmpSalarylistDataSet1.Designer.cs" />
     <Compile Include="Reports\Dataset\DSAnnexure.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DSAnnexure.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Dataset\DSBonusList.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DSBonusList.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\Dataset\DSEmpWisePayslip.Designer.cs" />
     <Compile Include="Reports\Dataset\DSSalaryRegister.Designer.cs">
@@ -1988,6 +2000,7 @@
     <Content Include="ProjectJS\Loan.js" />
     <Content Include="ProjectJS\PTaxSlab.js" />
     <Content Include="Reports\AllEmployeeSalaryDetails.aspx" />
+    <Content Include="Reports\BonusReport.aspx" />
     <Content Include="Reports\LoanLedger.aspx" />
     <Content Include="Reports\LoanRegister.aspx" />
     <Content Include="Reports\PaySlip.aspx" />
@@ -2162,6 +2175,17 @@
     </None>
     <Content Include="Reports\Dataset\DSAnnexure.xss">
       <DependentUpon>DSAnnexure.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\Dataset\DSBonusList.xsc">
+      <DependentUpon>DSBonusList.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\Dataset\DSBonusList.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DSBonusList.Designer.cs</LastGenOutput>
+    </None>
+    <Content Include="Reports\Dataset\DSBonusList.xss">
+      <DependentUpon>DSBonusList.xsd</DependentUpon>
     </Content>
     <None Include="Reports\Dataset\DSEmpWisePayslip.xsd" />
     <Content Include="Reports\Dataset\DSEmpWisePayslip.xss">
@@ -2342,6 +2366,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\RDLC\AllEMPSalaryList.rdlc" />
+    <EmbeddedResource Include="Reports\RDLC\BonusList.rdlc" />
     <EmbeddedResource Include="Reports\RDLC\TDSAnnexure1.rdlc" />
     <EmbeddedResource Include="Reports\RDLC\LoanRegister.rdlc" />
     <EmbeddedResource Include="Reports\RDLC\LoanRegisterOLD.rdlc" />

@@ -49,4 +49,11 @@ namespace MendinePayroll.UI.Models
         public String User { get; set; } = "";
 
     }
+
+    public class clsDepartmentInfo
+    {
+        public long IDDepartment { get; set; }
+        public String Name { get; set; }
+
+    }
 }

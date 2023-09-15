@@ -187,6 +187,22 @@ namespace MendinePayroll.UI.BLL
             return mlist;
 
         }
+
+        public static List<clsDepartmentInfo> Department_List()
+        {
+            List<clsDepartmentInfo> mlist = new List<clsDepartmentInfo>();
+            DataTable DT = clsDatabase.fnDataTable("PRC_HRMS_Department_List");
+            foreach (DataRow DR in DT.Rows)
+            {
+                mlist.Add(new clsDepartmentInfo
+                {
+                    IDDepartment = clsHelper.fnConvert2Long(DR["DepartmentId"]),
+                    Name = DR["Department"].ToString()
+                });
+            }
+            return mlist;
+        }
+
         public static List<clsEmployeeInfo> EmployeeListCompanyWise(String CompanyCode )
         {
             List<clsEmployeeInfo> mlist = new List<clsEmployeeInfo>();
@@ -264,6 +280,11 @@ namespace MendinePayroll.UI.BLL
         public static DataTable  SalaryRegisterNew(long IDEmployee, String StartMonth, int StartYear, String EndMonth, int EndYear)
         {
             return  clsDatabase.fnDataTable("PRC_Salary_Register", IDEmployee, StartMonth, StartYear, EndMonth, EndYear);
+        }
+
+        public static DataTable GetBonusList(long IDEmployee,long IDDepartment,int Year)
+        {
+            return clsDatabase.fnDataTable("PRC_Get_Bonus_List", IDEmployee, IDDepartment, Year);
         }
         public static DataTable SalaryYears()
         {

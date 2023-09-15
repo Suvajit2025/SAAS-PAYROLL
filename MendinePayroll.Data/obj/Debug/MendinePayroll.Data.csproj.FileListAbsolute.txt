@@ -208,7 +208,6 @@ D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\bin\Debug\EntityFramewo
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\bin\Debug\EntityFramework.SqlServer.dll
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\bin\Debug\EntityFramework.xml
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\bin\Debug\EntityFramework.SqlServer.xml
-D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.csproj.AssemblyReference.cache
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.csproj.CoreCompileInputs.cache
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.csproj.CopyComplete
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.dll
