@@ -290,6 +290,12 @@ namespace MendinePayroll.UI.BLL
         {
             return clsDatabase.fnDataTable("PRC_Salary_Year_List");
         }
+
+
+        public static DataTable FinancialYears()
+        {
+            return clsDatabase.fnDataTable("PRC_Financial_Year_List");
+        }
         public static List<clsYearInfo> SalaryYear()
         {
             List<clsYearInfo> mlist = new List<clsYearInfo>();

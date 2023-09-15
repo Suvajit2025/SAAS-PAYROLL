@@ -28,7 +28,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row mb-1">
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <label>Financial Year </label>
                                 </div>
                                 <div class="col-md-2">
@@ -47,7 +47,7 @@
                                 <div class="col-md-1">
                                     <label>Employee</label>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-select form-select-sm"></asp:DropDownList>
                                 </div>
                             </div>

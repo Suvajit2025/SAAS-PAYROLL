@@ -212,3 +212,4 @@ D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Debug\MendinePayrol
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.csproj.CopyComplete
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.dll
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.pdb
+D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.csproj.AssemblyReference.cache

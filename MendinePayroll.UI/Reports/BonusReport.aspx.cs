@@ -51,8 +51,8 @@ namespace MendinePayroll.UI.Reports
 
 
             // Start Year 
-            ddlYear.DataSource = clsSalary.SalaryYears();
-            ddlYear.DataTextField = "Year";
+            ddlYear.DataSource = clsSalary.FinancialYears();
+            ddlYear.DataTextField = "FinancialYear";
             ddlYear.DataValueField = "Year";
             ddlYear.DataBind();
             ddlYear.Items.Insert(0, "Select");
@@ -68,8 +68,8 @@ namespace MendinePayroll.UI.Reports
             string con = ConfigurationManager.ConnectionStrings["Admin"].ConnectionString;
             long IDEmployee = clsHelper.fnConvert2Long(ddlEmployee.SelectedValue);
             long IDDepartment = clsHelper.fnConvert2Long(ddlDepartment.SelectedValue);
-            int Year = clsHelper.fnConvert2Int(ddlYear.SelectedItem.Text);
-            var Financial_Year = (Year-1) + "-" + Year;
+            int Year = clsHelper.fnConvert2Int(ddlYear.SelectedValue);
+            var Financial_Year = ddlYear.SelectedItem.Text;
 
             RVViewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
             RVViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/RDLC/BonusList.rdlc");
