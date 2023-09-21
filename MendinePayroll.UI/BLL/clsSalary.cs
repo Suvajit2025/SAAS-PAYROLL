@@ -282,9 +282,9 @@ namespace MendinePayroll.UI.BLL
             return  clsDatabase.fnDataTable("PRC_Salary_Register", IDEmployee, StartMonth, StartYear, EndMonth, EndYear);
         }
 
-        public static DataTable GetBonusList(long IDEmployee,long IDDepartment,int Year)
+        public static DataTable GetBonusList(long IDEmployee,long IDDepartment,String CompanyCode, int Year)
         {
-            return clsDatabase.fnDataTable("PRC_Get_Bonus_List", IDEmployee, IDDepartment, Year);
+            return clsDatabase.fnDataTable("PRC_Get_Bonus_List", IDEmployee, IDDepartment, CompanyCode, Year);
         }
         public static DataTable SalaryYears()
         {

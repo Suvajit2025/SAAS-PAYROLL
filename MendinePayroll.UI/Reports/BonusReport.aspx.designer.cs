@@ -60,6 +60,15 @@ namespace MendinePayroll.UI.Reports
         protected global::System.Web.UI.WebControls.DropDownList ddlDepartment;
 
         /// <summary>
+        /// ddlCompany control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlCompany;
+
+        /// <summary>
         /// ddlEmployee control.
         /// </summary>
         /// <remarks>

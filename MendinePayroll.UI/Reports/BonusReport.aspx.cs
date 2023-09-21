@@ -49,6 +49,13 @@ namespace MendinePayroll.UI.Reports
             ddlDepartment.DataBind();
             ddlDepartment.Items.Insert(0, "Select");
 
+            // Company
+            ddlCompany.DataSource = clsSalary.CompanyList();
+            ddlCompany.DataTextField = "Name";
+            ddlCompany.DataValueField = "Code";
+            ddlCompany.DataBind();
+            ddlCompany.Items.Insert(0, new ListItem("Select", "0"));
+
 
             // Start Year 
             ddlYear.DataSource = clsSalary.FinancialYears();
@@ -68,6 +75,7 @@ namespace MendinePayroll.UI.Reports
             string con = ConfigurationManager.ConnectionStrings["Admin"].ConnectionString;
             long IDEmployee = clsHelper.fnConvert2Long(ddlEmployee.SelectedValue);
             long IDDepartment = clsHelper.fnConvert2Long(ddlDepartment.SelectedValue);
+            String CompanyCode = ddlCompany.SelectedValue;
             int Year = clsHelper.fnConvert2Int(ddlYear.SelectedValue);
             var Financial_Year = ddlYear.SelectedItem.Text;
 
@@ -76,7 +84,7 @@ namespace MendinePayroll.UI.Reports
             ReportParameter FinancialYear = new ReportParameter("FinancialYear", Financial_Year);
             RVViewer.LocalReport.SetParameters(new ReportParameter[] { FinancialYear });
 
-            DataTable dt = clsSalary.GetBonusList(IDEmployee, IDDepartment, Year);
+            DataTable dt = clsSalary.GetBonusList(IDEmployee, IDDepartment, CompanyCode, Year);
 
             ReportDataSource RSource = new ReportDataSource("DSBonusList", dt);
             RVViewer.LocalReport.DataSources.Clear();

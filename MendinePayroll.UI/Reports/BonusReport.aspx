@@ -43,11 +43,20 @@
                                     <asp:DropDownList ID="ddlDepartment" runat="server" CssClass="form-select form-select-sm">
                                     </asp:DropDownList>
                                 </div>
-                                
+
                                 <div class="col-md-1">
-                                    <label>Employee</label>
+                                    <label>Company </label>
                                 </div>
                                 <div class="col-md-3">
+                                    <asp:DropDownList ID="ddlCompany" runat="server" CssClass="form-select form-select-sm">
+                                    </asp:DropDownList>
+                                </div>
+
+                                
+                                <div class="col-md-1 mt-2">
+                                    <label>Employee</label>
+                                </div>
+                                <div class="col-md-3 mt-2">
                                     <asp:DropDownList ID="ddlEmployee" runat="server" CssClass="form-select form-select-sm"></asp:DropDownList>
                                 </div>
                             </div>
