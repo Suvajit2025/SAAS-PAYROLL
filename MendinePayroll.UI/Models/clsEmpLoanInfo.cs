@@ -56,4 +56,18 @@ namespace MendinePayroll.UI.Models
         public String Name { get; set; }
 
     }
+
+    public class clsDesignationInfo
+    {
+        public long IDDesignation { get; set; }
+        public String Name { get; set; }
+
+    }
+
+    public class clsLocationInfo
+    {
+        public long IDLocation { get; set; }
+        public String Name { get; set; }
+
+    }
 }

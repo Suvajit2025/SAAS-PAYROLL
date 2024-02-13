@@ -139,6 +139,9 @@
               <Width>4.74896cm</Width>
             </TablixColumn>
             <TablixColumn>
+              <Width>2.05021cm</Width>
+            </TablixColumn>
+            <TablixColumn>
               <Width>4.21979cm</Width>
             </TablixColumn>
             <TablixColumn>
@@ -1218,6 +1221,38 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox77</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox2">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>ARREARS</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox2</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -2614,6 +2649,38 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="Arrears">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Arrears.Value</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Arrears</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="TOTALALLOWANCES">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -2981,6 +3048,7 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -2997,7 +3065,7 @@
         <Top>2.2987cm</Top>
         <Left>0.31432cm</Left>
         <Height>1.41166cm</Height>
-        <Width>148.33752cm</Width>
+        <Width>150.38773cm</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -3009,7 +3077,7 @@
     <Height>2.97917in</Height>
     <Style />
   </Body>
-  <Width>58.69101in</Width>
+  <Width>59.5086in</Width>
   <Page>
     <PageHeight>29.7cm</PageHeight>
     <PageWidth>21cm</PageWidth>
@@ -3209,10 +3277,14 @@
           <DataField>Department</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Arrears">
+          <DataField>Arrears</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>AllEmpSalarylistDataSet1</rd:DataSetName>
-        <rd:SchemaPath>D:\COMPANY\MENDINE PAYROLL\Live-Payroll\MendinePayroll.UI\Reports\Dataset\AllEmpSalarylistDataSet1.xsd</rd:SchemaPath>
+        <rd:SchemaPath>D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.UI\Reports\Dataset\AllEmpSalarylistDataSet1.xsd</rd:SchemaPath>
         <rd:TableName>AllEmpSalaryDataset1</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />

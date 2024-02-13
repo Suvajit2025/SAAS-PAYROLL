@@ -334,6 +334,7 @@
     <Content Include="Contents\css\Site.css" />
     <Content Include="Contents\css\skins\default.css" />
     <Content Include="Contents\css\skins\extension.css" />
+    <Content Include="Contents\css\sumoselect.css" />
     <Content Include="Contents\css\theme-custom.css" />
     <Content Include="Contents\css\theme.css" />
     <Content Include="Contents\CustomCSS\Tabledesign.css" />
@@ -393,6 +394,7 @@
     <Content Include="Contents\js\jquery-3.3.1.slim.js" />
     <Content Include="Contents\js\jquery-3.3.1.slim.min.js" />
     <Content Include="Contents\js\jquery-ui-1.12.1.min.js" />
+    <Content Include="Contents\js\jquery.sumoselect.min.js" />
     <Content Include="Contents\js\jquery.twbsPagination.js" />
     <None Include="Contents\js\jquery.validate-vsdoc.js" />
     <Content Include="Contents\js\jquery.validate.js" />
@@ -2281,6 +2283,7 @@
     <Content Include="Views\Loan\Approval.cshtml" />
     <Content Include="Views\Annexure\Annexure92B.cshtml" />
     <Content Include="Views\Annexure\Form16.cshtml" />
+    <Content Include="Views\EmployeeList\ViewFullAndFinalSalary.cshtml" />
     <None Include="Web References\LoginWebService\logincontrol.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

@@ -293,31 +293,55 @@ namespace MendinePayroll.UI.Reports.Dataset {
             
             private global::System.Data.DataColumn columnPostName;
             
-            private global::System.Data.DataColumn columnJanuary;
+            private global::System.Data.DataColumn columnJanuaryActual;
             
-            private global::System.Data.DataColumn columnFebruary;
+            private global::System.Data.DataColumn columnFebruaryActual;
             
-            private global::System.Data.DataColumn columnMarch;
+            private global::System.Data.DataColumn columnMarchActual;
             
-            private global::System.Data.DataColumn columnApril;
+            private global::System.Data.DataColumn columnAprilActual;
             
-            private global::System.Data.DataColumn columnMay;
+            private global::System.Data.DataColumn columnMayActual;
             
-            private global::System.Data.DataColumn columnJune;
+            private global::System.Data.DataColumn columnJuneActual;
             
-            private global::System.Data.DataColumn columnJuly;
+            private global::System.Data.DataColumn columnJulyActual;
             
-            private global::System.Data.DataColumn columnAugust;
+            private global::System.Data.DataColumn columnAugustActual;
             
-            private global::System.Data.DataColumn columnSeptember;
+            private global::System.Data.DataColumn columnSeptemberActual;
             
-            private global::System.Data.DataColumn columnOctober;
+            private global::System.Data.DataColumn columnOctoberActual;
             
-            private global::System.Data.DataColumn columnNovember;
+            private global::System.Data.DataColumn columnNovemberActual;
             
-            private global::System.Data.DataColumn columnDecember;
+            private global::System.Data.DataColumn columnDecemberActual;
             
             private global::System.Data.DataColumn columncompanycode;
+            
+            private global::System.Data.DataColumn columnJanuaryEarned;
+            
+            private global::System.Data.DataColumn columnFebruaryEarned;
+            
+            private global::System.Data.DataColumn columnMarchEarned;
+            
+            private global::System.Data.DataColumn columnAprilEarned;
+            
+            private global::System.Data.DataColumn columnMayEarned;
+            
+            private global::System.Data.DataColumn columnJuneEarned;
+            
+            private global::System.Data.DataColumn columnJulyEarned;
+            
+            private global::System.Data.DataColumn columnAugustEarned;
+            
+            private global::System.Data.DataColumn columnSeptemberEarned;
+            
+            private global::System.Data.DataColumn columnOctoberEarned;
+            
+            private global::System.Data.DataColumn columnNovemberEarned;
+            
+            private global::System.Data.DataColumn columnDecemberEarned;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
@@ -410,97 +434,97 @@ namespace MendinePayroll.UI.Reports.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn JanuaryColumn {
+            public global::System.Data.DataColumn JanuaryActualColumn {
                 get {
-                    return this.columnJanuary;
+                    return this.columnJanuaryActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn FebruaryColumn {
+            public global::System.Data.DataColumn FebruaryActualColumn {
                 get {
-                    return this.columnFebruary;
+                    return this.columnFebruaryActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn MarchColumn {
+            public global::System.Data.DataColumn MarchActualColumn {
                 get {
-                    return this.columnMarch;
+                    return this.columnMarchActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn AprilColumn {
+            public global::System.Data.DataColumn AprilActualColumn {
                 get {
-                    return this.columnApril;
+                    return this.columnAprilActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn MayColumn {
+            public global::System.Data.DataColumn MayActualColumn {
                 get {
-                    return this.columnMay;
+                    return this.columnMayActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn JuneColumn {
+            public global::System.Data.DataColumn JuneActualColumn {
                 get {
-                    return this.columnJune;
+                    return this.columnJuneActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn JulyColumn {
+            public global::System.Data.DataColumn JulyActualColumn {
                 get {
-                    return this.columnJuly;
+                    return this.columnJulyActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn AugustColumn {
+            public global::System.Data.DataColumn AugustActualColumn {
                 get {
-                    return this.columnAugust;
+                    return this.columnAugustActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn SeptemberColumn {
+            public global::System.Data.DataColumn SeptemberActualColumn {
                 get {
-                    return this.columnSeptember;
+                    return this.columnSeptemberActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn OctoberColumn {
+            public global::System.Data.DataColumn OctoberActualColumn {
                 get {
-                    return this.columnOctober;
+                    return this.columnOctoberActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn NovemberColumn {
+            public global::System.Data.DataColumn NovemberActualColumn {
                 get {
-                    return this.columnNovember;
+                    return this.columnNovemberActual;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public global::System.Data.DataColumn DecemberColumn {
+            public global::System.Data.DataColumn DecemberActualColumn {
                 get {
-                    return this.columnDecember;
+                    return this.columnDecemberActual;
                 }
             }
             
@@ -509,6 +533,102 @@ namespace MendinePayroll.UI.Reports.Dataset {
             public global::System.Data.DataColumn companycodeColumn {
                 get {
                     return this.columncompanycode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn JanuaryEarnedColumn {
+                get {
+                    return this.columnJanuaryEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn FebruaryEarnedColumn {
+                get {
+                    return this.columnFebruaryEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn MarchEarnedColumn {
+                get {
+                    return this.columnMarchEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn AprilEarnedColumn {
+                get {
+                    return this.columnAprilEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn MayEarnedColumn {
+                get {
+                    return this.columnMayEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn JuneEarnedColumn {
+                get {
+                    return this.columnJuneEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn JulyEarnedColumn {
+                get {
+                    return this.columnJulyEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn AugustEarnedColumn {
+                get {
+                    return this.columnAugustEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn SeptemberEarnedColumn {
+                get {
+                    return this.columnSeptemberEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn OctoberEarnedColumn {
+                get {
+                    return this.columnOctoberEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn NovemberEarnedColumn {
+                get {
+                    return this.columnNovemberEarned;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn DecemberEarnedColumn {
+                get {
+                    return this.columnDecemberEarned;
                 }
             }
             
@@ -557,19 +677,31 @@ namespace MendinePayroll.UI.Reports.Dataset {
                         string DesignationName, 
                         string Department, 
                         string PostName, 
-                        string January, 
-                        string February, 
-                        string March, 
-                        string April, 
-                        string May, 
-                        string June, 
-                        string July, 
-                        string August, 
-                        string September, 
-                        string October, 
-                        string November, 
-                        string December, 
-                        string companycode) {
+                        string JanuaryActual, 
+                        string FebruaryActual, 
+                        string MarchActual, 
+                        string AprilActual, 
+                        string MayActual, 
+                        string JuneActual, 
+                        string JulyActual, 
+                        string AugustActual, 
+                        string SeptemberActual, 
+                        string OctoberActual, 
+                        string NovemberActual, 
+                        string DecemberActual, 
+                        string companycode, 
+                        string JanuaryEarned, 
+                        string FebruaryEarned, 
+                        string MarchEarned, 
+                        string AprilEarned, 
+                        string MayEarned, 
+                        string JuneEarned, 
+                        string JulyEarned, 
+                        string AugustEarned, 
+                        string SeptemberEarned, 
+                        string OctoberEarned, 
+                        string NovemberEarned, 
+                        string DecemberEarned) {
                 DSBonusListRow rowDSBonusListRow = ((DSBonusListRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Empno,
@@ -579,19 +711,31 @@ namespace MendinePayroll.UI.Reports.Dataset {
                         DesignationName,
                         Department,
                         PostName,
-                        January,
-                        February,
-                        March,
-                        April,
-                        May,
-                        June,
-                        July,
-                        August,
-                        September,
-                        October,
-                        November,
-                        December,
-                        companycode};
+                        JanuaryActual,
+                        FebruaryActual,
+                        MarchActual,
+                        AprilActual,
+                        MayActual,
+                        JuneActual,
+                        JulyActual,
+                        AugustActual,
+                        SeptemberActual,
+                        OctoberActual,
+                        NovemberActual,
+                        DecemberActual,
+                        companycode,
+                        JanuaryEarned,
+                        FebruaryEarned,
+                        MarchEarned,
+                        AprilEarned,
+                        MayEarned,
+                        JuneEarned,
+                        JulyEarned,
+                        AugustEarned,
+                        SeptemberEarned,
+                        OctoberEarned,
+                        NovemberEarned,
+                        DecemberEarned};
                 rowDSBonusListRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowDSBonusListRow);
                 return rowDSBonusListRow;
@@ -621,19 +765,31 @@ namespace MendinePayroll.UI.Reports.Dataset {
                 this.columnDesignationName = base.Columns["DesignationName"];
                 this.columnDepartment = base.Columns["Department"];
                 this.columnPostName = base.Columns["PostName"];
-                this.columnJanuary = base.Columns["January"];
-                this.columnFebruary = base.Columns["February"];
-                this.columnMarch = base.Columns["March"];
-                this.columnApril = base.Columns["April"];
-                this.columnMay = base.Columns["May"];
-                this.columnJune = base.Columns["June"];
-                this.columnJuly = base.Columns["July"];
-                this.columnAugust = base.Columns["August"];
-                this.columnSeptember = base.Columns["September"];
-                this.columnOctober = base.Columns["October"];
-                this.columnNovember = base.Columns["November"];
-                this.columnDecember = base.Columns["December"];
+                this.columnJanuaryActual = base.Columns["JanuaryActual"];
+                this.columnFebruaryActual = base.Columns["FebruaryActual"];
+                this.columnMarchActual = base.Columns["MarchActual"];
+                this.columnAprilActual = base.Columns["AprilActual"];
+                this.columnMayActual = base.Columns["MayActual"];
+                this.columnJuneActual = base.Columns["JuneActual"];
+                this.columnJulyActual = base.Columns["JulyActual"];
+                this.columnAugustActual = base.Columns["AugustActual"];
+                this.columnSeptemberActual = base.Columns["SeptemberActual"];
+                this.columnOctoberActual = base.Columns["OctoberActual"];
+                this.columnNovemberActual = base.Columns["NovemberActual"];
+                this.columnDecemberActual = base.Columns["DecemberActual"];
                 this.columncompanycode = base.Columns["companycode"];
+                this.columnJanuaryEarned = base.Columns["JanuaryEarned"];
+                this.columnFebruaryEarned = base.Columns["FebruaryEarned"];
+                this.columnMarchEarned = base.Columns["MarchEarned"];
+                this.columnAprilEarned = base.Columns["AprilEarned"];
+                this.columnMayEarned = base.Columns["MayEarned"];
+                this.columnJuneEarned = base.Columns["JuneEarned"];
+                this.columnJulyEarned = base.Columns["JulyEarned"];
+                this.columnAugustEarned = base.Columns["AugustEarned"];
+                this.columnSeptemberEarned = base.Columns["SeptemberEarned"];
+                this.columnOctoberEarned = base.Columns["OctoberEarned"];
+                this.columnNovemberEarned = base.Columns["NovemberEarned"];
+                this.columnDecemberEarned = base.Columns["DecemberEarned"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -653,32 +809,56 @@ namespace MendinePayroll.UI.Reports.Dataset {
                 base.Columns.Add(this.columnDepartment);
                 this.columnPostName = new global::System.Data.DataColumn("PostName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnPostName);
-                this.columnJanuary = new global::System.Data.DataColumn("January", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnJanuary);
-                this.columnFebruary = new global::System.Data.DataColumn("February", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnFebruary);
-                this.columnMarch = new global::System.Data.DataColumn("March", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnMarch);
-                this.columnApril = new global::System.Data.DataColumn("April", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnApril);
-                this.columnMay = new global::System.Data.DataColumn("May", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnMay);
-                this.columnJune = new global::System.Data.DataColumn("June", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnJune);
-                this.columnJuly = new global::System.Data.DataColumn("July", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnJuly);
-                this.columnAugust = new global::System.Data.DataColumn("August", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnAugust);
-                this.columnSeptember = new global::System.Data.DataColumn("September", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnSeptember);
-                this.columnOctober = new global::System.Data.DataColumn("October", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnOctober);
-                this.columnNovember = new global::System.Data.DataColumn("November", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnNovember);
-                this.columnDecember = new global::System.Data.DataColumn("December", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnDecember);
+                this.columnJanuaryActual = new global::System.Data.DataColumn("JanuaryActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnJanuaryActual);
+                this.columnFebruaryActual = new global::System.Data.DataColumn("FebruaryActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnFebruaryActual);
+                this.columnMarchActual = new global::System.Data.DataColumn("MarchActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnMarchActual);
+                this.columnAprilActual = new global::System.Data.DataColumn("AprilActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnAprilActual);
+                this.columnMayActual = new global::System.Data.DataColumn("MayActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnMayActual);
+                this.columnJuneActual = new global::System.Data.DataColumn("JuneActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnJuneActual);
+                this.columnJulyActual = new global::System.Data.DataColumn("JulyActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnJulyActual);
+                this.columnAugustActual = new global::System.Data.DataColumn("AugustActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnAugustActual);
+                this.columnSeptemberActual = new global::System.Data.DataColumn("SeptemberActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSeptemberActual);
+                this.columnOctoberActual = new global::System.Data.DataColumn("OctoberActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnOctoberActual);
+                this.columnNovemberActual = new global::System.Data.DataColumn("NovemberActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnNovemberActual);
+                this.columnDecemberActual = new global::System.Data.DataColumn("DecemberActual", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDecemberActual);
                 this.columncompanycode = new global::System.Data.DataColumn("companycode", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncompanycode);
+                this.columnJanuaryEarned = new global::System.Data.DataColumn("JanuaryEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnJanuaryEarned);
+                this.columnFebruaryEarned = new global::System.Data.DataColumn("FebruaryEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnFebruaryEarned);
+                this.columnMarchEarned = new global::System.Data.DataColumn("MarchEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnMarchEarned);
+                this.columnAprilEarned = new global::System.Data.DataColumn("AprilEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnAprilEarned);
+                this.columnMayEarned = new global::System.Data.DataColumn("MayEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnMayEarned);
+                this.columnJuneEarned = new global::System.Data.DataColumn("JuneEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnJuneEarned);
+                this.columnJulyEarned = new global::System.Data.DataColumn("JulyEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnJulyEarned);
+                this.columnAugustEarned = new global::System.Data.DataColumn("AugustEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnAugustEarned);
+                this.columnSeptemberEarned = new global::System.Data.DataColumn("SeptemberEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSeptemberEarned);
+                this.columnOctoberEarned = new global::System.Data.DataColumn("OctoberEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnOctoberEarned);
+                this.columnNovemberEarned = new global::System.Data.DataColumn("NovemberEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnNovemberEarned);
+                this.columnDecemberEarned = new global::System.Data.DataColumn("DecemberEarned", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnDecemberEarned);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_DSBonusList");
                 this.ExtendedProperties.Add("Generator_UserTableName", "DSBonusList");
             }
@@ -935,193 +1115,193 @@ namespace MendinePayroll.UI.Reports.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string January {
+            public string JanuaryActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.JanuaryColumn]));
+                        return ((string)(this[this.tableDSBonusList.JanuaryActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'January\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'JanuaryActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.JanuaryColumn] = value;
+                    this[this.tableDSBonusList.JanuaryActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string February {
+            public string FebruaryActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.FebruaryColumn]));
+                        return ((string)(this[this.tableDSBonusList.FebruaryActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'February\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'FebruaryActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.FebruaryColumn] = value;
+                    this[this.tableDSBonusList.FebruaryActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string March {
+            public string MarchActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.MarchColumn]));
+                        return ((string)(this[this.tableDSBonusList.MarchActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'March\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'MarchActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.MarchColumn] = value;
+                    this[this.tableDSBonusList.MarchActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string April {
+            public string AprilActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.AprilColumn]));
+                        return ((string)(this[this.tableDSBonusList.AprilActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'April\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'AprilActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.AprilColumn] = value;
+                    this[this.tableDSBonusList.AprilActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string May {
+            public string MayActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.MayColumn]));
+                        return ((string)(this[this.tableDSBonusList.MayActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'May\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'MayActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.MayColumn] = value;
+                    this[this.tableDSBonusList.MayActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string June {
+            public string JuneActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.JuneColumn]));
+                        return ((string)(this[this.tableDSBonusList.JuneActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'June\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'JuneActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.JuneColumn] = value;
+                    this[this.tableDSBonusList.JuneActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string July {
+            public string JulyActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.JulyColumn]));
+                        return ((string)(this[this.tableDSBonusList.JulyActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'July\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'JulyActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.JulyColumn] = value;
+                    this[this.tableDSBonusList.JulyActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string August {
+            public string AugustActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.AugustColumn]));
+                        return ((string)(this[this.tableDSBonusList.AugustActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'August\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'AugustActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.AugustColumn] = value;
+                    this[this.tableDSBonusList.AugustActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string September {
+            public string SeptemberActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.SeptemberColumn]));
+                        return ((string)(this[this.tableDSBonusList.SeptemberActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'September\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SeptemberActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.SeptemberColumn] = value;
+                    this[this.tableDSBonusList.SeptemberActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string October {
+            public string OctoberActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.OctoberColumn]));
+                        return ((string)(this[this.tableDSBonusList.OctoberActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'October\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'OctoberActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.OctoberColumn] = value;
+                    this[this.tableDSBonusList.OctoberActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string November {
+            public string NovemberActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.NovemberColumn]));
+                        return ((string)(this[this.tableDSBonusList.NovemberActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'November\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'NovemberActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.NovemberColumn] = value;
+                    this[this.tableDSBonusList.NovemberActualColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public string December {
+            public string DecemberActual {
                 get {
                     try {
-                        return ((string)(this[this.tableDSBonusList.DecemberColumn]));
+                        return ((string)(this[this.tableDSBonusList.DecemberActualColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'December\' in table \'DSBonusList\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'DecemberActual\' in table \'DSBonusList\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDSBonusList.DecemberColumn] = value;
+                    this[this.tableDSBonusList.DecemberActualColumn] = value;
                 }
             }
             
@@ -1138,6 +1318,198 @@ namespace MendinePayroll.UI.Reports.Dataset {
                 }
                 set {
                     this[this.tableDSBonusList.companycodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string JanuaryEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.JanuaryEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'JanuaryEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.JanuaryEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string FebruaryEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.FebruaryEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'FebruaryEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.FebruaryEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string MarchEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.MarchEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'MarchEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.MarchEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string AprilEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.AprilEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'AprilEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.AprilEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string MayEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.MayEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'MayEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.MayEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string JuneEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.JuneEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'JuneEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.JuneEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string JulyEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.JulyEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'JulyEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.JulyEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string AugustEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.AugustEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'AugustEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.AugustEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string SeptemberEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.SeptemberEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'SeptemberEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.SeptemberEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string OctoberEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.OctoberEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'OctoberEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.OctoberEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string NovemberEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.NovemberEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'NovemberEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.NovemberEarnedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string DecemberEarned {
+                get {
+                    try {
+                        return ((string)(this[this.tableDSBonusList.DecemberEarnedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'DecemberEarned\' in table \'DSBonusList\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDSBonusList.DecemberEarnedColumn] = value;
                 }
             }
             
@@ -1227,146 +1599,146 @@ namespace MendinePayroll.UI.Reports.Dataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsJanuaryNull() {
-                return this.IsNull(this.tableDSBonusList.JanuaryColumn);
+            public bool IsJanuaryActualNull() {
+                return this.IsNull(this.tableDSBonusList.JanuaryActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetJanuaryNull() {
-                this[this.tableDSBonusList.JanuaryColumn] = global::System.Convert.DBNull;
+            public void SetJanuaryActualNull() {
+                this[this.tableDSBonusList.JanuaryActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsFebruaryNull() {
-                return this.IsNull(this.tableDSBonusList.FebruaryColumn);
+            public bool IsFebruaryActualNull() {
+                return this.IsNull(this.tableDSBonusList.FebruaryActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetFebruaryNull() {
-                this[this.tableDSBonusList.FebruaryColumn] = global::System.Convert.DBNull;
+            public void SetFebruaryActualNull() {
+                this[this.tableDSBonusList.FebruaryActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsMarchNull() {
-                return this.IsNull(this.tableDSBonusList.MarchColumn);
+            public bool IsMarchActualNull() {
+                return this.IsNull(this.tableDSBonusList.MarchActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetMarchNull() {
-                this[this.tableDSBonusList.MarchColumn] = global::System.Convert.DBNull;
+            public void SetMarchActualNull() {
+                this[this.tableDSBonusList.MarchActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsAprilNull() {
-                return this.IsNull(this.tableDSBonusList.AprilColumn);
+            public bool IsAprilActualNull() {
+                return this.IsNull(this.tableDSBonusList.AprilActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetAprilNull() {
-                this[this.tableDSBonusList.AprilColumn] = global::System.Convert.DBNull;
+            public void SetAprilActualNull() {
+                this[this.tableDSBonusList.AprilActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsMayNull() {
-                return this.IsNull(this.tableDSBonusList.MayColumn);
+            public bool IsMayActualNull() {
+                return this.IsNull(this.tableDSBonusList.MayActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetMayNull() {
-                this[this.tableDSBonusList.MayColumn] = global::System.Convert.DBNull;
+            public void SetMayActualNull() {
+                this[this.tableDSBonusList.MayActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsJuneNull() {
-                return this.IsNull(this.tableDSBonusList.JuneColumn);
+            public bool IsJuneActualNull() {
+                return this.IsNull(this.tableDSBonusList.JuneActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetJuneNull() {
-                this[this.tableDSBonusList.JuneColumn] = global::System.Convert.DBNull;
+            public void SetJuneActualNull() {
+                this[this.tableDSBonusList.JuneActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsJulyNull() {
-                return this.IsNull(this.tableDSBonusList.JulyColumn);
+            public bool IsJulyActualNull() {
+                return this.IsNull(this.tableDSBonusList.JulyActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetJulyNull() {
-                this[this.tableDSBonusList.JulyColumn] = global::System.Convert.DBNull;
+            public void SetJulyActualNull() {
+                this[this.tableDSBonusList.JulyActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsAugustNull() {
-                return this.IsNull(this.tableDSBonusList.AugustColumn);
+            public bool IsAugustActualNull() {
+                return this.IsNull(this.tableDSBonusList.AugustActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetAugustNull() {
-                this[this.tableDSBonusList.AugustColumn] = global::System.Convert.DBNull;
+            public void SetAugustActualNull() {
+                this[this.tableDSBonusList.AugustActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsSeptemberNull() {
-                return this.IsNull(this.tableDSBonusList.SeptemberColumn);
+            public bool IsSeptemberActualNull() {
+                return this.IsNull(this.tableDSBonusList.SeptemberActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetSeptemberNull() {
-                this[this.tableDSBonusList.SeptemberColumn] = global::System.Convert.DBNull;
+            public void SetSeptemberActualNull() {
+                this[this.tableDSBonusList.SeptemberActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsOctoberNull() {
-                return this.IsNull(this.tableDSBonusList.OctoberColumn);
+            public bool IsOctoberActualNull() {
+                return this.IsNull(this.tableDSBonusList.OctoberActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetOctoberNull() {
-                this[this.tableDSBonusList.OctoberColumn] = global::System.Convert.DBNull;
+            public void SetOctoberActualNull() {
+                this[this.tableDSBonusList.OctoberActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsNovemberNull() {
-                return this.IsNull(this.tableDSBonusList.NovemberColumn);
+            public bool IsNovemberActualNull() {
+                return this.IsNull(this.tableDSBonusList.NovemberActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetNovemberNull() {
-                this[this.tableDSBonusList.NovemberColumn] = global::System.Convert.DBNull;
+            public void SetNovemberActualNull() {
+                this[this.tableDSBonusList.NovemberActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public bool IsDecemberNull() {
-                return this.IsNull(this.tableDSBonusList.DecemberColumn);
+            public bool IsDecemberActualNull() {
+                return this.IsNull(this.tableDSBonusList.DecemberActualColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public void SetDecemberNull() {
-                this[this.tableDSBonusList.DecemberColumn] = global::System.Convert.DBNull;
+            public void SetDecemberActualNull() {
+                this[this.tableDSBonusList.DecemberActualColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1379,6 +1751,150 @@ namespace MendinePayroll.UI.Reports.Dataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void SetcompanycodeNull() {
                 this[this.tableDSBonusList.companycodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsJanuaryEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.JanuaryEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetJanuaryEarnedNull() {
+                this[this.tableDSBonusList.JanuaryEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsFebruaryEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.FebruaryEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetFebruaryEarnedNull() {
+                this[this.tableDSBonusList.FebruaryEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsMarchEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.MarchEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetMarchEarnedNull() {
+                this[this.tableDSBonusList.MarchEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsAprilEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.AprilEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetAprilEarnedNull() {
+                this[this.tableDSBonusList.AprilEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsMayEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.MayEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetMayEarnedNull() {
+                this[this.tableDSBonusList.MayEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsJuneEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.JuneEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetJuneEarnedNull() {
+                this[this.tableDSBonusList.JuneEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsJulyEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.JulyEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetJulyEarnedNull() {
+                this[this.tableDSBonusList.JulyEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsAugustEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.AugustEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetAugustEarnedNull() {
+                this[this.tableDSBonusList.AugustEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsSeptemberEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.SeptemberEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetSeptemberEarnedNull() {
+                this[this.tableDSBonusList.SeptemberEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsOctoberEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.OctoberEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetOctoberEarnedNull() {
+                this[this.tableDSBonusList.OctoberEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsNovemberEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.NovemberEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetNovemberEarnedNull() {
+                this[this.tableDSBonusList.NovemberEarnedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsDecemberEarnedNull() {
+                return this.IsNull(this.tableDSBonusList.DecemberEarnedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetDecemberEarnedNull() {
+                this[this.tableDSBonusList.DecemberEarnedColumn] = global::System.Convert.DBNull;
             }
         }
         

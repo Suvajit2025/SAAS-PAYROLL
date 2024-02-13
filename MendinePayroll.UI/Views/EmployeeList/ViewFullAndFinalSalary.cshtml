@@ -1,0 +1,384 @@
+﻿
+@model MendinePayroll.Models.EmployeeSalaryModel
+@{
+    ViewBag.Title = "ViewFullAndFinalSalary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+
+    <header class="page-header">
+        <h2>Employee  Salary List </h2>
+        @*<link href="~/plugins/select2/select2.css" rel="stylesheet" />*@
+    </header>
+    <!-- start: page -->
+    <style>
+        .Pagenum {
+            padding: 6px !important;
+            height: 31px !important;
+            width: 88px !important;
+            border: 1px solid #a89d9d;
+            float: right;
+        }
+    </style>
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+
+                <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+            <h2 class="panel-title">Employee Salary List</h2>
+        </header>
+        <div class="panel-body">
+            <form class="form-inline">
+                <label>Month</label>
+                @Html.DropDownListFor(M => M.Month, Model.MonthList, new { @class = "foem-control", @id = "ddlmonth", @onchange = "return ViewAllEmployeeSalarySalarySearch(1);" })
+                @*<select name="month" id="ddlmonth">
+                        <option value="0">Select Month</option>
+                    </select>*@
+                <label>Year</label>
+                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                    @*<select name="month" id="ddlyear">
+                            <option value="0">Select Year</option>
+                        </select>*@
+                    @Html.DropDownListFor(M => M.Year, Model.YearList, new { @class = "form-control", @id = "ddlyear", @onchange = "return ViewAllEmployeeSalarySalarySearch(1);" })
+
+                </div>
+                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                    @*<select name="month" id="ddlyear">
+                            <option value="0">Select Year</option>
+                        </select>*@
+                    @Html.DropDownListFor(M => M.EmployeeName, Model.masterModel.selectListItems, new { @class = "form-control", @onchange = "return ViewAllEmployeeSalarySalarySearch(1);" })
+
+                </div>
+
+
+                @*<button type="button" class="btn btn-primary" id="btnSearch" onclick="return ViewAllEmployeeSalarySalary();">Search</button>*@
+                <button id="btnExportToExcel" onclick="return exportToExcel();" class="btn btn-primary">Export to Excel</button>
+
+                <select class="Pagenum" onchange="GetSearchbypagenumberResult(1);" id="Pagrow" name="Numberofrow">
+                    <option selected value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <label style="float:right;" for="PageRow">PageRow&emsp;</label>
+                <div class="panel-body table-responsive" id="d1">
+
+                    <table class="table  mb-none" id="users">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>EmpNO</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Employee Name</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>PayGroup Name</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Basic</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Total Allowances</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Gross Amount</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Total Deduction</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Net Amount</th>
+                                <th><i class="fa fa-credit-card text-muted space-right"></i>Salary Payment</th>
+                                <th><i class="fa fa-info-circle text-muted space-right"></i>Bank Details</th>
+                                <th><i class="fa fa-info-circle text-muted space-right"></i>PDF</th>
+                                <th><i class="fa fa-info-circle text-muted space-right"></i>TDS Report</th>
+                                <th class="center">MORE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listVehicle"></tbody>
+                    </table>
+                    <label style="float:left" id="Showing_no_Row" class="mt-md"></label>
+                    <table style="float:right" id="#pagination">
+                        <tr>
+                            <td colspan="12" align="right" style="text-align:right;">
+                                <div>
+                                    <div id="divPageNumbers">
+                                        <ul id="pagination" class="pagination-sm"></ul>
+                                    </div>
+                                </div>
+                            </td>
+                            @*<td colspan="2" align="left">
+                                    &nbsp;
+                                </td>*@
+                        </tr>
+                    </table>
+                </div>
+
+            </form>
+        </div>
+
+
+    </section>
+    <!-- end: page -->
+</section>
+
+<div class="modal fade modal-header-color zoom-anim-dialog" id="Bankdetail" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog" role="">
+        <div class="modal-content">
+            <section class="">
+                <header class="panel-heading bg-quartenary">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="panel-title  text-white">Bank Details</h2>
+                </header>
+            </section>
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Employee Name </a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblEmployeeName"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Bank Name</a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblBankName"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Branch Name</a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblBranchName"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">IFSC Code</a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblIFSCCode"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Bank Account No.</a></div>
+                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblBankAccountNo"></label></a></div>
+                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/plugins/cdnjs/jquery.twbsPagination.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#ddlmonth").select2();
+        $("#ddlyear").select2();
+        $("#EmployeeName").select2();
+        $("#d1").hide();
+        //var thisYear = (new Date()).getFullYear();
+       
+        ViewAllEmployeeSalarySalary(1);
+        //$pagination.twbsPagination('destroy');
+
+    });
+
+    function GetBankDetails(Empid) {
+
+        var jq = jQuery.noConflict();
+        jq.ajax({
+            type: "POST",
+            url: '/EmployeeList/GetEmployeebyid',
+            data: { "empid": Empid },
+            datatype: JSON,
+            success: function (response) {
+
+                var RecordLength = response.length;
+                if (RecordLength > 0) {
+                    jq("#lblEmployeeName").text(response[0].EmployeeName);
+                    jq("#lblBankName").text(response[0].bankname);
+                    jq("#lblBranchName").text(response[0].empbankbranchname);
+                    jq("#lblIFSCCode").text(response[0].empbankbranchifsccode);
+                    jq("#lblBankAccountNo").text(response[0].empaccountno);
+                }
+
+            },
+            error: function (er) {
+
+                console.log(er);
+            }
+        });
+    }
+</script>
+
+<script>
+    var $pagination = $('#pagination'),
+        totalRecords = 0,
+        records = [],
+        displayRecords = [],
+        recPerPage = 10,
+        page = 1,
+        totalPages = 0;
+    function apply_pagination(Datarecords, pagerow) {
+
+
+        var jq = jQuery.noConflict();
+        recPerPage = pagerow;
+
+        totalRecords = Datarecords
+        var totalPages = Math.ceil(totalRecords / recPerPage);
+        var LimitvisiblePages = 1;
+        if (totalPages > 10) {
+            LimitvisiblePages = 6;
+        }
+        else {
+            LimitvisiblePages = parseInt(totalPages);
+
+        }
+        $pagination.twbsPagination({
+            totalPages: totalPages,
+            visiblePages: LimitvisiblePages,
+            initiateStartPageClick: false,
+            onPageClick: function (event, page) {
+
+                displayRecordsIndex = Math.max(page - 1, 0) * recPerPage;
+                ViewAllEmployeeSalarySalary(page);
+
+            }
+
+        });
+    }
+</script>
+
+<script>
+    function BacktoEmpList() {
+
+
+        window.location.href = "/EmployeeList/Index";
+    }
+</script>
+
+<script>
+    function ViewAllEmployeeSalarySalary(pagnumber) {
+
+
+        var month = $("#ddlmonth option:selected").text();
+        var year = $("#ddlyear").val();
+        var Employeename = $("#EmployeeName").val();
+        var Status = 2;
+        var numberofRow = $("#Pagrow").val();
+        var pagenumber = pagnumber;
+        //var month = $("#ddlmonth").val();
+
+        $.ajax({
+            type: "POST",
+            url: '/EmployeeList/GetAllEmployeeSalary',
+            data: {
+                "Month": month, "Year": year, "Empid": Employeename, "Status": Status, "numberofRow": numberofRow, "pagenumber": pagenumber
+            },
+            datatype: "JSON",
+            success: function (data) {
+                $("#d1").show();
+                $("#pagination").hide();
+                
+                $("#users tbody").empty();
+                $("#Showing_no_Row").text("");
+                var Coutntotlloop = 0;
+                $.each(data, function (Index, value) {
+                    Coutntotlloop++;
+                    console.log(value);
+                    if (value.ISTDS == 1) {
+                        if (value.IsPaid == "1" || value.IsPaid == true) {
+                            $("#users tbody").append('<tr><td style="padding-left: 20px;">' +
+                                '<input type="checkbox" id="' + value.Empid + '" class="form-control chkclass" value="' + value.Empid + '" name="Areasdelete" style="width:20px;height: 20px;"/>' + '</td><td>'
+                                + value.Empno + '</td><td>' + value.EmployeeName + '</td><td>' + value.PayGroupeName + '</td><td>' + value.Basic + '</td><td>' + value.Total_Allowances + '</td><td>'
+                                + value.Gross_Amount + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount + '</td><td>Paid</td><td>' +
+                                '<a href="#" onclick="return GetBankDetails(' + "'" + value.sEmpid + "'" + ');"  data-toggle="modal" data-target="#Bankdetail">' +
+                                '<i class="text-tertiary fa fa-info-circle fa-lg"></i></a >' + '</td><td>' +
+                                //'<a href="#" onclick="return ExportToPDF(' + value.Empid + ',\'' + value.EmployeeName + '\');"title="Click Here to Download Salary Statement">' +
+                                //'<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>' +
+
+                                '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'PDF'" + ');"title="Click Here to Download Salary Statement">' +
+                                '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>' +
+
+                                '<a href="#" onclick="return TDFEXPORT(' + value.Empid + ',\'' + value.EmployeeName + '\');"title="Click Here to Download TDS Report">' +
+                                '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>'
+
+                                + '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'VIEW'" + ');">' +
+                                '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a>' +
+                                '</td></tr>');
+                        }
+                        else {
+                            $("#users tbody").append('<tr><td style="padding-left: 20px;">' +
+                                '<input type="checkbox" id="' + value.Empid + '" class="form-control chkclass" value="' + value.Empid + '" name="Areasdelete" style="width: 20px;height: 20px;" />' + '</td><td>'
+                                + value.Empno + '</td><td>' + value.EmployeeName + '</td><td>' + value.PayGroupeName + '</td><td>' + value.Basic + '</td><td>' + value.Total_Allowances + '</td><td>'
+                                + value.Gross_Amount + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount + '</td><td>Not Paid</td><td>' +
+                                '<a href="#" onclick="return GetBankDetails(' + "'" + value.sEmpid + "'" + ');"  data-toggle="modal" data-target="#Bankdetail">' +
+                                '<i class="text-tertiary fa fa-info-circle fa-lg"></i></a >' + '</td><td>' +
+                                //'<a href="#" onclick="return ExportToPDF(' + value.Empid + ');" title="Click Here to Download Salary Statement">' +
+                                //'<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>'+
+
+                                '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'PDF'" + ');" title="Click Here to Download Salary Statement">' +
+                                '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>' +
+
+                                '<a href="#" onclick="return TDFEXPORT(' + value.Empid + ');" title="Click Here to Download TDS Report">' +
+                                '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>'
+
+
+                                + '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'VIEW'" + ');">' +
+                                '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a>' +
+                                '</td></tr>');
+                        }
+                    }
+                    else {
+                        if (value.IsPaid == "1" || value.IsPaid == true) {
+                            $("#users tbody").append('<tr><td style="padding-left: 20px;">' +
+                                '<input type="checkbox" id="' + value.Empid + '" class="form-control chkclass" value="' + value.Empid + '" name="Areasdelete" style="width:20px;height: 20px;"/>' + '</td><td>'
+                                + value.Empno + '</td><td>' + value.EmployeeName + '</td><td>' + value.PayGroupeName + '</td><td>' + value.Basic + '</td><td>' + value.Total_Allowances + '</td><td>'
+                                + value.Gross_Amount + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount + '</td><td>Paid</td><td>' +
+                                '<a href="#" onclick="return GetBankDetails(' + "'" + value.sEmpid + "'" + ');"  data-toggle="modal" data-target="#Bankdetail">' +
+                                '<i class="text-tertiary fa fa-info-circle fa-lg"></i></a >' + '</td><td>' +
+                                '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'PDF'" + ');"title="Click Here to Download Salary Statement">' +
+                                '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>' +
+                                '</td><td>'
+
+                                + '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'VIEW'" + ');">' +
+                                '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a>' +
+                                '</td></tr>');
+                        }
+                        else {
+                            $("#users tbody").append('<tr><td style="padding-left: 20px;">' +
+                                '<input type="checkbox" id="' + value.Empid + '" class="form-control chkclass" value="' + value.Empid + '" name="Areasdelete" style="width: 20px;height: 20px;" />' + '</td><td>'
+                                + value.Empno + '</td><td>' + value.EmployeeName + '</td><td>' + value.PayGroupeName + '</td><td>' + value.Basic + '</td><td>' + value.Total_Allowances + '</td><td>'
+                                + value.Gross_Amount + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount + '</td><td>Not Paid</td><td>' +
+                                '<a href="#" onclick="return GetBankDetails(' + "'" + value.sEmpid + "'" + ');"  data-toggle="modal" data-target="#Bankdetail">' +
+                                '<i class="text-tertiary fa fa-info-circle fa-lg"></i></a >' + '</td><td>' +
+                                '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'PDF'" + ');"title="Click Here to Download Salary Statement">' +
+                                '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>' +
+
+                                '</td><td>'
+                                + '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'VIEW'" + ');">' +
+                                '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a>' +
+                                '</td></tr>');
+                        }
+                    }
+                });
+                if (data.length > 0) {
+                    $("#pagination").show();
+                    apply_pagination(data[0].TotalCount, numberofRow);
+                    $("#Showing_no_Row").text(" " + data[0].TotalCount + " Records Found");
+                    $("#Showing_no_Row").text("Showing " + (((pagnumber - 1) * numberofRow) + 1) + " to " + (((pagnumber - 1) * numberofRow) + Coutntotlloop) + " of " + data[0].TotalCount + " entries");
+                }
+                else {
+                    $("#Showing_no_Row").text(" " + "NO" + " Records Found");
+                }
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+
+    function ViewAllEmployeeSalarySalarySearch(page) {
+        $pagination.twbsPagination('destroy');
+        ViewAllEmployeeSalarySalary(page);
+    }
+
+    function GetSearchbypagenumberResult(page) {
+        $pagination.twbsPagination('destroy');
+        ViewAllEmployeeSalarySalary(page);
+    }
+
+    function GetIndivdualSalary(Empid, Type) {
+        var jq = jQuery.noConflict();
+        var monthname = jq("#ddlmonth option:selected").text();
+        var Months = jq("#ddlmonth").val();
+        var year = jq("#ddlyear").val();
+        var status = 2;
+        window.location.href = "/Reports/PaySlip.aspx?Empid=" + Empid + "&Month=" + monthname + "&Year=" + year + "&Type=" + Type + "&Status=" + status;
+    }
+
+</script>
+

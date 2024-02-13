@@ -12,7 +12,7 @@
   <xs:element name="AllEmpSalarylistDataSet1" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="AllEmpSalarylistDataSet1" msprop:Generator_UserDSName="AllEmpSalarylistDataSet1">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="AllEmpSalaryDataset1" msprop:Generator_TableClassName="AllEmpSalaryDataset1DataTable" msprop:Generator_TableVarName="tableAllEmpSalaryDataset1" msprop:Generator_RowChangedName="AllEmpSalaryDataset1RowChanged" msprop:Generator_TablePropName="AllEmpSalaryDataset1" msprop:Generator_RowDeletingName="AllEmpSalaryDataset1RowDeleting" msprop:Generator_RowChangingName="AllEmpSalaryDataset1RowChanging" msprop:Generator_RowEvHandlerName="AllEmpSalaryDataset1RowChangeEventHandler" msprop:Generator_RowDeletedName="AllEmpSalaryDataset1RowDeleted" msprop:Generator_RowClassName="AllEmpSalaryDataset1Row" msprop:Generator_UserTableName="AllEmpSalaryDataset1" msprop:Generator_RowEvArgName="AllEmpSalaryDataset1RowChangeEvent">
+        <xs:element name="AllEmpSalaryDataset1" msprop:Generator_TableClassName="AllEmpSalaryDataset1DataTable" msprop:Generator_TableVarName="tableAllEmpSalaryDataset1" msprop:Generator_TablePropName="AllEmpSalaryDataset1" msprop:Generator_RowDeletingName="AllEmpSalaryDataset1RowDeleting" msprop:Generator_RowChangingName="AllEmpSalaryDataset1RowChanging" msprop:Generator_RowEvHandlerName="AllEmpSalaryDataset1RowChangeEventHandler" msprop:Generator_RowDeletedName="AllEmpSalaryDataset1RowDeleted" msprop:Generator_UserTableName="AllEmpSalaryDataset1" msprop:Generator_RowChangedName="AllEmpSalaryDataset1RowChanged" msprop:Generator_RowEvArgName="AllEmpSalaryDataset1RowChangeEvent" msprop:Generator_RowClassName="AllEmpSalaryDataset1Row">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="SLNO" msprop:Generator_ColumnVarNameInTable="columnSLNO" msprop:Generator_ColumnPropNameInRow="SLNO" msprop:Generator_ColumnPropNameInTable="SLNOColumn" msprop:Generator_UserColumnName="SLNO" type="xs:string" minOccurs="0" />
@@ -58,6 +58,7 @@
               <xs:element name="NETAMOUNT" msprop:Generator_ColumnVarNameInTable="columnNETAMOUNT" msprop:Generator_ColumnPropNameInRow="NETAMOUNT" msprop:Generator_ColumnPropNameInTable="NETAMOUNTColumn" msprop:Generator_UserColumnName="NETAMOUNT" type="xs:string" minOccurs="0" />
               <xs:element name="PAID_DATE" msprop:Generator_ColumnVarNameInTable="columnPAID_DATE" msprop:Generator_ColumnPropNameInRow="PAID_DATE" msprop:Generator_ColumnPropNameInTable="PAID_DATEColumn" msprop:Generator_UserColumnName="PAID_DATE" type="xs:string" minOccurs="0" />
               <xs:element name="Department" msprop:Generator_ColumnVarNameInTable="columnDepartment" msprop:Generator_ColumnPropNameInRow="Department" msprop:Generator_ColumnPropNameInTable="DepartmentColumn" msprop:Generator_UserColumnName="Department" type="xs:string" minOccurs="0" />
+              <xs:element name="Arrears" msprop:Generator_ColumnVarNameInTable="columnArrears" msprop:Generator_ColumnPropNameInRow="Arrears" msprop:Generator_ColumnPropNameInTable="ArrearsColumn" msprop:Generator_UserColumnName="Arrears" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

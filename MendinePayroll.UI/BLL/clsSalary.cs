@@ -188,6 +188,23 @@ namespace MendinePayroll.UI.BLL
 
         }
 
+        public static List<clsEmployeeInfo> Employee_List()
+        {
+            List<clsEmployeeInfo> mlist = new List<clsEmployeeInfo>();
+            DataTable DT = clsDatabase.fnDataTable("PRC_Bonus_Employee_List");
+            foreach (DataRow DR in DT.Rows)
+            {
+                mlist.Add(new clsEmployeeInfo()
+                {
+                    IDEmployee = clsHelper.fnConvert2Int(DR["Empid"]),
+                    EmployeeNo = DR["EmpNo"].ToString(),
+                    EmployeeName = DR["Employee"].ToString()
+                });
+            }
+            return mlist;
+
+        }
+
         public static List<clsDepartmentInfo> Department_List()
         {
             List<clsDepartmentInfo> mlist = new List<clsDepartmentInfo>();
@@ -198,6 +215,36 @@ namespace MendinePayroll.UI.BLL
                 {
                     IDDepartment = clsHelper.fnConvert2Long(DR["DepartmentId"]),
                     Name = DR["Department"].ToString()
+                });
+            }
+            return mlist;
+        }
+
+        public static List<clsDesignationInfo> Designation_List()
+        {
+            List<clsDesignationInfo> mlist = new List<clsDesignationInfo>();
+            DataTable DT = clsDatabase.fnDataTable("PRC_Designation_List");
+            foreach (DataRow DR in DT.Rows)
+            {
+                mlist.Add(new clsDesignationInfo
+                {
+                    IDDesignation = clsHelper.fnConvert2Long(DR["IDDesignation"]),
+                    Name = DR["Name"].ToString()
+                });
+            }
+            return mlist;
+        }
+
+        public static List<clsLocationInfo> Location_List()
+        {
+            List<clsLocationInfo> mlist = new List<clsLocationInfo>();
+            DataTable DT = clsDatabase.fnDataTable("Proc_Allstate");
+            foreach (DataRow DR in DT.Rows)
+            {
+                mlist.Add(new clsLocationInfo
+                {
+                    IDLocation = clsHelper.fnConvert2Long(DR["stateid"]),
+                    Name = DR["statename"].ToString()
                 });
             }
             return mlist;
@@ -282,9 +329,9 @@ namespace MendinePayroll.UI.BLL
             return  clsDatabase.fnDataTable("PRC_Salary_Register", IDEmployee, StartMonth, StartYear, EndMonth, EndYear);
         }
 
-        public static DataTable GetBonusList(long IDEmployee,long IDDepartment,String CompanyCode, int Year)
+        public static DataTable GetBonusList(long IDEmployee,String IDDepartment,String CompanyCode, long IDDesignation, long IDLocation, int Year)
         {
-            return clsDatabase.fnDataTable("PRC_Get_Bonus_List", IDEmployee, IDDepartment, CompanyCode, Year);
+            return clsDatabase.fnDataTable("PRC_Get_Bonus_List_Sample", IDEmployee, IDDepartment, CompanyCode, IDDesignation, IDLocation, Year);
         }
         public static DataTable SalaryYears()
         {
