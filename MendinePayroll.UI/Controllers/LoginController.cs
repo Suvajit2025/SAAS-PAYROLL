@@ -65,9 +65,9 @@ namespace MendinePayroll.UI.Controllers
             //Session["UserId"] = "1744";
             //Session["UserEmail"] = "saikat.manna@mendine.com";
 
-            //Session["UserName"] = "surajit.sarkar@mendine.com";
-            //Session["UserId"] = "3107";
-            //Session["UserEmail"] = "surajit.sarkar@mendine.com";
+            //Session["UserName"] = "atreyee.das@mendine.com";
+            //Session["UserId"] = "3114";
+            //Session["UserEmail"] = "atreyee.das@mendine.com";
 
             // Development
             Session["UserName"] = "rimpa.das@iecsl.co.in";

@@ -258,6 +258,13 @@ namespace MendinePayroll.UI.Controllers
             return Json(DataTableToJSONWithJSONNet(DT), JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public ActionResult GetEmployeeHavingLoanList()
+        {
+            DataTable DT = clsLoan.Employee_Having_Loan_List();
+            return Json(DataTableToJSONWithJSONNet(DT), JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
 
         #region Approval

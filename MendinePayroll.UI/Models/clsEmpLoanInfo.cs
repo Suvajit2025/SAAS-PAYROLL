@@ -70,4 +70,5 @@ namespace MendinePayroll.UI.Models
         public String Name { get; set; }
 
     }
+
 }
