@@ -156,5 +156,10 @@ namespace UI.BLL
 										info.Rejected, info.RejectReason, info.User);
 		}
 
+		public static DataTable Employee_Having_Loan_List()
+		{
+			return clsDatabase.fnDataTable("PRC_Get_Employee_Having_Loan");
+		}
+
 	}
 }

@@ -15,6 +15,11 @@
         width: 85px !important;
         border: 1px solid #a89d9d;
     }
+
+    .panel-body {
+        height: 400px;
+        overflow-y: scroll; /*give auto it will take based in content */
+    }
 </style>
 <section role="main" class="content-body">
     <input type="hidden" id="hdnPayGroupId" value="0" />
@@ -25,9 +30,10 @@
     <section class="panel">
         <header class="panel-heading">
             <div class="panel-actions">
+                <button type="button" id="btnShowLoanedEmp" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold" data-target="#ShowEmpHavingLoan" data-toggle="modal">Show Emp(Loan)</button>
                 <button type="button" id="btnimport" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold" data-target="#upload" data-toggle="modal">Import Leave</button>
                 <button type="button" id="btnExportToExcel" onclick="return exportToExcel();" class="mb-sm mt-xs mr-xs btn btn-sm btn btn-primary">Export to Excel</button>
-                <button type="button" id="btnCalculate" onclick="calculateAll();" style="display:none"  class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Process Salary</button>
+                <button type="button" id="btnCalculate" onclick="calculateAll();" style="display:none" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Process Salary</button>
                 <button type="button" id="btnTrash" onclick="TrashAll();" class="mb-sm mt-xs mr-xs btn btn-danger btn-tertiary text-sm text-weight-semibold">Trash Current Salary</button>
             </div>
             <h2 class="panel-title">Employee List</h2>
@@ -191,6 +197,65 @@
                 <button type="button" class="btn btn-tertiary" id="btnimportexcelfile" onclick="return ImportEmployee();">
                     <i class="fa fa-cloud-upload space-right"></i> Upload
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal upload-->
+<div class="modal fade modal-header-color zoom-anim-dialog" id="ShowEmpHavingLoan" tabindex="-1" role="dialog" aria-labelledby="">
+    <div class="modal-dialog modal-lg" role="">
+        <div class="modal-content">
+            <section class="">
+                <header class="panel-heading bg-tertiary">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="panel-title  text-white">Show Employee's Data (Loan)</h2>
+                </header>
+            </section>
+            <div class="panel-body">
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <div class="form-group mb-2">
+                            <table id="tblData" class="table tabl-dm small table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width:10%">Emp No</th>
+                                        <th style="width:15%">Name</th>
+                                        <th style="width:20%">Loan No</th>
+                                        <th style="width:10%">Loan Date</th>
+                                        <th style="width:8%">Loan Type</th>
+                                        <th style="width:10%">Amount</th>
+                                        <th style="width:7%">Tenure</th>
+                                        <th style="width:10%">Installment</th>
+                                        <th style="width:10%">Monthly Loan </th>
+                                        <th style="width:10%">Total Loan Amount</th>
+                                        @*<th style="width:15%">
+                                            Action
+
+                                        </th>*@
+
+                                    </tr>
+                                </thead>
+                                <tbody id="tblBody">
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div id="progressbar" style="display:none;">
+                    <div class="col-md-12 text-center">
+                        <img src="~/Contents/images/ajax-loader.gif" />
+                    </div>
+                </div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                
             </div>
         </div>
     </div>
@@ -730,4 +795,35 @@
         }
     }
 
+</script>
+
+
+<script>
+    $("#btnShowLoanedEmp").on('click', function () {
+        let url = "/Loan/GetEmployeeHavingLoanList";
+     
+        $.get(url, function (data) {
+            let newdata = JSON.parse(data);
+            $("#tblBody").empty();
+            newdata.map(function (obj) {
+                var row = '';
+                row = row + '<tr>';
+                row = row + '<td><label id="lblEmpNo"> ' + obj.EmpNo + '</label></td>';
+                row = row + '<td><label id="lblEmployeeName"> ' + obj.EmployeeName + '</td>';
+                row = row + '<td><label id="lblLoanNo"> ' + obj.LoanNo + '</td>';
+                row = row + '<td><label id="lblLoanDate"> ' + obj.LoanDate + '</td>';
+                row = row + '<td><label id="lblLoanType"> ' + obj.LoanType + '</td>';
+                row = row + '<td><label id="lblLoanAmount"> ' + obj.LoanAmount + '</td>';
+                row = row + '<td><label id="lblLoanTenure"> ' + obj.LoanTenure + '</td>';
+                row = row + '<td><label id="lblMonthlyInstallment"> ' + obj.MonthlyInstallment + '</td>';
+                row = row + '<td><label id="lblMonthlyLoan"> ' + obj.MonthlyLoan + '</td>';
+                row = row + '<td><label id="lblTotalLoanAmount"> ' + obj.TotalLoanAmount + '</td>';
+                //row = row + '<td><input type="hidden" id="hdIDLoan" value="' + obj.IDLoan + '"/>';
+                //row = row + '<input type="button" id="btnEdit" class="btn btn-sm btn-success" value="Edit">';
+                //row = row + '<input type="button" id="btnPreview" class="btn btn-sm btn-warning" value="Preview">';
+                row = row + '</tr>';
+                $("#tblBody").append(row);
+            });
+        });
+    });
 </script>
