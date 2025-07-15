@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigureSalaryComponentModel.cs" />
+    <Compile Include="CTCCalculationModels.cs" />
     <Compile Include="EmpbasicModel.cs" />
     <Compile Include="EmployeeBonusModel.cs" />
     <Compile Include="EmployeeLeaveModel.cs" />

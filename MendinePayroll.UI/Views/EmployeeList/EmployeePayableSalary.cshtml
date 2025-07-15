@@ -951,6 +951,7 @@
         var jq = jQuery.noConflict();
         var basic = jq(".BASIC").val();
         var gamount = $(".GROSSAMOUNT").val();
+        console.log(" loadContinuousAllowance Gross Amount = " + gamount);
         jq.ajax({
             type: "POST",
             url: '/EmployeeList/loadContinuousAllowance',

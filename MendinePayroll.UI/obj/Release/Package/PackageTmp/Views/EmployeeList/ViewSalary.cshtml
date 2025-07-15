@@ -145,35 +145,17 @@
                     <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">IFSC Code</a></div>
                     <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblIFSCCode"></label></a></div>
                     <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
-
-                    @*<div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">ESIC No</a></div>
-                        <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblEsicNo"></label></a></div>
-                        <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>*@
-
                     <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Bank Account No.</a></div>
                     <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblBankAccountNo"></label></a></div>
                     <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
-
-                    @*<div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">PRAN Account No.</a></div>
-                        <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblPRANAccountNo"></label></a></div>
-                        <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>*@
                 </div>
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                @*<button type="button" class="btn btn-quartenary" data-toggle="modal" data-target="#editpaygroup" data-dismiss="modal">
-                        <i class="fa fa-pencil-square-o space-right"></i> Edit
-                    </button>*@
             </div>
         </div>
     </div>
 </div>
-
-
-
-@*<script src="~/Content/SELECT2/select2.min.js"></script>*@
-@*<script src="~/Content/CHOSEN/chosen.jquery.min.js"></script>*@
 <script src="~/plugins/cdnjs/jquery.twbsPagination.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -286,7 +268,6 @@
         $.ajax({
             type: "POST",
             url: '/EmployeeList/GetAllEmployeeSalary',
-
             data: {
                 "Month": month, "Year": year, "Empid": Employeename, "Status": Status, "numberofRow": numberofRow, "pagenumber": pagenumber
             },
@@ -319,13 +300,16 @@
                                 + value.Gross_Amount + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount + '</td><td>Paid</td><td>' +
                                 '<a href="#" onclick="return GetBankDetails(' + "'"+value.sEmpid +"'"+ ');"  data-toggle="modal" data-target="#Bankdetail">' +
                                 '<i class="text-tertiary fa fa-info-circle fa-lg"></i></a >' + '</td><td>' +
-                                '<a href="#" onclick="return ExportToPDF(' + value.Empid + ',\'' + value.EmployeeName + '\');"title="Click Here to Download Salary Statement">' +
+                                //'<a href="#" onclick="return ExportToPDF(' + value.Empid + ',\'' + value.EmployeeName + '\');"title="Click Here to Download Salary Statement">' +
+                                //'<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>' +
+
+                                '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'PDF'" + ');"title="Click Here to Download Salary Statement">' +
                                 '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>' +
 
                                 '<a href="#" onclick="return TDFEXPORT(' + value.Empid + ',\'' + value.EmployeeName + '\');"title="Click Here to Download TDS Report">' +
                                 '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>'
 
-                                + '<a href="#" onclick="return GetIndivdualSalary(' + "'" + value.sEmpid + "'" + ');">' +
+                                + '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'VIEW'" + ');">' +
                                 '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a>' +
                                 '</td></tr>');
                         }
@@ -336,14 +320,17 @@
                                 + value.Gross_Amount + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount + '</td><td>Not Paid</td><td>' +
                                 '<a href="#" onclick="return GetBankDetails(' + "'" + value.sEmpid + "'" + ');"  data-toggle="modal" data-target="#Bankdetail">' +
                                 '<i class="text-tertiary fa fa-info-circle fa-lg"></i></a >' + '</td><td>' +
-                                '<a href="#" onclick="return ExportToPDF(' + value.Empid + ');" title="Click Here to Download Salary Statement">' +
+                                //'<a href="#" onclick="return ExportToPDF(' + value.Empid + ');" title="Click Here to Download Salary Statement">' +
+                                //'<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>'+
+
+                                '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'PDF'" + ');" title="Click Here to Download Salary Statement">' +
                                 '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>'+
 
                                 '<a href="#" onclick="return TDFEXPORT(' + value.Empid + ');" title="Click Here to Download TDS Report">' +
                                 '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>'
 
 
-                                + '<a href="#" onclick="return GetIndivdualSalary(' + "'" + value.sEmpid + "'"+ ');">' +
+                                + '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'VIEW'"+ ');">' +
                                 '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a>' +
                                 '</td></tr>');
                         }
@@ -356,12 +343,11 @@
                                 + value.Gross_Amount + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount + '</td><td>Paid</td><td>' +
                                 '<a href="#" onclick="return GetBankDetails(' + "'" + value.sEmpid + "'" + ');"  data-toggle="modal" data-target="#Bankdetail">' +
                                 '<i class="text-tertiary fa fa-info-circle fa-lg"></i></a >' + '</td><td>' +
-                                '<a href="#" onclick="return ExportToPDF(' + value.Empid + ',\'' + value.EmployeeName + '\');"title="Click Here to Download Salary Statement">' +
+                                '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'PDF'" + ');"title="Click Here to Download Salary Statement">' +
                                 '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>' +
-
                                  '</td><td>' 
 
-                                + '<a href="#" onclick="return GetIndivdualSalary(' + "'" + value.sEmpid + "'" + ');">' +
+                                + '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'VIEW'" + ');">' +
                                 '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a>' +
                                 '</td></tr>');
                         }
@@ -372,22 +358,16 @@
                                 + value.Gross_Amount + '</td><td>' + value.Total_Deduction + '</td><td>' + value.Net_Payable_Amount + '</td><td>Not Paid</td><td>' +
                                 '<a href="#" onclick="return GetBankDetails(' + "'" + value.sEmpid + "'" + ');"  data-toggle="modal" data-target="#Bankdetail">' +
                                 '<i class="text-tertiary fa fa-info-circle fa-lg"></i></a >' + '</td><td>' +
-                                '<a href="#" onclick="return ExportToPDF(' + value.Empid + ',\'' + value.EmployeeName + '\');"title="Click Here to Download Salary Statement">' +
+                                '<a href="#" onclick="return GetIndivdualSalary(' + value.Empid + ",'PDF'" + ');"title="Click Here to Download Salary Statement">' +
                                 '<i class="text-tertiary fa fa-file-pdf-o fa-lg"></i></a>' + '</td><td>' +
 
                                 '</td><td>' 
-                                + '<a href="#" onclick="return GetIndivdualSalary(' + "'" + value.sEmpid + "'"+ ');">' +
+                                + '<a href="#" onclick="return GetIndivdualSalary(' +  value.Empid + ",'VIEW'"+ ');">' +
                                 '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a>' +
                                 '</td></tr>');
                         }
                     }
                 });
-                //$("#users").DataTable({
-                //    "searching": false
-
-                //});
-
-                
                 if (data.length > 0) {
                     $("#pagination").show();
                     apply_pagination(data[0].TotalCount, numberofRow);
@@ -481,14 +461,12 @@
     }
 </script>
 <script>
-    function GetIndivdualSalary(Empid) {
+    function GetIndivdualSalary(Empid,Type) {
         var jq = jQuery.noConflict();
         var monthname = jq("#ddlmonth option:selected").text();
         var Months = jq("#ddlmonth").val();
         var year = jq("#ddlyear").val();
-        //console.log(Empid + ' ' + monthname + ' ' + year + ' ' + Username);
-        //window.location.href = '/EmployeeList/IndividualSalryview?Empid=' + Empid + '&&Month=' + month + '&&Year=' + year + '';
-        window.location.href = "/Reports/PaySlip.aspx?Empid=" + Empid + "&Month=" + monthname + "&Year=" + year;
+        window.location.href = "/Reports/PaySlip.aspx?Empid=" + Empid + "&Month=" + monthname + "&Year=" + year + "&Type=" + Type;
     }
 </script>
 

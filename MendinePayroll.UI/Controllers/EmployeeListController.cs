@@ -930,6 +930,17 @@ namespace MendinePayroll.UI.Controllers
                                 {
                                     result = 0;
                                 }
+                                else
+                                {
+
+                                    double res = Convert.ToDouble(GrossAmount);
+                                    name = Regex.Replace(data[i].PayConfigName, @"[^0-9a-zA-Z]+", "");
+                                    result = Convert.ToDouble(res) * Convert.ToDouble(ManualRate) / 100;
+                                    if (name.Equals("esic", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        result = Math.Ceiling(result);
+                                    }
+                                }
 
                                 caldata.Add(new ConfigureSalaryComponentModel
                                 {

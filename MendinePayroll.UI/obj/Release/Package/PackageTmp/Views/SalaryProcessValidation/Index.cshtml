@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section role="main" class="content-body">
+    <section class="panel">
+        <header class="panel-heading">
+            <h2 class="panel-title">Salary Process Validation</h2>
+
+        </header>
+        <div class="panel-body listpanel">
+            <div class="form-group row">
+                <div class="col-md-2 mb-3">
+                    <label>Pay Group</label>
+                </div>
+                <div class="col-md-2">
+                    <select id="ddlPayGroup" class="form-control"></select>
+                </div>
+                <div class="col-md-1 mb-3">
+                    <label>Month</label>
+                </div>
+                <div class="col-md-2">
+                    <select id="ddlMonth" class="form-control"></select>
+                </div>
+                <div class="col-md-1 mb-3">
+                    <label>Year</label>
+                </div>
+                <div class="col-md-1 mb-3">
+                    <select id="ddlYear" class="form-control"></select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button id="btnShow" class="mb-sm mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Show</button>
+                    <button id="btnValidate" class="mb-sm mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Validate</button>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <table class="table table-responsive mb-none" id="tblSalary">
+                    <thead>
+                        <tr>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>SRL</th>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Employee No</th>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Employee Name</th>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Depatment</th>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Pay Group</th>
+                            <th><i class="fa fa-credit-card text-muted space-right"></i>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ProcessSalary">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</section>
+
+<!--Modal Employee Loan Details-->
+<div class="modal" tabindex="-1" role="dialog" id="modalEmpLoanDtls">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title bold" id="modalTitle"></h4>
+                <input type="hidden" id="hdIDLoan" />
+            </div>
+            <div class="modal-body">
+                <div class="from-group row mb-2">
+                    <div class="col-md-12">
+                        <div style="min-height:400px;overflow-y:auto">
+                            <table id="tblModalLoanDetails" class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="small" style="display:none">ID Detail</th>
+                                        <th class="small" style="width:10%">Opening Amount</th>
+                                        <th class="small" style="width:10%">Installment</th>
+                                        <th class="small" style="width:10%">Interest</th>
+                                        <th class="small" style="width:10%">Closing Amount</th>
+                                        <th class="small" style="width:10%">Salary Processed</th>
+                                        <th class="small" style="width:10%">Installment Month</th>
+                                        <th class="small" style="width:10%">Installment Year</th>
+                                        <th class="small" style="width:10%">Processed</th>
+                                        <th class="small" style="width:10%">Processed Date</th>
+                                        <th class="small" style="width:10%">Received</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblModalLoanDetailsBody" style="border-top: 1px solid currentColor"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="from-group row mt-3">
+                    <div class="col-md-12">
+                        <h4 class="bold">Revised Loan Installment </h4>
+                    </div>
+                </div>
+                <div class="from-group row mt-3 pl-2">
+                    <div class="col-md-3"><label>Revised Amount </label></div>
+                    <div class="col-md-2"><input type="number" id="txtInsAmount" class="form-control form-control" /></div>
+                    <div class="col-md-2"><label>Starting Month </label></div>
+                    <div class="col-md-3"><select id="ddlMonth" class="form-control form-control-sm"></select></div>
+                    <div class="col-md-2"><button type="button" class="btn btn-warning" id="btnChangeLoan">Change Loan</button></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnSave">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/ProjectJS/SalaryProcessValidation.js"></script>
+
+

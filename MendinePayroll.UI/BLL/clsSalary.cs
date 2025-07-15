@@ -422,6 +422,13 @@ namespace MendinePayroll.UI.BLL
             string UserName = HttpContext.Current.Session["username"].ToString();
             return clsDatabase.fnDBOperation("PRC_Form16_Upload", IDForm, Employeeno, Companycode, Year, FilePathA, FileNameA, FilePathB, FileNameB, UserName);
         }
+
+        public static String AllForm16Upload(String aadharNo, String filesName, String part, int year, String filepath)
+        {
+            string UserName = HttpContext.Current.Session["username"].ToString();
+            return clsDatabase.fnDBOperation("PRC_All_Form16_Uploaded", aadharNo, filesName, part, year, filepath);
+        }
+
     }
     public class SalaryRegisterlModel
     {

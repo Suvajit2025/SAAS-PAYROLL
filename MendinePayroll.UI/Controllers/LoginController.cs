@@ -45,9 +45,9 @@ namespace MendinePayroll.UI.Controllers
         public ActionResult Index()
         {
             // Development 
-            //Session["UserName"] = "pallab.das@iecsl.co.in";
-            //Session["UserId"] = "1753";
-            //Session["UserEmail"] = "pallab.das@iecsl.co.in";
+            Session["UserName"] = "pallab.das@iecsl.co.in";
+            Session["UserId"] = "1753";
+            Session["UserEmail"] = "pallab.das@iecsl.co.in";
 
             //Session["UserName"] = "subrata.mukherjee@mendine.co.in";
             //Session["UserId"] = "1114";
@@ -70,9 +70,13 @@ namespace MendinePayroll.UI.Controllers
             //Session["UserEmail"] = "atreyee.das@mendine.com";
 
             // Development
-            Session["UserName"] = "rimpa.das@iecsl.co.in";
-            Session["UserId"] = "2993";
-            Session["UserEmail"] = "rimpa.das@iecsl.co.in";
+            //Session["UserName"] = "rimpa.das@iecsl.co.in";
+            //Session["UserId"] = "2993";
+            //Session["UserEmail"] = "rimpa.das@iecsl.co.in";
+
+            //Session["UserName"] = "md.mendinepharma@gmail.com";
+            //Session["UserId"] = "1260";
+            //Session["UserEmail"] = "md.mendinepharma@gmail.com";
 
             // Production 
             //Session["UserName"] = Request.QueryString["UserName"];

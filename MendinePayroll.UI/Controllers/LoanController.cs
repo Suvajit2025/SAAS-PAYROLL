@@ -189,9 +189,16 @@ namespace MendinePayroll.UI.Controllers
             DataTable DT = clsLoan.Change_Loan(info.LoanNo.Trim(), info.InsAmount, info.ChangeMonth, info.ChangeYear);
             return Json(DataTableToJSONWithJSONNet(DT), JsonRequestBehavior.AllowGet);
         }
-
-        // MOnth List
         [HttpGet]
+        public JsonResult Sanctioned_Realised_Due_Loan(long IDEmployee)
+        {
+            DataTable DT = clsLoan.Sanctioned_Realised_Due_Loan(IDEmployee);
+            return Json(DataTableToJSONWithJSONNet(DT), JsonRequestBehavior.AllowGet);
+        }
+        
+
+       // MOnth List
+       [HttpGet]
         public JsonResult SalaryMonthsList(String LoanNo)
         {
             var Result = clsSalaryModification.Salary_Months_List(LoanNo);

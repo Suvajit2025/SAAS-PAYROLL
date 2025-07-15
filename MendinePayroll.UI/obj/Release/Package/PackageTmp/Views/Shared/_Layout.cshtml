@@ -83,6 +83,9 @@
                         <span class="name">
                             <a role="menuitem" id="Logout" href="https://hrms.mendine.co.in/Account/ChoosePortal.aspx"> GO TO MODULE  </a> |
                             <span class="" id="useremail">@Session["UserName"]</span>
+                            <input type="hidden" id="hdUserEmail" value="@Session["UserEmail"]"/>
+                            <input type="hidden" id="hdUserID" value="@Session["UserId"]"/>
+                            <input type="hidden" id="hdUserName" value="@Session["UserName"]"/>
                         </span>
                     </div>
                 </div>
@@ -142,19 +145,54 @@
                                             </a>
                                         </li>
                                         <li>
+                                            <a href="/PTaxSlab/">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>P Tax</span>
+                                            </a>
+                                        </li>
+                                        <li style="display:none">
+                                            <a href="/Loan/Approval">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Loan Approval</span>
+                                            </a>
+                                        </li>
+                                        <li>
                                             <a href="/Loan/">
                                                 <i class="fa fa-home" aria-hidden="true"></i>
-                                                <span>Loan</span>
+                                                <span>Loan Creation</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Loan/LoanProcess">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Loan Process</span>
                                             </a>
                                         </li>
                                         <li>
                                             <a href="/Loan/List">
                                                 <i class="fa fa-home" aria-hidden="true"></i>
-                                                <span>Loan List</span>
+                                                <span>Revised Loan </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/SalaryConfiguration">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Salary Configuration</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Modification/Salary">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Salary Modification</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Annexure/Form16">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Form16 Upload</span>
                                             </a>
                                         </li>
                                         <hr class="separator" />
-
                                     </ul>
                                 </li>
                                 <li class="nav-parent">
@@ -163,15 +201,24 @@
                                         Reports
                                     </a>
                                     <ul class="nav nav-children">
-
                                         <li>
-                                            <a href="/EmployeeList/ViewSalary/">
-                                                <i class="fa fa-home" aria-hidden="true"></i>
-
-                                                <span>Active Employee Salary Reports</span>
-                                            </a>
+                                            @{
+                                                if (Session["UserName"].ToString() == "annyatama.panda@mendine.co.in")
+                                                {
+                                                    <a href="#">
+                                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                                        <span>Active Employee Salary Reports</span>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="/EmployeeList/ViewSalary/">
+                                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                                        <span>Active Employee Salary Reports</span>
+                                                    </a>
+                                                }
+                                            }
                                         </li>
-
                                         <li>
                                             <a href="/EmployeeList/ViewInActiveSalary">
                                                 <i class="fa fa-home" aria-hidden="true"></i>
@@ -179,25 +226,82 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="/EmployeeList/ViewAllEmployeeStatutoryReport">
-                                                <i class="fa fa-home" aria-hidden="true"></i>
-                                                <span>Employee Statutory Reports</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/SalaryReports/SalaryRegister">
-                                                <i class="fa fa-home" aria-hidden="true"></i>
-                                                <span>Employee Salary Register</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="/Reports/EmpWiseLoanDetails.aspx">
-                                                <i class="fa fa-home" aria-hidden="true"></i>
-                                                <span>Employee Loan Register</span>
-                                            </a>
-                                        </li>
-                                    </ul>
+                                            @{
+                                                if (Session["UserName"].ToString() == "annyatama.panda@mendine.co.in")
+                                                {
+                                                    <a href="#">
+                                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                                        <span>Employee Statutory Reports</span>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="/EmployeeList/ViewAllEmployeeStatutoryReport">
+                                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                                        <span>Employee Statutory Reports</span>
+                                                    </a>
+                                                }
 
+                                            }
+                                        </li>
+                                        <li>
+                                            <a href="/Reports/BonusReport.aspx">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Bonus Reports</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            @{
+
+                                                if (Session["UserName"].ToString() == "annyatama.panda@mendine.co.in")
+                                                {
+                                                    <a href="#">
+                                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                                        <span>Employee Salary Register</span>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="/Reports/SalaryRegister.aspx">
+                                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                                        <span>Employee Salary Register</span>
+                                                    </a>
+                                                }
+                                            }
+
+                                        </li>
+                                        <li>
+                                            <a href="/Reports/LoanRegister.aspx">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Loan Register</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Reports/LoanLedger.aspx">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Loan Ledger</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Reports/OutStandingLoanInstallment.aspx">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Outstanding Loan Installment</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Reports/TDSAnnexure1.aspx">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>TDS Annexure 1</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/Reports/UserAccessLog.aspx">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>User Access Log</span>
+                                            </a>
+                                        </li>
+
+                                    </ul>
                                 </li>
                             </ul>
                         </nav>

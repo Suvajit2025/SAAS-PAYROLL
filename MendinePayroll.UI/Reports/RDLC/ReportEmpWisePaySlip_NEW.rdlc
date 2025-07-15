@@ -23,7 +23,7 @@
         </Paragraphs>
         <rd:DefaultName>Textbox12</rd:DefaultName>
         <Top>3.36747cm</Top>
-        <Left>0.65015cm</Left>
+        <Left>0.65563cm</Left>
         <Height>0.66174cm</Height>
         <Width>14.92655cm</Width>
         <Style>
@@ -59,8 +59,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox12</rd:DefaultName>
-        <Top>7.92739cm</Top>
-        <Left>0.65011cm</Left>
+        <Top>7.32324cm</Top>
+        <Left>0.65949cm</Left>
         <Height>0.62646cm</Height>
         <Width>14.92652cm</Width>
         <ZIndex>1</ZIndex>
@@ -95,8 +95,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox74</rd:DefaultName>
-        <Top>11.6053cm</Top>
-        <Left>0.65011cm</Left>
+        <Top>12.02864cm</Top>
+        <Left>0.65559cm</Left>
         <Height>0.68819cm</Height>
         <Width>4.43224cm</Width>
         <ZIndex>2</ZIndex>
@@ -133,8 +133,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox87</rd:DefaultName>
-        <Top>11.6053cm</Top>
-        <Left>5.08235cm</Left>
+        <Top>12.02864cm</Top>
+        <Left>5.08783cm</Left>
         <Height>0.68819cm</Height>
         <Width>2.48187cm</Width>
         <ZIndex>3</ZIndex>
@@ -168,8 +168,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox88</rd:DefaultName>
-        <Top>11.60531cm</Top>
-        <Left>7.56421cm</Left>
+        <Top>12.02865cm</Top>
+        <Left>7.56969cm</Left>
         <Height>0.68819cm</Height>
         <Width>3.88739cm</Width>
         <ZIndex>4</ZIndex>
@@ -206,8 +206,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox87</rd:DefaultName>
-        <Top>11.6053cm</Top>
-        <Left>11.45161cm</Left>
+        <Top>12.02864cm</Top>
+        <Left>11.45709cm</Left>
         <Height>0.68821cm</Height>
         <Width>4.12115cm</Width>
         <ZIndex>5</ZIndex>
@@ -245,8 +245,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox118</rd:DefaultName>
-        <Top>16.2534cm</Top>
-        <Left>0.03576cm</Left>
+        <Top>17.06478cm</Top>
         <Height>0.67938cm</Height>
         <Width>15.537cm</Width>
         <ZIndex>6</ZIndex>
@@ -272,7 +271,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.3125in</Height>
+              <Height>0.23958in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -364,9 +363,9 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DSPaySlipAllowance</DataSetName>
-        <Top>4.85384in</Top>
-        <Left>0.64625cm</Left>
-        <Height>0.3125in</Height>
+        <Top>5.02051in</Top>
+        <Left>0.65173cm</Left>
+        <Height>0.23958in</Height>
         <Width>2.72361in</Width>
         <ZIndex>7</ZIndex>
         <Style>
@@ -393,7 +392,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.27604in</Height>
+              <Height>0.24479in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -536,7 +535,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.30729in</Height>
+              <Height>0.23437in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -679,7 +678,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.29688in</Height>
+              <Height>0.23438in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -965,7 +964,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.30729in</Height>
+              <Height>0.22396in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1124,8 +1123,8 @@
         </TablixRowHierarchy>
         <DataSetName>DSEmpWisePaySlipHeader</DataSetName>
         <Top>1.60018in</Top>
-        <Left>0.65011cm</Left>
-        <Height>1.46354in</Height>
+        <Left>0.65559cm</Left>
+        <Height>1.21354in</Height>
         <Width>5.87661in</Width>
         <ZIndex>8</ZIndex>
         <Style>
@@ -1152,7 +1151,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.27604in</Height>
+              <Height>0.22396in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1233,7 +1232,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Privilege Leave</Value>
+                              <Value>Leave Without Pay Amount</Value>
                               <Style>
                                 <FontStyle>Normal</FontStyle>
                                 <FontSize>9pt</FontSize>
@@ -1262,14 +1261,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="EarnedLeave">
+                    <Textbox Name="LeaveAmount2">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!EarnedLeave.Value</Value>
+                              <Value>=Fields!LeaveAmount.Value</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -1280,7 +1279,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>EarnedLeave</rd:DefaultName>
+                      <rd:DefaultName>LeaveAmount2</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1297,7 +1296,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.27604in</Height>
+              <Height>0.23437in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1378,7 +1377,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Leave Without Pay Amount</Value>
+                              <Value>Deduct Amount Due To Late</Value>
                               <Style>
                                 <FontStyle>Normal</FontStyle>
                                 <FontSize>9pt</FontSize>
@@ -1414,7 +1413,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!LeaveAmount.Value</Value>
+                              <Value>0</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -1442,7 +1441,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.29687in</Height>
+              <Height>0.21354in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1516,14 +1515,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox110">
+                    <Textbox Name="Textbox115">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Deduct Amount Due To Late</Value>
+                              <Value>Leave Consumed</Value>
                               <Style>
                                 <FontStyle>Normal</FontStyle>
                                 <FontSize>9pt</FontSize>
@@ -1536,7 +1535,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox110</rd:DefaultName>
+                      <rd:DefaultName>Textbox115</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1552,14 +1551,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="LeaveAmount">
+                    <Textbox Name="TotalLeave1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>0</Value>
+                              <Value>=Fields!TotalLeave.Value</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -1570,7 +1569,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>LeaveAmount</rd:DefaultName>
+                      <rd:DefaultName>TotalLeave1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1587,7 +1586,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.29687in</Height>
+              <Height>0.22395in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1661,14 +1660,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox115">
+                    <Textbox Name="Textbox7">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Leave Consumed</Value>
+                              <Value />
                               <Style>
                                 <FontStyle>Normal</FontStyle>
                                 <FontSize>9pt</FontSize>
@@ -1681,7 +1680,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox115</rd:DefaultName>
+                      <rd:DefaultName>Textbox7</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1697,14 +1696,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="TotalLeave">
+                    <Textbox Name="Textbox10">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!TotalLeave.Value</Value>
+                              <Value />
                               <Style>
                                 <FontSize>9pt</FontSize>
                               </Style>
@@ -1715,7 +1714,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>TotalLeave</rd:DefaultName>
+                      <rd:DefaultName>Textbox10</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1755,9 +1754,9 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DSEmpWisePaySlipHeader</DataSetName>
-        <Top>3.39542in</Top>
-        <Left>0.65011cm</Left>
-        <Height>1.14582in</Height>
+        <Top>3.77042in</Top>
+        <Left>0.65559cm</Left>
+        <Height>0.89582in</Height>
         <Width>5.87661in</Width>
         <ZIndex>9</ZIndex>
         <Style>
@@ -1770,15 +1769,15 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.2577in</Width>
+              <Width>1.25111in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.63206in</Width>
+              <Width>4.62547in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.25in</Height>
+              <Height>0.22917in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1852,7 +1851,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.2743in</Height>
+              <Height>0.22222in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1926,7 +1925,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.36805in</Height>
+              <Height>0.23263in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2020,10 +2019,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DSEmpWisePaySlipHeader</DataSetName>
-        <Top>5.47884in</Top>
-        <Left>0.61278cm</Left>
-        <Height>0.89235in</Height>
-        <Width>5.88976in</Width>
+        <Top>6.00662in</Top>
+        <Left>0.65949cm</Left>
+        <Height>0.68402in</Height>
+        <Width>5.87658in</Width>
         <ZIndex>10</ZIndex>
         <Style>
           <Border>
@@ -2043,7 +2042,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.31249in</Height>
+              <Height>0.23957in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2114,7 +2113,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.3125in</Height>
+              <Height>0.22917in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2213,9 +2212,9 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DSPaySlipDeduction</DataSetName>
-        <Top>4.85385in</Top>
-        <Left>2.97804in</Left>
-        <Height>0.62499in</Height>
+        <Top>5.02052in</Top>
+        <Left>2.9802in</Left>
+        <Height>0.46874in</Height>
         <Width>3.15297in</Width>
         <ZIndex>11</ZIndex>
         <Style>
@@ -2273,7 +2272,7 @@
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
         <Top>0.57379cm</Top>
-        <Left>0.01788cm</Left>
+        <Left>0.02336cm</Left>
         <Height>1.08189cm</Height>
         <Width>16.07736cm</Width>
         <ZIndex>12</ZIndex>
@@ -2327,7 +2326,7 @@
         </Paragraphs>
         <rd:DefaultName>Textbox4</rd:DefaultName>
         <Top>1.69095cm</Top>
-        <Left>0.01788cm</Left>
+        <Left>0.02336cm</Left>
         <Height>0.73229cm</Height>
         <Width>16.07736cm</Width>
         <ZIndex>13</ZIndex>
@@ -2362,7 +2361,7 @@
         </Paragraphs>
         <rd:DefaultName>Textbox5</rd:DefaultName>
         <Top>2.42324cm</Top>
-        <Left>0.01788cm</Left>
+        <Left>0.02336cm</Left>
         <Height>0.80312cm</Height>
         <Width>16.07736cm</Width>
         <ZIndex>14</ZIndex>
@@ -2376,15 +2375,447 @@
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
+      <Tablix Name="Tablix8">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>3.29996in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>2.57357in</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="CodeType">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!CodeType.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>CodeType</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="LeaveBalance">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!LeaveBalance.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>LeaveBalance</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="Details4" />
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>DSLeaveType</DataSetName>
+        <Top>3.42147in</Top>
+        <Left>0.25964in</Left>
+        <Height>0.25in</Height>
+        <Width>5.87353in</Width>
+        <ZIndex>15</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Tablix>
+      <Tablix Name="Tablix1">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>1.95784in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.95784in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.95784in</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.23958in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox11">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Loan Sanctioned</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox11</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox15">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Loan Realised</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox15</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox17">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Loan Due</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox17</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.20833in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="SanctionedLoanAmount">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!SanctionedLoanAmount.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>SanctionedLoanAmount</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="LoanRealized">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!LoanRealized.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>LoanRealized</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="DueLoanAmount">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!DueLoanAmount.Value</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>DueLoanAmount</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <KeepWithGroup>After</KeepWithGroup>
+            </TablixMember>
+            <TablixMember>
+              <Group Name="Details5" />
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>DSLoanDetails</DataSetName>
+        <Top>5.51704in</Top>
+        <Left>0.25964in</Left>
+        <Height>0.44791in</Height>
+        <Width>5.87352in</Width>
+        <ZIndex>16</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Tablix>
+      <Textbox Name="Textbox75">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Leave Type</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Bold</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox74</rd:DefaultName>
+        <Top>8.12609cm</Top>
+        <Left>0.65949cm</Left>
+        <Height>0.56444cm</Height>
+        <Width>8.38189cm</Width>
+        <ZIndex>17</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+          <BackgroundColor>White</BackgroundColor>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox77">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Leave Balance</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Bold</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox74</rd:DefaultName>
+        <Top>8.12609cm</Top>
+        <Left>9.04138cm</Left>
+        <Height>0.56444cm</Height>
+        <Width>6.54463cm</Width>
+        <ZIndex>18</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+          <BackgroundColor>White</BackgroundColor>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
     </ReportItems>
-    <Height>6.8125in</Height>
+    <Height>7.01714in</Height>
     <Style>
       <Border>
         <Style>Solid</Style>
       </Border>
     </Style>
   </Body>
-  <Width>6.65184in</Width>
+  <Width>6.654in</Width>
   <Page>
     <PageHeight>11.69in</PageHeight>
     <PageWidth>8.27in</PageWidth>
@@ -2601,6 +3032,62 @@
         <rd:DataSetName>DSEmpWisePayslip</rd:DataSetName>
         <rd:SchemaPath>C:\Users\Mega Dhar\Downloads\Live-Payroll-2022-Feb-07\Live-Payroll\MendinePayroll.UI\Report\DataSet\DSEmpWisePayslip.xsd</rd:SchemaPath>
         <rd:TableName>DSPaySlipDeduction</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="DSLeaveType">
+      <Query>
+        <DataSourceName>DSEmpWisePayslip</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="CodeType">
+          <DataField>CodeType</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LeaveBalance">
+          <DataField>LeaveBalance</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>DSEmpWisePayslip</rd:DataSetName>
+        <rd:SchemaPath>D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.UI\Reports\Dataset\DSEmpWisePayslip.xsd</rd:SchemaPath>
+        <rd:TableName>DSLeaveType</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="DSLoanDetails">
+      <Query>
+        <DataSourceName>DSEmpWisePayslip</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="IDEmployee">
+          <DataField>IDEmployee</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SanctionedLoanAmount">
+          <DataField>SanctionedLoanAmount</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="LoanRealized">
+          <DataField>LoanRealized</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DueLoanAmount">
+          <DataField>DueLoanAmount</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>DSEmpWisePayslip</rd:DataSetName>
+        <rd:SchemaPath>D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.UI\Reports\Dataset\DSEmpWisePayslip.xsd</rd:SchemaPath>
+        <rd:TableName>DSLoanDetails</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />

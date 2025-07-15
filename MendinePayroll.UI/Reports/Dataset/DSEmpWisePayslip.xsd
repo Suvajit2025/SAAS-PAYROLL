@@ -68,6 +68,24 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="DSLeaveType" msprop:Generator_TableClassName="DSLeaveTypeDataTable" msprop:Generator_TableVarName="tableDSLeaveType" msprop:Generator_RowChangedName="DSLeaveTypeRowChanged" msprop:Generator_TablePropName="DSLeaveType" msprop:Generator_RowDeletingName="DSLeaveTypeRowDeleting" msprop:Generator_RowChangingName="DSLeaveTypeRowChanging" msprop:Generator_RowEvHandlerName="DSLeaveTypeRowChangeEventHandler" msprop:Generator_RowDeletedName="DSLeaveTypeRowDeleted" msprop:Generator_RowClassName="DSLeaveTypeRow" msprop:Generator_UserTableName="DSLeaveType" msprop:Generator_RowEvArgName="DSLeaveTypeRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="CodeType" msdata:Caption="PayConfigName" msprop:Generator_ColumnVarNameInTable="columnCodeType" msprop:Generator_ColumnPropNameInRow="CodeType" msprop:Generator_ColumnPropNameInTable="CodeTypeColumn" msprop:Generator_UserColumnName="CodeType" type="xs:string" minOccurs="0" />
+              <xs:element name="LeaveBalance" msdata:Caption="Amount" msprop:Generator_ColumnVarNameInTable="columnLeaveBalance" msprop:Generator_ColumnPropNameInRow="LeaveBalance" msprop:Generator_ColumnPropNameInTable="LeaveBalanceColumn" msprop:Generator_UserColumnName="LeaveBalance" type="xs:long" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DSLoanDetails" msprop:Generator_TableClassName="DSLoanDetailsDataTable" msprop:Generator_TableVarName="tableDSLoanDetails" msprop:Generator_TablePropName="DSLoanDetails" msprop:Generator_RowDeletingName="DSLoanDetailsRowDeleting" msprop:Generator_RowChangingName="DSLoanDetailsRowChanging" msprop:Generator_RowEvHandlerName="DSLoanDetailsRowChangeEventHandler" msprop:Generator_RowDeletedName="DSLoanDetailsRowDeleted" msprop:Generator_UserTableName="DSLoanDetails" msprop:Generator_RowChangedName="DSLoanDetailsRowChanged" msprop:Generator_RowEvArgName="DSLoanDetailsRowChangeEvent" msprop:Generator_RowClassName="DSLoanDetailsRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="IDEmployee" msprop:Generator_ColumnVarNameInTable="columnIDEmployee" msprop:Generator_ColumnPropNameInRow="IDEmployee" msprop:Generator_ColumnPropNameInTable="IDEmployeeColumn" msprop:Generator_UserColumnName="IDEmployee" type="xs:string" minOccurs="0" />
+              <xs:element name="SanctionedLoanAmount" msprop:Generator_ColumnVarNameInTable="columnSanctionedLoanAmount" msprop:Generator_ColumnPropNameInRow="SanctionedLoanAmount" msprop:Generator_ColumnPropNameInTable="SanctionedLoanAmountColumn" msprop:Generator_UserColumnName="SanctionedLoanAmount" type="xs:decimal" minOccurs="0" />
+              <xs:element name="LoanRealized" msprop:Generator_ColumnVarNameInTable="columnLoanRealized" msprop:Generator_ColumnPropNameInRow="LoanRealized" msprop:Generator_ColumnPropNameInTable="LoanRealizedColumn" msprop:Generator_UserColumnName="LoanRealized" type="xs:decimal" minOccurs="0" />
+              <xs:element name="DueLoanAmount" msprop:Generator_ColumnVarNameInTable="columnDueLoanAmount" msprop:Generator_ColumnPropNameInRow="DueLoanAmount" msprop:Generator_ColumnPropNameInTable="DueLoanAmountColumn" msprop:Generator_UserColumnName="DueLoanAmount" type="xs:decimal" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>

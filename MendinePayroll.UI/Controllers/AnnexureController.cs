@@ -142,5 +142,31 @@ namespace MendinePayroll.UI.Controllers
         //    return View();
         //}
 
+
+        [HttpPost]
+        public JsonResult allform16upload()
+        {
+            string folderPath = Server.MapPath("/Form16");
+            string[] fileNames = Directory.GetFiles(folderPath);
+            List<string> fileList = new List<string>();
+            String Result = "";
+            foreach (string fileName in fileNames)
+            {
+                string[] parts = Path.GetFileNameWithoutExtension(fileName).Split('_');
+                string filesName = Path.GetFileName(fileName);
+                string part = parts[1].ToString();
+                string aadharNo = parts[0].ToString();
+                int year = DateTime.Now.Year;
+                String filepath = Path.Combine(Server.MapPath("/Form16Data"), filesName);
+
+                Result = clsSalary.AllForm16Upload(aadharNo, filesName, part, year, filepath);
+            }
+            if (Result == "")
+                return Json(new { success = "" }, JsonRequestBehavior.AllowGet);
+            else
+            {
+                return Json(new { error = Result }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

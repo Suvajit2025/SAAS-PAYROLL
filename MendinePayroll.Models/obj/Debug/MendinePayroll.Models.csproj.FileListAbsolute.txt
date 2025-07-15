@@ -208,3 +208,10 @@ D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayr
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.CopyComplete
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.dll
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.pdb
+D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.dll
+D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.pdb
+D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.AssemblyReference.cache
+D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.CoreCompileInputs.cache
+D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\obj\Debug\MendineP.DBBBFFCE.Up2Date
+D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.dll
+D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.pdb

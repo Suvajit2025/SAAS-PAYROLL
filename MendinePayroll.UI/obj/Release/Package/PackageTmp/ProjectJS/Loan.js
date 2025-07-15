@@ -35,7 +35,6 @@
         let txtmonthlyinstallment = $("#txtmonthlyinstallment").val();
         let tenure = Math.ceil(txtloanamount / txtmonthlyinstallment);
         $("#txttenure").val(tenure);
-        console.log(txtmonthlyinstallment);
         $("txttotalmonthlyloan").val(txtmonthlyinstallment);
     });
     

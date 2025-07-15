@@ -5,7 +5,6 @@
 }
 
 <section role="main" class="content-body">
-
     <header class="page-header">
         <h2>Employee Salary  Details</h2>
     </header>
@@ -38,7 +37,7 @@
                                 <input type="hidden" id="txtMobileall" value="0" />
                                 @*<input type="hidden" id="txtInternetall" value="0" />
 
-                            <input type="hidden" id="txtContinuousAllowance" value="0" />*@
+                                    <input type="hidden" id="txtContinuousAllowance" value="0" />*@
                                 <input type="hidden" id="txtClosingBlnc" value="0" />
 
                             </div>
@@ -151,7 +150,7 @@
                                     </div>
                                     <div class="col-sm-6 input-group btn-group" style="width:150px;">
                                         <span class="input-group-addon" id="errorStatus"><i class="fa fa-inr"></i></span>
-                                        <input type="text" class="form-control clsallowance" id="txtContinuous" />
+                                        <input type="text" class="form-control clsallowance" id="txtContinuous" readonly />
                                         <span class="field-validation-error" id="errorStatus" style="color: Red;"></span>
                                     </div>
 
@@ -166,7 +165,7 @@
                                     </div>
                                     <div class="col-sm-6 input-group btn-group" style="width:150px;">
                                         <span class="input-group-addon" id="errorStatus"><i class="fa fa-inr"></i></span>
-                                        <input type="text" class="form-control clsallowance" id="txtProduction" />
+                                        <input type="text" class="form-control clsallowance" id="txtProduction" readonly />
                                         <span class="field-validation-error" id="errorStatus" style="color: Red;"></span>
                                     </div>
 
@@ -181,7 +180,7 @@
                                     </div>
                                     <div class="col-sm-6 input-group btn-group" style="width:150px;">
                                         <span class="input-group-addon" id="errorStatus"><i class="fa fa-inr"></i></span>
-                                        <input type="text" class="form-control clsallowance" id="txtOverTime" />
+                                        <input type="text" class="form-control clsallowance" id="txtOverTime" readonly />
                                         <span class="field-validation-error" id="errorStatus" style="color: Red;"></span>
                                     </div>
 
@@ -265,7 +264,7 @@
                                     </div>
                                     <div class="col-sm-6 input-group btn-group" style="width:150px;">
                                         <span class="input-group-addon" id="errorStatus"><i class="fa fa-inr"></i></span>
-                                        <input type="text" class="form-control" id="txtTotalArrears" />
+                                        <input type="text" class="form-control" id="txtTotalArrears" readonly />
                                         <span class="field-validation-error" id="errorStatus" style="color: Red;"></span>
                                     </div>
 
@@ -281,7 +280,7 @@
                                     </div>
                                     <div class="col-sm-6 input-group btn-group" style="width:150px;">
                                         <span class="input-group-addon" id="errorStatus"><i class="fa fa-inr"></i></span>
-                                        <input type="text" class="form-control" id="txtfgrossamount" />
+                                        <input type="text" class="form-control" id="txtfgrossamount" readonly />
                                         <span class="field-validation-error" id="errorStatus" style="color: Red;"></span>
                                     </div>
 
@@ -319,12 +318,12 @@
 
 
                     @*@if (Convert.ToString(Session["UserEmail"]) == Convert.ToString(TempData["LeaveEdit"]))
-                {*@
+                        {*@
                     <tr>
 
                         <th scope="row" style="width:25%;">Leave Without Pay</th>
                         <td style="width:25%;">
-                            <input type="text" id="txtLeaveWithoutpay" class="form-control" name="LeaveWithoutPay" onchange="return LWPOnComponent();" />
+                            <input type="text" id="txtLeaveWithoutpay" class="form-control" name="LeaveWithoutPay" @*onchange="return LWPOnComponent();"*@ />
                         </td>
                         <th scope="row" style="width:25%;">Leave Amount</th>
                         <td style="width:25%;"><span id="lblLeaveWithoutPayamt"></span></td>
@@ -332,33 +331,33 @@
                     <tr>
                         <th scope="row" style="width:25%;">No of Leave Deduction Due To Late</th>
                         <td style="width:25%;">
-                            <input type="text" id="txtlatedays" class="form-control" name="latedays" onchange="return ChangeLeaveDetails(this.name, this.value);" />
+                            <input type="text" id="txtlatedays" class="form-control" name="latedays" onchange="return ChangeLeaveDetails(this.name, this.value);" readonly />
                         </td>
                         <th scope="row" style="width:25%;">Leave Amount Due To Late</th>
                         <td style="width:25%;"><span id="lbllatedaysamt"></span></td>
                     </tr>
 
                     @*}
-                else
-                {
-                    <tr>
+                        else
+                        {
+                            <tr>
 
-                        <th scope="row" style="width:25%;">Leave Without Pay</th>
-                        <td style="width:25%;">
-                            <input type="text" readonly id="txtLeaveWithoutpay" class="form-control" name="LeaveWithoutPay" onchange="return ChangeLeaveDetails(this.name, this.value);" />
-                        </td>
-                        <th scope="row" style="width:25%;">Leave Amount</th>
-                        <td style="width:25%;"><span id="lblLeaveWithoutPayamt"></span></td>
-                    </tr>
-                    <tr>
-                        <th scope="row" style="width:25%;">No of Leave Deduction Due To Late</th>
-                        <td style="width:25%;">
-                            <input type="text" readonly id="txtlatedays" class="form-control" name="latedays" onchange="return ChangeLeaveDetails(this.name, this.value);" />
-                        </td>
-                        <th scope="row" style="width:25%;">Leave Amount Due To Late</th>
-                        <td style="width:25%;"><span id="lbllatedaysamt"></span></td>
-                    </tr>
-                }*@
+                                <th scope="row" style="width:25%;">Leave Without Pay</th>
+                                <td style="width:25%;">
+                                    <input type="text" readonly id="txtLeaveWithoutpay" class="form-control" name="LeaveWithoutPay" onchange="return ChangeLeaveDetails(this.name, this.value);" />
+                                </td>
+                                <th scope="row" style="width:25%;">Leave Amount</th>
+                                <td style="width:25%;"><span id="lblLeaveWithoutPayamt"></span></td>
+                            </tr>
+                            <tr>
+                                <th scope="row" style="width:25%;">No of Leave Deduction Due To Late</th>
+                                <td style="width:25%;">
+                                    <input type="text" readonly id="txtlatedays" class="form-control" name="latedays" onchange="return ChangeLeaveDetails(this.name, this.value);" />
+                                </td>
+                                <th scope="row" style="width:25%;">Leave Amount Due To Late</th>
+                                <td style="width:25%;"><span id="lbllatedaysamt"></span></td>
+                            </tr>
+                        }*@
                     <tr>
 
                         <th scope="row" style="width:25%;" colspan="2">Absent Day</th>
@@ -380,7 +379,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </span>
-                        @Html.DropDownList("ddlMonth", Model.MonthList, new { @class = "form-control", @readonly = "readonly" })
+                        @Html.DropDownList("ddlMonth", Model.MonthList, new { @class = "form-control", @disabled = "disabled" })
 
                     </div>
                     <span id="msgPayConfigTypeedit" style="color:red;"></span>
@@ -393,7 +392,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-inr"></i>
                         </span>
-                        <input type="text" class="form-control" id="txtleaveamt" />
+                        <input type="text" class="form-control" id="txtleaveamt" readonly />
                     </div>
                     <span id="msgPayConfigNameedit" class="ms-error" style="color:red;"></span>
 
@@ -424,7 +423,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-inr"></i>
                         </span>
-                        <input type="text" class="form-control" id="txtdedamt" />
+                        <input type="text" class="form-control" id="txtdedamt" readonly />
                         <input type="hidden" id="txttotdedamount" value="0" />
                     </div>
                     <span id="msgPayConfigNameedit" class="ms-error" style="color:red;"></span>
@@ -437,7 +436,7 @@
                         <span class="input-group-addon">
                             <i class="fa fa-inr"></i>
                         </span>
-                        <input type="text" class="form-control" id="txtfinalamount" />
+                        <input type="text" class="form-control" id="txtfinalamount" readonly style="font-weight: 700;" />
                         <input type="hidden" id="txttotcalamount" value="0" />
                     </div>
                 </div>
@@ -458,22 +457,21 @@
             </div>
 
 
-</section>
+    </section>
     <!-- end: page -->
 </section>
 
 <script>
     $(document).ready(function () {
         loadallowances();
+
     });
     var qsparam = "";
     var query = window.location.search.substring(1);
     var parms = query.split('&&');
-
     for (var i = 0; i < parms.length; i++) {
         var pos = parms[i].indexOf('=');
         if (pos > 0) {
-
             var key = parms[i].substring(0, pos);
             if (key == "SearchValue") {
                 var val = parms[i].substring(pos + 1);
@@ -482,7 +480,6 @@
         }
     }
     function GetSalaryHistory(sempid) {
-
         window.location.href = '/EmployeeList/SalaryHistory?cal=' + sempid + '&&SearchValue=' + qsparam + '';
     }
 </script>
@@ -527,16 +524,13 @@
                     final = parseFloat(finalpay) - parseFloat(response[0].TotalLeaveAmount);
                     jq("#txtfinalamount").val(Math.round(final));
                 }
-
             },
             error: function (er) {
-
                 console.log(er);
             }
         });
     }
 </script>
-
 <script>
     function loadallowances() {
         var ID = 0;
@@ -546,7 +540,6 @@
             type: "POST",
             url: '/ConfigureSalaryComponent/GetPayConfigbyTypeAllowances',
             success: function (response) {
-
                 RecordLength = response.length;
                 $("#divDynamicAllowances").empty();
                 $("#divDynamicBasci").empty();
@@ -568,7 +561,7 @@
 
                             '<div class="col-sm-6 input-group btn-group" style="width:150px;">' +
                             '<span class="input-group-addon" id="errorStatus"><i class="fa fa-inr"></i></span>' +
-                            '<input type="text" class="form-control clsallowance" id="tPriceedit_' + response[ID].PayConfigId + '" />' +
+                            '<input type="text" class="form-control clsallowance" id="tPriceedit_' + response[ID].PayConfigId + '"  readonly/>' +
                             '<span class="field-validation-error" id="errorStatus" style="color: Red;"></span>' +
                             '</div>' +
                             '</div>' +
@@ -591,7 +584,7 @@
 
                             '<div class="col-sm-6 input-group btn-group" style="width:150px;">' +
                             '<span class="input-group-addon" id="errorStatus"><i class="fa fa-inr"></i></span>' +
-                            '<input type="text" class="form-control clsallowance ' + response[ID].PayConfigName.toUpperCase().replace(/[^a-z0-9\s]/gi, '').replace(/[-\s]/g, '') + '" id="tPriceedit_' + response[ID].PayConfigId + '" Value="0"/>' +
+                            '<input type="text" class="form-control clsallowance ' + response[ID].PayConfigName.toUpperCase().replace(/[^a-z0-9\s]/gi, '').replace(/[-\s]/g, '') + '" id="tPriceedit_' + response[ID].PayConfigId + '" Value="0" readonly />' +
                             '<span class="field-validation-error" id="errorStatus" style="color: Red;"></span>' +
                             '</div>' +
                             '</div>' +
@@ -652,7 +645,7 @@
                         '</div>' +
                         '<div class="col-sm-6 input-group btn-group">' +
                         '<span class="input-group-addon" id="errorStatus"><i class="fa fa-inr"></i></span>' +
-                        '<input type="text" class="form-control clsdeduction" style="width: 150px;" id="tPriceeditDeducation_' + response[ID].PayConfigId + '" value="0"  />' +
+                        '<input type="text" class="form-control clsdeduction" style="width: 150px;" id="tPriceeditDeducation_' + response[ID].PayConfigId + '" value="0" readonly  />' +
                         '<span class="field-validation-error" id="errorStatus" style="color: Red;"></span>' +
                         '</div>' +
                         '</div>' +
@@ -670,9 +663,7 @@
     }
 </script>
 <script>
-
     function loaddata() {
-
         var Empid = $("#empid").val();
         $.ajax({
             type: "POST",
@@ -806,7 +797,7 @@
                         //$("#txtfgrossamount").val(parseFloat(gamount) - parseFloat($("#txtinternet").val()));
                         //$(".GROSSAMOUNT").val(gamount);
                     }
-                    
+
                     //$("#txtinternet").val(totalAllowancess);
                     getearningdata(response[0].SalaryConfigureType);
 
@@ -856,12 +847,9 @@
                             $("#tPriceeditDeducation_" + response[ID].PayConfigId + "").val(response[ID].CalculationFormula);
                         }
                     }
-
                 }
                 var internetallownce = $(".INTERNETALLOWANCE").val();
-
                 //$("#TotalAllowance").val(parseFloat(totalAllowances) + parseFloat(internetallownce));
-                console.log(parseFloat(totalAllowances) + parseFloat(internetallownce));
                 $("#TotalAllowance").val(parseFloat(totalAllowances) + parseFloat(internetallownce));
                 $("#txtTotalArrears").val($(".ARREARS").val());
                 DynamicSubTotal(response[0].ConfigureSalaryID, SalaryConfigureType);
@@ -963,6 +951,7 @@
         var jq = jQuery.noConflict();
         var basic = jq(".BASIC").val();
         var gamount = $(".GROSSAMOUNT").val();
+        console.log(" loadContinuousAllowance Gross Amount = " + gamount);
         jq.ajax({
             type: "POST",
             url: '/EmployeeList/loadContinuousAllowance',
@@ -991,7 +980,7 @@
                     var totamount = $("#txtfinalamount").val(Math.round(totamount));
                 }
                 else {
-                    // Mayukh New 
+                    // Mayukh New
                     jq("#txtContinuous").val(response[0].ContinuousAllowance);
                     jq("#txtProduction").val(response[0].ProductionBonus);
                     jq("#txtOverTime").val(response[0].OvertimeAllowance);
@@ -1118,12 +1107,12 @@
 </script>
 <script>
     /*LWP Calculation  */
-
-    function LWPOnComponent() {
+    $("#txtLeaveWithoutpay").on('change', function () {
         let lwp = $("#txtLeaveWithoutpay").val() == '' ? 0 : parseInt($("#txtLeaveWithoutpay").val());
         let wdays = parseInt($("#lblWorkingDays").html());
         let totallowance = 0;
-
+        let totalLoss = 0;
+        let previosgross = parseFloat($("#txtfgrossamount").val());
         // allowance calculation
         $(".clsallowance").each(function (item) {
             let allowance = $(this).val() == '' ? 0 : parseInt($(this).val());
@@ -1133,15 +1122,28 @@
                 allowance = allowance - calallowance;
                 $(this).val(allowance);
                 totallowance += allowance;
+                totalLoss += calallowance
             }
         });
         let basicamount = Math.round($(".BASIC").val());
-        $("#txtfgrossamount").val(totallowance);
-        $("#TotalAllowance").val(totallowance - basicamount);
+        let Gross = 0
+        // In case all total Allowence is 0 and Gross is given
+        if (totallowance != 0) {
+            $("#txtfgrossamount").val(totallowance);
+        }
+        else {
+            Gross = parseInt($("#txtfgrossamount").val());
+            totallowance = Gross - Math.round((Gross / wdays) * lwp);
+            $("#txtfgrossamount").val(totallowance);
+        }
 
+        $("#TotalAllowance").val(totallowance - basicamount);
+        $("#lblLeaveWithoutPayamt").html(totalLoss);
+        $("#txtleaveamt").val(totalLoss);
 
         // Deduction
         // PTAX, PF, ESIC
+        let deduction = parseInt($("#tPriceeditDeducation_47").val() == "" ? "0" : $("#tPriceeditDeducation_47").val());
         let totdeduction = 0;
         $(".clsdeduction").each(function (item) {
             let deduction = $(this).val() == '' ? 0 : parseInt($(this).val());
@@ -1171,11 +1173,18 @@
                 // PF New Calculation on Basic (12 %)
                 if ($(this).attr('id') == 'tPriceeditDeducation_22') {
                     let basicamount = Math.round($(".BASIC").val());
+                    let stipned = Math.round($("#tPriceedit_33").val());
                     let oldPF = $(this).val();
                     let pfamount = oldPF;
                     // IN case PF is applicable
                     if (oldPF != 0) {
-                        pfamount = Math.ceil(basicamount * .12);
+                        // Basic Amount is not there (Some Case)
+                        if (basicamount == 0) {
+                            pfamount = Math.ceil(stipned * .12);
+                        }
+                        else {
+                            pfamount = Math.ceil(basicamount * .12);
+                        }
                         $(this).val(pfamount);
                     }
                     totdeduction += pfamount;
@@ -1193,17 +1202,34 @@
                 }
             }
         });
+
+        //
+        let loan = parseInt($("#EmployeeLoanModel_MonthlyInstallment").val() == "" ? "0" : $("#EmployeeLoanModel_MonthlyInstallment").val());
+        let tds = parseInt($("#tPriceeditDeducation_44").val() == '' ? "0" : $("#tPriceeditDeducation_44").val());
+        totdeduction = (totdeduction + deduction + totalLoss + loan + tds);
+
         $("#txtdedamt").val(totdeduction);
-        let gross = parseInt($("#txtfgrossamount").val());
-        let net = (gross - totdeduction);
+        let net = 0;
+        // Chekcing only Gross amount is given
+        if (totdeduction == 0 && lwp != 0) {
+            totdeduction = (previosgross - totallowance);
+            net = (totallowance);
+            totalLoss = totdeduction;
+        }
+        else {
+            net = (previosgross - totdeduction);
+        }
+
+        $("#lblLeaveWithoutPayamt").html(totalLoss);
+        $("#txtleaveamt").val(totalLoss);
+        $("#txtdedamt").val(totdeduction);
         $("#txtfinalamount").val(net);
-        //let pli = parseInt($("#txtPLIAmount").val() == "" ? 0 : $("#txtPLIAmount").val());
-        //let final = (net + pli);
-        //$("#txtFinalAmount").val(final);
-    }
+
+    });
 </script>
 <script>
     $("#btnSave").click(function () {
+        let users = '@Session["UserName"].ToString();'
         let param = {
             EmpNo: $("#empno").val(),
             Basic: $("#tPriceedit_9").val(),
@@ -1233,15 +1259,19 @@
             Vehical: $("#tPriceedit_28").val(),
             Food: $("#tPriceedit_29").val(),
             TDS: $("#tPriceeditDeducation_44").val(),
-            LWP: $("#txtLeaveWithoutpay").val()
+            LWP: $("#txtLeaveWithoutpay").val(),
+            Others: $("#tPriceeditDeducation_47").val(),
+            User: users,
+            Internet: $("#tPriceedit_16").val(),
+            Lodging: $("#tPriceedit_14").val(),
+            Stipned: $("#tPriceedit_33").val()
         };
         $.get("/EmployeeList/SalarySave", param, function (data) {
             if (data.a == "") {
-                alert("Salary Data successfully saved...");
+                alert("Salary successfully processed...");
             }
         });
-
-
-
     });
 </script>
+
+

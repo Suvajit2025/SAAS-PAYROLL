@@ -1,0 +1,524 @@
+﻿
+@{
+    ViewBag.Title = "EmployeeDeductionSetUp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+    <header class="page-header">
+    </header>
+    <section class="panel" style="position:relative;">
+        <header class="panel-heading">
+            <h2 class="panel-title">Emplyee Statutory Deduction Setting</h2>
+            <div class="panel-actions">
+                <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+        </header>
+        <div class="panel-body">
+            <div id="progressOverlay" style="display: none; position: absolute; top: 0; left: 0;
+                    width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 9999;
+                    justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+
+                <div style="width: 60%; background-color: #ddd; border-radius: 8px; height: 30px; margin-bottom: 10px;">
+                    <div id="progressBar" style="height: 100%; width: 0%; background-color: #28a745;
+                        text-align: center; color: white; line-height: 30px; border-radius: 8px;">
+                        0%
+                    </div>
+                </div>
+                <strong style="color:#555;">Emplyee Statutory Deduction Setting</strong>
+            </div>
+
+
+            <form role="form">
+                <div class="box-body">
+                    <div class="col-md-12">
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <input type="hidden" id="hdnEmpId" value="0" />
+                                <input type="hidden" id="hdnEmployeeId" value="@Model" />
+                                <label class="label-design" for="Status">PayConfig Name <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    <select id="ddlpayConfig" class="form-control" name="Model.PaymentTerm" value="0"></select>
+                                </div>
+                                <span id="msgPayConfigName" class="ms-error" style="color:red;"></span>
+
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">Financial Year <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <select id="FinancialYear" class="form-control" value="0"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="col-sm-12" style="margin-left:0px;">
+                                <div class="form-group">
+
+                                    <label class="label-design" for="Status">Setting Name<span class="required">*</span></label>
+                                    <input type="text" id="txtSettingName" class="form-control" placeholder="e.g. WB PTAX Slab 10,001–15,000" />
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">Setting Type<span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-list-alt"></i>
+                                    </span>
+                                    <select class="form-control" id="type" name="type">
+                                        <option value="0">-Select-</option>
+                                        <option value="SLAB">SLAB</option>
+                                        <option value="PERCENT">PERCENT</option>
+                                        <option value="FIX">FIX</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-sm">
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">Calculated ON<span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-list-alt"></i>
+                                    </span>
+                                    <select class="form-control" id="calculatedon" name="calculatedon">
+                                        <option value="0">-Select-</option>
+                                        <option value="Gross Amount">Gross Amount</option>
+                                        <option value="BASIC">BASIC</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">Effective From<span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input type="date" class="form-control" id="effectiveFrom" name="effectiveFrom" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">State<span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-list-alt"></i>
+                                    </span>
+                                    <select id="ddlState" class="form-control" value="0"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-sm">
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Lower Limit<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-arrow-down"></i>
+                                    </span>
+                                    <input type="text" id="txtlowerlimit" class="form-control" placeholder="e.g. 10001" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Upper Limit<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-arrow-up"></i>
+                                    </span>
+                                    <input type="text" id="txtupperlimit" class="form-control" placeholder="e.g. 15000" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Rate (&#8377;&nbsp;)<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-dollar"></i>
+                                    </span>
+                                    <input type="text" id="txtrate" class="form-control" placeholder="e.g. 110" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">RoundOff Type<span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-list-alt"></i>
+                                    </span>
+                                    <select class="form-control" id="RoundOfftype" name="RoundOfftype">
+                                        <option value="0">-Select-</option>
+                                        <option value="NONE">NONE</option>
+                                        <option value="ROUND_NEAREST">ROUND_NEAREST</option>
+                                        <option value="CEILING">CEILING</option>
+                                        <option value="FLOOR">FLOOR</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <div class="box-footer mt-lg" style="text-align:center;">
+                <div class="col-md-12">
+                    <button type="button" id="btnEmpCTCSave" class="btn btn-tertiary" onclick="return validateAndAddRow();" style="margin:10px;">
+                        <i class="fa fa-plus-square space-right"></i> Add Deduction Rule
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- New card for table -->
+    <section class="panel mt-3">
+        <header class="panel-heading">
+            <h2 class="panel-title">Deduction Rule List</h2>
+        </header>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>PayConfig Name</th>
+                        <th>Financial Year</th>
+                        <th>Setting Name</th>
+                        <th>Lower Limit</th>
+                        <th>Upper Limit</th>
+                        <th>Rate (₹)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="deductionTableBody"></tbody>
+            </table>
+            <div class="text-center mt-3">
+                <button type="button" class="btn btn-success" onclick="saveDeductionRules()">
+                    <i class="fa fa-save"></i> Save Deduction Rules
+                </button>
+            </div>
+        </div>
+    </section>
+</section>
+<script>
+    $(document).ready(function () {
+        loadpayConfig();
+        stateList(); 
+        loadDeductionRules(); 
+    });
+
+    function loadpayConfig() {
+        const dropdown = $("#ddlpayConfig");
+        dropdown.empty().append($('<option></option>').val('0').text('-- Select --'));
+
+        $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetPayConfigbyTypeDeducation",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $.each(response, function (index, item) {
+                        dropdown.append(
+                            $("<option></option>")
+                                .val(item.PayConfigId)
+                                .text(item.PayConfigName)
+                        );
+                    });
+                }
+                loadmasterData();
+            },
+            error: function (xhr) {
+                console.error("Error loading Pay Config:", xhr.responseText);
+                alert("Failed to load pay configuration.");
+            }
+        });
+    }
+
+    function loadmasterData(callback) {
+        const empId = 1;
+        if (!empId) {
+            console.warn("Employee ID is not set.");
+            return;
+        }
+
+        $.ajax({
+            url: '/PayrollTds/GetTDSMasterData',
+            type: 'GET',
+            data: { empId: empId },
+            dataType: 'json',
+            success: function (data) {
+                if (data && data.financialYears) {
+                    populateFinancialYearDropdown(
+                        '#FinancialYear',
+                        data.financialYears,
+                        'IDFinancialYear',
+                        'FinancialYearCode',
+                        'AssessmentYearCode'
+                    );
+                }
+                if (typeof callback === 'function') callback();
+            },
+            error: function (err) {
+                console.error('Failed to load master data:', err);
+                alert("Failed to load financial year data.");
+            }
+        });
+    }
+
+    function populateFinancialYearDropdown(selector, data, valueField, textField, dataAttrField) {
+        const dropdown = $(selector);
+        dropdown.empty().append($('<option></option>').val('0').html('-- Select --'));
+
+        $.each(data, function (i, item) {
+            dropdown.append(
+                $('<option></option>')
+                    .val(item[valueField])
+                    .html(item[textField])
+                    .attr('data-assessmentyear', item[dataAttrField])
+            );
+        });
+    }
+    function stateList() {
+        const dropdown = $("#ddlState");
+        dropdown.empty().append($('<option></option>').val('0').html('-- Select --'));
+
+        $.ajax({
+            type: "GET",
+            url: "/PTaxSlab/State_List",
+            dataType: "json",
+            contentType: "application/json",
+            success: function (res) {
+                $.each(res.d, function (data, value) {
+                    //alert(value.Name)
+                    dropdown.append($("<option></option>").val(value.IDState).html(value.Name));
+                })
+            }
+
+        });
+    }
+</script>
+<script>
+    function validateAndAddRow() {
+        const payConfigId = $("#ddlpayConfig").val();
+        const financialYearId = $("#FinancialYear").val(); 
+        const payConfigText = $("#ddlpayConfig option:selected").text();
+        const financialYearText = $("#FinancialYear option:selected").text();
+        const settingName = $("#txtSettingName").val().trim();
+        const settingType = $("#type").val().trim();
+        const lower = $("#txtlowerlimit").val().trim();
+        const upper = $("#txtupperlimit").val().trim();
+        const rate = $("#txtrate").val().trim();
+        const calculatedOn = $("#calculatedon").val();
+        const effectiveFrom = $("#effectiveFrom").val();
+        const stateId = $("#ddlState").val();
+        const roundOffType = $("#RoundOfftype").val();
+
+        if (payConfigId === "0" || financialYearId === "0" || !settingName || !lower || !upper || !rate ||
+            settingType === "0" || calculatedOn === "0" || !effectiveFrom || stateId === "0" || roundOffType === "0") {
+            alert("Please fill all required (*) fields.");
+            return;
+        }
+
+        const row = `
+        <tr>
+            <td data-payconfigid="${payConfigId}">${payConfigText}</td>
+            <td data-financialyear="${financialYearText}">${financialYearText}</td>
+            <td data-settingname="${settingName}">${settingName}</td>
+            <td data-lowerlimit="${lower}">${lower}</td>
+            <td data-upperlimit="${upper}">${upper}</td>
+            <td data-rate="${rate}">${rate}</td>
+            <td style="display:none;" data-settingtype="${settingType}">${settingType}</td>
+            <td style="display:none;" data-calculatedon="${calculatedOn}">${calculatedOn}</td>
+            <td style="display:none;" data-effectivefrom="${effectiveFrom}">${effectiveFrom}</td>
+            <td style="display:none;" data-stateid="${stateId}">${stateId}</td>
+            <td style="display:none;" data-roundofftype="${roundOffType}">${roundOffType}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-warning" onclick="editRow(this)">Edit</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="deleteRow(this)">Delete</button>
+            </td>
+        </tr>
+    `;
+
+        $("#deductionTableBody").append(row);
+
+        // Reset form
+        $("#txtSettingName").val("");
+        $("#txtlowerlimit").val("");
+        $("#txtupperlimit").val("");
+        $("#txtrate").val("");
+        $("#type").val("0");
+        $("#calculatedon").val("0");
+        $("#effectiveFrom").val("");
+        $("#ddlState").val("0");
+        $("#RoundOfftype").val("0");
+    }
+
+
+    function deleteRow(button) {
+        if (confirm("Are you sure you want to delete this row?")) {
+            $(button).closest("tr").remove();
+        }
+    }
+
+    function editRow(button) {
+        const row = $(button).closest("tr");
+        const cells = row.find("td");
+
+        $("#ddlpayConfig").val(cells.eq(0).data("payconfigid"));
+        // FinancialYear by matching its visible text
+        const fyText = cells.eq(1).text().trim();
+        $("#FinancialYear option").each(function () {
+            if ($(this).text().trim() === fyText) {
+                $(this).prop("selected", true);
+                return false; // stop the loop
+            }
+        });
+        $("#txtSettingName").val(cells.eq(2).data("settingname"));
+        $("#txtlowerlimit").val(cells.eq(3).data("lowerlimit"));
+        $("#txtupperlimit").val(cells.eq(4).data("upperlimit"));
+        $("#txtrate").val(cells.eq(5).data("rate"));
+        $("#type").val(cells.eq(6).data("settingtype"));
+        $("#calculatedon").val(cells.eq(7).data("calculatedon"));
+        //$("#effectiveFrom").val(cells.eq(8).data("effectivefrom"));
+        // ——— FIX effectiveFrom ———
+        const raw = cells.eq(8).attr("data-effectivefrom");
+        let formatted = "";
+        if (raw) {
+            // raw === "01-04-2025 00:00:00"
+            const [datePart] = raw.split(" ");          // "01-04-2025"
+            const [dd, mm, yyyy] = datePart.split("-");  // ["01","04","2025"]
+            formatted = `${yyyy}-${mm}-${dd}`;           // "2025-04-01"
+        }
+        $("#effectiveFrom").val(formatted);
+
+        $("#ddlState").val(cells.eq(9).data("stateid"));
+        //$("#RoundOfftype").val(cells.eq(10).data("roundofftype"));
+        // ——— FIX RoundOffType ———
+        const rot = cells.eq(10).attr("data-roundofftype")
+            || cells.eq(10).text().trim();
+
+        // try matching by option value
+        if ($("#RoundOfftype option[value='" + rot + "']").length) {
+            $("#RoundOfftype").val(rot);
+        } else {
+            // fallback: match by the option's text
+            $("#RoundOfftype option").filter(function () {
+                return $(this).text().trim() === rot;
+            }).prop("selected", true);
+        }
+
+        row.remove(); // Remove row after editing
+    }
+    function saveDeductionRules() {
+        const rows = $("#deductionTableBody tr");
+        if (rows.length === 0) {
+            alert("No deduction rules to save.");
+            return;
+        }
+
+        const dataToSave = [];
+
+        rows.each(function () {
+            const cells = $(this).find("td");
+            dataToSave.push({
+                PayConfigId: cells.eq(0).data("payconfigid"),
+                FinancialYear: cells.eq(1).data("financialyear"),
+                SettingName: cells.eq(2).data("settingname"),
+                LowerLimit: cells.eq(3).data("lowerlimit"),
+                UpperLimit: cells.eq(4).data("upperlimit"),
+                Rate: cells.eq(5).data("rate"),
+                SettingType: cells.eq(6).data("settingtype"),
+                CalculatedOn: cells.eq(7).data("calculatedon"),
+                EffectiveFrom: cells.eq(8).data("effectivefrom"),
+                StateId: cells.eq(9).data("stateid"),
+                RoundOffType: cells.eq(10).data("roundofftype")
+            });
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "/PayrollTds/SaveDeductionRules", // Your controller endpoint
+            data: JSON.stringify({ rules: dataToSave }),
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                alert("Deduction rules saved successfully.");
+                $("#deductionTableBody").empty();
+            },
+            error: function (xhr) {
+                console.error("Save error:", xhr.responseText);
+                alert("Failed to save deduction rules.");
+            }
+        });
+    }
+
+</script>
+
+<script>
+    function loadDeductionRules() {
+        $.ajax({
+            type: "GET",
+            url: "/PayrollTds/GetDeductionRules",
+            dataType: "json",
+            success: function (items) {
+                const tbody = $("#deductionTableBody").empty();
+                console.log(items)
+                items.forEach(item => tbody.append(renderDeductionRow(item)));
+            },
+            error: function (xhr) {
+                console.error("Error loading deduction rules:", xhr.responseText);
+                alert("Failed to load deduction rules from server.");
+            }
+        });
+    }
+    // Reusable row-builder
+    function renderDeductionRow(item) {
+        return `
+    <tr>
+      <td data-payconfigid="${item.PayConfigId}">${item.PayConfigName}</td>
+      <td data-financialyear="${item.FinancialYear}">${item.FinancialYear}</td>
+      <td data-settingname="${item.SettingName}">${item.SettingName}</td>
+      <td data-lowerlimit="${item.LowerLimit}">${item.LowerLimit}</td>
+      <td data-upperlimit="${item.UpperLimit}">${item.UpperLimit}</td>
+      <td data-rate="${item.Rate}">${item.Rate}</td>
+
+      <!-- hidden cells to carry extra data for edit/save -->
+
+      <td style="display:none;" data-settingtype="${item.SettingType}">${item.SettingType}</td>
+      <td style="display:none;" data-calculatedon="${item.CalculatedOn}">${item.CalculatedOn}</td>
+      <td style="display:none;" data-effectivefrom="${item.EffectiveFrom}">${item.EffectiveFrom}</td>
+      <td style="display:none;" data-stateid="${item.StateId}">${item.StateId}</td>
+      <td style="display:none;" data-roundofftype="${item.RoundOffType}">${item.RoundOffType}</td>
+
+      <td>
+        <button class="btn btn-sm btn-warning" onclick="editRow(this)">Edit</button>
+        <button class="btn btn-sm btn-danger"  onclick="deleteRow(this)">Delete</button>
+      </td>
+    </tr>`;
+    }
+    function BacktoEmpList() { 
+        window.location.href = "/Dashboard/Index";
+    }
+
+</script>

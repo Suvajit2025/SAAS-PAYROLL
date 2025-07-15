@@ -100,7 +100,26 @@ namespace MendinePayroll.UI.Controllers
 
 
         #region bind Allowances
+        public JsonResult GetPayConfig()
+        {
+            string message = "All";
+            List<PayConfigModel> data = new List<PayConfigModel>();
+            PayConfigModel payConfigModel = new PayConfigModel();
+            payConfigModel.PayConfigType = message;
+            string contents = JsonConvert.SerializeObject(payConfigModel);
+            HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/GetAllPayconfigbyType", contents);
+            if (response.IsSuccessStatusCode)
+            {
+                string responseString = response.Content.ReadAsStringAsync().Result;
 
+                if (!string.IsNullOrEmpty(responseString))
+                {
+                    data = JsonConvert.DeserializeObject<List<PayConfigModel>>(responseString);
+                }
+            }
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
         public JsonResult GetPayConfigbyTypeAllowances()
         {
             string message = "Allowances";

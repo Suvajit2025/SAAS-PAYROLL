@@ -107,6 +107,12 @@ namespace UI.BLL
 		{
 			return clsDatabase.fnDataTable("Payroll_PRC_Change_Loan_Installment_New", LoanNo, InsAmount, Month,Year);
 		}
+
+		public static DataTable Sanctioned_Realised_Due_Loan(long EmpId)
+		{
+			return clsDatabase.fnDataTable("PRC_GET_Loan_Sanctioned_Realised_Due_Details", EmpId);
+		}
+
 		public static double  Employee_Loan_Amount(long IDEmployeeNo)
         {
 			double Value = 0; 

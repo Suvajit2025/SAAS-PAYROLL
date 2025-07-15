@@ -40,16 +40,22 @@ namespace MendinePayroll.UI.Reports
                 string con = ConfigurationManager.ConnectionStrings["Admin"].ConnectionString;
                 DataSet DS = clsDatabase.fnDataSet("EmployeeSalary_Report_ById", empid, monthname, year, firstday, lastday);
                 DataSet DSAllowance_Deduction = clsDatabase.fnDataSet("EmployeeSalary_Allowances_ById", empid, monthname, year);
+                DataSet DSLeaveType = clsDatabase.fnDataSet("PRC_Get_Leave_Type", empid, year);
+                DataSet DSLoanDetails = clsDatabase.fnDataSet("PRC_GET_Loan_Sanctioned_Realised_Due_Details", empid);
 
                 RVViewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
                 RVViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/RDLC/ReportEmpWisePaySlip_NEW.rdlc");        
                 ReportDataSource SourceEmpWisePaySlipHeader = new ReportDataSource("DSEmpWisePaySlipHeader", DS.Tables[0]);
                 ReportDataSource SourcePaySlipAllowance = new ReportDataSource("DSPaySlipAllowance", DSAllowance_Deduction.Tables[0]);
                 ReportDataSource SourcePaySlipDeduction = new ReportDataSource("DSPaySlipDeduction", DSAllowance_Deduction.Tables[1]);
+                ReportDataSource SourceLeaveType = new ReportDataSource("DSLeaveType", DSLeaveType.Tables[0]);
+                ReportDataSource SourceLoanDetails = new ReportDataSource("DSLoanDetails", DSLoanDetails.Tables[0]);
                 RVViewer.LocalReport.DataSources.Clear();
                 RVViewer.LocalReport.DataSources.Add(SourceEmpWisePaySlipHeader);
                 RVViewer.LocalReport.DataSources.Add(SourcePaySlipAllowance);
                 RVViewer.LocalReport.DataSources.Add(SourcePaySlipDeduction);
+                RVViewer.LocalReport.DataSources.Add(SourceLeaveType);
+                RVViewer.LocalReport.DataSources.Add(SourceLoanDetails);
 
                 if (type=="PDF")
                 {

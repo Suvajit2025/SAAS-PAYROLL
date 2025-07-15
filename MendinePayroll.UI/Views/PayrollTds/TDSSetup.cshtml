@@ -1,0 +1,561 @@
+﻿
+@{
+    ViewBag.Title = "TDSSetup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .label-design {
+        font-weight: 600 !important;
+        color: #444444 !important;
+    }
+</style>
+<section role="main" class="content-body">
+    <header class="page-header">
+    </header>
+    <section class="panel" style="position:relative;">
+        <header class="panel-heading">
+            <h2 class="panel-title">TDS Financial YearWise SetUp</h2>
+            <div class="panel-actions">
+                <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+        </header>
+        <div class="panel-body">
+            <form role="form">
+                <div class="box-body">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Tax Regime Type<span class="required">*</span></label>
+                                <select id="ddlregimetype" class="form-control" value="0"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">Financial Year <span class="required">*</span></label>
+                                <select id="ddlFinancialYear" class="form-control" value="0"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">Deduction Type<span class="required">*</span></label>
+                                <select class="form-control" id="DeductionType" name="DeductionType">
+                                    <option value="0">-Select-</option>
+                                    <option value="STANDERED DEDUCTION">STANDERED DEDUCTION</option>
+                                    <option value="DEDUCTION">DEDUCTION</option>
+                                    <option value="EXEMPTION">EXEMPTION</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Code<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <input type="text" id="txtsectioncode" class="form-control" style="padding:0.3rem" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Deduction Name<span class="required">*</span></label>
+                                <div>
+                                    <input type="text" id="txtdeduction" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" style="margin-top:1rem">
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" id="lblMaxLimit" for="Status">Max Limit<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+
+                                    <input type="text" id="txtmaxlimit" class="form-control" placeholder="e.g. 0.00" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;display:none;" id="divstandered">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Standered Deduction<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+
+                                    <input type="text" id="txtstanderd" class="form-control" placeholder="e.g. 0.00" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;display:none;" id="divRebateAmount">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Rebate Amount<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+
+                                    <input type="text" id="txtrebatermount" class="form-control" placeholder="e.g. 0.00" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;display:none;" id="divCessRate">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Cess Rate(%)<span class="required">*</span></label>
+                                <div class="input-group btn-group">
+
+                                    <input type="text" id="txtcessrate" class="form-control" placeholder="e.g. 0.00" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-top:1rem; display:flex; justify-content:start; align-items:end;">
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">IsLinked PayConfig<span class="required">*</span></label>
+                                <select class="form-control" id="isLinked" name="isLinked">
+                                    <option value="0">-Select-</option>
+                                    <option value="YES">YES</option>
+                                    <option value="NO">NO</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;display:none" id="divPayConfig">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">PayConfig Name <span class="required">*</span></label>
+                                <select id="ddlpayConfig" class="form-control" value="0"></select>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Is Auto Calculated<span class="required">*</span></label>
+                                <input type="checkbox" id="IsAutoCalculated" name="IsAutoCalculated" value="1">
+                            </div>
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Is Proof Required<span class="required">*</span></label>
+                                <input type="checkbox" id="IsProofRequired" name="IsProofRequired" value="1">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+            <div class="box-footer mt-lg" style="text-align:center;">
+                <div class="col-md-12">
+                    <button type="button" id="btnEmpCTCSave" class="btn btn-tertiary" onclick="return validateAndAddRow();" style="margin:10px;">
+                        <i class="fa fa-plus-square space-right"></i> Add Tax Setup
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- New card for table -->
+    <section class="panel mt-3">
+        <header class="panel-heading">
+            <h2 class="panel-title">TDS Tax SetUp List</h2>
+        </header>
+        <div class="panel-body" style="overflow:auto; max-height:400px;">
+            <div style="min-width:1200px;">
+                <table id="tdssetupdatatable" class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Tax Regime</th>
+                            <th>Financial Year</th>
+                            <th>Section Code</th>
+                            <th>Section Name</th>
+                            <th>Maximum Limit</th>
+                            <th>Deduction Type</th>
+                            <th>Auto Calculated</th>
+                            <th>Proof Required</th>
+                            <th>Related PayConfig</th>
+                            <th>Standard Deduction</th>
+                            <th>Rebate Amount</th>
+                            <th>Cess Rate(%)</th>
+                            <th style="width: 123px; text-align:center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tdssetuptablebody" style="font-size:1.1rem"></tbody>
+                </table>
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-success" onclick="savetdssetup()">
+                        <i class="fa fa-save"></i> Save Tax Setup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</section>
+
+<script>
+    $(document).ready(function () {
+        loadpayConfig();
+        loadmasterData();
+        loadtabledata();
+    });
+    function loadpayConfig() {
+        const dropdown = $("#ddlpayConfig");
+        dropdown.empty().append($('<option></option>').val('0').text('-- Select --'));
+
+        $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetPayConfig",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $.each(response, function (index, item) {
+                        dropdown.append(
+                            $("<option></option>")
+                                .val(item.PayConfigId)
+                                .text(item.PayConfigName)
+                        );
+                    });
+                }
+                loadmasterData();
+            },
+            error: function (xhr) {
+                console.error("Error loading Pay Config:", xhr.responseText);
+                alert("Failed to load pay configuration.");
+            }
+        });
+    }
+    function loadmasterData() {
+        const empId = "0";
+        $.ajax({
+            url: '/PayrollTds/GetTDSMasterData',
+            type: 'GET',
+            data: { empId: empId },
+            dataType: 'json',
+            success: function (data) {
+                populateFinancialYearDropdown('#ddlFinancialYear', data.financialYears, 'IDFinancialYear', 'FinancialYearCode', 'AssessmentYearCode');
+                populateDropdown('#ddlregimetype', data.taxRegimes, 'RegimeId', 'RegimeName');
+            },
+            error: function (err) {
+                console.error('Failed to load master data:', err);
+            }
+        });
+    }
+    function populateFinancialYearDropdown(selector, data, valueField, textField, dataAttrField) {
+        var dropdown = $(selector);
+        dropdown.empty();
+        dropdown.append($('<option></option>').val("0").html('-- Select --'));
+        $.each(data, function (i, item) {
+            // Add assessment year as data attribute
+            dropdown.append(
+                $('<option></option>')
+                    .val(item[valueField])
+                    .html(item[textField])
+                    .attr('data-assessmentyear', item[dataAttrField])
+            );
+        });
+    }
+    function populateDropdown(selector, data, valueField, textField) {
+        var dropdown = $(selector);
+        dropdown.empty();
+        dropdown.append($('<option></option>').val("0").html('-- Select --'));
+        $.each(data, function (i, item) {
+            dropdown.append($('<option></option>').val(item[valueField]).html(item[textField]));
+        });
+    }
+</script>
+<script>
+    function loadtabledata() {
+        $.ajax({
+            type: "GET",
+            url: "/PayrollTds/GetTdsSetUpData",
+            dataType: "json",
+            success: function (items) {
+                const tbody = $("#tdssetuptablebody").empty();
+                console.log(items)
+                items.forEach(item => tbody.append(renderDeductionRow(item)));
+            },
+            error: function (xhr) {
+                console.error("Error loading deduction rules:", xhr.responseText);
+                alert("Failed to load deduction rules from server.");
+            }
+        });
+    }
+    function renderDeductionRow(item) {
+        return `
+            <tr>
+                <td>${item.RegimeName}</td>
+                <td>${item.FinancialYear}</td>
+                <td>${item.SectionCode}</td>
+                <td>${item.DeductionName}</td>
+                <td>${item.MaxLimit != null ? item.MaxLimit.toFixed(2) : '-'}</td>
+                <td>${item.DeductionType}</td>
+                <td>${item.AutoCalculated}</td>
+                <td>${item.ProofRequired}</td>
+                <td>${item.PayConfigName ?? '-'}</td>
+                <td>${item.StandardDeduction != null ? item.StandardDeduction.toFixed(2) : '-'}</td>
+                <td>${item.RebateAmount != null ? item.RebateAmount.toFixed(2) : '-'}</td>
+                <td>${item.CessRate != null ? parseFloat(item.CessRate).toFixed(2) : '-'}</td>
+                <td>
+                <input type="hidden" class="hdnIsLinked" value="${item.IsLinked}" />
+                  <button class="btn btn-sm btn-warning" onclick="editRow(this)">Edit</button>
+                  <button class="btn btn-sm btn-danger"  onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        `;
+    }
+
+</script>
+<script>
+    function editRow(btn) {
+        const row = $(btn).closest("tr");
+
+        // Get values from row cells (based on column order)
+        const regime = row.find("td:eq(0)").text().trim();
+        const finYear = row.find("td:eq(1)").text().trim();
+        const sectionCode = row.find("td:eq(2)").text().trim();
+        const deductionName = row.find("td:eq(3)").text().trim();
+        const maxLimit = row.find("td:eq(4)").text().trim();
+        const deductionType = row.find("td:eq(5)").text().trim();
+        const autoCalculated = row.find("td:eq(6)").text().trim();
+        const proofRequired = row.find("td:eq(7)").text().trim();
+        const payConfig = row.find("td:eq(8)").text().trim();
+        const stdDeduction = row.find("td:eq(9)").text().trim();
+        const rebateAmount = row.find("td:eq(10)").text().trim();
+        const cessRate = row.find("td:eq(11)").text().replace('%', '').trim();
+
+        // Fill dropdowns & inputs
+        $("#ddlregimetype option").filter(function () {
+            return $(this).text().trim() === regime;
+        }).prop("selected", true);
+
+        $("#ddlFinancialYear option").filter(function () {
+            return $(this).text().trim() === finYear;
+        }).prop("selected", true);
+
+        $("#txtsectioncode").val(sectionCode);
+        $("#txtdeduction").val(deductionName);
+        $("#txtmaxlimit").val(maxLimit);
+        $("#DeductionType").val(deductionType);
+
+        $("#txtrebatermount").val(rebateAmount);
+        $("#txtcessrate").val(cessRate);
+        $("#txtstanderd").val(stdDeduction); // if `#txtstanderd` exists
+
+        // ✅ Get IsLinked from hidden field
+        const isLinked = row.find(".hdnIsLinked").val();
+        // ✅ Set IsLinked dropdown
+        $("#isLinked").val(isLinked.toUpperCase());
+
+        // Manually control PayConfig visibility
+        if (isLinked.toUpperCase() === "YES") {
+            $("#divPayConfig").show();
+            $("#ddlpayConfig option").filter(function () {
+                return $(this).text().trim() === payConfig;
+            }).prop("selected", true);
+        } else {
+            $("#divPayConfig").hide();
+            $("#ddlpayConfig").val("0");
+        }
+
+        $("#IsAutoCalculated").prop("checked", autoCalculated.toUpperCase() === "YES");
+        $("#IsProofRequired").prop("checked", proofRequired.toUpperCase() === "YES");
+        // Handle DeductionType-specific field logic
+        if (deductionType.toUpperCase() === "STANDERED DEDUCTION") {
+            $("#lblMaxLimit").text("Rebate Limit");
+            $("#divstandered").show();
+            $("#divRebateAmount").show();
+            $("#divCessRate").show();
+        } else {
+            $("#lblMaxLimit").text("Max Limit");
+            $("#divstandered").hide();
+            $("#divRebateAmount").hide();
+            $("#divCessRate").hide();
+        }
+        row.remove();
+    }
+
+</script>
+<script>
+    function validateAndAddRow() {
+        const regimeText = $("#ddlregimetype option:selected").text().trim();
+        const regimeVal = $("#ddlregimetype").val();
+
+        const assessmentyeartext = $("#ddlFinancialYear option:selected").data("assessmentyear");
+        const finYearText = $("#ddlFinancialYear option:selected").text().trim();
+        const finYearVal = $("#ddlFinancialYear").val();
+
+        const sectionCode = $("#txtsectioncode").val().trim();
+        const deductionName = $("#txtdeduction").val().trim();
+        const maxLimit = $("#txtmaxlimit").val().trim();
+        const deductionType = $("#DeductionType").val();
+
+        const standeredAmt = $("#txtstanderd").val().trim();
+        const rebateAmount = $("#txtrebatermount").val().trim();
+        const cessRate = $("#txtcessrate").val().trim();
+
+        const isLinked = $("#isLinked").val();
+        const payConfigText = $("#ddlpayConfig option:selected").text().trim();
+        const payConfigVal = $("#ddlpayConfig").val();
+
+        const isAutoCalculated = $("#IsAutoCalculated").is(":checked") ? "YES" : "NO";
+        const isProofRequired = $("#IsProofRequired").is(":checked") ? "YES" : "NO";
+
+        // Validation
+        if (regimeVal === "0" || finYearVal === "0" || deductionType === "0" || !sectionCode || !deductionName || !maxLimit) {
+            alert("Please fill all required fields.");
+            return false;
+        }
+
+        if (deductionType === "STANDERED DEDUCTION") {
+            if (!rebateAmount || !cessRate || !standeredAmt) {
+                alert("Rebate Amount and Cess Rate and standered deduction amount are required for Standard Deduction.");
+                return false;
+            }
+        }
+
+        if (isLinked === "YES" && (payConfigVal === "0" || payConfigVal === "")) {
+            alert("Please select PayConfig.");
+            return false;
+        }
+
+        const finalPayConfig = isLinked === "YES" ? payConfigText : "-";
+
+        // Add row to table
+        const newRow = `
+            <tr>
+                <td data-regimeTypeId="${regimeVal}">${regimeText}</td>
+                <td>${finYearText}<input type="hidden" name="FinancialYear" value="${finYearVal}"/></td>
+                <td>${sectionCode}</td>
+                <td>${deductionName}</td>
+                <td>${parseFloat(maxLimit).toFixed(2)}</td>
+                <td>${deductionType}</td>
+                <td>${isAutoCalculated}</td>
+                <td>${isProofRequired}</td>
+                <td>${finalPayConfig}<input type="hidden" class="hdnIsLinked" value="${isLinked}"/></td>
+
+                <td>${deductionType === "STANDERED DEDUCTION" ? parseFloat(standeredAmt).toFixed(2) : '-'}</td>
+                <td>${deductionType === "STANDERED DEDUCTION" ? parseFloat(rebateAmount).toFixed(2) : '-'}</td>
+                <td>${deductionType === "STANDERED DEDUCTION" ? parseFloat(cessRate).toFixed(2) : '-'}</td>
+                <td style="display:none;" data-assessmentyeartext="${assessmentyeartext}">${assessmentyeartext}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick="editRow(this)">Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        `;
+        $("#tdssetuptablebody").append(newRow);
+
+        // Reset Form Fields
+        $("#txtsectioncode, #txtdeduction, #txtmaxlimit,#txtstanderd, #txtrebatermount, #txtcessrate").val("");
+        $("#isLinked").val("0");
+        $("#ddlpayConfig").val("0").parent().parent().hide();
+        $("#IsAutoCalculated").prop("checked", false);
+        $("#IsProofRequired").prop("checked", false);
+        $("#DeductionType").val("0");
+        $("#lblMaxLimit").text("Max Limit");
+        $("#divRebateAmount, #divCessRate").hide();
+
+        return false;
+    }
+
+    // Show/hide logic
+    $(document).ready(function () {
+        $("#DeductionType").change(function () {
+            const type = $(this).val();
+            if (type === "STANDERED DEDUCTION") {
+                $("#lblMaxLimit").text("Rebate Limit");
+                $("#divstandered").show();
+                $("#divRebateAmount").show();
+                $("#divCessRate").show();
+            } else {
+                $("#lblMaxLimit").text("Max Limit");
+                $("#divRebateAmount, #divCessRate,#divstandered").hide();
+                $("#txtrebatermount, #txtcessrate,#txtstanderd").val("");
+            }
+        });
+
+        $("#isLinked").change(function () {
+            if ($(this).val() === "YES") {
+                $("#divPayConfig").show();
+            } else {
+                $("#divPayConfig").hide();
+                $("#ddlpayConfig").val("0");
+            }
+        });
+    });
+</script>
+<script>
+    function savetdssetup() {
+        const rows = $("#tdssetuptablebody tr");
+        const data = [];
+
+        if (rows.length === 0) {
+            alert("No rows to save.");
+            return;
+        }
+
+        rows.each(function () {
+            const cells = $(this).find("td");
+
+            // Get RegimeId from RegimeName
+            const regimeText = cells.eq(0).text().trim();
+            const regimeId = $("#ddlregimetype option").filter(function () {
+                return $(this).text().trim() === regimeText;
+            }).val();
+
+            // Get FinancialYearID and AssessmentYearCode
+            const finYearText = cells.eq(1).text().trim();
+            const finYearOption = $("#ddlFinancialYear option").filter(function () {
+                return $(this).text().trim() === finYearText;
+            });
+            const finYearId = finYearOption.val();
+            const assessmentYear = finYearOption.attr("data-assessmentyear");
+
+            // Get PayConfigName
+            const payConfigText = cells.eq(8).text().trim();
+            const payConfigId = payConfigText !== "-" ? $("#ddlpayConfig option").filter(function () {
+                return $(this).text().trim() === payConfigText;
+            }).val() : "0";
+
+            const isLinked = (payConfigId && payConfigId !== "0") ? "YES" : "NO";
+
+            const rowData = {
+                RegimeName: regimeText,
+                RegimeId: regimeId,
+                FinancialYear: finYearText,
+                FinancialYearId: finYearId,
+                AssessmentYear: assessmentYear,
+                SectionCode: cells.eq(2).text().trim(),
+                DeductionName: cells.eq(3).text().trim(),
+                MaxLimit: parseFloat(cells.eq(4).text().trim()),
+                DeductionType: cells.eq(5).text().trim(),
+                AutoCalculated: cells.eq(6).text().trim(),
+                ProofRequired: cells.eq(7).text().trim(),
+                PayConfigName: payConfigText,
+                PayConfigId: payConfigId,
+                IsLinked: isLinked,
+                StandardDeduction: cells.eq(9).text().trim() !== '-' ? parseFloat(cells.eq(9).text().trim()) : null,
+                RebateAmount: cells.eq(10).text().trim() !== '-' ? parseFloat(cells.eq(10).text().trim()) : null,
+                CessRate: cells.eq(11).text().trim() !== '-' ? parseFloat(cells.eq(11).text().trim()) : null
+            };
+
+            data.push(rowData);
+        });
+
+        $.ajax({
+            url: '/PayrollTds/SaveTdsSetup',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                alert("TDS Setup saved successfully.");
+            },
+            error: function (xhr, status, error) {
+                alert("Error saving TDS Setup: " + error);
+            }
+        });
+    }
+    function BacktoEmpList() {
+        window.location.href = "/Dashboard/Index";
+    }
+</script>
