@@ -611,7 +611,7 @@ namespace MendinePayroll.UI.Controllers
                 { "PTAX", inputJson["DeductPTAX"]?.ToObject<bool>() ?? false }
             };
 
-            var deductions = CalculateDeductions(payGroupId, deductionFlags, manualValuesDict, basicAmount, grossAmount);
+            var deductions = CalculateDeductions(payGroupId, deductionFlags, manualValuesDict, filteredAllowances, basicAmount, grossAmount);
             var filteredDeductions = deductions
                 .Where(x => x.ConfigValues != 0)
                 .Select(x => new outPutJson
@@ -644,7 +644,7 @@ namespace MendinePayroll.UI.Controllers
                 x => (decimal)(x.Values ?? 0)  // Explicit conversion with null check
             );
 
-            var companyContributions = GetCompanyContributionConfigs(payGroupId, basicAmount, grossAmount, companyContributionDict, manualValuesDict);
+            var companyContributions = GetCompanyContributionConfigs(payGroupId, basicAmount, grossAmount, companyContributionDict, filteredAllowances, manualValuesDict);
             decimal totalContribution = companyContributions.Sum(c => (decimal)c.Values);
 
             var contributionOutput = companyContributions
@@ -914,13 +914,22 @@ namespace MendinePayroll.UI.Controllers
             return filtered;
         }
 
-        public List<PayConfigDeduction> CalculateDeductions(int payGroupId, Dictionary<string, bool> deductionFlags, Dictionary<string, decimal> manualValuesDict, decimal basicAmount, decimal grossAmount)
+        public List<PayConfigDeduction> CalculateDeductions(int payGroupId, Dictionary<string, bool> deductionFlags, Dictionary<string, decimal> manualValuesDict, List<outPutJson> allowanceValues, decimal basicAmount, decimal grossAmount)
         {
 
             DataTable dataTable = clsDatabase.fnDataTable("ConfigationWise_Deduction", payGroupId);
             List<PayConfigDeduction> deductionConfigs = new List<PayConfigDeduction>();
             decimal totalDeductions = 0;
+            // Merge manual values + allowance values into one dictionary
+            var formulaValues = new Dictionary<string, decimal>(manualValuesDict);
 
+            foreach (var allowance in allowanceValues)
+            {
+                if (!formulaValues.ContainsKey(allowance.PayConfigName))
+                    formulaValues.Add(allowance.PayConfigName, allowance.ConfigValue);
+                else
+                    formulaValues[allowance.PayConfigName] = allowance.ConfigValue; // overwrite
+            }
             // Step 3: Loop through config rows
             foreach (DataRow row in dataTable.Rows)
             {
@@ -958,7 +967,9 @@ namespace MendinePayroll.UI.Controllers
 
                 if (!string.IsNullOrWhiteSpace(config.CalculationFormula))
                 {
-                    baseValue = EvaluateFormula(config.CalculationFormula, basicAmount, grossAmount, manualValuesDict);
+                    //baseValue = EvaluateFormula(config.CalculationFormula, basicAmount, grossAmount, manualValuesDict);
+                    baseValue = EvaluateFormula(config.CalculationFormula, basicAmount, grossAmount, formulaValues);
+
                 }
                 else
                 {
@@ -1031,7 +1042,7 @@ namespace MendinePayroll.UI.Controllers
             return deductionConfigs;
         }
 
-        public List<CompanyContributionConfig> GetCompanyContributionConfigs(int payGroupId, decimal basic, decimal gross, Dictionary<string, decimal> ContributionDict, Dictionary<string, decimal> manualValuesDict)
+        public List<CompanyContributionConfig> GetCompanyContributionConfigs(int payGroupId, decimal basic, decimal gross, Dictionary<string, decimal> ContributionDict, List<outPutJson> allowanceValues, Dictionary<string, decimal> manualValuesDict)
         {
             DataTable dtable = clsDatabase.fnDataTable("ConfigationWise_CompanyContribution", payGroupId);
 
@@ -1041,7 +1052,16 @@ namespace MendinePayroll.UI.Controllers
             {
                 dtable.Columns["ConfigValues"].ReadOnly = false;
             }
+            // Merge manual values + allowance values into one dictionary
+            var formulaValues = new Dictionary<string, decimal>(manualValuesDict);
 
+            foreach (var allowance in allowanceValues)
+            {
+                if (!formulaValues.ContainsKey(allowance.PayConfigName))
+                    formulaValues.Add(allowance.PayConfigName, allowance.ConfigValue);
+                else
+                    formulaValues[allowance.PayConfigName] = allowance.ConfigValue; // overwrite
+            }
             // Update config values from ContributionDict
             foreach (DataRow row in dtable.Rows)
             {
@@ -1076,7 +1096,8 @@ namespace MendinePayroll.UI.Controllers
 
                 if (!string.IsNullOrWhiteSpace(calculatedOn))
                 {
-                    baseAmount = EvaluateFormula(calculatedOn, basic, gross, manualValuesDict);
+                    //baseAmount = EvaluateFormula(calculatedOn, basic, gross, manualValuesDict);
+                    baseAmount = EvaluateFormula(calculatedOn, basic, gross, formulaValues);
                 }
                 else
                 {
@@ -1112,7 +1133,8 @@ namespace MendinePayroll.UI.Controllers
 
                         formula = formula.Replace("BASIC", baseAmount.ToString())
                                 .Replace("GROSS", gross.ToString())
-                                .Replace("GROSS AMOUNT", gross.ToString());
+                                .Replace("GROSS AMOUNT", gross.ToString())
+                                .Replace("Rate", rate.ToString());
 
                         foreach (var kvp in manualValuesDict)
                         {
@@ -1167,31 +1189,92 @@ namespace MendinePayroll.UI.Controllers
 
             return list;
         }
+        //private decimal EvaluateFormula(string formula, decimal basic, decimal gross, Dictionary<string, decimal> extraValues)
+        //{
+        //    try
+        //    {
+        //        // 1. Replace BASIC and GROSS using actual variables
+        //        formula = formula.Replace("BASIC", basic.ToString());
+
+        //        // 2. Replace entries from extraValues, giving priority
+        //        foreach (var kvp in extraValues)
+        //        {
+        //            formula = formula.Replace(kvp.Key, kvp.Value.ToString());
+        //        }
+
+        //        // 3. After extraValues, fallback replacement if still present
+        //        formula = formula.Replace("Gross Amount", gross.ToString())
+        //                         .Replace("GROSS", gross.ToString())
+        //                         .Replace("Stipend", gross.ToString()); // fallback if "Stipend" not provided in extraValues
+
+        //        // 4. Evaluate math
+        //        var result = new System.Data.DataTable().Compute(formula, "");
+        //        return Convert.ToDecimal(result);
+        //    }
+        //    catch
+        //    {
+        //        throw new Exception("Invalid formula: " + formula);
+        //    }
+        //}
         private decimal EvaluateFormula(string formula, decimal basic, decimal gross, Dictionary<string, decimal> extraValues)
         {
             try
             {
-                // 1. Replace BASIC and GROSS using actual variables
-                formula = formula.Replace("BASIC", basic.ToString());
+                string parsed = formula;
 
-                // 2. Replace entries from extraValues, giving priority
+                // 1. Replace dictionary values (dynamic keys like BAAAASIC, Conveyence Allowance)
                 foreach (var kvp in extraValues)
                 {
-                    formula = formula.Replace(kvp.Key, kvp.Value.ToString());
+                    // Escape spaces and special chars → replace with safe token
+                    string safeKey = kvp.Key.Replace(" ", "_");
+
+                    // Replace key in formula (using Regex for whole word match, case-insensitive)
+                    parsed = System.Text.RegularExpressions.Regex.Replace(
+                        parsed,
+                        $@"\b{System.Text.RegularExpressions.Regex.Escape(kvp.Key)}\b",
+                        kvp.Value.ToString(),
+                        System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                    );
+
+                    // Also support if already normalized in formula (spaces removed)
+                    parsed = parsed.Replace(safeKey, kvp.Value.ToString());
                 }
 
-                // 3. After extraValues, fallback replacement if still present
-                formula = formula.Replace("Gross Amount", gross.ToString())
-                                 .Replace("GROSS", gross.ToString())
-                                 .Replace("Stipend", gross.ToString()); // fallback if "Stipend" not provided in extraValues
+                // 2. Replace fallback keywords
+                parsed = parsed.Replace("Gross Amount", gross.ToString())
+                               .Replace("GROSS", gross.ToString())
+                               .Replace("Stipend", gross.ToString());
 
-                // 4. Evaluate math
-                var result = new System.Data.DataTable().Compute(formula, "");
+                // 3. Replace BASIC only if explicitly needed
+                parsed = parsed.Replace("BASIC", basic.ToString());
+
+                // 4. Handle MIN / MAX manually (since DataTable.Compute does not support them)
+                if (parsed.Contains("MIN("))
+                {
+                    var inner = parsed.Substring(parsed.IndexOf("MIN(") + 4);
+                    inner = inner.Substring(0, inner.IndexOf(")"));
+                    var parts = inner.Split(',');
+                    var v1 = Convert.ToDecimal(new System.Data.DataTable().Compute(parts[0], ""));
+                    var v2 = Convert.ToDecimal(new System.Data.DataTable().Compute(parts[1], ""));
+                    return Math.Min(v1, v2);
+                }
+                if (parsed.Contains("MAX("))
+                {
+                    var inner = parsed.Substring(parsed.IndexOf("MAX(") + 4);
+                    inner = inner.Substring(0, inner.IndexOf(")"));
+                    var parts = inner.Split(',');
+                    var v1 = Convert.ToDecimal(new System.Data.DataTable().Compute(parts[0], ""));
+                    var v2 = Convert.ToDecimal(new System.Data.DataTable().Compute(parts[1], ""));
+                    return Math.Max(v1, v2);
+                }
+
+                // 5. Final evaluate with DataTable.Compute
+                var result = new System.Data.DataTable().Compute(parsed, "");
                 return Convert.ToDecimal(result);
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception("Invalid formula: " + formula);
+                throw new Exception("Invalid formula: " + formula + " | " + ex.Message);
             }
         }
 
