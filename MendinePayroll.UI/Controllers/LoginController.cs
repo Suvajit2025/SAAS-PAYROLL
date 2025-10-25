@@ -44,11 +44,15 @@ namespace MendinePayroll.UI.Controllers
         // Development
         public ActionResult Index()
         {
-            // Development 
-            Session["UserName"] = "pallab.das@iecsl.co.in";
-            Session["UserId"] = "1753";
-            Session["UserEmail"] = "pallab.das@iecsl.co.in";
+            //Session["UserName"] = "suvajit.das@iecsl.co.in";
+            //Session["UserId"] = "3299";
+            //Session["UserEmail"] = "suvajit.das@iecsl.co.in";
 
+            // Development 
+            //Session["UserName"] = "pallab.das@iecsl.co.in";
+            //Session["UserId"] = "1753";
+            //Session["UserEmail"] = "pallab.das@iecsl.co.in";
+            //Session["CompanyId"] = "55";
             //Session["UserName"] = "subrata.mukherjee@mendine.co.in";
             //Session["UserId"] = "1114";
             //Session["UserEmail"] = "subrata.mukherjee@mendine.co.in";
@@ -79,9 +83,9 @@ namespace MendinePayroll.UI.Controllers
             //Session["UserEmail"] = "md.mendinepharma@gmail.com";
 
             // Production 
-            //Session["UserName"] = Request.QueryString["UserName"];
-            //Session["UserId"] = Request.QueryString["UserID"];
-            //Session["UserEmail"] = Request.QueryString["UserEmail"];
+            Session["UserName"] = Request.QueryString["UserName"];
+            Session["UserId"] = Request.QueryString["UserID"];
+            Session["UserEmail"] = Request.QueryString["UserEmail"];
 
             Session["ModuleURL"] = ConfigurationManager.AppSettings["ModuleURL"].ToString();
             // Access Log Data Insert 

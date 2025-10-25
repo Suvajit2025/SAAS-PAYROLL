@@ -827,9 +827,18 @@ namespace MendinePayroll.UI.Controllers
         {
             if (input == null) return null;
 
-            input = System.Text.RegularExpressions.Regex.Replace(input, @"[.\-\s]", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            // 1. Remove special characters: dot (.), hyphen (-), and spaces
+            input = System.Text.RegularExpressions.Regex.Replace(
+                input,
+                @"[.\-\s]",
+                "",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase
+            );
+
+            // 2. Convert to uppercase (culture independent)
             return input.ToUpperInvariant();
         }
+
         public static decimal RoundEmployerESICContribution(decimal contribution)
         {
             //decimal integerPart = Math.Floor(contribution);
@@ -979,7 +988,7 @@ namespace MendinePayroll.UI.Controllers
 
                 if (config.Type == "PERCENT")
                 {
-                    if (normalizedName == "ESIC" && baseValue > config.UpperLimit)
+                    if (normalizedName.Contains("ESIC") && baseValue > config.UpperLimit)
                     {
                         value = 0;
                     }
@@ -1042,7 +1051,7 @@ namespace MendinePayroll.UI.Controllers
             return deductionConfigs;
         }
 
-        public List<CompanyContributionConfig> GetCompanyContributionConfigs(int payGroupId, decimal basic, decimal gross, Dictionary<string, decimal> ContributionDict, List<outPutJson> allowanceValues, Dictionary<string, decimal> manualValuesDict)
+        public List<CompanyContributionConfig>GetCompanyContributionConfigs(int payGroupId, decimal basic, decimal gross, Dictionary<string, decimal> ContributionDict, List<outPutJson> allowanceValues, Dictionary<string, decimal> manualValuesDict)
         {
             DataTable dtable = clsDatabase.fnDataTable("ConfigationWise_CompanyContribution", payGroupId);
 

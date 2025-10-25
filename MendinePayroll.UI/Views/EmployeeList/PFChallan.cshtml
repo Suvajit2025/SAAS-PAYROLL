@@ -1,0 +1,318 @@
+﻿@model MendinePayroll.Models.EmployeeSalaryModel
+@{
+    ViewBag.Title = "PF Challan Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2>EPF ECR Challan</h2>
+    </header>
+
+    <style>
+        .Pagenum {
+            padding: 6px !important;
+            height: 31px !important;
+            width: 88px !important;
+            border: 1px solid #a89d9d;
+            float: right;
+        }
+
+        #pagination li a {
+            color: #007bff;
+            border: 1px solid #dee2e6;
+        }
+
+        #pagination li.active a {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
+
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs btn btn-sm btn-default text-sm text-weight-semibold">
+                    <i class="text-tertiary fa fa-arrow-circle-left ml-lg"></i> Back
+                </button>
+            </div>
+            <h2 class="panel-title">EPF ECR Report </h2>
+        </header>
+
+        <div class="modal-body">
+            <form class="form-inline">
+                <label>Month</label>
+                @Html.DropDownListFor(M => M.Month, Model.MonthList, new { @class = "form-control", @id = "ddlmonth", @onchange = "return reloadPFChallan(1);" })
+                <label>Year</label>
+                @Html.DropDownListFor(M => M.Year, Model.YearList, new { @class = "form-control", @id = "ddlyear", @onchange = "return reloadPFChallan(1);" })
+                <label>Employee</label>
+                @Html.DropDownListFor(M => M.EmployeeName, Model.masterModel.selectListItems, new { @class = "form-control", @id = "EmployeeName", @onchange = "return reloadPFChallan(1);" })
+
+                <button type="button" id="btnExportToCSV" onclick="exportPFChallanToCSV();" class="mb-sm mt-xs mr-xs btn btn-sm btn-primary">
+                    Export to CSV
+                </button>
+
+                <button type="button" id="btnGeneratePFFile" onclick="generatePFTextFile();" class="mb-sm mt-xs mr-xs btn btn-sm btn-success">
+                    Export to Text
+                </button>
+
+                <select class="Pagenum" onchange="GetSearchbypagenumberResult(1);" id="Pagrow" name="Numberofrow">
+                    <option selected value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <label style="float:right;" for="PageRow">PageRow&nbsp;</label>
+
+                <div class="panel-body table-responsive" id="d1">
+                    <div id="progress" style="display:none;" class="text-center">
+                        <img src="~/Contents/images/ajax-loader.gif" />
+                    </div>
+
+                    <table class="table mb-none" id="users">
+                        <thead>
+                            <tr>
+                                <th>UAN NO</th>
+                                <th>MEMBER NAME</th>
+                                <th>GROSS WAGES</th>
+                                <th>EPF WAGES</th>
+                                <th>EPS WAGES</th>
+                                <th>EDLI WAGES</th>
+                                <th>EPF CONTRI REMITTED</th>
+                                <th>EPS CONTRI REMITTED</th>
+                                <th>EPF EPS DIFF REMITTED</th>
+                                <th>NCP DAYS</th>
+                                <th>ADVANCES</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <label style="float:left" id="Showing_no_Row" class="mt-md"></label>
+                    <table style="float:right;">
+                        <tr>
+                            <td colspan="12" align="right" style="text-align:right;">
+                                <div id="divPageNumbers">
+                                    <ul id="pagination" class="pagination-sm"></ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </section>
+</section>
+
+<script src="~/plugins/cdnjs/jquery.twbsPagination.min.js"></script>
+
+<script>
+    var $pagination = $('#pagination'),
+        totalRecords = 0,
+        recPerPage = 10,
+        totalPages = 0,
+        currentPage = 1,
+        isPaginationInitialized = false;
+
+    $(document).ready(function () {
+        $("#d1").hide();
+
+        if ($pagination.data('twbs-pagination')) {
+            $pagination.twbsPagination('destroy');
+        }
+
+        $("#ddlmonth, #ddlyear, #EmployeeName").select2();
+        reloadPFChallan(1);
+    });
+
+    // -------------------------------------------------------
+    // Load PF Challan Data
+    // -------------------------------------------------------
+    function reloadPFChallan(page) {
+        currentPage = page; // store current active page
+
+        var month = $("#ddlmonth").val();
+        var year = $("#ddlyear").val();
+        var empId = $("#EmployeeName").val();
+        var rows = $("#Pagrow").val();
+
+        $.ajax({
+            type: "POST",
+            url: '/EmployeeList/GetAllEmployeePFChallan',
+            data: {
+                Month: month,
+                Year: year,
+                empParam: (empId == "0" || empId == "" ? null : empId),
+                Status: 1,
+                numberofRow: rows,
+                pagenumber: page
+            },
+            datatype: "JSON",
+            beforeSend: function () { $("#progress").show(); },
+            success: function (data) {
+                $("#progress").hide();
+                $("#d1").show();
+                $("#users tbody").empty();
+                $("#Showing_no_Row").text("");
+
+                var count = 0;
+                $.each(data, function (index, value) {
+                    count++;
+                    $("#users tbody").append(`
+                        <tr>
+                            <td>${value.UAN || ''}</td>
+                            <td>${value.EmployeeName || ''}</td>
+                            <td>${value.GROSS_WAGES || ''}</td>
+                            <td>${value.EPFWages || ''}</td>
+                            <td>${value.EPSWages || ''}</td>
+                            <td>${value.EDLIWages || ''}</td>
+                            <td>${value.EPFRemitted || ''}</td>
+                            <td>${value.EPSRemitted || ''}</td>
+                            <td>${value.EPFEPSDIFF || ''}</td>
+                            <td>${value.NCPDays || ''}</td>
+                            <td>${value.ADVANCES || ''}</td>
+                        </tr>
+                    `);
+                });
+
+                if (data.length > 0) {
+                    var totalCount = parseInt(data[0].TotalCount) || count;
+                    $("#Showing_no_Row").text(
+                        "Showing " +
+                        (((page - 1) * rows) + 1) + " to " +
+                        (((page - 1) * rows) + count) + " of " + totalCount + " entries"
+                    );
+
+                    // initialize pagination only once
+                    if (!isPaginationInitialized) {
+                        apply_pagination(totalCount, rows);
+                        isPaginationInitialized = true;
+                    }
+                } else {
+                    $("#Showing_no_Row").text("No Records Found");
+                    $pagination.twbsPagination('destroy');
+                    isPaginationInitialized = false;
+                }
+            },
+            error: function (er) {
+                $("#progress").hide();
+                console.error(er);
+            }
+        });
+    }
+
+    // -------------------------------------------------------
+    // Pagination Logic — keeps highlight on correct page
+    // -------------------------------------------------------
+    function apply_pagination(totalRecords, pageSize) {
+        $pagination.twbsPagination('destroy');
+
+        var totalPages = Math.ceil(totalRecords / pageSize);
+        var visible = totalPages > 10 ? 6 : totalPages;
+
+        $pagination.twbsPagination({
+            totalPages: totalPages,
+            visiblePages: visible,
+            startPage: currentPage,
+            initiateStartPageClick: false,
+            onPageClick: function (event, page) {
+                if (page !== currentPage) {
+                    currentPage = page;
+                    reloadPFChallan(page);
+                }
+            }
+        });
+    }
+
+    // -------------------------------------------------------
+    // When user changes number of rows per page
+    // -------------------------------------------------------
+    function GetSearchbypagenumberResult(page) {
+        if ($pagination.data('twbs-pagination')) {
+            $pagination.twbsPagination('destroy');
+            isPaginationInitialized = false;
+        }
+        reloadPFChallan(page);
+    }
+
+    // -------------------------------------------------------
+    // Export to CSV
+    // -------------------------------------------------------
+    function exportPFChallanToCSV() {
+        var month = $("#ddlmonth").val();
+        var year = $("#ddlyear").val();
+        var empId = $("#EmployeeName").val();
+
+        $("#progress").show();
+
+        $.ajax({
+            type: "POST",
+            url: '/EmployeeList/ExportPFChallanToCSV',
+            data: { Month: month, Year: year, empParam: (empId == "0" || empId == "" ? null : empId) },
+            success: function (fileName) {
+                $("#progress").hide();
+
+                if (fileName === "NODATA") {
+                    alert("No data found for the selected filters.");
+                    return;
+                }
+
+                const link = document.createElement("a");
+                link.href = '/EmployeeList/DownloadCsv?fileName=' + fileName;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+            error: function (xhr, status, error) {
+                $("#progress").hide();
+                alert("Error exporting CSV: " + error);
+            }
+        });
+    }
+
+    // -------------------------------------------------------
+    // Export PF Text File (#~# format)
+    // -------------------------------------------------------
+    function generatePFTextFile() {
+        var month = $("#ddlmonth").val();
+        var year = $("#ddlyear").val();
+        var empId = $("#EmployeeName").val();
+
+        $("#progress").show();
+
+        $.ajax({
+            type: "POST",
+            url: '/EmployeeList/ExportPFChallanToText',
+            data: { Month: month, Year: year, empParam: (empId == "0" || empId == "" ? null : empId) },
+            success: function (fileName) {
+                $("#progress").hide();
+
+                if (fileName === "NODATA") {
+                    alert("No data found for the selected filters.");
+                    return;
+                }
+
+                const link = document.createElement("a");
+                link.href = '/EmployeeList/DownloadTxt?fileName=' + fileName;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+            error: function (xhr, status, error) {
+                $("#progress").hide();
+                alert("Error exporting text file: " + error);
+            }
+        });
+    }
+
+    // -------------------------------------------------------
+    // Back to Employee List
+    // -------------------------------------------------------
+    function BacktoEmpList() {
+        window.location.href = "/EmployeeList/Index";
+    }
+</script>
+

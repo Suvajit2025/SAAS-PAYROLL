@@ -1,0 +1,277 @@
+﻿@model MendinePayroll.Models.EmployeeSalaryModel
+@{
+    ViewBag.Title = "ESIC Challan Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2>ESIC Challan Report</h2>
+    </header>
+
+    <style>
+        .Pagenum {
+            padding: 6px !important;
+            height: 31px !important;
+            width: 88px !important;
+            border: 1px solid #a89d9d;
+            float: right;
+        }
+
+        #pagination li a {
+            color: #007bff;
+            border: 1px solid #dee2e6;
+        }
+
+        #pagination li.active a {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
+
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs btn btn-sm btn-default text-sm text-weight-semibold">
+                    <i class="text-tertiary fa fa-arrow-circle-left ml-lg"></i> Back
+                </button>
+            </div>
+            <h2 class="panel-title">Employee ESIC Challan List</h2>
+        </header>
+
+        <div class="modal-body">
+            <form class="form-inline">
+                <label>Month</label>
+                @Html.DropDownListFor(M => M.Month, Model.MonthList, new { @class = "form-control", @id = "ddlmonth", @onchange = "return reloadESICChallan(1);" })
+
+                <label>Year</label>
+                @Html.DropDownListFor(M => M.Year, Model.YearList, new { @class = "form-control", @id = "ddlyear", @onchange = "return reloadESICChallan(1);" })
+
+                <label>Employee</label>
+                @Html.DropDownListFor(M => M.EmployeeName, Model.masterModel.selectListItems, new { @class = "form-control", @id = "EmployeeName", @onchange = "return reloadESICChallan(1);" })
+
+                <button type="button" id="btnExportToCSV" onclick="exportESICChallanToCSV();" class="mb-sm mt-xs mr-xs btn btn-sm btn-primary">
+                    Export to CSV
+                </button>
+
+                <select class="Pagenum" onchange="GetSearchbypagenumberResult(1);" id="Pagrow" name="Numberofrow">
+                    <option selected value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <label style="float:right;" for="PageRow">PageRow&nbsp;</label>
+
+                <div class="panel-body table-responsive" id="d1">
+                    <div id="progress" style="display:none;" class="text-center">
+                        <img src="~/Contents/images/ajax-loader.gif" />
+                    </div>
+
+                    <table class="table mb-none" id="esicTable">
+                        <thead>
+                            <tr>
+                                <th>IP Number (10 Digits)</th>
+                                <th>IP Name (Only alphabets and space)</th>
+                                <th>No. of Days for which wages paid/payable during the month</th>
+                                <th>Total Monthly Wages</th>
+                                <th>Reason Code for Zero workings days (numeric only; provide 0 for all other reasons)</th>
+                                <th>Last Working Day (Format DD/MM/YYYY or DD-MM-YYYY)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <label style="float:left" id="Showing_no_Row" class="mt-md"></label>
+                    <table style="float:right;">
+                        <tr>
+                            <td colspan="6" align="right" style="text-align:right;">
+                                <div>
+                                    <div id="divPageNumbers">
+                                        <ul id="pagination" class="pagination-sm"></ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </section>
+</section>
+
+<script src="~/plugins/cdnjs/jquery.twbsPagination.min.js"></script>
+
+<script>
+    var $pagination = $('#pagination'),
+        totalRecords = 0,
+        recPerPage = 10,
+        totalPages = 0,
+        isPaginationInitialized = false; // flag to prevent reinitialization
+
+    $(document).ready(function () {
+        $("#d1").hide();
+
+        if ($pagination.data('twbs-pagination')) {
+            $pagination.twbsPagination('destroy');
+        }
+
+        $("#ddlmonth, #ddlyear, #EmployeeName").select2();
+        reloadESICChallan(1);
+    });
+
+    // -------------------------------------------------------
+    // Load ESIC Challan Data
+    // -------------------------------------------------------
+    function reloadESICChallan(page) {
+
+        var month = $("#ddlmonth").val();
+        var year = $("#ddlyear").val();
+        var empId = $("#EmployeeName").val();
+        var rows = $("#Pagrow").val();
+        var pagnumber = page;
+
+        $.ajax({
+            type: "POST",
+            url: '/EmployeeList/GetAllEmployeeESICChallan',
+            data: {
+                Month: month,
+                Year: year,
+                empParam: (empId == "0" || empId == "" ? null : empId),
+                Status: 1,
+                numberofRow: rows,
+                pagenumber: pagnumber
+            },
+            datatype: "JSON",
+            beforeSend: function () { $("#progress").show(); },
+            success: function (data) {
+                $("#progress").hide();
+                $("#d1").show();
+                $("#esicTable tbody").empty();
+                $("#Showing_no_Row").text("");
+
+                var count = 0;
+                $.each(data, function (index, value) {
+                    count++;
+                    $("#esicTable tbody").append(`
+                        <tr>
+                            <td>${value["IP Number (10 Digits)"] ?? ''}</td>
+                            <td>${value["IP Name (Only alphabets and space)"] ?? ''}</td>
+                            <td>${value["No of Days for which wages paid/payable during the month"] ?? ''}</td>
+                            <td>${value["Total Monthly Wages"] ?? ''}</td>
+                            <td>${value["Reason Code for Zero workings days (numeric only; provide 0 for all other reasons)"] ?? ''}</td>
+                            <td>${value["Last Working Day (Format DD/MM/YYYY or DD-MM-YYYY)"] ?? ''}</td>
+                        </tr>
+                    `);
+                });
+
+                if (data.length > 0) {
+                    let totalCount = parseInt(data[0].TotalCount) || count;
+
+                    $("#Showing_no_Row").text(
+                        "Showing " +
+                        (((pagnumber - 1) * rows) + 1) + " to " +
+                        (((pagnumber - 1) * rows) + count) +
+                        " of " + totalCount + " entries"
+                    );
+
+                    // Initialize pagination only once
+                    if (!isPaginationInitialized) {
+                        apply_pagination(totalCount, rows);
+                        isPaginationInitialized = true;
+                    }
+                } else {
+                    $("#Showing_no_Row").text("No Records Found");
+                    $("#pagination").hide();
+                }
+            },
+            error: function (er) {
+                $("#progress").hide();
+                console.error(er);
+            }
+        });
+    }
+
+    // -------------------------------------------------------
+    // When user changes "rows per page"
+    // -------------------------------------------------------
+    function GetSearchbypagenumberResult(page) {
+        if ($pagination.data('twbs-pagination')) {
+            $pagination.twbsPagination('destroy');
+            isPaginationInitialized = false;
+        }
+        reloadESICChallan(page);
+    }
+
+    // -------------------------------------------------------
+    // Export to CSV
+    // -------------------------------------------------------
+    function exportESICChallanToCSV() {
+        var month = $("#ddlmonth").val();
+        var year = $("#ddlyear").val();
+        var empId = $("#EmployeeName").val();
+
+        $("#progress").show();
+
+        $.ajax({
+            type: "POST",
+            url: '/EmployeeList/ExportESICChallanToCSV',
+            data: { Month: month, Year: year, empParam: (empId == "0" || empId == "" ? null : empId) },
+            success: function (fileName) {
+                $("#progress").hide();
+
+                if (fileName === "NODATA") {
+                    alert("No data found for the selected filters.");
+                    return;
+                }
+
+                const link = document.createElement("a");
+                link.href = '/EmployeeList/DownloadCsv?fileName=' + fileName;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+            error: function (xhr, status, error) {
+                $("#progress").hide();
+                alert("Error exporting CSV: " + error);
+            }
+        });
+    }
+
+    // -------------------------------------------------------
+    // Pagination Logic (highlight stays correct)
+    // -------------------------------------------------------
+    function apply_pagination(totalRecords, recPerPage) {
+        var totalPages = Math.ceil(totalRecords / recPerPage);
+        if ($pagination.data('twbs-pagination')) {
+            $pagination.twbsPagination('destroy');
+        }
+
+        if (!totalPages || totalPages < 1) {
+            $("#pagination").hide();
+            return;
+        }
+
+        var visiblePages = totalPages > 10 ? 6 : totalPages;
+
+        $pagination.twbsPagination({
+            totalPages: totalPages,
+            visiblePages: visiblePages,
+            initiateStartPageClick: false,
+            onPageClick: function (event, page) {
+                reloadESICChallan(page);
+            }
+        });
+
+        $("#pagination").show();
+    }
+
+    // -------------------------------------------------------
+    // Back button
+    // -------------------------------------------------------
+    function BacktoEmpList() {
+        window.location.href = "/EmployeeList/Index";
+    }
+</script>
+

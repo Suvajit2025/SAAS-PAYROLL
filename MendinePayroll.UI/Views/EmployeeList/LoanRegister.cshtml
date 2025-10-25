@@ -1,0 +1,336 @@
+﻿@model MendinePayroll.Models.EmployeeSalaryModel
+@{
+    ViewBag.Title = "Loan Register Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2>Loan Register Report</h2>
+    </header>
+
+    <style>
+        .Pagenum {
+            padding: 6px !important;
+            height: 31px !important;
+            width: 88px !important;
+            border: 1px solid #a89d9d;
+            float: right;
+        }
+
+        #pagination li a {
+            color: #007bff;
+            border: 1px solid #dee2e6;
+        }
+
+        #pagination li.active a {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        /* Table Styling */
+        #loanRegister {
+            font-size: 12px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #loanRegister th, #loanRegister td {
+            padding: 4px 6px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+            #loanRegister thead th {
+                background-color: #0d6efd;
+                color: #fff;
+                font-weight: 600;
+                border: 1px solid #a89d9d;
+            }
+
+        #loanRegister thead tr:first-child th {
+            background-color: #007bff;
+            font-size: 13px;
+            text-align: center;
+            border-bottom: 2px solid #a89d9d;
+        }
+
+        #loanRegister tbody tr.subtotal-row {
+            font-weight: bold;
+            font-size: 11.5px;
+            background-color: #f9f9f9;
+        }
+
+        #loanRegister tbody tr.grandtotal-row {
+            font-weight: bold;
+            font-size: 12px;
+            background-color: #e3f2fd;
+            border-top: 2px solid #0d6efd;
+        }
+
+        /* ---------- FULL PAGE LOADER ---------- */
+        #pageLoader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loader-spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #0E7777;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        .loader-text {
+            margin-top: 12px;
+            font-weight: 600;
+            color: #0E7777;
+            font-size: 14px;
+        }
+
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs btn btn-sm btn-default text-sm text-weight-semibold">
+                    <i class="text-tertiary fa fa-arrow-circle-left ml-lg"></i> Back
+                </button>
+            </div>
+            <h2 class="panel-title">Employee Loan Register List</h2>
+        </header>
+
+        <div class="modal-body">
+            <form class="form-inline">
+                <label>Financial Year</label>
+                @Html.DropDownListFor(
+                    m => m.Year,
+                    Model.YearList,
+                    new { @class = "form-control", @id = "ddlyear", @onchange = "return reloadLoanRegister(1);" }
+                )
+
+                <label>Employee</label>
+                @Html.DropDownListFor(
+                    M => M.EmployeeName,
+                    Model.masterModel.selectListItems,
+                    new { @class = "form-control", @id = "EmployeeName", @onchange = "return reloadLoanRegister(1);" }
+                )
+
+                <button type="button" id="btnExportToCSV" onclick="exportLoanRegisterToCSV();" class="mb-sm mt-xs mr-xs btn btn-sm btn-primary">
+                    Export to CSV
+                </button>
+
+                <select class="Pagenum" onchange="GetSearchbypagenumberResult(1);" id="Pagrow" name="Numberofrow">
+                    <option selected value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <label style="float:right;" for="PageRow">PageRow&nbsp;</label>
+
+                <div class="panel-body table-responsive" id="d1">
+                    <table class="table table-bordered mb-none" id="loanRegister">
+                        <thead id="loanHeader" class="thead-light text-center"></thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <label style="float:left" id="Showing_no_Row" class="mt-md"></label>
+                    <table style="float:right;">
+                        <tr>
+                            <td colspan="12" align="right" style="text-align:right;">
+                                <div>
+                                    <div id="divPageNumbers">
+                                        <ul id="pagination" class="pagination-sm"></ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </section>
+</section>
+
+<!-- ---------- FULL PAGE LOADER ELEMENT ---------- -->
+<div id="pageLoader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Loading, please wait...</div>
+</div>
+
+<script src="~/plugins/cdnjs/jquery.twbsPagination.min.js"></script>
+
+<script>
+    var $pagination = $('#pagination'),
+        isPaginationInitialized = false;
+
+    $(document).ready(function () {
+        $("#d1").hide();
+        if ($pagination.data('twbs-pagination')) $pagination.twbsPagination('destroy');
+        $("#ddlyear, #EmployeeName").select2();
+        reloadLoanRegister(1);
+    });
+
+    function reloadLoanRegister(page) {
+        var year = $("#ddlyear option:selected").text();
+        var empId = $("#EmployeeName").val();
+        var rows = $("#Pagrow").val();
+        var pagnumber = page;
+
+        $.ajax({
+            type: "POST",
+            url: '/EmployeeList/GetAllEmployeeLoanRegister',
+            data: {
+                Year: year,
+                empParam: (empId === "0" || empId === "" ? null : empId),
+                numberofRow: rows,
+                pagenumber: pagnumber
+            },
+            datatype: "JSON",
+            beforeSend: function () {
+                $("#pageLoader").css("display", "flex"); // Show full-page overlay
+            },
+            success: function (data) {
+                $("#pageLoader").hide();
+                $("#d1").show();
+                $("#loanRegister tbody").empty();
+                $("#loanHeader").empty();
+                $("#Showing_no_Row").text("");
+
+                if (!data || data.length === 0) {
+                    $("#Showing_no_Row").text("No Records Found");
+                    $("#pagination").hide();
+                    return;
+                }
+
+                let allCols = Object.keys(data[0]).filter(c => c !== "RN" && c !== "TotalCount");
+                let loanCols = ["Financial Year", "Loan No", "Employee Name", "Loan Taken On", "Loan Amount", "Loan Opening Balance", "Department"];
+                let closingCols = ["Closing Balance"];
+                let installmentCols = allCols.filter(c => !loanCols.includes(c) && !closingCols.includes(c));
+
+                let header1 = `
+                <tr>
+                    <th colspan="${loanCols.length}" class="text-center">Loan Details</th>
+                    <th colspan="${installmentCols.length}" class="text-center">Installment Details</th>
+                    <th colspan="${closingCols.length}" class="text-center">Closing Balance</th>
+                </tr>`;
+
+                let header2 = "<tr>";
+                loanCols.forEach(c => header2 += `<th>${c}</th>`);
+                installmentCols.forEach(c => header2 += `<th>${c}</th>`);
+                closingCols.forEach(c => header2 += `<th>${c}</th>`);
+                header2 += "</tr>";
+
+                $("#loanHeader").html(header1 + header2);
+
+                let count = 0;
+                $.each(data, function (index, value) {
+                    count++;
+                    const isSubtotal = (value["Employee Name"] === "Subtotal");
+                    const isGrandTotal = (value["Department"] === "Grand Total");
+                    let rowClass = isSubtotal ? "subtotal-row" : isGrandTotal ? "grandtotal-row" : "";
+
+                    let rowHtml = `<tr class="${rowClass}">`;
+                    allCols.forEach(col => {
+                        let cellValue = value[col] ?? 0;
+                        if (!isNaN(cellValue) && cellValue !== "" &&
+                            col !== "Employee Name" && col !== "Department" &&
+                            col !== "Loan No" && col !== "Financial Year" && col !== "Loan Taken On") {
+                            cellValue = parseFloat(cellValue).toFixed(2);
+                        }
+                        rowHtml += `<td>${cellValue}</td>`;
+                    });
+                    rowHtml += "</tr>";
+                    $("#loanRegister tbody").append(rowHtml);
+                });
+
+                let totalCount = parseInt(data[0].TotalCount) || count;
+                $("#Showing_no_Row").text(
+                    "Showing " + (((pagnumber - 1) * rows) + 1) + " to " +
+                    (((pagnumber - 1) * rows) + count) + " of " + totalCount + " entries"
+                );
+
+                if (!isPaginationInitialized) {
+                    apply_pagination(totalCount, rows);
+                    isPaginationInitialized = true;
+                }
+            },
+            error: function (xhr, status, error) {
+                $("#pageLoader").hide();
+                console.error("Status:", status);
+                console.error("Error:", error);
+                console.error("Response Text:", xhr.responseText);
+                alert(xhr.responseText);
+            }
+        });
+    }
+
+    function GetSearchbypagenumberResult(page) {
+        if ($pagination.data('twbs-pagination')) {
+            $pagination.twbsPagination('destroy');
+            isPaginationInitialized = false;
+        }
+        reloadLoanRegister(page);
+    }
+
+    function exportLoanRegisterToCSV() {
+        var year = $("#ddlyear option:selected").text();
+        var empId = $("#EmployeeName").val();
+
+        $("#pageLoader").css("display", "flex");
+        $.ajax({
+            type: "POST",
+            url: '/EmployeeList/ExportLoanRegisterToCSV',
+            data: { Year: year, empParam: (empId === "0" || empId === "" ? null : empId) },
+            success: function (fileName) {
+                $("#pageLoader").hide();
+                if (fileName === "NODATA") { alert("No data found."); return; }
+                const link = document.createElement("a");
+                link.href = '/EmployeeList/DownloadCsv?fileName=' + fileName;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+            error: function (xhr, status, error) {
+                $("#pageLoader").hide();
+                alert("Error exporting CSV: " + error);
+            }
+        });
+    }
+
+    function apply_pagination(totalRecords, recPerPage) {
+        var totalPages = Math.ceil(totalRecords / recPerPage);
+        if ($pagination.data('twbs-pagination')) $pagination.twbsPagination('destroy');
+        if (!totalPages || totalPages < 1) { $("#pagination").hide(); return; }
+        var visiblePages = totalPages > 10 ? 6 : totalPages;
+        $pagination.twbsPagination({
+            totalPages: totalPages,
+            visiblePages: visiblePages,
+            initiateStartPageClick: false,
+            onPageClick: function (event, page) { reloadLoanRegister(page); }
+        });
+        $("#pagination").show();
+    }
+
+    function BacktoEmpList() {
+        window.location.href = "/EmployeeList/Index";
+    }
+</script>

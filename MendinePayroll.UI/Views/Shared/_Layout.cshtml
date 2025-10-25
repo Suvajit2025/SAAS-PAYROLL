@@ -210,6 +210,12 @@
                                                 <span>Arrear Calculation</span>
                                             </a>
                                         </li>
+                                        <li>
+                                            <a href="/EmployeeList/ESIC_SetUp">
+                                                <i class="fa fa-home" aria-hidden="true"></i>
+                                                <span>Employee Esic Slab</span>
+                                            </a>
+                                        </li>
                                         <hr class="separator" />
                                     </ul>
                                 </li>
@@ -318,7 +324,28 @@
                                                 <span>User Access Log</span>
                                             </a>
                                         </li>
-
+                                        <li>
+                                            @{
+                                                if (Session["UserName"] != null && Session["UserName"].ToString() != "annyatama.panda@mendine.co.in")
+                                                {
+                                                    <a href="/EmployeeList/PFChallan">
+                                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                                        <span>EPF ECR Challan Report</span>
+                                                    </a>
+                                                }
+                                            }
+                                        </li>
+                                        <li>
+                                            @{
+                                                if (Session["UserName"] != null && Session["UserName"].ToString() != "annyatama.panda@mendine.co.in")
+                                                {
+                                                    <a href="/EmployeeList/ESIChallan">
+                                                        <i class="fa fa-home" aria-hidden="true"></i>
+                                                        <span>ESIC Challan Report</span>
+                                                    </a>
+                                                }
+                                            }
+                                        </li>
                                     </ul>
                                 </li>
                             </ul>
@@ -350,8 +377,8 @@
 
 <!-- Specific Page Vendor -->
 
-<script src="https://maps.google.com/maps/api/js?sensor=false"></script>
-<script src="~/plugins/gmaps/gmaps.js"></script>
+@*<script src="https://maps.google.com/maps/api/js?sensor=false"></script>
+<script src="~/plugins/gmaps/gmaps.js"></script>*@
 
 
 <script src="~/plugins/jquery-ui/js/jquery-ui-1.10.4.custom.js"></script>
@@ -386,8 +413,8 @@
 <!-- Theme Initialization Files -->
 <script src="~/Contents/js/theme.init.js"></script>
 
-<script src="plugins/maps/examples.gmap.js"></script>
-<script src="plugins/ui-elements/examples.modals.js"></script>
+@*<script src="plugins/maps/examples.gmap.js"></script>*@
+@*<script src="plugins/ui-elements/examples.modals.js"></script>*@
 @*Add Scripts*@
 @*<script src="~/plugins/select2/select2.min.js"></script>*@
 <script src="~/Content/CHOSEN/chosen.jquery.min.js"></script>

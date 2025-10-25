@@ -1,0 +1,314 @@
+﻿@model MendinePayroll.UI.Models.PayslipViewModel
+@{
+    Layout = null;
+
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payslip - @Model.Month @Model.Year</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .payslip {
+            width: 210mm;
+            min-height: 297mm;
+            margin: auto;
+            padding: 15mm;
+            border: 1px solid #000;
+            box-sizing: border-box;
+            background: #fff;
+        }
+
+        /* ---------- Header ---------- */
+        .header {
+            display: flex; /* ✅ Better for wkhtmltopdf */
+            width: 100%;
+/*            margin-bottom: 20px;*/
+            border-bottom: 2px solid #167d80;
+/*            padding-bottom: 6px;*/
+            justify-content: space-between;
+            flex-direction: column;
+        }
+
+        .header-element {
+            display: flex; /* ✅ Better for wkhtmltopdf */
+            width: 100%;
+            /*            margin-bottom: 20px;
+
+            padding-bottom: 8px;*/
+            justify-content: flex-start;
+        }
+
+        .header-logo {
+            display: table-cell;
+            vertical-align: middle; /* ✅ Always vertically centered */
+            width: 140px;
+            text-align: left;
+            margin-right:13px;
+        }
+
+            .header-logo img {
+                height: auto; /* ✅ Fixed height */
+                width: 100%; /* maintain aspect ratio */
+                display: block;
+            }
+
+        .header-info {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+            .header-info p {
+                line-height: 20px;
+                padding: 0px;
+                margin: 0px;
+                font-size: 14px;
+            }
+        /* ---------- Section Headings ---------- */
+        h3 {
+            background: #167d80; /* dark brown */
+            color: #fff;
+            padding: 6px;
+            margin-top: 10px;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+
+        /* ---------- Tables ---------- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f1f1;
+            font-weight: 600;
+        }
+
+        .summary td {
+            font-weight: bold;
+        }
+
+        .netpay {
+            font-size: 16px;
+            font-weight: bold;
+            color: #167d80;
+        }
+
+        /* ---------- Footer ---------- */
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            text-align: center;
+            color: #555;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        .nopayslip {
+            text-align: center;
+            padding: 80px;
+            font-size: 18px;
+            color: #a00;
+            font-weight: bold;
+        }
+
+        @@media print {
+            .payslip {
+                border: none;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            .noprint {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    @if (Model.NetPay == 0)
+    {
+        <div class="nopayslip">
+            No payslip generated for @Model.Month @Model.Year
+        </div>
+    }
+    else
+    {
+<div class="payslip">
+    <!-- Header -->
+    <div class="header">
+        <div class="header-element">
+            <div class="header-logo">
+                <img src="@Model.CompanyLogoUrl" alt="Company Logo" />
+            </div>
+            <div class="header-info">
+                <h2 style="margin:0px;">@Model.CompanyName</h2>
+                <p>@Model.CompanyAddressLine1</p>
+                <p>@Model.CompanyAddressLine2</p>
+
+            </div>
+        </div>
+
+        <h3 style="text-align:center">Payslip for @Model.Month @Model.Year (Confidential)</h3>
+    </div>
+
+    <!-- Employee Details -->
+    <h3>Employee Details</h3>
+    <table>
+        <tr><th>Employee Name</th><td>@Model.EmpName</td><th>Employee Code</th><td>@Model.EmpCode</td></tr>
+        <tr><th>Designation</th><td>@Model.Designation</td><th>Department</th><td>@Model.Department</td></tr>
+        <tr><th>Date of Joining</th><td>@Model.DOJ.ToString("dd-MMM-yyyy")</td><th>Bank A/C</th><td>@Model.BankAccount</td></tr>
+        <tr><th>PAN</th><td>@Model.PAN</td><th>UAN</th><td>@Model.UAN</td></tr>
+        <tr><th>PF No</th><td>@Model.PFNo</td><th>ESIC No</th><td>@Model.ESICNo</td></tr>
+    </table>
+
+    <!-- Attendance -->
+    <h3>Attendance Summary</h3>
+    <table>
+        <tr><th>Total Days</th><th>Worked Days</th><th>Loss of Pay</th><th>Payable Days</th><th>Leave Taken</th></tr>
+        <tr><td>@Model.TotalDays</td><td>@Model.WorkedDays</td><td>@Model.LOPDays</td><td>@Model.PayableDays</td><td>@Model.LeaveTaken</td></tr>
+    </table>
+    <!-- Leave Balance -->
+    @*@if (Model.LeaveBalances != null && Model.LeaveBalances.Any())
+        {
+            <h3>Leave Balance</h3>
+            <table>
+                <tr><th>Leave Type</th><th>Balance</th></tr>
+                @foreach (var leave in Model.LeaveBalances)
+                {
+                    <tr><td>@leave.CodeType</td><td>@leave.Balance.ToString("N2")</td></tr>
+                }
+            </table>
+        }*@
+    @if (Model.LeaveBalances != null && Model.LeaveBalances.Any())
+    {
+        <h3>Leave Balance</h3>
+        <table>
+            <thead>
+                <tr>
+                    @foreach (var leave in Model.LeaveBalances)
+                    {
+                        <th>@leave.CodeType</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach (var leave in Model.LeaveBalances)
+                    {
+                        <td>@leave.Balance.ToString("N2")</td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    }
+        <!--Loan Details-->
+        @if (Model.LoanInstallment > 0 || Model.OpeningLoan > 0 || Model.ClosingLoan > 0)
+        {
+            <h3>Loan Details</h3>
+            <table>
+                <tr>
+                    <th>Opening Loan Balance</th>
+                    <th>Current Installment</th>
+                    <th>Closing Loan Balance</th>
+                </tr>
+                <tr>
+                    <td>₹ @Model.OpeningLoan.ToString("N2")</td>
+                    <td>₹ @Model.LoanInstallment.ToString("N2")</td>
+                    <td>₹ @Model.ClosingLoan.ToString("N2")</td>
+                </tr>
+            </table>
+        }
+
+    <!-- Salary -->
+    <h3>Salary Details</h3>
+    <table>
+        <tr><th>Earnings</th><th>Amount (₹)</th><th>Deductions</th><th>Amount (₹)</th></tr>
+        @{
+            int rows = Math.Max(Model.Earnings.Count, Model.Deductions.Count);
+            for (int i = 0; i < rows; i++)
+            {
+                <tr>
+                    <td>@(i < Model.Earnings.Count ? Model.Earnings[i].PayConfigName : "")</td>
+                    <td>@(i < Model.Earnings.Count ? Model.Earnings[i].Amount.ToString("N2") : "")</td>
+                    <td>@(i < Model.Deductions.Count ? Model.Deductions[i].PayConfigName : "")</td>
+                    <td>@(i < Model.Deductions.Count ? Model.Deductions[i].Amount.ToString("N2") : "")</td>
+                </tr>
+            }
+        }
+        <tr>
+            <td><strong>Gross Earnings</strong></td>
+            <td><strong>@Model.GrossEarnings.ToString("N2")</strong></td>
+            <td><strong>Total Deductions</strong></td>
+            <td><strong>@Model.TotalDeductions.ToString("N2")</strong></td>
+        </tr>
+    </table>
+
+    <!-- Net -->
+    <h3>Net Salary</h3>
+    @if (Model.LoanInstallment > 0)
+    {
+        <table class="summary">
+            <tr>
+                <td>Net Salary (Before Loan Deduction)</td>
+                <td>₹ @((Model.NetPay + Model.LoanInstallment).ToString("N2"))</td>
+            </tr>
+            <tr>
+                <td>Less: Loan / Advance Recovery</td>
+                <td>₹ @Model.LoanInstallment.ToString("N2")</td>
+            </tr>
+            <tr>
+                <td class="netpay">Final Take Home (After Loan Deduction)</td>
+                <td class="netpay">₹ @Model.NetPay.ToString("N2")</td>
+            </tr>
+
+            <tr><td>Amount in Words</td><td>@Model.NetPayWords</td></tr>
+            <tr><td>Salary Credited To</td><td>@Model.BankName (****@Model.BankAccount.Substring(Math.Max(0, Model.BankAccount.Length - 4)))</td></tr>
+        </table>
+    }
+    else
+    {
+        <table class="summary">
+            <tr><td class="netpay">Net Pay (Take Home)</td><td class="netpay">₹ @Model.NetPay.ToString("N2")</td></tr>
+            <tr><td>Amount in Words</td><td>@Model.NetPayWords</td></tr>
+            <tr><td>Salary Credited To</td><td>@Model.BankName (****@Model.BankAccount.Substring(Math.Max(0, Model.BankAccount.Length - 4)))</td></tr>
+        </table>
+    }
+
+
+
+    <!-- Footer -->
+    <div class="footer">
+        Confidential: This is a system generated payslip and does not require signature.<br />
+        Figures rounded to nearest rupee.
+        @if (!Model.isPdf)
+        {
+            <div class="noprint" style="margin-top:15px;">
+                <a href="@Url.Action("Download", "Payslip", new { empId = Model.EmpId, month = Model.Month, year = Model.Year })"
+                   style="padding:8px 16px; background:#167d80; color:#fff; text-decoration:none; border-radius:5px;">
+                    Download as PDF
+                </a>
+            </div>
+        }
+    </div>
+</div>
+    }
+</body>
+</html>

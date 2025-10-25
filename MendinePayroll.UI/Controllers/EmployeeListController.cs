@@ -1,36 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Net.Http;
-using MendinePayroll.UI.Utility;
-using Newtonsoft.Json;
-using MendinePayroll.Models;
-using System.Data;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.IO;
+﻿using ClosedXML.Excel;
+using Common.Utility;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using ExcelDataReader;
 using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
-using System.Net.Mail;
-using System.Net;
-using System.Configuration;
-using iTextSharp.tool.xml.pipeline.html;
-using iTextSharp.tool.xml.pipeline.css;
 using iTextSharp.tool.xml;
 using iTextSharp.tool.xml.parser;
-using System.Text;
-using System.Data.OleDb;
-using System.Xml;
-using ExcelDataReader;
-using ClosedXML.Excel;
+using iTextSharp.tool.xml.pipeline.css;
+using iTextSharp.tool.xml.pipeline.html;
+using MendinePayroll.Models;
 using MendinePayroll.UI.BLL;
-using UI.BLL;
 using MendinePayroll.UI.Models;
-using Common.Utility;
+using MendinePayroll.UI.Utility;
+using Newtonsoft.Json;
+using Org.BouncyCastle.Ocsp;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.OleDb;
+using System.Data.SqlClient;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Mail;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Mvc;
+using System.Xml;
+using UI.BLL;
 
 namespace MendinePayroll.UI.Controllers
 {
@@ -54,6 +57,7 @@ namespace MendinePayroll.UI.Controllers
         static int days = DateTime.DaysInMonth(Year, Convert.ToInt32(Month));
         static DateTime first = new DateTime(Year, Convert.ToInt32(Month), 1);
         DateTime last = first.AddMonths(1).AddSeconds(-1);
+        
         public ActionResult Index()
         {
             if (Session["UserName"] == null)
@@ -512,25 +516,58 @@ namespace MendinePayroll.UI.Controllers
         #endregion
 
         #region Save Employee Manual Salary
-        public JsonResult SaveEmployeeManualSalary(string modelParameter, string PayConfigID, string EmployeeSalaryConfigid)
-        {
-            var data = "";
-            EmpoloyeeSalaryConfigManualValueModel empoloyeeSalaryConfigManualValueModel = new EmpoloyeeSalaryConfigManualValueModel();
-            empoloyeeSalaryConfigManualValueModel.Values = modelParameter;
-            empoloyeeSalaryConfigManualValueModel.PayConfigIDS = PayConfigID;
-            empoloyeeSalaryConfigManualValueModel.EmployeeSalaryConfigid = Convert.ToInt32(EmployeeSalaryConfigid);
-            string contents = JsonConvert.SerializeObject(empoloyeeSalaryConfigManualValueModel);
-            HttpResponseMessage response = ObjAPI.CallAPI("api/Employee/SaveEmployeeManualSalary", contents);
-            if (response.IsSuccessStatusCode)
-            {
-                string responseString = response.Content.ReadAsStringAsync().Result;
+        //public JsonResult SaveEmployeeManualSalary(string modelParameter, string PayConfigID, string EmployeeSalaryConfigid)
+        //{
+        //    var data = "";
+        //    EmpoloyeeSalaryConfigManualValueModel empoloyeeSalaryConfigManualValueModel = new EmpoloyeeSalaryConfigManualValueModel();
+        //    empoloyeeSalaryConfigManualValueModel.Values = modelParameter;
+        //    empoloyeeSalaryConfigManualValueModel.PayConfigIDS = PayConfigID;
+        //    empoloyeeSalaryConfigManualValueModel.EmployeeSalaryConfigid = Convert.ToInt32(EmployeeSalaryConfigid);
+        //    string contents = JsonConvert.SerializeObject(empoloyeeSalaryConfigManualValueModel);
+        //    HttpResponseMessage response = ObjAPI.CallAPI("api/Employee/SaveEmployeeManualSalary", contents);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        string responseString = response.Content.ReadAsStringAsync().Result;
 
-                if (!string.IsNullOrEmpty(responseString))
-                {
-                    data = JsonConvert.DeserializeObject(responseString).ToString();
-                }
+        //        if (!string.IsNullOrEmpty(responseString))
+        //        {
+        //            data = JsonConvert.DeserializeObject(responseString).ToString();
+        //        }
+        //    }
+        //    return Json(data, JsonRequestBehavior.AllowGet);
+        //}
+
+        [HttpPost]
+        public JsonResult SaveEmployeeManualSalary()
+        {
+            clsAccessLogInfo info = new clsAccessLogInfo();
+            // Read the raw JSON body
+            string jsonString;
+            using (var reader = new StreamReader(Request.InputStream))
+            {
+                jsonString = reader.ReadToEnd();
             }
-            return Json(data, JsonRequestBehavior.AllowGet);
+
+            // Deserialize into model
+            var request = JsonConvert.DeserializeObject<ManualSalaryRequest>(jsonString);
+            foreach (var item in request.ManualSalaryList)
+            {
+                if (string.IsNullOrWhiteSpace(item.Value?.ToString()))
+                    item.Value = "0";   // Default blank values to 0
+            }
+            // Convert lists to comma-separated strings
+            var PayConfigIDs = string.Join(",", request.ManualSalaryList.Select(x => x.PayConfigID));
+            var payConfigValues = string.Join(",", request.ManualSalaryList.Select(x => x.Value));
+            var salaryConfigId = request.ManualSalaryList.First().EmployeeSalaryConfigid;
+
+            info.AccessType = "EMPLOYEE-MANUAL-SALARY-ENTRY-UPDATE";
+            clsAccessLog.AccessLog_Save(info);
+
+            var result = "";
+            result=clsDatabase.fnDBOperation("EmpoloyeeSalaryConfigManualValues_Update_New", PayConfigIDs,payConfigValues,salaryConfigId);
+
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
         #endregion
 
@@ -595,7 +632,9 @@ namespace MendinePayroll.UI.Controllers
             // Employee production Bonus
             List<EmployeeBonusModel> PayBonusdata = GetEmployeeBonusDataById(Empid);
             List<ConfigureSalaryComponentModel> caldata = new List<ConfigureSalaryComponentModel>();
-            
+
+            Boolean IsesicActive = true;
+
             // Employee Exist Then 
             if (empdata.Count > 0)
             {
@@ -619,7 +658,9 @@ namespace MendinePayroll.UI.Controllers
                 }
                 // Working day (FOr this month- Leave)
                 var workingdays = days - leavedays;
-               // Employee Wise Manual Fields and Value  + (Continous Allowance and  Ptax Reaquired or not )
+                
+
+                // Employee Wise Manual Fields and Value  + (Continous Allowance and  Ptax Reaquired or not )
                 List<EmployeeSalaryConfigModel> Salarydata = GetEmployeeSalaryManualData(Empid);
                 double Basic = 0;
                 double GrossAmount = 0;
@@ -628,6 +669,26 @@ namespace MendinePayroll.UI.Controllers
                 //double MobileAllowance = 0;
                 bool IsPtaxActive = false;
                 double LoanAmount = Employee_Loan_Amount(Convert.ToInt64(Empid));
+
+                List<EmployeeSalaryConfigModel> EsicActive = GetSalaryData(Empid);
+
+                if (EsicActive != null && EsicActive.Count > 0)
+                {
+                    foreach (var item in EsicActive)
+                    {
+                        if (item.PayConfigName != null && item.PayConfigName.ToUpper() == "GROSS AMOUNT")
+                        {
+                            GrossAmount = Convert.ToDouble(item.Values);
+
+                            if (GrossAmount > 21000)
+                            {
+                                IsesicActive = false;
+                                break; // stop loop once condition met
+                            }
+                        }
+                    }
+                }
+
 
                 // Mayukh New 
                 //employeeSalaryModel.Loan_Installment = Employee_Loan_Amount(Empid);
@@ -759,10 +820,41 @@ namespace MendinePayroll.UI.Controllers
                             else if (name.Equals("esic", StringComparison.InvariantCultureIgnoreCase) ||
                                 name.Equals("esi", StringComparison.InvariantCultureIgnoreCase))
                             {
-                                if (GrossAmount >= 21000)
+                                bool eligible = false;
+                                int slabStart = 0, slabEnd = 0, id = 0;
+
+                                DataTable esidt = clsDatabase.fnDataTable("SP_Check_ESIC_SLAB", Empid);
+                                if (esidt != null && esidt.Rows.Count > 0)
+                                {
+                                    slabStart = Convert.ToInt32(esidt.Rows[0]["SlabStartMonth"]);
+                                    slabEnd = Convert.ToInt32(esidt.Rows[0]["SlabEndMonth"]);
+                                    eligible = Convert.ToBoolean(esidt.Rows[0]["IsEligible"]);
+                                    id = Convert.ToInt32(esidt.Rows[0]["ID"]);
+
+                                    int salaryMonth = DateTime.Now.AddMonths(-1).Month;
+
+                                    if (salaryMonth >= slabStart && salaryMonth <= slabEnd && eligible)
+                                    {
+                                        result = Math.Ceiling(result);
+                                    }
+                                    else if (GrossAmount >= 21000 || IsesicActive == false)
+                                    {
+                                        result = 0;
+                                    }
+                                    else result = 0;
+
+                                    if (salaryMonth == slabEnd)
+                                        clsDatabase.fnDataTable("SP_UPDATE_ESIC_TAG", Empid, id);
+                                }
+                                //else if (GrossAmount <= 21000 && !IsesicActive)
+                                //{
+                                //    result = Math.Ceiling(result);
+                                //}
+                                else if (GrossAmount >= 21000 || IsesicActive == false)
                                 {
                                     result = 0;
                                 }
+                                else result = result;
 
                                 caldata.Add(new ConfigureSalaryComponentModel
                                 {
@@ -3613,5 +3705,629 @@ namespace MendinePayroll.UI.Controllers
         }
 
         #endregion
+
+        #region PF And ESIC Challan
+        public ActionResult PFChallan()
+        {
+            if (Session["UserName"] == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            EmployeeSalaryModel employeeSalaryModel = new EmployeeSalaryModel();
+            #region bind Employee
+            EmployeeListModel employeeListModel = new EmployeeListModel();
+            List<SelectListItem> EmpList = new List<SelectListItem>();
+            EmpList.Add(new SelectListItem { Text = "Select Employee", Value = "0", Selected = true });
+            employeeListModel.empid = 0;
+            List<EmployeeListModel> employeedata = GetAllEmployee();
+            foreach (var items in employeedata)
+            {
+                EmpList.Add(new SelectListItem
+                {
+                    Text = items.EmployeeName,
+                    Value = items.empid.ToString()
+                });
+            }
+            #endregion
+            employeeSalaryModel.masterModel.selectListItems = EmpList;
+            employeeSalaryModel.MonthList = GetMonthList();
+            employeeSalaryModel.YearList = GetYearList();
+            return View(employeeSalaryModel);
+        }
+        [HttpPost] 
+        public JsonResult GetAllEmployeePFChallan(int Month, int Year, int? empParam, string Status, int numberofRow, int pagenumber)
+        {
+            int? Empid = (empParam == 0 ? (int?)null : empParam);
+
+            // Call SP
+            var dt = clsDatabase.fnDataTable("SP_GetEmployeePF_ECR_Report", Month, Year, Empid, Status, numberofRow, pagenumber);
+
+            // Convert DataTable → List<Dictionary<string, object>>
+            var rows = new List<Dictionary<string, object>>();
+            foreach (System.Data.DataRow dr in dt.Rows)
+            {
+                var dict = new Dictionary<string, object>();
+                foreach (System.Data.DataColumn col in dt.Columns)
+                {
+                    dict[col.ColumnName] = dr[col];
+                }
+                rows.Add(dict);
+            }
+
+            return Json(rows, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ExportPFChallanToCSV(int Month, int Year, int? empParam)
+        {
+            int? Empid = (empParam == 0 ? (int?)null : empParam);
+
+            // Fetch data from SP
+            var dt = clsDatabase.fnDataTable("SP_GetEmployeePF_ECR_Report", Month, Year, Empid, "1", 9999, 1);
+            // Remove TotalCount column if exists
+            if (dt.Columns.Contains("TotalCount"))
+                dt.Columns.Remove("TotalCount");
+            // Build CSV content
+            var csv = new StringBuilder();
+
+            // Header row
+            for (int i = 0; i < dt.Columns.Count; i++)
+            {
+                csv.Append(dt.Columns[i].ColumnName);
+                if (i < dt.Columns.Count - 1)
+                    csv.Append(",");
+            }
+            csv.AppendLine();
+
+            // Data rows
+            foreach (DataRow row in dt.Rows)
+            {
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    csv.Append(row[i].ToString().Replace(",", " ")); // avoid breaking commas
+                    if (i < dt.Columns.Count - 1)
+                        csv.Append(",");
+                }
+                csv.AppendLine();
+            }
+
+            // File name format: EPF_ECR_Month_Year.csv
+            string fileName = $"EPF_ECR_{Month}_{Year}.csv";
+            string folderPath = Server.MapPath("~/Downloads/");
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            string filePath = Path.Combine(folderPath, fileName);
+            System.IO.File.WriteAllText(filePath, csv.ToString(), Encoding.UTF8);
+
+            return Json(fileName, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult DownloadCsv(string fileName)
+        {
+            string fullPath = Server.MapPath("~/Downloads/" + fileName);
+            if (!System.IO.File.Exists(fullPath))
+                return HttpNotFound();
+
+            return File(fullPath, "text/csv", fileName);
+        }
+
+        [HttpPost]
+        public JsonResult ExportPFChallanToText(int Month, int Year, int? empParam)
+        {
+            int? Empid = (empParam == 0 ? (int?)null : empParam);
+
+            // Fetch data from SP
+            var dt = clsDatabase.fnDataTable("SP_GetEmployeePF_ECR_Report", Month, Year, Empid, "1", 9999, 1);
+
+            if (dt == null || dt.Rows.Count == 0)
+                return Json("NODATA", JsonRequestBehavior.AllowGet);
+
+            // Remove TotalCount column if exists
+            if (dt.Columns.Contains("TotalCount"))
+                dt.Columns.Remove("TotalCount");
+
+            // Build PF text file content (#~# separated)
+            var sb = new StringBuilder();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                string line = string.Join("#~#", row.ItemArray.Select(v => v?.ToString()?.Trim() ?? ""));
+                sb.AppendLine(line);
+            }
+
+            // File name format: EPF_ECR_Month_Year.txt
+            string fileName = $"EPF_ECR_{Month}_{Year}.txt";
+            string folderPath = Server.MapPath("~/Downloads/");
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            string filePath = Path.Combine(folderPath, fileName);
+            System.IO.File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+
+            return Json(fileName, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult DownloadTxt(string fileName)
+        {
+            string fullPath = Server.MapPath("~/Downloads/" + fileName);
+            if (!System.IO.File.Exists(fullPath))
+                return HttpNotFound();
+
+            return File(fullPath, "text/plain", fileName);
+        }
+
+        //ESIC Challan
+
+        public ActionResult ESIChallan()
+        {
+            if (Session["UserName"] == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            EmployeeSalaryModel employeeSalaryModel = new EmployeeSalaryModel();
+            #region bind Employee
+            EmployeeListModel employeeListModel = new EmployeeListModel();
+            List<SelectListItem> EmpList = new List<SelectListItem>();
+            EmpList.Add(new SelectListItem { Text = "Select Employee", Value = "0", Selected = true });
+            employeeListModel.empid = 0;
+            List<EmployeeListModel> employeedata = GetAllEmployee();
+            foreach (var items in employeedata)
+            {
+                EmpList.Add(new SelectListItem
+                {
+                    Text = items.EmployeeName,
+                    Value = items.empid.ToString()
+                });
+            }
+            #endregion
+            employeeSalaryModel.masterModel.selectListItems = EmpList;
+            employeeSalaryModel.MonthList = GetMonthList();
+            employeeSalaryModel.YearList = GetYearList();
+            return View(employeeSalaryModel);
+        }
+
+        [HttpPost]
+        public JsonResult GetAllEmployeeESICChallan(int Month, int Year, int? empParam, string Status, int numberofRow, int pagenumber)
+        {
+            int? Empid = (empParam == 0 ? (int?)null : empParam);
+
+            // Call SP
+            var dt = clsDatabase.fnDataTable("SP_GetEmployee_ESIC_Report", Month, Year, Empid, numberofRow, pagenumber);
+
+            // Convert DataTable → List<Dictionary<string, object>>
+            var rows = new List<Dictionary<string, object>>();
+            foreach (System.Data.DataRow dr in dt.Rows)
+            {
+                var dict = new Dictionary<string, object>();
+                foreach (System.Data.DataColumn col in dt.Columns)
+                {
+                    dict[col.ColumnName] = dr[col];
+                }
+                rows.Add(dict);
+            }
+
+            return Json(rows, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ExportESICChallanToCSV(int Month, int Year, int? empParam)
+        {
+            int? Empid = (empParam == 0 ? (int?)null : empParam);
+
+            // Fetch data from SP
+            var dt = clsDatabase.fnDataTable("SP_GetEmployee_ESIC_Report", Month, Year, Empid, 9999, 1);
+            // Remove TotalCount column if exists
+            if (dt.Columns.Contains("TotalCount"))
+                dt.Columns.Remove("TotalCount");
+            // Build CSV content
+            var csv = new StringBuilder();
+
+            // Header row
+            for (int i = 0; i < dt.Columns.Count; i++)
+            {
+                csv.Append(dt.Columns[i].ColumnName);
+                if (i < dt.Columns.Count - 1)
+                    csv.Append(",");
+            }
+            csv.AppendLine();
+
+            // Data rows
+            foreach (DataRow row in dt.Rows)
+            {
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    csv.Append(row[i].ToString().Replace(",", " ")); // avoid breaking commas
+                    if (i < dt.Columns.Count - 1)
+                        csv.Append(",");
+                }
+                csv.AppendLine();
+            }
+
+            // File name format: EPF_ECR_Month_Year.csv
+            string fileName = $"ESIC_Challan_{Month}_{Year}.csv";
+            string folderPath = Server.MapPath("~/Downloads/");
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            string filePath = Path.Combine(folderPath, fileName);
+            System.IO.File.WriteAllText(filePath, csv.ToString(), Encoding.UTF8);
+
+            return Json(fileName, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region ESIC_SetUp
+        public ActionResult ESIC_SetUp()
+        {
+            if (Session["UserName"] == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            // Esic Process
+            clsAccessLogInfo info = new clsAccessLogInfo();
+            info.AccessType = "ESIC-EMPLOYEE-PROCESS";
+            clsAccessLog.AccessLog_Save(info);
+            EmployeeSalaryModel employeeSalaryModel = new EmployeeSalaryModel();
+            #region bind Employee
+            EmployeeListModel employeeListModel = new EmployeeListModel();
+            List<SelectListItem> EmpList = new List<SelectListItem>();
+            EmpList.Add(new SelectListItem { Text = "Select Employee", Value = "0", Selected = true });
+            employeeListModel.empid = 0;
+            List<EmployeeListModel> employeedata = GetAllEmployee();
+            foreach (var items in employeedata)
+            {
+                EmpList.Add(new SelectListItem
+                {
+                    Text = items.EmployeeName,
+                    Value = items.empid.ToString()
+                });
+            }
+            #endregion
+            employeeSalaryModel.masterModel.selectListItems = EmpList;
+            employeeSalaryModel.MonthList = GetMonthList();
+            employeeSalaryModel.YearList = GetYearList();
+            return View(employeeSalaryModel);
+        }
+        [HttpPost]
+        public JsonResult SaveEmployeeSlab(int EmployeeId, int SlabId, int IsEligible, string remark)
+        {
+            try
+            {
+                // Insert into DB (Payroll_ESIC_EmployeeSlab)
+                Payroll_ESIC_EmployeeSlab model = new Payroll_ESIC_EmployeeSlab
+                {
+                    EmployeeId = EmployeeId,
+                    SlabId = SlabId,
+                    IsEligible = Convert.ToBoolean(IsEligible),
+                    Remark = remark,
+                    CreatedBy = Session["UserName"].ToString()
+                };
+
+                clsDatabase.fnDataTable("SP_Save_ESIC_EmployeeSlab", model.EmployeeId, model.SlabId, model.IsEligible, model.Remark, model.CreatedBy);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        public JsonResult GetEmployeeSlabs()
+        {
+            // Fetch from DB (Payroll_ESIC_EmployeeSlab with join on Employee and SlabMaster)
+            DataTable DT = clsDatabase.fnDataTable("SP_Get_ESIC_EmployeeSlabs");
+            var data = DT.AsEnumerable().Select(row => new
+            {
+                EmployeeSlabId = row.Field<int>("EmployeeSlabId"),
+                EmployeeName = row.Field<string>("EmployeeName"),
+                SlabName = row.Field<string>("SlabName"),
+                IsEligible = row.Field<bool>("IsEligible")
+            }).ToList();
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteEmployeeSlab(int EmployeeSlabId)
+        {
+            try
+            {
+                DataTable dataTable = clsDatabase.fnDataTable("SP_Delete_ESIC_EmployeeSlab", EmployeeSlabId);
+                return Json(new { success = true, message = "Delete Successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
+        #region Loan Register
+        public ActionResult LoanRegister()
+        {
+            if (Session["UserName"] == null)
+                return RedirectToAction("Index", "Login");
+
+            EmployeeSalaryModel employeeSalaryModel = new EmployeeSalaryModel();
+
+            // Employee dropdown
+            var empList = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Select Employee", Value = "0", Selected = true }
+            };
+            foreach (var emp in GetAllEmployee())
+            {
+                empList.Add(new SelectListItem
+                {
+                    Text = emp.EmployeeName,
+                    Value = emp.empid.ToString()
+                });
+            }
+            employeeSalaryModel.masterModel.selectListItems = empList;
+
+            // Month dropdown
+            employeeSalaryModel.MonthList = GetMonthList();
+
+            DataTable fyTable = clsSalary.FinancialYears(); // Must return columns: FinancialYear, Year
+
+            List<SelectListItem> fyList = new List<SelectListItem>();
+
+            foreach (DataRow row in fyTable.Rows)
+            {
+                SelectListItem item = new SelectListItem();
+                item.Text = row["FinancialYear"].ToString(); // e.g., "2024-2025"
+                item.Value = row["Year"].ToString();         // e.g., "2025"
+                fyList.Add(item);
+            }
+
+            employeeSalaryModel.YearList = fyList;
+
+
+
+            // Optional: select current FY
+            var currentFY = employeeSalaryModel.YearList
+            .FirstOrDefault(y => y.Value == (DateTime.Now.Year).ToString());
+            if (currentFY != null)
+                currentFY.Selected = true;
+
+
+            return View(employeeSalaryModel);
+        }
+        [HttpPost]
+        public JsonResult GetAllEmployeeLoanRegister(string Year, int? empParam, int numberofRow, int pagenumber)
+        {
+            try
+            {
+                int? IDEmployee = (empParam == 0 ? (int?)null : empParam);
+
+                // 1. Fetch full SP result
+                DataTable dt = clsDatabase.fnDataTable("PRC_Loan_Ledger_ByFY", Year, IDEmployee, numberofRow, pagenumber);
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+
+                // 2. Convert DataTable → list of dictionary (row-wise)
+                var rows = new List<Dictionary<string, object>>();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    var dict = new Dictionary<string, object>();
+                    foreach (DataColumn col in dt.Columns)
+                        dict[col.ColumnName] = dr[col] == DBNull.Value ? null : dr[col];
+                    rows.Add(dict);
+                }
+
+                // 3. Department-wise subtotals
+                var grouped = rows.GroupBy(r => r["Department"]?.ToString() ?? "Unknown").ToList();
+                var final = new List<Dictionary<string, object>>();
+
+                foreach (var grp in grouped)
+                {
+                    final.AddRange(grp); // add all department rows first
+
+                    // subtotal row
+                    var subtotal = new Dictionary<string, object>();
+                    subtotal["Department"] = grp.Key;
+                    subtotal["Employee Name"] = "Subtotal";
+
+                    foreach (DataColumn col in dt.Columns)
+                    {
+                        string name = col.ColumnName;
+                        if (IsNumericType(col.DataType))
+                        {
+                            decimal sum = grp.Sum(r =>
+                            {
+                                var val = r[name];
+                                if (val == null) return 0;
+                                decimal d;
+                                return decimal.TryParse(val.ToString(), out d) ? d : 0;
+                            });
+                            subtotal[name] = sum;
+                        }
+                        else if (!subtotal.ContainsKey(name))
+                        {
+                            subtotal[name] = null;
+                        }
+                    }
+
+                    final.Add(subtotal);
+                }
+
+                // 4. Grand total row
+                var grand = new Dictionary<string, object>();
+                grand["Department"] = "Grand Total";
+                grand["Employee Name"] = "";
+
+                foreach (DataColumn col in dt.Columns)
+                {
+                    string name = col.ColumnName;
+                    if (IsNumericType(col.DataType))
+                    {
+                        decimal sum = final
+                            .Where(r => r.ContainsKey("Employee Name") && (r["Employee Name"]?.ToString() == "Subtotal"))
+                            .Sum(r =>
+                            {
+                                var val = r[name];
+                                if (val == null) return 0;
+                                decimal d;
+                                return decimal.TryParse(val.ToString(), out d) ? d : 0;
+                            });
+                        grand[name] = sum;
+                    }
+                    else if (!grand.ContainsKey(name))
+                    {
+                        grand[name] = null;
+                    }
+                }
+
+                final.Add(grand);
+
+                // 5. Return full JSON list
+                return Json(final, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                System.IO.File.AppendAllText(@"C:\Temp\LoanRegisterError.log",
+                    DateTime.Now + " :: " + ex.ToString() + Environment.NewLine);
+                return Json(new { error = true, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private bool IsNumericType(Type t)
+        {
+            return t == typeof(decimal) || t == typeof(double) || t == typeof(float) ||
+                   t == typeof(int) || t == typeof(long) || t == typeof(short);
+        }
+        [HttpPost]
+        public JsonResult ExportLoanRegisterToCSV(string Year, int? empParam)
+        {
+            try
+            {
+                int? IDEmployee = (empParam == 0 ? (int?)null : empParam);
+                int numberofRow = 9999; // fetch all rows
+                int pagenumber = 1;
+
+                // 1. Get data from SP
+                DataTable dt = clsDatabase.fnDataTable("PRC_Loan_Ledger_ByFY", Year, IDEmployee, numberofRow, pagenumber);
+                if (dt == null || dt.Rows.Count == 0)
+                    return Json("NODATA", JsonRequestBehavior.AllowGet);
+                // Remove TotalCount column if exists
+                if (dt.Columns.Contains("TotalCount"))
+                    dt.Columns.Remove("TotalCount");
+                // Remove TotalCount column if exists
+                if (dt.Columns.Contains("RN"))
+                    dt.Columns.Remove("RN");
+                // 2. Clone table for modifications (subtotal + grand total)
+                DataTable grouped = dt.Clone();
+                var deptGroups = dt.AsEnumerable().GroupBy(r => r["Department"].ToString());
+
+                foreach (var group in deptGroups)
+                {
+                    // Add all rows for this department
+                    foreach (var row in group)
+                        grouped.ImportRow(row);
+
+                    // Create subtotal row
+                    DataRow subtotal = grouped.NewRow();
+
+                    // Fill all string columns to avoid null issues
+                    foreach (DataColumn col in grouped.Columns)
+                        if (col.DataType == typeof(string))
+                            subtotal[col.ColumnName] = "";
+
+                    subtotal["Department"] = group.Key;
+                    subtotal["Employee Name"] = "Subtotal";
+                    subtotal["Financial Year"] = Year;
+
+                    // Sum numeric columns
+                    foreach (DataColumn col in grouped.Columns)
+                    {
+                        if (!new[] { "Department", "Employee Name", "Financial Year", "Loan No" }.Contains(col.ColumnName)
+                            && (col.DataType == typeof(decimal) || col.DataType == typeof(double) ||
+                                col.DataType == typeof(float) || col.DataType == typeof(int)))
+                        {
+                            decimal sum = group.Sum(r =>
+                            {
+                                decimal d;
+                                return decimal.TryParse(r[col.ColumnName]?.ToString(), out d) ? d : 0;
+                            });
+                            subtotal[col.ColumnName] = sum;
+                        }
+                    }
+                    grouped.Rows.Add(subtotal);
+                }
+
+                // 3. Add grand total row
+                DataRow grand = grouped.NewRow();
+                foreach (DataColumn col in grouped.Columns)
+                    if (col.DataType == typeof(string))
+                        grand[col.ColumnName] = "";
+
+                grand["Department"] = "Grand Total";
+                grand["Financial Year"] = Year;
+
+                foreach (DataColumn col in grouped.Columns)
+                {
+                    if (!new[] { "Department", "Employee Name", "RN", "TotalCount", "Financial Year", "Loan No" }.Contains(col.ColumnName)
+                        && (col.DataType == typeof(decimal) || col.DataType == typeof(double) ||
+                            col.DataType == typeof(float) || col.DataType == typeof(int)))
+                    {
+                        decimal sum = grouped.AsEnumerable()
+                            .Where(r => r["Employee Name"].ToString() == "Subtotal")
+                            .Sum(r =>
+                            {
+                                decimal d;
+                                return decimal.TryParse(r[col.ColumnName]?.ToString(), out d) ? d : 0;
+                            });
+                        grand[col.ColumnName] = sum;
+                    }
+                }
+                grouped.Rows.Add(grand);
+
+                // 4. Build CSV
+                var csv = new StringBuilder();
+
+                // Header
+                for (int i = 0; i < grouped.Columns.Count; i++)
+                {
+                    csv.Append(grouped.Columns[i].ColumnName);
+                    if (i < grouped.Columns.Count - 1)
+                        csv.Append(",");
+                }
+                csv.AppendLine();
+
+                // Rows
+                foreach (DataRow row in grouped.Rows)
+                {
+                    for (int i = 0; i < grouped.Columns.Count; i++)
+                    {
+                        string val = row[i]?.ToString().Replace(",", " ") ?? "0";
+                        if (string.IsNullOrWhiteSpace(val)) val = "0";
+                        csv.Append(val);
+                        if (i < grouped.Columns.Count - 1)
+                            csv.Append(",");
+                    }
+                    csv.AppendLine();
+                }
+
+                // 5. Save file (same as ESIC)
+                string fileName = $"LoanRegister_{Year}_{DateTime.Now:yyyyMMddHHmmss}.csv";
+                string folderPath = Server.MapPath("~/Downloads/");
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                string filePath = Path.Combine(folderPath, fileName);
+                System.IO.File.WriteAllText(filePath, csv.ToString(), Encoding.UTF8);
+
+                // 6. Return filename to AJAX
+                return Json(fileName, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            { 
+                return Json("ERROR", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #endregion
+
     }
 }
