@@ -1,0 +1,88 @@
+﻿@model MendinePayroll.Models.EmployeeSalaryModel
+@{
+    ViewBag.Title = "Increment SetUp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2>Increment SetUp</h2>
+    </header>
+
+    <style>
+        .form-inline select,
+        .form-inline label {
+            margin-right: 8px;
+        }
+
+        .form-inline select {
+            width: 160px;
+        }
+
+        .form-inline {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 10px;
+        }
+    </style>
+
+
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs btn btn-sm btn-default text-sm text-weight-semibold">
+                    <i class="text-tertiary fa fa-arrow-circle-left ml-lg"></i> Back
+                </button>
+            </div>
+            <h2 class="panel-title">Employee Increment SetUp</h2>
+        </header>
+
+        <div class="modal-body">
+            <form class="form-inline d-flex align-items-center flex-wrap gap-2" style="gap:10px;">
+
+                <label>Financial Year</label>
+                @Html.DropDownListFor(m => m.FinancialYear, Model.YearList,
+                    new { @class = "form-control", id = "ddlyear", onchange = "reloadEmployeeList(1);" })
+
+                <label>Department</label>
+                @Html.DropDownListFor(m => m.DepartmentId, Model.DepartmentList,
+                    new { @class = "form-control", id = "ddldepartment", onchange = "reloadEmployeeList(1);" })
+
+                <label>Pay Group</label>
+                @Html.DropDownListFor(m => m.PayGroupId, Model.PayGroupList,
+                    new { @class = "form-control", id = "ddlpayGroup", onchange = "reloadEmployeeList(1);" })
+
+                <label>Employee</label>
+                @Html.DropDownListFor(m => m.Empid, Model.masterModel.selectListItems,
+                    new { @class = "form-control", id = "EmployeeName", onchange = "reloadEmployeeList(1);" })
+
+                <label>PageRow</label>
+                <select class="form-control Pagenum" onchange="GetSearchbypagenumberResult(1);" id="Pagrow" name="Numberofrow">
+                    <option selected value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+
+            </form>
+
+        </div>
+    </section>
+</section>
+
+<script src="~/plugins/cdnjs/jquery.twbsPagination.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        //$("#d1").hide();
+
+        //if ($pagination.data('twbs-pagination')) {
+        //    $pagination.twbsPagination('destroy');
+        //}
+
+        $("#ddlyear, #ddldepartment,#ddlpayGroup, #EmployeeName").select2(); 
+    });
+
+</script>

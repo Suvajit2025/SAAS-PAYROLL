@@ -1,6 +1,8 @@
 ﻿using ClosedXML.Excel;
 using Common.Utility;
 using MendinePayroll.Models;
+using MendinePayroll.UI.BLL;
+using MendinePayroll.UI.Models;
 using MendinePayroll.UI.Utility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -11,9 +13,11 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using UI.BLL;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 using Path = System.IO.Path;
 
@@ -22,6 +26,7 @@ namespace MendinePayroll.UI.Controllers
     public class PayrollTdsController : Controller
     {
         // GET: PayrollTds
+        ApiCommon ObjAPI = new ApiCommon();
         public ActionResult Index()
         {
             return View();
@@ -2892,6 +2897,75 @@ namespace MendinePayroll.UI.Controllers
             }
 
 
+        }
+
+        #endregion
+
+
+        #region Increment SetUp
+        [HttpGet]
+        public ActionResult IncrementSetup()
+        {
+            if (Session["UserName"] == null)
+                return RedirectToAction("Index", "Login");
+
+            clsAccessLogInfo info = new clsAccessLogInfo { AccessType = "INCREMENT-SETUP" };
+            clsAccessLog.AccessLog_Save(info);
+
+            var model = new EmployeeSalaryModel();
+            var employeeListController = new EmployeeListController();
+
+            // ===================== 1. Financial Year Dropdown =====================
+            DataTable fyTable = clsSalary.FinancialYears(); // Returns columns: FinancialYear, Year
+            model.YearList = fyTable.AsEnumerable().Select(r => new SelectListItem
+            {
+                Text = r["FinancialYear"].ToString(),
+                Value = r["Year"].ToString(),
+                Selected = r["Year"].ToString() == DateTime.Now.Year.ToString()
+            }).ToList();
+
+            // ===================== 2. Department Dropdown =====================
+
+            DataTable deptTable = clsDatabase.fnDataTable("PRC_Department_List"); // Replace with your actual SP name
+            model.DepartmentList = deptTable.AsEnumerable().Select(r => new SelectListItem
+            {
+                Text = r["Name"].ToString(),
+                Value = r["IDDepartment"].ToString()
+            }).ToList();
+
+            // Insert default option at top
+            model.DepartmentList.Insert(0, new SelectListItem { Text = "Select Department", Value = "0", Selected = true });
+
+            // ===================== Pay Group Dropdown =====================
+
+            var payGroupModel = new PayGroupModel { PayGroupID = 0 };
+            string json = JsonConvert.SerializeObject(payGroupModel);
+            HttpResponseMessage response = ObjAPI.CallAPI("api/PayGroup/GetAllPayGroupList", json);
+            if (response.IsSuccessStatusCode)
+            {
+                string result = response.Content.ReadAsStringAsync().Result;
+                var payGroups = JsonConvert.DeserializeObject<List<PayGroupModel>>(result);
+
+                model.PayGroupList = payGroups.Select(pg => new SelectListItem
+                {
+                    Text = pg.PayGroupName,
+                    Value = pg.PayGroupID.ToString()
+                }).ToList();
+
+                model.PayGroupList.Insert(0, new SelectListItem { Text = "Select Pay Group", Value = "0", Selected = true });
+            }
+            // ===================== Employee Dropdown =====================
+
+            var empList = employeeListController.GetAllEmployee();
+            model.masterModel.selectListItems = empList.Select(emp => new SelectListItem
+            {
+                Text = emp.EmployeeName,
+                Value = emp.empid.ToString()
+            }).ToList();
+
+            model.masterModel.selectListItems.Insert(0, new SelectListItem { Text = "Select Employee", Value = "0", Selected = true });
+
+            return View(model);
         }
 
         #endregion

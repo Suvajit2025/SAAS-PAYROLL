@@ -64,10 +64,15 @@ namespace MendinePayroll.Models
 
         public double TDS { get; set; }
         public int ISTDS { get; set; }
+
+        public string FinancialYear { get; set; }
+        public int DepartmentId { get; set; }
+
         public string companycode { get; set; }
         public List<SelectListItem> MonthList { get; set; }
         public List<SelectListItem> YearList { get; set; }
-        
+        public List<SelectListItem> DepartmentList { get; set; }
+        public List<SelectListItem> PayGroupList { get; set; }
         public EmployeeSalaryModel()
         {
             masterModel = new EmpbasicModel();
@@ -79,4 +84,37 @@ namespace MendinePayroll.Models
         public List<EmployeeSalaryModel> TDSReportList { get; set; }
        
     }
+    public class Payroll_ESIC_EmployeeSlab
+    {
+        public int EmployeeSlabId { get; set; }
+
+        public int EmployeeId { get; set; }
+
+        public int SlabId { get; set; }
+
+        public bool IsEligible { get; set; }
+
+        public string Remark { get; set; }
+
+        public string CreatedBy { get; set; }
+    }
+
+    public class LoanRegisterViewModel
+    {
+        public string Department { get; set; }
+        public string EmployeeName { get; set; }
+        public decimal LoanAmount { get; set; }
+        public decimal LoanOpeningBalance { get; set; }
+        public decimal ClosingBalance { get; set; }
+
+        // holds Apr-25, May-25, ... Mar-26 dynamically
+        public Dictionary<string, string> MonthlyValues { get; set; }
+
+        public LoanRegisterViewModel()
+        {
+            MonthlyValues = new Dictionary<string, string>();
+        }
+    }
+
+
 }

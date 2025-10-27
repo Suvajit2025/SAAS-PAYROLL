@@ -1,10 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Common.Utility;
-using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Drawing;
 using MendinePayroll.UI.Models;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Ocsp;
 using Rotativa;
 using System;
 using System.Collections.Generic;
@@ -15,10 +12,9 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
-using System.Web;
 using System.Web.Mvc;
 using UI.BLL;
-using JsonSerializer = System.Text.Json.JsonSerializer;
+//using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace MendinePayroll.UI.Controllers
 {
@@ -134,38 +130,7 @@ namespace MendinePayroll.UI.Controllers
                 // 3. Attendance Summary
                 var SalesEmpNo = clsDatabase.fnDBOperation("PROC_GETEMPNO_SALES", EmpId);
                 if (!string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
-                {
-                    ////var row = SalesEmpNo.Tables[1].Rows[0];
-                    //var Empno = SalesEmpNo;//row["empno"].ToString();
-
-                    //string url = $"https://crmfieldforceapi.mendine.co.in/api/crm/HRMSApi/EmployeeAttendanceSheet?Businessid=MEND-PVTL-890&Employeeno={Empno}&Month={Month}&Year={Year}";
-
-                    //using (var client = new HttpClient())
-                    //{
-                    //    var response = client.GetStringAsync(url).Result;
-
-                    //    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    //    var logs = System.Text.Json.JsonSerializer.Deserialize<List<AttendanceLog>>(response, options);
-
-                    //    // count days with valid CheckIn (exclude blank or 00:00:00 cases if needed)
-                    //    int presentDays = logs.Count(l =>
-                    //        !string.IsNullOrWhiteSpace(l.CheckIn) &&
-                    //        !(l.CheckIn == l.CheckOut && l.Duration == "00:00:00")
-                    //    );
-
-                    //    // ✅ Get TotalDays and PayableDays from dataset
-                    //    if (ds.Tables.Count > 2 && ds.Tables[2].Rows.Count > 0)
-                    //    {
-                    //        var dsRow = ds.Tables[2].Rows[0];
-                    //        model.TotalDays = Convert.ToInt32(dsRow["TotalDays"]);
-                    //        model.PayableDays = Convert.ToInt32(dsRow["TotalDays"]);
-                    //        model.LeaveTaken = Convert.ToInt32(dsRow["TotalLeave"]);
-                    //    }
-
-                    //    model.WorkedDays = presentDays;   // from API
-                    //    model.LOPDays = 0;
-
-                    //}
+                { 
                     DataTable officeTable = clsDatabase.fnDataTable("proc_dailyattendance", Month, Year, SalesEmpNo, "");
                     // Step 2: Fetch API data (Sales)
                     List<AttendanceLog> apiLogs = new List<AttendanceLog>();
@@ -175,10 +140,22 @@ namespace MendinePayroll.UI.Controllers
                         {
                             string url = $"https://crmfieldforceapi.mendine.co.in/api/crm/HRMSApi/EmployeeAttendanceSheet?Businessid=MEND-PVTL-890&Employeeno={SalesEmpNo}&Month={Month}&Year={Year}";
                             var response = client.GetStringAsync(url).Result;
-                            apiLogs = JsonSerializer.Deserialize<List<AttendanceLog>>(response, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                        }
-                    }
 
+
+
+                            //apiLogs = JsonSerializer.Deserialize<List<AttendanceLog>>(response,
+                            //    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                            apiLogs = JsonConvert.DeserializeObject<List<AttendanceLog>>(response);
+
+                            // Log response
+                            System.IO.File.WriteAllText(
+                                 System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AttendanceApiLog.txt"),
+                                 JsonConvert.SerializeObject(apiLogs, Formatting.Indented)
+                             );
+
+                        }
+
+                    } 
                     // Step 3: Merge sources if Hybrid
                     int totalDays = 0, presentDays = 0, leaveDays = 0;
 
@@ -200,20 +177,18 @@ namespace MendinePayroll.UI.Controllers
                             r["DURATION"] != DBNull.Value &&
                             r["DURATION"].ToString() != "00:00:00"
                         ) ?? false;
-
-                        // ✅ check from API logs
-                        //bool apiPresent = apiLogs.Any(l =>
-                        //    DateTime.Parse(l.LogDate).Date == day.Date &&
-                        //    !string.IsNullOrWhiteSpace(l.CheckIn)
-                        //);
-                        //var apiDay = apiLogs.FirstOrDefault(l => DateTime.Parse(l.LogDate).Date == day.Date);
+                         
                         var apiDay = apiLogs.FirstOrDefault(l =>
                         {
                             if (string.IsNullOrWhiteSpace(l.LogDate))
                                 return false;
 
                             DateTime parsed;
-                            if (!DateTime.TryParse(l.LogDate, out parsed))
+                            if (!DateTime.TryParseExact(l.LogDate,
+                                new[] { "dd/MM/yyyy", "yyyy-MM-dd", "MM/dd/yyyy HH:mm:ss" },
+                                System.Globalization.CultureInfo.InvariantCulture,
+                                System.Globalization.DateTimeStyles.None,
+                                out parsed))
                                 return false;
 
                             return parsed.Date == day.Date;
@@ -228,8 +203,7 @@ namespace MendinePayroll.UI.Controllers
                             presentDays++;
                         else
                             leaveDays++;
-                    }
-
+                    } 
                     // Assign
                     model.TotalDays = totalDays;
                     model.WorkedDays = presentDays;  // or adjust with policy
@@ -270,26 +244,7 @@ namespace MendinePayroll.UI.Controllers
                             Balance = Convert.ToDecimal(row["LeaveBalance"])
                         });
                     }
-                }
-
-                //// 5. Earnings (Table 4) → skip 0 and Gross Amount
-                //if (ds.Tables.Count > 4)
-                //{
-                //    foreach (DataRow row in ds.Tables[4].Rows)
-                //    {
-                //        decimal amount = Convert.ToDecimal(row["Amount"]);
-                //        string name = ToProperCase(row["PayConfigName"].ToString());
-
-                //        if (amount == 0) continue;
-                //        if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
-
-                //        model.Earnings.Add(new SalaryHead
-                //        {
-                //            PayConfigName = name,
-                //            Amount = amount
-                //        });
-                //    }
-                //}
+                } 
                 // 5. Earnings (Table 4) → skip 0 and Gross Amount
                 if (ds.Tables.Count > 4)
                 {

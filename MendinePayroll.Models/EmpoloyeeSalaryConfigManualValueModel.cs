@@ -14,4 +14,15 @@ namespace MendinePayroll.Models
         public string Values { get; set; }
         public string PayConfigIDS { get; set; }
     }
+    public class ManualSalaryItem
+    {
+        public int EmployeeSalaryConfigid { get; set; }
+        public int PayConfigID { get; set; }
+        public string Value { get; set; }
+    }
+
+    public class ManualSalaryRequest
+    {
+        public List<ManualSalaryItem> ManualSalaryList { get; set; }
+    }
 }
