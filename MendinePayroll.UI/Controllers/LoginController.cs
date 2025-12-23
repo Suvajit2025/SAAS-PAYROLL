@@ -44,14 +44,17 @@ namespace MendinePayroll.UI.Controllers
         // Development
         public ActionResult Index()
         {
-            Session["UserName"] = "suvajit.das@iecsl.co.in";
-            Session["UserId"] = "3299";
-            Session["UserEmail"] = "suvajit.das@iecsl.co.in";
+            //Session["UserName"] = "suvajit.das@iecsl.co.in";
+            //Session["UserId"] = "3299";
+            //Session["UserEmail"] = "suvajit.das@iecsl.co.in";
 
             // Development 
-            //Session["UserName"] = "pallab.das@iecsl.co.in";
-            //Session["UserId"] = "1753";
-            //Session["UserEmail"] = "pallab.das@iecsl.co.in";
+            Session["UserName"] = "lit@mindtree.co.in";
+            Session["UserId"] = "229";
+            Session["UserEmail"] = "lit@mindtree.co.in";
+            Session["TenantID"] = "9CBC5D8B-589C-4144-8AE9-1937A39FC89D";
+            //Session["TenantID"] = "DB9DE705-8097-41C6-A8F9-8175DD6DF064";
+
             //Session["CompanyId"] = "55";
             //Session["UserName"] = "subrata.mukherjee@mendine.co.in";
             //Session["UserId"] = "1114";
@@ -82,10 +85,11 @@ namespace MendinePayroll.UI.Controllers
             //Session["UserId"] = "1260";
             //Session["UserEmail"] = "md.mendinepharma@gmail.com";
 
-            // Production 
+            //Production
             //Session["UserName"] = Request.QueryString["UserName"];
             //Session["UserId"] = Request.QueryString["UserID"];
             //Session["UserEmail"] = Request.QueryString["UserEmail"];
+            //Session["TenantID"] = Request.QueryString["TenantID"];
 
             Session["ModuleURL"] = ConfigurationManager.AppSettings["ModuleURL"].ToString();
             // Access Log Data Insert 

@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Common.Utility;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using MendinePayroll.Models;
 using MendinePayroll.UI.BLL;
 using MendinePayroll.UI.Models;
@@ -10,14 +11,19 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Management;
 using System.Web.Mvc;
 using UI.BLL;
+using DataTable = System.Data.DataTable;
+using Formatting = Newtonsoft.Json.Formatting;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 using Path = System.IO.Path;
 
@@ -26,11 +32,34 @@ namespace MendinePayroll.UI.Controllers
     public class PayrollTdsController : Controller
     {
         // GET: PayrollTds
+        private string TenantId
+        {
+            get
+            {
+                try
+                {
+                    if (Session["TenantID"] == null)
+                    {
+                        // Redirect to login or handle gracefully
+                        throw new Exception("Session expired. Please log in again.");
+                    }
+                    return Session["TenantID"].ToString();
+                }
+                catch (Exception ex)
+                {
+                    // Log the error (you can use your existing logging mechanism)
+                    System.Diagnostics.Debug.WriteLine("TenantID retrieval error: " + ex.Message);
+                    throw; // Let it bubble to global error handler if configured
+                }
+            }
+        }
+
         ApiCommon ObjAPI = new ApiCommon();
         public ActionResult Index()
         {
             return View();
         }
+
         #region TDS&ARREAR&CTC SETUP
         public ActionResult EmployeeDeductionSetUp()
         {
@@ -752,7 +781,8 @@ namespace MendinePayroll.UI.Controllers
             //}
             // 3) Build a strongly-typed sequence of anonymous rows
             var rows = allKeys
-                .Select(key => {
+                .Select(key =>
+                {
                     oldDict.TryGetValue(key, out var o);
                     newDict.TryGetValue(key, out var n);
 
@@ -1056,7 +1086,7 @@ namespace MendinePayroll.UI.Controllers
             return deductionConfigs;
         }
 
-        public List<CompanyContributionConfig>GetCompanyContributionConfigs(int payGroupId, decimal basic, decimal gross, Dictionary<string, decimal> ContributionDict, List<outPutJson> allowanceValues, Dictionary<string, decimal> manualValuesDict)
+        public List<CompanyContributionConfig> GetCompanyContributionConfigs(int payGroupId, decimal basic, decimal gross, Dictionary<string, decimal> ContributionDict, List<outPutJson> allowanceValues, Dictionary<string, decimal> manualValuesDict)
         {
             DataTable dtable = clsDatabase.fnDataTable("ConfigationWise_CompanyContribution", payGroupId);
 
@@ -1851,7 +1881,8 @@ namespace MendinePayroll.UI.Controllers
 
                 // 1) Read all deductions (Table[2]) with old vs new monthly values
                 var deductionRows = EmployeeDetails.Tables[2].AsEnumerable()
-                    .Select(r => new {
+                    .Select(r => new
+                    {
                         SectionCode = r["SectionCode"].ToString(),
                         Details = r["DeductionName"].ToString(),
                         MaxLimit = Convert.ToDecimal(r["MaxLimit"]),
@@ -2901,7 +2932,6 @@ namespace MendinePayroll.UI.Controllers
 
         #endregion
 
-
         #region Increment SetUp
         [HttpGet]
         public ActionResult IncrementSetup()
@@ -2966,6 +2996,440 @@ namespace MendinePayroll.UI.Controllers
             model.masterModel.selectListItems.Insert(0, new SelectListItem { Text = "Select Employee", Value = "0", Selected = true });
 
             return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult GetEmployeesByDeptPayGroup(int? payGroupId)
+        {
+            try
+            {
+                var employeeListController = new EmployeeListController();
+                var empList = employeeListController.GetAllEmployee();
+
+                bool hasPayGroup = payGroupId.HasValue && payGroupId > 0;
+
+                var filtered = empList
+                    .Where(e => !hasPayGroup || e.PayGroupID == payGroupId)
+                    .Select(e => new
+                    {
+                        Value = e.empid.ToString(),
+                        Text = e.EmployeeName
+                    })
+                    .ToList();
+
+                // Add default option at top
+                filtered.Insert(0, new { Value = "0", Text = "Select Employee" });
+
+                return Json(filtered, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        [HttpGet]
+        public JsonResult GetPayConfigsByPayGroup(int payGroupId)
+        {
+            try
+            {
+                // Defensive check
+                if (payGroupId <= 0)
+                    return Json(new { error = "Invalid PayGroupId." }, JsonRequestBehavior.AllowGet);
+
+                // SQL query / SP — you can use either raw query or stored procedure
+                // Example: SP name: PRC_Get_PayConfig_By_PayGroup
+                DataTable dt = clsDatabase.fnDataTable("SP_GET_PAYCONFIG_PAYGROUPWISE", payGroupId);
+
+                // Convert to list of anonymous objects
+                var list = dt.AsEnumerable().Select(r => new
+                {
+                    PayConfigId = Convert.ToInt32(r["PayConfigId"]),
+                    PayConfigName = r["PayConfigName"].ToString()
+                }).ToList();
+
+                // Return JSON result
+                return Json(list, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                // Return error JSON (safe for client debugging)
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public class PayConfigValue
+        {
+            public int PayConfigId { get; set; }
+            public string PayConfigName { get; set; }
+            public decimal IncrementValue { get; set; }
+        }
+
+        public class GenerateIncrementPivotModel
+        {
+            public int PayGroupId { get; set; }
+            public List<PayConfigValue> PayConfigs { get; set; }
+        }
+        public class PayComponentValue
+        {
+            public int PayComponentId { get; set; }
+            public string IncrementValue { get; set; }
+        }
+
+        public class SaveIncrementModel
+        {
+            public string session { get; set; }
+            public string EmpCode { get; set; }
+            public int EmpNo { get; set; }
+            public int IncrementTypeValue { get; set; } // 1 = Fixed Amount, 2 = Percentage
+            public List<PayComponentValue> IncrementValues { get; set; } // <-- fix here
+        }
+
+        public class SaveIncrementRequest
+        {
+            public List<SaveIncrementModel> Data { get; set; }
+        }
+
+
+        [HttpPost]
+        public JsonResult GenerateIncrementPivot(GenerateIncrementPivotModel model)
+        {
+            try
+            {
+                if (model == null || model.PayGroupId <= 0)
+                    return Json(new { error = "Invalid request." }, JsonRequestBehavior.AllowGet);
+
+                var employeeListController = new EmployeeListController();
+                var empList = employeeListController.GetAllEmployee()
+                    .Where(e => e.PayGroupID == model.PayGroupId)
+                    .ToList();
+
+                if (empList.Count == 0)
+                    return Json(new { error = "No employees found for selected Pay Group." }, JsonRequestBehavior.AllowGet);
+
+                var result = new List<Dictionary<string, object>>();
+
+                foreach (var emp in empList)
+                {
+                    var row = new Dictionary<string, object>();
+
+                    // ✅ Add checkbox placeholder
+                    row["Select"] = $"<input type='checkbox' class='chkEmployee' data-empno='{emp.empno}' />";
+
+                    row["EmpCode"] = emp.empno;           // Code to display
+                    row["Empno"] = emp.empid;             // Hidden ID
+                    row["Employee Name"] = emp.EmployeeName;
+
+                    // Dynamic pay component columns
+                    foreach (var pc in model.PayConfigs)
+                    {
+                        row[pc.PayConfigName] = new
+                        {
+                            Id = pc.PayConfigId,
+                            Value = pc.IncrementValue
+                        };
+                    }
+
+                    result.Add(row);
+                }
+
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SaveIncrement(SaveIncrementRequest model)
+        {
+            try
+            {
+                if (model == null || model.Data == null || model.Data.Count == 0)
+                    return Json(new { error = "No data to save" }, JsonRequestBehavior.AllowGet);
+
+                // Get CreatedBy from session
+                string CreatedBy = Session["UserName"]?.ToString() ?? "system";
+
+                string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(model.Data);
+
+                var result = clsDatabase.fnDBOperation("PRC_Save_Payroll_Increment_SetUp", jsonData, CreatedBy);
+
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        #endregion
+
+        #region SAAS TDS Settings
+        public ActionResult PayrollTdsSettings()
+        {
+            if (Session["UserName"] == null)
+                return RedirectToAction("Index", "Login");
+            clsAccessLogInfo info = new clsAccessLogInfo { AccessType = "TDS-SETTINGS" };
+            clsAccessLog.AccessLog_Save(info);
+            var model = new TaxRuleModel();
+            // Load existing settings from DB
+            DataTable dt = clsDatabase.fnDataTable("SP_Get_Payroll_TDS_Settings");
+
+            return View(model);
+        }
+        [HttpGet]
+        public ActionResult GetFinancialYears()
+        {
+            DataTable dt = clsDatabase.fnDataTable("SP_Get_Payroll_Saas_FinancialYears");
+
+            var data = dt.AsEnumerable().Select(x => new
+            {
+                value = x["IdFinancialYear"]?.ToString(),
+                text = x["FinancialYearCode"]?.ToString()
+            }).ToList();
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult GetTaxRegimes()
+        {
+            DataTable dt = clsDatabase.fnDataTable("SP_Get_Payroll_Saas_TaxRegimes");
+
+            var data = dt.AsEnumerable().Select(x => new
+            {
+                value = x["RegimeId"]?.ToString(),     // used in backend
+                code = x["RegimeCode"]?.ToString(),   // optional (future use)
+                text = x["RegimeName"]?.ToString()    // shown in dropdown
+            }).ToList();
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpGet]
+        public ActionResult GetTaxSections(string financialYear, int regimeId)
+        {
+            DataTable dt = clsDatabase.fnDataTable("SP_Get_Payroll_SaaS_TaxSection", financialYear, regimeId);
+
+            var data = dt.AsEnumerable().Select(x => new
+            {
+                id = x["SectionId"]?.ToString(),
+                code = x["SectionCode"]?.ToString(),
+                text = x["Section"]?.ToString(),
+                category = x["SectionCategory"]?.ToString(),
+                // 🔹 Rule-driven fields
+                calculationBase = x["CalculationBaseType"]?.ToString(),
+                maxLimit = x["MaxLimit"] != DBNull.Value
+                         ? Convert.ToDecimal(x["MaxLimit"])
+                         : (decimal?)null,
+                allowanceKeys = x["AllowanceKeys"]?.ToString(),
+                statutoryKeys = x["StatutoryKeys"]?.ToString(),
+                isPercentage = Convert.ToBoolean(x["IsPercentage"]),
+                proof = Convert.ToBoolean(x["IsProofRequired"]),
+                IsAuto = Convert.ToBoolean(x["IsAutoCalculated"]),
+                calFormula= x["Formula"]?.ToString()
+
+            }).ToList();
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult GetTaxSlabAndConstant(string financialYear, int regimeId)
+        {
+            DataTable dtConst = clsDatabase.fnDataTable("SP_Get_Payroll_SaaS_TaxConstant", financialYear, regimeId);
+
+            DataTable dtSlab = clsDatabase.fnDataTable("SP_Get_Payroll_SaaS_TaxSlab", financialYear, regimeId);
+
+            var constant = dtConst.AsEnumerable().Select(x => new
+            {
+                cessRate = x["HealthEduCessRate"],
+                rebateLimit = x["RebateLimit87A"],
+                rebateThreshold = x["RebateIncomeThreshold"],
+                standardDeduction = x["StandardDeduction"]
+            }).FirstOrDefault();
+
+            var slabs = dtSlab.AsEnumerable().Select(x => new
+            {
+                from = x["FromAmount"],
+                to = x["ToAmount"] == DBNull.Value ? null : x["ToAmount"],
+                rate = x["TaxRate"]
+            }).ToList();
+
+            return Json(new { constant, slabs }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public ActionResult GetAllPayConfig()
+        {
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable("SP_GetAllPayConfig", TenantId);
+
+                // 🔹 Map result
+                var data = dt.AsEnumerable().Select(x => new
+                {
+                    payConfigId = Convert.ToInt32(x["PayConfigId"]),
+                    payConfigName = x["PayConfigName"]?.ToString(),
+                    payConfigType = x["PayConfigType"]?.ToString(),
+
+                    isCalculative = Convert.ToBoolean(x["IScalculative"]),
+                    isStatutory = Convert.ToBoolean(x["IsStatutory"]),
+                    statutoryType = x["StatutoryType"]?.ToString(),
+
+                    isAllowance = Convert.ToBoolean(x["IsAllowance"]),
+                    allowanceType = x["AllowanceType"]?.ToString(),
+
+                    isGrossComponent = Convert.ToBoolean(x["IsGrossComponent"]),
+                    isBasicComponent = Convert.ToBoolean(x["IsBasicComponent"]),
+
+                    isActive = Convert.ToBoolean(x["IsActive"])
+                }).ToList();
+
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Failed to load pay configuration",
+                    error = ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public ActionResult SaveTaxRuleConfiguration(TaxRuleConfigModel model)
+        {
+            try
+            {
+                var UserId = Session["UserName"]?.ToString() ?? "system";
+
+                DataTable dt = clsDatabase.fnDataTable("SP_Save_Payroll_SaaS_TaxRule",
+                            model.TaxRuleId,
+                            TenantId,
+                            model.FinancialYear,
+                            model.RegimeId,
+                            model.SectionId,
+                            model.RuleName,
+                            model.RuleCode,
+                            model.MappingType,
+                            model.LinkedPayComponentId,
+                            model.StatutoryCode,
+                            model.MaxLimitAmount,
+                            model.PercentageOfAmount,
+                            model.IsAutoCalculated,
+                            model.IsProofRequired,
+                            model.AllowEmployeeOverride,
+                            model.CalculationFormula,
+                            UserId
+                        );
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    return Json(new
+                    {
+                        success = Convert.ToInt32(dt.Rows[0]["SuccessCode"]) == 1,
+                        message = dt.Rows[0]["Message"].ToString(),
+                        TaxRuleId = dt.Rows[0]["TaxRuleId"]
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    message = "No response from database"
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetTaxRuleList()
+        {
+            DataTable dt = clsDatabase.fnDataTable("SP_Get_Payroll_SaaS_TaxRule_List",TenantId);
+
+            var list = new List<object>();
+
+            foreach (DataRow r in dt.Rows)
+            {
+                list.Add(new
+                {
+                    TaxRuleId = r["TaxRuleId"],
+                    FinancialYear = r["FinancialYear"],
+
+                    RegimeCode = r["RegimeCode"],        // OLD / NEW
+                    SectionCode = r["SectionCode"],      // 80C
+                    Category = r["Category"],            // DEDUCTION
+
+                    RuleName = r["RuleName"],
+                    RuleCode = r["RuleCode"],
+
+                    MappingType = r["MappingType"],
+
+                    Limit =
+                        r["PercentageOfAmount"] != DBNull.Value
+                            ? r["PercentageOfAmount"] + " %"
+                            : r["MaxLimitAmount"] != DBNull.Value
+                                ? "₹ " + Convert.ToDecimal(r["MaxLimitAmount"]).ToString("N0")
+                                : "--",
+
+                    IsActive = Convert.ToBoolean(r["IsActive"])
+                });
+            }
+
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult GetTaxRuleById(int taxRuleId)
+        {
+            DataTable dt = clsDatabase.fnDataTable(
+                "SP_Get_Payroll_SaaS_TaxRule_ById",
+                TenantId,
+                taxRuleId
+            );
+
+            if (dt == null || dt.Rows.Count == 0)
+                return Json(null, JsonRequestBehavior.AllowGet);
+
+            DataRow r = dt.Rows[0];
+
+            var model = new
+            {
+                TaxRuleId = r["TaxRuleId"],
+                FinancialYear = r["FinancialYear"],
+                RegimeId = r["RegimeId"],
+                SectionId = r["SectionId"],
+
+                RuleName = r["RuleName"],
+                RuleCode = r["RuleCode"],
+
+                MappingType = r["MappingType"],
+                LinkedPayComponentId = r["LinkedPayComponentId"],
+                StatutoryCode = r["StatutoryCode"],
+                StatutoryKeys = r["StatutoryKeys"],
+                MaxLimitAmount = r["MaxLimitAmount"],
+                PercentageOfAmount = r["PercentageOfAmount"],
+
+                IsAutoCalculated = r["IsAutoCalculated"],
+                IsProofRequired = r["IsProofRequired"],
+                AllowEmployeeOverride = r["AllowEmployeeOverride"],
+                CalculationFormula = r["CalculationFormula"]
+            };
+
+            return Json(model, JsonRequestBehavior.AllowGet);
         }
 
         #endregion

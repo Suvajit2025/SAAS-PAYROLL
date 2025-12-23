@@ -1,12 +1,13 @@
 ﻿using Common.Utility;
+using DocumentFormat.OpenXml.Spreadsheet;
+using MendinePayroll.UI.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Web;
 using UI.Models;
-using System.Configuration;
-using MendinePayroll.UI.Models;
 
 namespace UI.BLL
 {
@@ -37,24 +38,65 @@ namespace UI.BLL
                                     Info.MonthlyInstallmentAmount, Info.MonthlyInterestAmount,Info.MonthlyLoan,
                                     Info.TotalInterestAmount, Info.TotalLoanAmount,UserName);
         }
-        public static String Payroll_Loan_Processed(List<clsLoanProcessedInfo> Info)
+        //public static String Payroll_Loan_Processed(List<clsLoanProcessedInfo> Info)
+        //{
+        //    string UserName = HttpContext.Current.Session["username"].ToString();
+        //    DataTable dtDetail = SaveTable();
+        //    if (Info.Count > 0)
+        //    {
+        //        foreach (var item in Info)
+        //        {
+        //            DataRow DR = dtDetail.NewRow();
+        //            DR["SRL"] = item.SRL;
+        //            DR["IDDetail"] = item.IDDetail;
+        //            DR["IDLoan"] = item.IDLoan;
+        //            DR["ReceivedAmount"] = item.ReceivedAmount;
+        //            dtDetail.Rows.Add(DR);
+        //        }
+        //    }
+        //    return clsDatabase.fnDBOperation("Payroll_Proc_Loan_Procesed_New", dtDetail, UserName);
+        //}
+        public static string Payroll_Loan_Processed(List<clsLoanProcessedInfo> info)
         {
-            string UserName = HttpContext.Current.Session["username"].ToString();
-            DataTable dtDetail = SaveTable();
-            if (Info.Count > 0)
+            if (info == null || info.Count == 0)
+                return "No records to process.";
+
+            // ✅ Get username safely from session (fallback if missing)
+            string EntryUser = HttpContext.Current?.Session?["username"]?.ToString() ?? "system";
+
+            try
             {
-                foreach (var item in Info)
+                foreach (var item in info)
                 {
-                    DataRow DR = dtDetail.NewRow();
-                    DR["SRL"] = item.SRL;
-                    DR["IDDetail"] = item.IDDetail;
-                    DR["IDLoan"] = item.IDLoan;
-                    DR["ReceivedAmount"] = item.ReceivedAmount;
-                    dtDetail.Rows.Add(DR);
+                    if (item == null)
+                        continue;
+
+                    // ✅ Map model fields directly
+                    long IDLoan = item.IDLoan;
+                    string InstallmentMonth = item.Month ?? string.Empty;
+                    int InstallmentYear = Convert.ToInt32(item.Year);
+                    decimal ReceivedAmount = item.ReceivedAmount;  // Already decimal
+                    decimal OpeningBalance = Convert.ToDecimal(item.ClosingBalance);  // Passed from SP, used as next opening
+
+                    // ✅ Ensure minimal validation before DB call
+                    if (IDLoan <= 0 || string.IsNullOrEmpty(InstallmentMonth) || InstallmentYear <= 0)
+                        continue;
+
+                    var dbResult = clsDatabase.fnDBOperation("PRC_UpdateOrInsert_LoanProcess", IDLoan, InstallmentMonth, InstallmentYear, ReceivedAmount, OpeningBalance, EntryUser);
+
+                    
                 }
+
+                return "OK"; // or return aggregated DB result as needed
             }
-            return clsDatabase.fnDBOperation("Payroll_Proc_Loan_Procesed_New", dtDetail, UserName);
+            catch (Exception ex)
+            {
+                // Log exception as appropriate and return message
+                // e.g. Log.Error(ex);
+                return $"Error: {ex.Message}";
+            }
         }
+
         public static String Payroll_Loan_Processed_All(List<clsLoanProcessedInfo> Info)
 		{
 			string UserName = HttpContext.Current.Session["username"].ToString();
@@ -83,10 +125,11 @@ namespace UI.BLL
 			DT.Columns.Add("ReceivedAmount", typeof(System.Decimal));
 			return DT;
 		}
-		public static DataTable Loan_Process_Data(long IDEmployee)
+		public static DataTable Loan_Process_Data(long IDEmployee, int Year, string MonthName)
 		{
-			return clsDatabase.fnDataTable("Payroll_Proc_Get_All_Emp_Loan_Process_Data  ", IDEmployee);
-		}
+            //return clsDatabase.fnDataTable("Payroll_Proc_Get_All_Emp_Loan_Process_Data  ", IDEmployee);
+            return clsDatabase.fnDataTable("PRC_Loan_Installment_ByMonth", Year, MonthName, IDEmployee);
+        }
 		public static DataTable  Loan_List(long Employeeno)
 		{
 			return clsDatabase.fnDataTable("Payroll_PRC_Employee_loan_List", Employeeno);

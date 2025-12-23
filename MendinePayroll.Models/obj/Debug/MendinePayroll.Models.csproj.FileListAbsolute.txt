@@ -215,3 +215,24 @@ D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Mo
 D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\obj\Debug\MendineP.DBBBFFCE.Up2Date
 D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.dll
 D:\WORKING\PayrollUI\PayrollUI\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.pdb
+D:\Archive\PayrollUI-MENDINE\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.pdb
+D:\Archive\PayrollUI-MENDINE\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.AssemblyReference.cache
+D:\Archive\PayrollUI-MENDINE\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.CoreCompileInputs.cache
+D:\Archive\PayrollUI-MENDINE\MendinePayroll.Models\obj\Debug\MendineP.DBBBFFCE.Up2Date
+D:\Archive\PayrollUI-MENDINE\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.pdb
+D:\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.dll
+D:\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.pdb
+D:\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.AssemblyReference.cache
+D:\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.CoreCompileInputs.cache
+D:\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendineP.DBBBFFCE.Up2Date
+D:\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.dll
+D:\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.AssemblyReference.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.CoreCompileInputs.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendineP.DBBBFFCE.Up2Date
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.pdb

@@ -18,7 +18,7 @@ namespace MendinePayroll.UI.Controllers
         // GET: PayGroup
         public ActionResult Index()
         {
-            if (Session["UserName"] == null)
+            if (Session["UserName"] == null && Session["TenantID"] == null)
             {
                 return RedirectToAction("Index", "Login");
             }
@@ -34,7 +34,8 @@ namespace MendinePayroll.UI.Controllers
             EmpbasicModel empbasicModel = new EmpbasicModel();
             List<SelectListItem> HRList = new List<SelectListItem>();
             HRList.Add(new SelectListItem { Text = "Select HR Name", Value = "0" });
-            empbasicModel.empdesignation = Convert.ToInt32(9);
+            //empbasicModel.empdesignation = Convert.ToInt32(9);
+            empbasicModel.TenantID = Session["TenantID"].ToString();
             string contentss = JsonConvert.SerializeObject(empbasicModel);
             HttpResponseMessage responses = ObjAPI.CallAPI("api/PayGroup/GetAllEmployeeByDesignation", contentss);
             if (responses.IsSuccessStatusCode)
@@ -63,7 +64,7 @@ namespace MendinePayroll.UI.Controllers
             payGroupModel.PayGroupID = 0;
             List<PayGroupModel> PaygroupList = new List<PayGroupModel>();
             //tenderModel.TenderID = 0;
-
+            payGroupModel.TenantID = Session["TenantID"].ToString();
             //tenderModel.ProsumersID = Convert.ToInt32(Session["ProsumersID"]);
 
             string contents = JsonConvert.SerializeObject(payGroupModel);
@@ -91,7 +92,8 @@ namespace MendinePayroll.UI.Controllers
             payGroupModel.Description = Description;
             payGroupModel.PayGroupMasterCode = PayGroupMasterCode;
             payGroupModel.ConcernHRPersonnel =Convert.ToInt32(ConcernHRPersonnel);
-
+            payGroupModel.TenantID = Session["TenantID"].ToString();
+            payGroupModel.EntryUser = Session["UserEmail"].ToString();
 
             string contents = JsonConvert.SerializeObject(payGroupModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/PayGoup/SavePayGroup", contents);
@@ -110,6 +112,7 @@ namespace MendinePayroll.UI.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
         #endregion
+
         #region Get PayGroup
         public JsonResult GetPayGroup(string PayGroupID)
         {
@@ -142,7 +145,8 @@ namespace MendinePayroll.UI.Controllers
             payGroupModel.Description = Description;
             payGroupModel.PayGroupMasterCode = PayGroupMasterCode;
             payGroupModel.ConcernHRPersonnel = Convert.ToInt32(ConcernHRPersonnel);
-
+            payGroupModel.TenantID = Session["TenantID"].ToString();
+            payGroupModel.EntryUser = Session["UserEmail"].ToString();
 
             string contents = JsonConvert.SerializeObject(payGroupModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/PayGoup/SavePayGroup", contents);

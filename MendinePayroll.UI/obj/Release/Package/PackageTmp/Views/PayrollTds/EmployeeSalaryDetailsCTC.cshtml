@@ -1,0 +1,1124 @@
+﻿
+@{
+    ViewBag.Title = "EmployeeSalaryDetailsCTC";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    #progressOverlay {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: rgba(255,255,255,0.85);
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        transition: opacity 0.3s ease;
+    }
+</style>
+<style>
+    #salaryBreakupTables table {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    #salaryBreakupTables th,
+    #salaryBreakupTables td {
+        padding: 8px;
+        vertical-align: middle;
+    }
+</style>
+
+<section role="main" class="content-body">
+    <header class="page-header">
+    </header>
+    <section class="panel" style="position:relative;">
+        <header class="panel-heading">
+            <h2 class="panel-title">Employee Manual Salary Configure</h2>
+            <div class="panel-actions">
+                <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+        </header>
+        <div class="panel-body">
+            <div id="progressOverlay" style="display: none; position: absolute; top: 0; left: 0;
+                    width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 9999;
+                    justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+
+                <div style="width: 60%; background-color: #ddd; border-radius: 8px; height: 30px; margin-bottom: 10px;">
+                    <div id="progressBar" style="height: 100%; width: 0%; background-color: #28a745;
+                        text-align: center; color: white; line-height: 30px; border-radius: 8px;">
+                        0%
+                    </div>
+                </div>
+                <strong style="color:#555;">Calculating Salary Structure...</strong>
+            </div>
+
+
+            <form role="form">
+                <div class="box-body">
+                    <div class="col-md-12">
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <input type="hidden" id="hdnEmpId" value="0" />
+                                <input type="hidden" id="hdnEmployeeId" value="@Model" />
+                                <label class="label-design" for="Status">PayGroup Name <span class="required">*</span></label>
+                                <div class="input-group btn-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-cab"></i>
+                                    </span>
+                                    <select id="ddlPaygroup" class="form-control" name="Model.PaymentTerm" value="0" onchange="return loadmanualSalarydata(this.value)"></select>
+                                </div>
+                                <span id="msgPayConfigName" class="ms-error" style="color:red;"></span>
+
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3" style="margin-left:0px;">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">Financial Year <span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <select id="FinancialYear" class="form-control"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ✅ Effective From Field -->
+                        @*<div class="col-sm-3" style="margin-left:0px;">
+                                    <div class="form-group">
+                                        <label class="label-design" for="txtEffectiveFrom">Date From <span class="required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="date" id="txtEffectiveFrom" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3" style="margin-left:0px;">
+                                    <div class="form-group">
+                                        <label class="label-design" for="txtEffectiveFrom">Date To <span class="required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="date" id="txtEffectiveto" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="col-md-12 mb-3">
+                            @*<div class="col-sm-3" style="margin-left:0px;">
+                                    <div class="form-group">
+                                        <label class="label-design" for="txtEffectiveFrom">Arrear Process Month<span class="required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="month" id="arrearMonth" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>*@
+                            <div class="col-sm-3">
+                                <label class="label-design"></label>
+                                <div>
+                                    <label class="checkbox-inline">
+
+                                        <input type="checkbox" id="txtPTAXstatus" checked="checked" style="height:20px;width:20px;">&nbsp; &nbsp;&nbsp;
+                                        DeductPTAX
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="label-design"></label>
+                                <div>
+                                    <label class="checkbox-inline">
+
+                                        <input type="checkbox" id="txtPFstatus" checked="checked" style="height:20px;width:20px;">&nbsp; &nbsp;&nbsp;
+                                        DeductPF
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="label-design"></label>
+                                <div>
+                                    <label class="checkbox-inline">
+
+                                        <input type="checkbox" id="txtESICstatus" checked="checked" style="height:20px;width:20px;">&nbsp; &nbsp;&nbsp;
+                                        DeductESIC
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="display:none">
+                            <div class="col-sm-3">
+                                <label class="label-design"></label>
+                                <div>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="chkCalculateArrear" style="height:20px;width:20px;" onchange="toggleArrearFields()" />
+                                        &nbsp; &nbsp;&nbsp;Calculate Arrear
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="arrearFields" style="display:none; flex-wrap: wrap;" class="d-flex">
+                                <div class="col-sm-4" style="margin-left:0px;">
+                                    <div class="form-group">
+                                        <label class="label-design" for="txtEffectiveFrom">Date From <span class="required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="date" id="txtEffectiveFrom" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4" style="margin-left:0px;">
+                                    <div class="form-group">
+                                        <label class="label-design" for="txtEffectiveto">Date To <span class="required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="date" id="txtEffectiveto" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4" style="margin-left:0px;">
+                                    <div class="form-group">
+                                        <label class="label-design" for="arrearMonth">Arrear Process Month<span class="required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="month" id="arrearMonth" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12" style="display:none">
+                            <div class="col-sm-12" style="margin-left:0px;">
+                                <div class="form-group">
+
+                                    <label class="label-design" for="Status">Continuous Attendance Allowance</label>
+                                    <input type="text" id="txtContinuousAllowance" class="form-control" />
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-12"></div>
+                        <input type="hidden" id="hdndata" value="0" />
+                        <div class="col-md-12">
+                            <div id="DynamicmanualData">
+
+                            </div>
+                        </div>
+                       
+                    </div>
+                    <div class="box-footer" style="text-align:center;margin-top:10px; ">
+                        <div class="col-md-12">
+                            <button type="button" id="btnEmpCTC" class="btn btn-tertiary" onclick="return CalculateCTC();" style="margin:10px;">
+                                <i class="fa fa-plus-square space-right"></i> Calculate
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="salaryBreakup"></div>
+                        </div>
+                        <div class="box-footer" style="text-align:center;margin-top:10px; ">
+                            <div class="col-md-12">
+                                <button type="button" id="btnEmpCTCSave" class="btn btn-tertiary" onclick="return SaveEmpProposedSalary();" style="margin:10px;">
+                                    <i class="fa fa-plus-square space-right"></i> Save
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </section>
+</section>
+
+<script>
+    $(document).ready(function () {
+
+        $('#btnEmpCTCSave').hide();
+        loadPaygroup();
+    });
+    function loadmasterData(callback) {
+        const empId = $('#hdnEmployeeId').val();
+        $.ajax({
+            url: '/PayrollTds/GetTDSMasterData',
+            type: 'GET',
+            data: { empId: empId },
+            dataType: 'json',
+            success: function (data) {
+                populateFinancialYearDropdown('#FinancialYear', data.financialYears, 'IDFinancialYear', 'FinancialYearCode', 'AssessmentYearCode');
+                if (typeof callback === 'function') callback();
+            },
+            error: function (err) {
+                console.error('Failed to load master data:', err);
+            }
+        });
+    }
+    function populateFinancialYearDropdown(selector, data, valueField, textField, dataAttrField) {
+        var dropdown = $(selector);
+        dropdown.empty();
+        /* dropdown.append($('<option></option>').val('').html('-- Select --'));*/
+        dropdown.append($('<option></option>').val('0').html('-- Select --'));
+        $.each(data, function (i, item) {
+            // Add assessment year as data attribute
+            dropdown.append(
+                $('<option></option>')
+                    .val(item[textField])
+                    .html(item[textField])
+                    .attr('data-assessmentyear', item[dataAttrField])
+            );
+        });
+    }
+</script>
+<script type="text/javascript">
+    function toggleArrearFields() {
+        var isChecked = document.getElementById("chkCalculateArrear").checked;
+        document.getElementById("arrearFields").style.display = isChecked ? "flex" : "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        toggleArrearFields(); // optional initial state
+    });
+</script>
+
+<script>
+
+    var qsparam = new Array(10);
+    //qsparam.splice(0, 10);
+    var query = window.location.search.substring(1);
+    var parms = query.split('&&');
+    for (var i = 0; i < parms.length; i++) {
+        var pos = parms[i].indexOf('=');
+        if (pos > 0) {
+            var key = parms[i].substring(0, pos);
+            var val = parms[i].substring(pos + 1);
+            qsparam[i] = val;
+        }
+    }
+
+    function loadPaygroup() {
+        //loadmasterData();
+        $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetPayGroup",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                //
+                $.each(response, function () {
+                    $("#ddlPaygroup").append($("<option></option>").val(this['Value']).html(this['Text']));
+                });
+                $("#hdnEmpId").val(qsparam[0]);
+                $("#ddlPaygroup").val(qsparam[1]);
+                loadmasterData();
+                loadmanualSalarydata($("#ddlPaygroup").val());
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+
+
+    }
+
+
+
+
+    function BacktoEmpList() {
+
+
+        window.location.href = "/EmployeeList/Index?SearchValue=" + qsparam[2] + "";
+    }
+
+
+</script>
+<script>
+
+    function loaddata() {
+        var Empid = $("#hdnEmpId").val();
+        var PayGroupId = $("#ddlPaygroup").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/PayrollTds/GetEmployeeSalaryDetailsNew",
+            data: { "Empid": Empid },
+            dataType: "json",
+            success: function (response) {
+                if (response.success && response.result.length > 0) {
+                    const data = response.result;
+
+                    $("#txtPTAXstatus").prop("checked", data[0].IsPTaxActive == true);
+                    $("#txtPFstatus").prop("checked", data[0].IsPFActive == 1);
+                    $("#txtESICstatus").prop("checked", data[0].IsEsicActive == 1);
+                    $("#txtContinuousAllowance").val(data[0].ContinuousAllowance || 0);
+                    $("#txtProductionBonus").val(data[0].ProductionBonus || 0);
+                    const fyVal = (data[0].FinancialYear || "0").trim();
+                    console.log("Financial year  in dropdown:", fyVal);
+                    $("#FinancialYear").val(fyVal || 0);
+                    $.each(data, function (index, value) {
+                        $("#txt_" + value.PayConfigId).val(value.Values);
+                    });
+                } else {
+                    console.warn("No salary details found or response unsuccessful.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching salary details:", error);
+                alert("Error: " + xhr.responseText);
+            }
+        });
+    }
+
+</script>
+<script>
+    function loadmanualSalarydata(PayGroupId) {
+        var jq = jQuery.noConflict();
+        var PayGroupID = PayGroupId;
+
+        // Only proceed if PayGroupID is valid
+        if (PayGroupID > 0) {
+            jq.ajax({
+                type: "POST",
+                url: '/PayrollTds/GetManualConfigureSalaryNew',
+                data: { "PayGroupID": PayGroupID },
+                dataType: "json",
+                success: function (response) {
+                    console.log(response); // Log the response to verify its structure
+
+                    // If response is a string, parse it
+                    if (typeof response.data === "string") {
+                        try {
+                            response.data = JSON.parse(response.data); // Parse the JSON string into an object
+                        } catch (e) {
+                            console.error("Error parsing response data:", e);
+                            $("#DynamicmanualData").html("<p>Error parsing data.</p>");
+                            return;
+                        }
+                    }
+
+                    // Check if the parsed response is an array and contains data
+                    if (!Array.isArray(response.data) || response.data.length === 0) {
+                        $("#DynamicmanualData").html("<p>No salary configuration data found.</p>");
+                        return;
+                    }
+
+                    let id = 0;
+
+                    // Clear existing content
+                    $("#DynamicmanualData").empty();
+
+                    // Create header rows for Earning SetUp and Company Contribution
+                    $("#DynamicmanualData").append(`
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12" id="earningSetupContainer">
+                                <h5 style="border-bottom: 1px solid #ccc;">Earning SetUp</h5>
+                            </div>
+                            <div class="col-md-6 col-sm-12" id="companyContributionContainer">
+                                <h5 style="border-bottom: 1px solid #ccc;">Company Contribution</h5>
+                            </div>
+                        </div>
+                    `);
+
+                    // Loop through the parsed response and add form fields to each column based on RecordSource
+                    for (let i = 0; i < response.data.length; i++) {
+                        const item = response.data[i];
+
+                        if (item.ISActive !== true) continue; // Skip inactive items
+
+                        // Create a unique ID for each row
+                        const rowId = `row_${id}`;
+
+
+                        const fieldPrefix = item.RecordSource === "ManualConfig" ? "hdnManual" : "hdnCC";
+
+                        const newrow = `
+                            <div id="${rowId}" class="form-group abc mb-3">
+                                <label id="lblManuals_${id}" style="font-weight: 500;">${item.PayConfigName}</label>
+                                <input type="text" class="form-control" id="txt_${item.ManualPayConfigId}" aria-label="Enter value for ${item.PayConfigName}" />
+                                <input type="hidden" id="${fieldPrefix}_${id}" value="${item.ManualPayConfigId}" />
+                                <span class="field-validation-error" id="errorStatus_${id}" style="color: Red;"></span>
+                            </div>
+                        `;
+                        // Append to the appropriate container based on RecordSource
+                        if (item.RecordSource === "ManualConfig") {
+                            jq("#earningSetupContainer").append(newrow);
+                        } else if (item.RecordSource === "CompanyContribution") {
+                            jq("#companyContributionContainer").append(newrow);
+                        }
+
+                        id++;
+                    }
+
+                    // Update the hidden field with the last ID used
+                    document.getElementById('hdndata').value = id;
+
+                    // Optional: Call another function if needed after data load
+                    loaddata();
+                },
+                error: function (er) {
+                    console.log(er);
+                    // Provide feedback to the user
+                    $("#DynamicmanualData").html("<p>An error occurred while loading data. Please try again later.</p>");
+                }
+            });
+        } else {
+            // If PayGroupID is invalid, show an error message
+            $("#DynamicmanualData").html("<p>Invalid PayGroupID provided.</p>");
+        }
+    }
+</script>
+
+
+
+
+
+
+<script>
+    function SaveEmpSalary() {
+
+        if (ValidationSaveSalary() == true) {
+            var PayGroupId = $("#ddlPaygroup").val();
+            var Id = $("#hdnid").val();
+            var EmpId = $("#hdnEmpId").val();
+            var IsPTaxActive = $("#txtPTAXstatus").is(":checked");
+            var ContinuousAllowance = $("#txtContinuousAllowance").val();
+            var ProductionBonus = $("#txtProductionBonus").val();
+
+            //var relength = ManualSalarylist.length;
+            var model = {
+                Id: Id, EmpId: EmpId, PayGroupId: PayGroupId, "IsPTaxActive": IsPTaxActive
+            }
+
+            $.ajax({
+                type: "POST",
+                url: '/PayrollTds/SaveEmployeeSalary',
+                data: {
+                    "Id": Id, "EmpId": EmpId, "PayGroupId": PayGroupId, "IsPTaxActive": IsPTaxActive, "ContinuousAllowance": ContinuousAllowance, "ProductionBonus": ProductionBonus
+                },
+                //datatype: "JSON",
+                //contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+
+                    if (data > 0) {
+                        SaveEmployeeManualSalaryValue(data)
+                    }
+
+
+                },
+                error: function (er) {
+                    console.log(er);
+                }
+            });
+
+        }
+    }
+
+    function ValidationSaveSalary() {
+        if ($("#ddlPaygroup").val() == 0 || $("#ddlPaygroup").val() == "") {
+            $("#msgPayConfigName").html("Please Select Pay Group");
+            $("#ddlPaygroup").focus();
+            return false;
+        }
+        return true;
+    }
+</script>
+<script>
+    function CalculateCTC() {
+        const empId = $("#hdnEmpId").val();
+        const payGroupName = $("#ddlPaygroup option:selected").text();
+        const payGroupId = $("#ddlPaygroup").val();
+        const dateFrom = $("#txtEffectiveFrom").val();
+        const dateTo = $("#txtEffectiveto").val();
+        const arrearMonth = $("#arrearMonth").val();
+
+        const deductPTAX = $("#txtPTAXstatus").is(":checked");
+        const deductPF = $("#txtPFstatus").is(":checked");
+        const deductESIC = $("#txtESICstatus").is(":checked");
+        var isArrearChecked = $('#chkCalculateArrear').is(':checked');
+        const financialYear = $("#FinancialYear").val();
+
+        const newManualValues = [];
+        const companyContributions = [];
+
+        $("#DynamicmanualData .abc").each(function () {
+            const label = $(this).find("label").text().trim();
+            const payConfigId = parseInt($(this).find("input[type='hidden']").val());
+            let value = $(this).find("input[type='text']").val().trim();
+            // Default to 0 if empty or not a valid number
+            value = value === "" || isNaN(value) ? "0" : value;
+            const row = {
+                PayConfigID: payConfigId,
+                PayConfigName: label,
+                Values: value
+            };
+
+            if ($(this).closest("#companyContributionContainer").length > 0) {
+                companyContributions.push(row);
+            } else {
+                newManualValues.push(row);
+            }
+        });
+
+        const finalJson = {
+            EmpId: empId,
+            PayGroupId: payGroupId,
+            FinancialYear: financialYear,
+            NewManualValues: newManualValues,
+            CompanyContributions: companyContributions,
+            DateFrom: dateFrom,
+            DateTo: dateTo,
+            ArrearMonth: arrearMonth,
+            DeductPTAX: deductPTAX,
+            DeductPF: deductPF,
+            DeductESIC: deductESIC,
+            IsArrear: isArrearChecked,
+
+        };
+
+        // Show overlay and simulate progress
+        $("#progressOverlay").show();
+        let progress = 0;
+        const interval = setInterval(function () {
+            if (progress < 90) {
+                progress += 1;
+                $("#progressBar").css("width", progress + "%").text(progress + "%");
+            }
+        }, 450);
+
+        $.ajax({
+            url: "/PayrollTds/CalculateCTCJson",
+
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(finalJson),
+            success: function (response) {
+                clearInterval(interval);
+                $("#progressBar").css("width", "100%").text("100%");
+
+                setTimeout(() => {
+                    $("#progressOverlay").fadeOut();
+                }, 500);
+
+                // ✅ Directly use the response object
+                if (response.success) {
+                    console.log("Data received:", response);
+                    renderSalaryBreakupTables(response);
+                    $('#btnEmpCTCSave').show();
+                } else {
+                    alert("Error calculating CTC: " + response.error);
+                }
+            },
+            error: function (xhr, status, error) {
+                clearInterval(interval);
+                $("#progressBar").css("width", "100%").text("Failed");
+                setTimeout(() => {
+                    $("#progressOverlay").fadeOut();
+                }, 1000);
+                alert("AJAX failed: " + error);
+            }
+        });
+
+
+    }
+    function renderSalaryBreakupTables(data) {
+        const container = $('#salaryBreakup');
+        container.empty();
+
+        // ✅ Old Proposed Salary Full Table
+        if (data.oldProposedSalary) {
+            const oldSalarySections = {
+                ManualValues: "Manual Components",
+                AllowanceValues: "Allowances",
+                GrossValues: "Gross Payable",
+                DeductionValues: "Deductions",
+                NetValues: "Net Payable",
+                CompanyContributions: "Company Contributions",
+                CompanyContributionsBreakup: "Company Contributions Breakup",
+                CompanyContributionsBreakup: "PF Breakup",
+                TotalContributionValues: "Total Contribution",
+                MonthlyCTCValues: "CTC Per Month",
+                YearlyCTCValues: "CTC Per Year"
+            };
+
+            const table = $('<table id="oldsalaryBreakupTables" style="display: none;" class="table table-bordered mb-4">');
+            const thead = `
+        <thead>
+            <tr>
+                <th style="width: 20%">PayConfigID</th>
+                <th style="width: 30%">Monthly Remuneration</th>
+                <th style="width: 20%">PayConfigType</th>
+                <th style="width: 30%">Amount (Rs)</th>
+            </tr>
+        </thead>
+    `;
+
+            const oldSalaryTbody = $('<tbody>');
+
+            for (const [key, label] of Object.entries(oldSalarySections)) {
+                const rows = data.oldProposedSalary[key];
+                if (Array.isArray(rows) && rows.length > 0) {
+                    rows.forEach(row => {
+                        if (row && typeof row === "object") {
+                            const isSummary = (row.PayConfigType || '').toLowerCase() === "summary";
+                            oldSalaryTbody.append(`<tr${isSummary ? ' style="font-weight:bold;"' : ''}>
+                            <td>${row.PayConfigId ?? ''}</td>
+                            <td>${row.PayConfigName ?? ''}</td>
+                            <td>${row.PayConfigType ?? ''}</td>
+                            <td>${parseFloat(row.ConfigValue ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+                        </tr>`);
+                        }
+                    });
+                }
+            }
+
+            table.append(thead);
+            table.append(oldSalaryTbody);
+            container.append(table);
+        }
+        // ✅ New Proposed Salary Full Table
+        if (data.newProposedSalary) {
+            const newSalarySections = {
+                ManualValues: "Manual Components",
+                AllowanceValues: "Allowances",
+                GrossValues: "Gross Payable",
+                DeductionValues: "Deductions",
+                NetValues: "Net Payable",
+                CompanyContributions: "Company Contributions",
+                CompanyContributionsBreakup: "Company Contributions Breakup",
+                TotalContributionValues: "Total Contribution",
+                MonthlyCTCValues: "CTC Per Month",
+                YearlyCTCValues: "CTC Per Year"
+            };
+
+            const table = $('<table id="NewsalaryBreakupTables" style="display: none;" class="table table-bordered mb-4">');
+            const thead = `
+                <thead>
+                    <tr>
+                        <th style="width: 20%">PayConfigID</th>
+                        <th style="width: 30%">Monthly Remuneration</th>
+                        <th style="width: 20%">PayConfigType</th>
+                        <th style="width: 30%">Amount (Rs)</th>
+                    </tr>
+                </thead>
+            `;
+
+            const newSalaryTbody = $('<tbody>');
+
+            for (const [key, label] of Object.entries(newSalarySections)) {
+                const rows = data.newProposedSalary[key];
+                if (Array.isArray(rows) && rows.length > 0) {
+                    rows.forEach(row => {
+                        if (row && typeof row === "object") {
+                            const isSummary = (row.PayConfigType || '').toLowerCase() === "summary";
+                            newSalaryTbody.append(`<tr${isSummary ? ' style="font-weight:bold;"' : ''}>
+                        <td>${row.PayConfigId ?? ''}</td>
+                        <td>${row.PayConfigName ?? ''}</td>
+                        <td>${row.PayConfigType ?? ''}</td>
+                        <td>${parseFloat(row.ConfigValue ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+                    </tr>`);
+                        }
+                    });
+                }
+            }
+
+            table.append(thead);
+            table.append(newSalaryTbody);
+            container.append(table);
+        }
+
+        // Render the combined SalaryBreakupTable with Old and New Amounts side by side
+        //if (Array.isArray(data.SalaryBreakupTable) && data.SalaryBreakupTable.length > 0) {
+        //    const table = $('<table id="salaryBreakupComparison" class="table table-bordered mb-4">');
+        //    const thead = `
+        //    <thead>
+        //        <tr>
+        //            <th style="width: 50%">Monthly Remuneration</th>
+        //            <th style="width: 25%">Old Amount (Rs)</th>
+        //            <th style="width: 25%">New Amount (Rs)</th>
+        //        </tr>
+        //    </thead>
+        //`;
+        //    const tbody = $('<tbody>');
+
+        //    data.SalaryBreakupTable.forEach(item => {
+        //        const isSummary = (item.PayConfigType || '').toLowerCase() === "summary";
+        //        tbody.append(`<tr${isSummary ? ' style="font-weight:bold;"' : ''}>
+        //        <td>${item.PayConfigName ?? ''}</td>
+        //        <td>${parseFloat(item.OldAmount ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+        //        <td>${parseFloat(item.NewAmount ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+        //    </tr>`);
+        //    });
+
+        //    table.append(thead).append(tbody);
+        //    container.append(table);
+        //}
+        // Check if all OldAmount values are zero
+        const isAllOldAmountZero = data.SalaryBreakupTable.every(
+            item => parseFloat(item.OldAmount ?? 0) === 0
+        );
+
+        // Build table
+        if (Array.isArray(data.SalaryBreakupTable) && data.SalaryBreakupTable.length > 0) {
+            const table = $('<table id="salaryBreakupComparison" class="table table-bordered mb-4">');
+
+            const thead = isAllOldAmountZero ? `
+                    <thead>
+                        <tr>
+                            <th style="width: 70%">Monthly Remuneration</th>
+                            <th style="width: 30%">Amount (Rs)</th>
+                        </tr>
+                    </thead>` : `
+                    <thead>
+                        <tr>
+                            <th style="width: 50%">Monthly Remuneration</th>
+                            <th style="width: 25%">Old Amount (Rs)</th>
+                            <th style="width: 25%">New Amount (Rs)</th>
+                        </tr>
+                    </thead>`;
+
+            const tbody = $('<tbody>');
+
+            data.SalaryBreakupTable.forEach(item => {
+                const isSummary = (item.PayConfigType || '').toLowerCase() === "summary";
+
+                const row = $('<tr>').attr("style", isSummary ? "font-weight:bold;" : "");
+
+                row.append(`<td>${item.PayConfigName ?? ''}</td>`);
+
+                if (isAllOldAmountZero) {
+                    row.append(`<td>${parseFloat(item.NewAmount ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>`);
+                } else {
+                    row.append(`<td>${parseFloat(item.OldAmount ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>`);
+                    row.append(`<td>${parseFloat(item.NewAmount ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>`);
+                }
+
+                tbody.append(row);
+            });
+
+            table.append(thead).append(tbody);
+            container.append(table);
+        }
+
+        // Arrear Summary Table
+        if (Array.isArray(data.Payroll_ArrearMaster) && data.Payroll_ArrearMaster.length > 0) {
+            const arrear = data.Payroll_ArrearMaster[0]; // access the first object directly
+
+            const summaryFields = {
+                GrossDifference: "Gross Difference",
+                NetDifference: "Net Difference",
+                CTCDifference: "CTC Difference",
+                TotalGrossArrear: "Total Gross Arrear",
+                TotalNetArrear: "Total Net Arrear",
+                TotalCTCArrear: "Total CTC Arrear"
+            };
+
+            const arrearSummaryTable = $('<table id="arrearSummaryTable" class="table table-bordered mt-4">');
+            arrearSummaryTable.append(`
+                    <thead>
+                        <tr>
+                            <th style="width: 70%">Arrear Component</th>
+                            <th style="width: 30%">Amount (Rs)</th>
+                        </tr>
+                    </thead>
+                `);
+
+            const arrearTbody = $('<tbody>');
+            for (const [key, label] of Object.entries(summaryFields)) {
+                if (arrear.hasOwnProperty(key)) {
+                    arrearTbody.append(`
+                <tr>
+                    <td><strong>${label}</strong></td>
+                    <td>${parseFloat(arrear[key] ?? 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+                </tr>
+            `);
+                }
+            }
+
+            arrearSummaryTable.append(arrearTbody);
+            container.append(arrearSummaryTable);
+        }
+
+        // Hidden JSON to use later (Save)
+        if (Array.isArray(data.Payroll_ArrearMaster)) {
+            const hiddenJson = $('<textarea>')
+                .attr({
+                    id: 'hdnFullArrearJson',
+                    name: 'hdnFullArrearJson',
+                    style: 'display:none;'
+                })
+                .text(JSON.stringify({
+                    Payroll_ArrearMaster: data.Payroll_ArrearMaster,
+                    Payroll_ArrearDetails: data.Payroll_ArrearDetails,
+                    Payroll_ArrearMonthlyBreakup: data.Payroll_ArrearMonthlyBreakup
+                }));
+            container.append(hiddenJson);
+        }
+
+    }
+</script>
+<script>
+    function SaveEmpProposedSalary() {
+        const payGroupId = $("#ddlPaygroup").val();
+        const financialYear = $("#FinancialYear").val();
+
+        // 🔍 Validate Pay Group and Financial Year
+        if (!payGroupId || payGroupId === "0") {
+            alert("Please select a Pay Group.");
+            $("#ddlPaygroup").focus();
+            return;
+        }
+
+        if (!financialYear || financialYear === "0") {
+            alert("Please select a Financial Year.");
+            $("#FinancialYear").focus();
+            return;
+        }
+
+        // Continue with data gathering and AJAX call
+        const id = $("#hdnid").val();
+        const empId = $("#hdnEmpId").val();
+        const isPTaxActive = $("#txtPTAXstatus").is(":checked");
+        const continuousAllowance = $("#txtContinuousAllowance").val();
+        const productionBonus = $("#txtProductionBonus").val();
+        const isPFActive = $("#txtPFstatus").is(":checked");
+        const isESICActive = $("#txtESICstatus").is(":checked");
+
+
+        const finalJson = {
+            EmpId: empId,
+            Id: id,
+            PayGroupId: payGroupId,
+            FinancialYear: financialYear,
+            DeductPTAX: isPTaxActive,
+            DeductPF: isPFActive,
+            DeductESIC: isESICActive,
+            ContinuousAllowance: continuousAllowance,
+            ProductionBonus: productionBonus
+        };
+
+        $.ajax({
+            url: "/PayrollTds/SaveEmployeeProposedSalary",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(finalJson),
+            success: function (response) {
+                if (response.result) {
+                    SaveEmployeeManualSalaryValue(response.result)
+                    // SaveEmployeePropsedSalaryValue(response.result)
+                }
+                // Optionally, refresh data or close modal
+            },
+            error: function (xhr, status, error) {
+                alert("AJAX failed: " + error);
+            }
+        });
+    }
+
+    function SaveEmployeeManualSalaryValue(EmployeeSalaryConfigid) {
+        // Build an array of objects representing each row in the table
+        var salaryTableRows = [];
+
+        $("#DynamicmanualData .abc").each(function () {
+            // Find the hidden input that holds the PayConfigID
+            var manualPayConfigId = $(this).find("input[id^='hdnManual_']").val();
+            // Find the corresponding text input value, default to "0" if empty
+            var manualValue = $("#txt_" + manualPayConfigId).val() || "0";
+
+            if (manualPayConfigId !== undefined) {
+                salaryTableRows.push({
+                    EmployeeSalaryConfigid: EmployeeSalaryConfigid,
+                    PayConfigID: manualPayConfigId,
+                    Value: manualValue
+                });
+            }
+        });
+        // Extract data from old salary breakup table
+        const oldSalaryData = extractSalaryTableData("#oldsalaryBreakupTables");
+
+        // Extract data from new salary breakup table
+        const newSalaryData = extractSalaryTableData("#NewsalaryBreakupTables");
+
+        // Final payload
+        const finalPayload = {
+            EmployeeSalaryConfigid: EmployeeSalaryConfigid,
+            ManualValues: salaryTableRows,
+            OldSalaryBreakup: oldSalaryData,
+            NewSalaryBreakup: newSalaryData
+        };
+        // ➕ Add Arrear JSON if available
+        const arrearJsonText = $('#hdnFullArrearJson').val();
+        if (arrearJsonText) {
+            try {
+                const arrearData = JSON.parse(arrearJsonText);
+                finalPayload.Payroll_ArrearMaster = arrearData.Payroll_ArrearMaster || [];
+                finalPayload.Payroll_ArrearDetails = arrearData.Payroll_ArrearDetails || [];
+                finalPayload.Payroll_ArrearMonthlyBreakup = arrearData.Payroll_ArrearMonthlyBreakup || [];
+            } catch (err) {
+                console.error("Invalid Arrear JSON:", err);
+            }
+        }
+        // Send the JSON payload via AJAX
+        $.ajax({
+            url: '/PayrollTds/SaveEmployeeManualSalaryNew',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(finalPayload),
+            success: function (response) {
+                //if (response.result != "0") {
+                //    //SaveEmployeeProposedSalaryValue(EmployeeSalaryConfigid)
+                //}
+                if (response.result != "0") {
+                    swal({
+                        title: "Success!",
+                        text: "Proposed salary saved successfully.",
+                        icon: "success"
+                    }).then(() => {
+                        // Optional: redirect or update UI
+                        window.location.href = "/EmployeeList";
+                    });
+                } else {
+                    swal({
+                        title: "Error!",
+                        text: "Failed to save proposed salary.",
+                        icon: "error"
+                    });
+                }
+            },
+            error: function (er) {
+                console.log(er);
+            }
+        });
+    }
+
+    function extractSalaryTableData(tableId) {
+        const data = [];
+
+        $(`${tableId} tbody tr`).each(function () {
+            const row = $(this).find('td');
+
+            data.push({
+                PayConfigID: row.eq(0).text().trim(),
+                PayConfigName: row.eq(1).text().trim(),
+                PayConfigType: row.eq(2).text().trim(),
+                ConfigValue: parseFloat(row.eq(3).text().replace(/,/g, '')) || 0
+            });
+        });
+
+        return data;
+    }
+
+
+    function SaveEmployeeProposedSalaryValue(EmployeeSalaryConfigid) {
+        const proposedSalaryData = [];
+
+        $("#salaryBreakupTables tbody tr").each(function () {
+            const payConfigId = $(this).find("td:eq(0)").text().trim(); // hidden PayConfigId
+            const payConfigType = $(this).find("td:eq(1)").text().trim(); // hidden PayConfigType (optional)
+            const payConfigName = $(this).find("td:eq(2)").text().trim();
+            let configValueText = $(this).find("td:eq(3)").text().trim();
+
+            // Parse the value to a decimal number
+            const configValue = parseFloat(configValueText.replace(/,/g, '')) || 0;
+
+            // Skip empty rows or summary rows if needed
+            if (!payConfigId) return;
+
+            proposedSalaryData.push({
+                EmployeeSalaryConfigid: EmployeeSalaryConfigid,
+                PayConfigId: payConfigId,
+                PayConfigType: payConfigType,
+                PayConfigName: payConfigName,
+                ConfigValue: configValue
+            });
+        });
+        // Read from hidden PF table
+        $("#hiddenPFTable tr").each(function () {
+            const payConfigId = $(this).find("td:eq(0)").text().trim();
+            const payConfigType = $(this).find("td:eq(1)").text().trim();
+            const payConfigName = $(this).find("td:eq(2)").text().trim();
+            let configValueText = $(this).find("td:eq(3)").text().trim();
+            const configValue = parseFloat(configValueText.replace(/,/g, '')) || 0;
+
+            if (!payConfigId) return;
+
+            proposedSalaryData.push({
+                EmployeeSalaryConfigid: EmployeeSalaryConfigid,
+                PayConfigId: payConfigId,
+                PayConfigType: payConfigType,
+                PayConfigName: payConfigName,
+                ConfigValue: configValue
+            });
+        });
+        // ✅ Get Arrear JSON string
+        const arrearJsonRaw = $('#hdnFullArrearJson').val();
+        const arrearJson = arrearJsonRaw ? JSON.parse(arrearJsonRaw) : null;
+
+        // ✅ Final Payload
+        const payload = {
+            EmployeeSalaryConfigid: EmployeeSalaryConfigid,
+            ProposedSalaryData: proposedSalaryData,
+            ArrearData: arrearJson
+        };
+        // Now send this array via AJAX to your controller/API
+        $.ajax({
+            url: '/EmployeeList/SaveEmployeeProposedSalaryValues',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (response) {
+                if (response.result != "0") {
+                    swal({
+                        title: "Success!",
+                        text: "Proposed salary saved successfully.",
+                        icon: "success"
+                    }).then(() => {
+                        // Optional: redirect or update UI
+                        window.location.href = "/EmployeeList";
+                    });
+                } else {
+                    swal({
+                        title: "Error!",
+                        text: "Failed to save proposed salary.",
+                        icon: "error"
+                    });
+                }
+            },
+            error: function (err) {
+                console.error("Error saving proposed salary:", err);
+                alert("Error occurred while saving proposed salary.");
+            }
+        });
+
+    }
+
+</script>
+ 

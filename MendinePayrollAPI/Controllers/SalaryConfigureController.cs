@@ -18,7 +18,7 @@ namespace MendinePayrollAPI.Controllers
         {
             try
             {
-                var list = groupCore.Salaryconfiglist();
+                var list = groupCore.Salaryconfiglist(salaryConfigureModel.TenantID);
 
                 if (list != null)
                 {

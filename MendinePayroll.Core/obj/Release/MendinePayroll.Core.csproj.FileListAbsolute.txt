@@ -346,3 +346,32 @@ D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\obj\Release\MendinePayr
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\obj\Release\MendinePayroll.Core.csproj.CopyComplete
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\obj\Release\MendinePayroll.Core.dll
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Core\obj\Release\MendinePayroll.Core.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\MendinePayroll.Core.dll.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\MendinePayroll.Core.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\MendinePayroll.Core.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\EntityFramework.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\EntityFramework.SqlServer.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\MendinePayroll.Data.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\MendinePayroll.Models.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.Mvc.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.Razor.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.WebPages.Razor.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.WebPages.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\Microsoft.Web.Infrastructure.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.WebPages.Deployment.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\MendinePayroll.Data.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\MendinePayroll.Data.dll.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\MendinePayroll.Models.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\EntityFramework.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\EntityFramework.SqlServer.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.Mvc.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.Razor.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.WebPages.Razor.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.WebPages.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\Microsoft.Web.Infrastructure.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\bin\Release\System.Web.WebPages.Deployment.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\obj\Release\MendinePayroll.Core.csproj.AssemblyReference.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\obj\Release\MendinePayroll.Core.csproj.CoreCompileInputs.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\obj\Release\MendineP.AB86F1E2.Up2Date
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\obj\Release\MendinePayroll.Core.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Core\obj\Release\MendinePayroll.Core.pdb

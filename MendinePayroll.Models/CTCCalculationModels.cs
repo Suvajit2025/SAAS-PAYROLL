@@ -291,5 +291,58 @@ namespace MendinePayroll.Models
         public bool IsForGross { get; set; }
         public string IncrementType { get; set; } // 'PERCENTAGE' or 'FIX'
     }
+    public class EmpSalaryConfigModel
+    {
+        public long EmployeeID { get; set; }
+        public long PayGroupID { get; set; }
+        public long EmpSalaryConfigID { get; set; }
+        public bool IsPF { get; set; }
+        public bool IsESIC { get; set; }
+        public bool IsPTAX { get; set; }
+
+        public decimal MonthlyGross { get; set; }
+        public decimal TotalAllowance { get; set; }
+        public decimal TotalDeduction { get; set; }
+        public decimal TotalContribution { get; set; }
+        public decimal NetPay { get; set; }
+        public decimal MonthlyCTC { get; set; }
+        public decimal AnnualCTC { get; set; }
+
+        public List<EmpSalaryDetailModel> DetailList { get; set; } = new List<EmpSalaryDetailModel>();
+    }
+
+
+    public class EmpSalaryDetailModel
+    {
+        public long PayConfigId { get; set; }
+        public string PayConfigName { get; set; }
+        public string PayType { get; set; }
+
+        public decimal MonthlyAmount { get; set; }
+        public decimal YearlyAmount { get; set; }
+
+        public string TimeBasis { get; set; }
+        public string LogicType { get; set; }
+        public string MappedColumn { get; set; }
+        public string CalculationFormula { get; set; }
+
+        public decimal ManualRate { get; set; }
+        public bool ISPercentage { get; set; }
+
+        // === Component Flags ===
+        public bool IsBasicComponent { get; set; }
+        public bool IsGrossComponent { get; set; }
+        public bool IsStatutory { get; set; }
+        public string StatutoryType { get; set; }
+        public bool IsOther { get; set; }
+        public string OtherType { get; set; }
+
+        // === Statutory Settings ===
+        public decimal? MaxLimit { get; set; }
+        public string RoundingType { get; set; }
+
+        // === PTAX Slabs ===
+        public string PTaxSlabsJson { get; set; }  // store JSON string
+    }
 
 }

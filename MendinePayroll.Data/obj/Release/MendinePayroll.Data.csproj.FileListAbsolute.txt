@@ -142,3 +142,15 @@ D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Release\MendinePayr
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Release\MendinePayroll.Data.csproj.CopyComplete
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Release\MendinePayroll.Data.dll
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Data\obj\Release\MendinePayroll.Data.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Release\MendinePayroll.Data.dll.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Release\MendinePayroll.Data.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Release\MendinePayroll.Data.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Release\EntityFramework.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Release\EntityFramework.SqlServer.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Release\EntityFramework.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Release\EntityFramework.SqlServer.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Release\MendinePayroll.Data.csproj.AssemblyReference.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Release\MendinePayroll.Data.csproj.CoreCompileInputs.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Release\MendineP.E9C25D64.Up2Date
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Release\MendinePayroll.Data.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Release\MendinePayroll.Data.pdb

@@ -10,7 +10,7 @@ namespace MendinePayroll.Core.Interface
 {
     public interface IPayGroupCore
     {
-        List<PayGroupModel> PayGroupList();
+        List<PayGroupModel> PayGroupList(string tenantID);
         List<PayGroupModel> GetPayGropById(PayGroupModel payGroupModel);
         int SavePayGroup(PayGroupModel payGroupModel);
         int DeletePayGroup(PayGroupModel payGroupModel);

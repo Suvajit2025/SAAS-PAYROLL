@@ -18,5 +18,8 @@ namespace MendinePayroll.Models
         public string PayGroupName { get; set; }
         public int? SalaryConfigureType { get; set; }
         public List<SalaryConfigureModel> SalaryConfigureList { get; set; }
+        public string TenantID { get; set; }
+        public string EntryUser { get; set; } = string.Empty;
+        public int ActiveFlag { get; set; }
     }
 }

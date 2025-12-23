@@ -15,14 +15,14 @@ namespace MendinePayroll.Core
 
         PayGroupModel model = new PayGroupModel();
 
-        public List<PayGroupModel> PayGroupList()
+        public List<PayGroupModel> PayGroupList(string tenantID)
         {
 
             List<PayGroupModel> listModel = new List<PayGroupModel>();
 
             try
             {
-                List<PayGroup_GetAll_Result> payGroupList = esspEntities.PayGroup_GetAll().ToList();
+                List<PayGroup_GetAll_Result> payGroupList = esspEntities.PayGroup_GetAll(tenantID).ToList();
 
                 listModel = payGroupList.Select(x =>
                 {
@@ -82,7 +82,7 @@ namespace MendinePayroll.Core
             try
             {
                 
-                List<PayGroup_Save_Result> SavePayGroup =esspEntities.PayGroup_Save(payGroupModel.PayGroupID, payGroupModel.PayGroupName, payGroupModel.Description, payGroupModel.PayGroupMasterCode, payGroupModel.ConcernHRPersonnel).ToList();
+                List<PayGroup_Save_Result> SavePayGroup =esspEntities.PayGroup_Save(payGroupModel.PayGroupID, payGroupModel.PayGroupName, payGroupModel.Description, payGroupModel.PayGroupMasterCode, payGroupModel.ConcernHRPersonnel,payGroupModel.TenantID,payGroupModel.EntryUser).ToList();
                 
                 if (SavePayGroup != null)
                 {
@@ -248,7 +248,7 @@ namespace MendinePayroll.Core
 
             try
             {
-                List<Employee_GetByDesignationID_Result> listById = esspEntities.Employee_GetByDesignationID(empbasicModel.empdesignation).ToList();
+                List<Employee_GetByDesignationID_Result> listById = esspEntities.Employee_GetByDesignationID(empbasicModel.TenantID).ToList();
 
                 listModel = listById.Select(x =>
                 {

@@ -1,30 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Net.Http;
+﻿using Common.Utility;
+using MendinePayroll.Models;
+using MendinePayroll.UI.Models;
 using MendinePayroll.UI.Utility;
 using Newtonsoft.Json;
-using MendinePayroll.Models;
-using Common.Utility;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Net.Http;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Services.Description;
 using UI.BLL;
-using MendinePayroll.UI.Models;
 
 namespace MendinePayroll.UI.Controllers
 {
     public class ConfigureSalaryComponentController : Controller
     {
+        private string TenantID
+        {
+            get
+            {
+                try
+                {
+                    if (Session["TenantID"] == null)
+                    {
+                        // Redirect to login or handle gracefully
+                        throw new Exception("Session expired. Please log in again.");
+                    }
+                    return Session["TenantID"].ToString();
+                }
+                catch (Exception ex)
+                {
+                    // Log the error (you can use your existing logging mechanism)
+                    System.Diagnostics.Debug.WriteLine("TenantID retrieval error: " + ex.Message);
+                    throw; // Let it bubble to global error handler if configured
+                }
+            }
+        }
+
         ApiCommon ObjAPI = new ApiCommon();
+
+        // Common API Call Wrapper
+        private T SafeApiCall<T>(string apiEndpoint, object model)
+        {
+            try
+            {
+                string contents = JsonConvert.SerializeObject(model);
+                HttpResponseMessage response = ObjAPI.CallAPI(apiEndpoint, contents);
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception($"API call failed: {apiEndpoint} - {response.StatusCode}");
+
+                string responseString = response.Content.ReadAsStringAsync().Result;
+                if (string.IsNullOrEmpty(responseString))
+                    return default(T);
+
+                return JsonConvert.DeserializeObject<T>(responseString);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error calling {apiEndpoint}: {ex.Message}");
+                return default(T);
+            }
+        }
+
         // GET: ConfigureSalaryComponent
         public ActionResult Index()
         {
-            if (Session["UserName"] == null)
+            if (Session["UserName"] == null && Session["TenantID"] == null)
             {
                 return RedirectToAction("Index", "Login");
             }
-
             // Access Log Data Insert 
             clsAccessLogInfo info = new clsAccessLogInfo();
             info.AccessType = "CONFIGURE-SALARY-COMPONENT-ENTRY";
@@ -32,6 +80,7 @@ namespace MendinePayroll.UI.Controllers
 
             SalaryConfigureModel salaryConfigureModel = new SalaryConfigureModel();
             salaryConfigureModel.SalaryConfigureID = 0;
+            salaryConfigureModel.TenantID = TenantID;
 
             string contents = JsonConvert.SerializeObject(salaryConfigureModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/SalaryConfigure/GetAllSalaryConfigureList", contents);
@@ -51,27 +100,111 @@ namespace MendinePayroll.UI.Controllers
             return View();
         }
 
-        #region Save Configure Salary Component
-        public JsonResult SaveConfigureSalaryComponent(List<ConfigureSalaryComponentModel> InvoiceDList)
+        public ActionResult dynamicConfigureSalary()
         {
-            var data = "";
-            foreach (ConfigureSalaryComponentModel configureSalaryComponentModel in InvoiceDList)
-            {
-                string contents = JsonConvert.SerializeObject(configureSalaryComponentModel);
-                HttpResponseMessage response = ObjAPI.CallAPI("api/ConfigureSalaryComponent/SaveConfigureSalarycomponent", contents);
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseString = response.Content.ReadAsStringAsync().Result;
-
-                    if (!string.IsNullOrEmpty(responseString))
-                    {
-                        data = JsonConvert.DeserializeObject(responseString).ToString();
-                    }
-                }
-            }
-            
-            return Json(data, JsonRequestBehavior.AllowGet);
+            return View();
         }
+
+        #region Save Configure Salary Component
+        //public JsonResult SaveConfigureSalaryComponent(List<ConfigureSalaryComponentModel> InvoiceDList)
+        //{
+        //    var data = "";
+        //    foreach (ConfigureSalaryComponentModel configureSalaryComponentModel in InvoiceDList)
+        //    {
+        //        string contents = JsonConvert.SerializeObject(configureSalaryComponentModel);
+        //        HttpResponseMessage response = ObjAPI.CallAPI("api/ConfigureSalaryComponent/SaveConfigureSalarycomponent", contents);
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            string responseString = response.Content.ReadAsStringAsync().Result;
+
+        //            if (!string.IsNullOrEmpty(responseString))
+        //            {
+        //                data = JsonConvert.DeserializeObject(responseString).ToString();
+        //            }
+        //        }
+        //    }
+
+        //    return Json(data, JsonRequestBehavior.AllowGet);
+        //}
+
+        [HttpPost]
+        public JsonResult SaveConfigureSalaryComponent(SalaryConfigureVM model)
+        {
+            try
+            {
+                var head = model.Head;
+                head.TenantID = TenantID;
+                head.EntryUser = Session["UserEmail"].ToString();
+                head.ActiveFlag = 1;
+
+                // 1. SAVE HEADER
+                var HeadDT = clsDatabase.fnDataTable("SP_SalaryConfigure_Save",
+                              head.SalaryConfigureID, head.SalaryConfigureName,
+                              head.PayGroupID, head.SalaryConfigureType,
+                              head.TenantID, head.EntryUser);
+
+                if (HeadDT.Rows.Count == 0)
+                    return Json(new { Success = false, Message = "Invalid SP response." });
+
+                // Read returned values
+                int code = Convert.ToInt32(HeadDT.Rows[0]["Code"]);
+                string message = HeadDT.Rows[0]["Message"].ToString();
+
+                // Pass SP message directly
+                if (code <= 0)
+                {
+                    return Json(new
+                    {
+                        Success = false,
+                        Code = code,
+                        Message = message
+                    });
+                }
+
+                int newHeadId = code; // On success, 'code' holds ID
+
+                // 2. SAVE DETAILS
+                foreach (var d in model.Detail)
+                {
+                    d.TenantID = TenantID;
+                    d.EntryUser = head.EntryUser;
+                }
+
+                string jsonDetail = JsonConvert.SerializeObject(model.Detail);
+
+                var DetailDT = clsDatabase.fnDataTable("SP_ConfigureSalaryComponent_Save",
+                                newHeadId.ToString(), jsonDetail);
+
+                int detailCode = Convert.ToInt32(DetailDT.Rows[0]["Code"]);
+                string detailMsg = DetailDT.Rows[0]["Message"].ToString();
+
+                if (detailCode <= 0)
+                {
+                    return Json(new
+                    {
+                        Success = false,
+                        Code = detailCode,
+                        Message = detailMsg
+                    });
+                }
+
+                // SUCCESS
+                return Json(new
+                {
+                    Success = true,
+                    Code = 1,
+                    Message = detailMsg,
+                    SalaryConfigureID = newHeadId
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message });
+            }
+        }
+
+
+
         #endregion
 
         #region Save  Salary Configure
@@ -98,14 +231,15 @@ namespace MendinePayroll.UI.Controllers
         }
         #endregion
 
-
-        #region bind Allowances
+        #region bind Allowances+Company Contribution
         public JsonResult GetPayConfig()
         {
             string message = "All";
             List<PayConfigModel> data = new List<PayConfigModel>();
             PayConfigModel payConfigModel = new PayConfigModel();
             payConfigModel.PayConfigType = message;
+            payConfigModel.TenantID = TenantID;
+            payConfigModel.EntryUser = Session["UserEmail"].ToString();
             string contents = JsonConvert.SerializeObject(payConfigModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/GetAllPayconfigbyType", contents);
             if (response.IsSuccessStatusCode)
@@ -126,6 +260,8 @@ namespace MendinePayroll.UI.Controllers
             List<PayConfigModel> data = new List<PayConfigModel>();
             PayConfigModel payConfigModel = new PayConfigModel();
             payConfigModel.PayConfigType = message;
+            payConfigModel.TenantID = TenantID;
+            payConfigModel.EntryUser = Session["UserEmail"].ToString();
             string contents = JsonConvert.SerializeObject(payConfigModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/GetAllPayconfigbyType", contents);
             if (response.IsSuccessStatusCode)
@@ -141,16 +277,39 @@ namespace MendinePayroll.UI.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetPayConfigbyTypeCC()
+        {
+            string message = "CC";
+            List<PayConfigModel> data = new List<PayConfigModel>();
+            PayConfigModel payConfigModel = new PayConfigModel();
+            payConfigModel.PayConfigType = message;
+            payConfigModel.TenantID = TenantID;
+            payConfigModel.EntryUser = Session["UserEmail"].ToString();
+            string contents = JsonConvert.SerializeObject(payConfigModel);
+            HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/GetAllPayconfigbyType", contents);
+            if (response.IsSuccessStatusCode)
+            {
+                string responseString = response.Content.ReadAsStringAsync().Result;
 
+                if (!string.IsNullOrEmpty(responseString))
+                {
+                    data = JsonConvert.DeserializeObject<List<PayConfigModel>>(responseString);
+                }
+            }
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
         #endregion
-        #region bind Deducation
 
+        #region bind Deducation
         public JsonResult GetPayConfigbyTypeDeducation()
         {
             string message = "Deduction";
             List<PayConfigModel> data = new List<PayConfigModel>();
             PayConfigModel payConfigModel = new PayConfigModel();
             payConfigModel.PayConfigType = message;
+            payConfigModel.TenantID = TenantID;
+            payConfigModel.EntryUser = Session["UserEmail"].ToString();
             string contents = JsonConvert.SerializeObject(payConfigModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/GetAllPayconfigbyType", contents);
             if (response.IsSuccessStatusCode)
@@ -165,13 +324,26 @@ namespace MendinePayroll.UI.Controllers
 
             return Json(data, JsonRequestBehavior.AllowGet);
         }
-
-
         #endregion
 
+        //#region Update Salary Configure
+        //public ActionResult UpdateSalaryConfigure()
+        //{
+        //    return View();
+        //}
+        //#endregion
         #region Update Salary Configure
-        public ActionResult UpdateSalaryConfigure()
+        public ActionResult NewUpdateSalaryConfigure(int id)
         {
+            if (id <= 0)
+            {
+                // If ID is missing or invalid redirect back
+                return RedirectToAction("Index", "ConfigureSalaryComponent");
+            }
+
+            // Pass ID to View (so JS can load the record)
+            ViewBag.SalaryConfigureID = id;
+
             return View();
         }
         #endregion
@@ -199,24 +371,126 @@ namespace MendinePayroll.UI.Controllers
         #endregion
 
         #region Get Salary Component By id
-        public JsonResult GetConfigureSalaryComponentByID(string ConfigureSalaryID)
+        //public JsonResult GetConfigureSalaryComponentByID(string ConfigureSalaryID)
+        //{
+        //    List<ConfigureSalaryComponentModel> data = new List<ConfigureSalaryComponentModel>();
+        //    ConfigureSalaryComponentModel configureSalaryComponentModel = new ConfigureSalaryComponentModel();
+        //    configureSalaryComponentModel.ConfigureSalaryID = Convert.ToInt32(ConfigureSalaryID);
+        //    string contents = JsonConvert.SerializeObject(configureSalaryComponentModel);
+        //    HttpResponseMessage response = ObjAPI.CallAPI("api/ConfigureSalaryComponent/GetAllConfigureSalaryComponentbyid", contents);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        string responseString = response.Content.ReadAsStringAsync().Result;
+        //        if (!string.IsNullOrEmpty(responseString))
+        //        {
+        //            data = JsonConvert.DeserializeObject<List<ConfigureSalaryComponentModel>>(responseString); ;
+        //        }
+        //    }
+
+        //    return Json(data, JsonRequestBehavior.AllowGet);
+        //}
+        [HttpPost]
+        public JsonResult GetConfigureSalaryComponentData(int? SalaryConfigureID)
         {
-            List<ConfigureSalaryComponentModel> data = new List<ConfigureSalaryComponentModel>();
-            ConfigureSalaryComponentModel configureSalaryComponentModel = new ConfigureSalaryComponentModel();
-            configureSalaryComponentModel.ConfigureSalaryID = Convert.ToInt32(ConfigureSalaryID);
-            string contents = JsonConvert.SerializeObject(configureSalaryComponentModel);
-            HttpResponseMessage response = ObjAPI.CallAPI("api/ConfigureSalaryComponent/GetAllConfigureSalaryComponentbyid", contents);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                string responseString = response.Content.ReadAsStringAsync().Result;
-                if (!string.IsNullOrEmpty(responseString))
+                if (SalaryConfigureID == null || SalaryConfigureID == 0)
                 {
-                    data = JsonConvert.DeserializeObject<List<ConfigureSalaryComponentModel>>(responseString); ;
+                    return Json(new { Success = false, Message = "SalaryConfigureID is missing" });
                 }
+
+                DataSet ds = clsDatabase.fnDataSet("SP_GetSalaryConfigureFullData", SalaryConfigureID.Value);
+
+                if (ds == null || ds.Tables.Count < 2)
+                {
+                    return Json(new { Success = false, Message = "No data found" });
+                }
+
+                // HEADER
+                var head = ds.Tables[0].AsEnumerable().Select(r => new
+                {
+                    SalaryConfigureID = Convert.ToInt32(r["SalaryConfigureID"]),
+                    SalaryConfigureName = r["SalaryConfigureName"].ToString(),
+                    PayGroupID = Convert.ToInt32(r["PayGroupID"]),
+                    SalaryConfigureType = r["SalaryConfigureType"].ToString(),
+                    TenantID = r["TenantID"].ToString()
+                }).FirstOrDefault();
+
+                // DATA
+                DataTable allData = ds.Tables[1];
+                var allList = ConvertToList(allData);
+
+                // Check column
+                bool hasTypeColumn = allData.Columns.Contains("PayConfigType");
+
+                if (!hasTypeColumn)
+                {
+                    return Json(new
+                    {
+                        Success = false,
+                        Message = "PayConfigType column missing in result set"
+                    });
+                }
+
+                // Extract distinct types
+                var availableTypes = allList
+                    .Select(x => x["PayConfigType"].ToString())
+                    .Distinct()
+                    .ToList();
+
+                // Safe splitting
+                var manual = availableTypes.Contains("Manual")
+                                ? allList.Where(x => x["PayConfigType"].ToString() == "Manual").ToList()
+                                : new List<Dictionary<string, object>>();
+
+                var allowances = availableTypes.Contains("Addition")
+                                ? allList.Where(x => x["PayConfigType"].ToString() == "Addition").ToList()
+                                : new List<Dictionary<string, object>>();
+
+                var deduction = availableTypes.Contains("Deduction")
+                                ? allList.Where(x => x["PayConfigType"].ToString() == "Deduction").ToList()
+                                : new List<Dictionary<string, object>>();
+
+                var companyContribution = availableTypes.Contains("CompanyContribution")
+                                ? allList.Where(x => x["PayConfigType"].ToString() == "CompanyContribution").ToList()
+                                : new List<Dictionary<string, object>>();
+
+                // Final return
+                return Json(new
+                {
+                    Success = true,
+                    Manual = manual,
+                    Allowances = allowances,
+                    Deduction = deduction,
+                    CompanyContribution = companyContribution
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message });
+            }
+        }
+
+
+
+        private List<Dictionary<string, object>> ConvertToList(DataTable dt)
+        {
+            var list = new List<Dictionary<string, object>>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var dict = new Dictionary<string, object>();
+                foreach (DataColumn col in dt.Columns)
+                {
+                    dict[col.ColumnName] = row[col];
+                }
+                list.Add(dict);
             }
 
-            return Json(data, JsonRequestBehavior.AllowGet);
+            return list;
         }
+
+
         #endregion
 
         #region Update Configure Salary Component
@@ -279,6 +553,7 @@ namespace MendinePayroll.UI.Controllers
             List<SelectListItem> HRList = new List<SelectListItem>();
             HRList.Add(new SelectListItem { Text = "Select PayGroup Name", Value = "0" });
             payGroupModel.PayGroupID = Convert.ToInt32(0);
+            payGroupModel.TenantID = Session["TenantID"].ToString();
             string contentss = JsonConvert.SerializeObject(payGroupModel);
             HttpResponseMessage responses = ObjAPI.CallAPI("api/PayGroup/GetAllPayGroupList", contentss);
             if (responses.IsSuccessStatusCode)
@@ -302,8 +577,6 @@ namespace MendinePayroll.UI.Controllers
         }
         #endregion
 
-
-
         #region bind payconfig
 
         public JsonResult GetAllPayConfig()
@@ -312,6 +585,7 @@ namespace MendinePayroll.UI.Controllers
             List<PayConfigModel> data = new List<PayConfigModel>();
             PayConfigModel payConfigModel = new PayConfigModel();
             payConfigModel.PayConfigId = 0;
+            payConfigModel.TenantID = TenantID;
             string contents = JsonConvert.SerializeObject(payConfigModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/GetAllPayconfig", contents);
             if (response.IsSuccessStatusCode)
@@ -329,8 +603,8 @@ namespace MendinePayroll.UI.Controllers
 
         public JsonResult GetAllPayConfigNew()
         {
-
-            DataTable dt = clsDatabase.fnDataTable("PayConfig_GetAll_New");
+             
+            DataTable dt = clsDatabase.fnDataTable("PayConfig_GetAll_New", TenantID);
             List<PayConfigModel> data = new List<PayConfigModel>();
             foreach (DataRow DR in dt.Rows )
             {
@@ -346,7 +620,8 @@ namespace MendinePayroll.UI.Controllers
         }
         public JsonResult GetManualConfigureSalaryNew(string PayGroupID)
         {
-            DataTable dt = clsDatabase.fnDataTable("ManualSalaryConfig_GetByPayGroupID_New", PayGroupID);
+
+            DataTable dt = clsDatabase.fnDataTable("ManualSalaryConfig_GetByPayGroupID_New", PayGroupID,TenantID);
             List<ManualSalaryConfigModel> data = new List<ManualSalaryConfigModel>();
             foreach (DataRow dr in dt.Rows  )
             {
@@ -419,6 +694,7 @@ namespace MendinePayroll.UI.Controllers
             List<SalaryConfigureModel> data = new List<SalaryConfigureModel>();
             SalaryConfigureModel salaryConfigureModel = new SalaryConfigureModel();
             salaryConfigureModel.PayGroupID = Convert.ToInt32(PayGroupID);
+            salaryConfigureModel.TenantID = TenantID;
             string contents = JsonConvert.SerializeObject(salaryConfigureModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/SalaryConfigure/DuplicatePaygroupCheck", contents);
             if (response.IsSuccessStatusCode)

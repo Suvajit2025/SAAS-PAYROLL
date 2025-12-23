@@ -1,496 +1,483 @@
-﻿@model MendinePayroll.Models.PayConfigModel
-@{
-    ViewBag.Title = "PayConfig";
+﻿@{
+    ViewBag.Title = "Tax Rule Configuration";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@*Add*@
-<div class="modal fade modal-header-color zoom-anim-dialog" id="payConfig" tabindex="-1" role="dialog" aria-labelledby="">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <section class="">
-                <header class="panel-heading bg-tertiary">
-                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h2 class="panel-title  text-white">Add New Pay Config</h2>
-                </header>
-            </section>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-12 clearfix-height20"></div>
-                        <div class='col-sm-6'>
-                            <div class="form-group">
-                                <label class="control-label">PayConfig Name <span class="required">*</span></label>
-                                <div class="input-group btn-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-cab"></i>
-                                    </span>
-                                    @Html.TextBoxFor(M => M.PayConfigName, new { @class = "form-control" })
-                                </div>
-                                <span id="msgPayConfigName" class="ms-error" style="color:red;"></span>
 
-                            </div>
-                        </div>
-                        <div class='col-sm-6'>
-                            <div class="form-group">
-                                <label class="control-label">PayConfig Type <span class="required">*</span></label>
-                                <div class="input-group btn-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-cab"></i>
-                                    </span>
-                                    <select class="form-control" id="ddlPayConfigType" name="StudentGender">
-                                        <option value="0">Select Type</option>
-                                        <option value="Allowances">Allowances</option>
-                                        <option value="Deduction">Deduction</option>
-                                        <option value="CC">Company Contribution</option>
-                                    </select>
-                                </div>
-                                <span id="msgPayConfigType" class="ms-error" style="color:red;"></span>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-                            </div>
-                        </div>
-                        <div class="col-md-12 clearfix-height20"></div>
-                        <div class='col-sm-12'>
-                            <div class="form-group">
-                                <label class="control-label">Entry Capital  <span class="required">*</span></label>
-                                <select class="form-control" id="ddlPayConfigentry" name="StudentGender">
-                                    <option value="2">Select Type</option>
-                                    <option value="0">Manual</option>
-                                    <option value="1">Calculative</option>
-                                </select>
-                                <span id="msgPayConfigentrytype" class="ms-error" style="color:red;"></span>
+<style>
+    :root {
+        --primary: #0f172a; /* Slate 900 */
+        --accent: #2563eb; /* Royal Blue */
+        --accent-hover: #1d4ed8;
+        --bg-body: #f1f5f9; /* Slate 100 */
+        --text-main: #334155; /* Slate 700 */
+        --text-muted: #64748b; /* Slate 500 */
+        --border-color: #e2e8f0; /* Slate 200 */
+    }
 
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" id="btnPayGroup" class="btn btn-tertiary" onclick="return SavePayConfig()">
-                    <i class="fa fa-plus-square space-right"></i> Add Pay Config
-                </button>
-            </div>
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg-body);
+        color: var(--text-main);
+    }
 
-            <div id="progress" style="display:none;">
-                <div class="col-md-12 text-center">
-                    <img src="~/Contents/images/ajax-loader.gif" />
-                </div>
-            </div>
+    /* --- OVERRIDE PANEL TO LOOK MODERN --- */
+    .panel {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        border: none;
+        margin-bottom: 20px;
+    }
 
-        </div>
-    </div>
-</div>
+    .panel-heading {
+        background: #fff;
+        border-bottom: 1px solid var(--border-color);
+        padding: 20px 24px;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-@*Edit*@
-<div class="modal fade modal-header-color zoom-anim-dialog" id="editpayConfig" tabindex="-1" role="dialog" aria-labelledby="">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <section class="">
-                <header class="panel-heading bg-tertiary">
-                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h2 class="panel-title  text-white">Edit Pay Config</h2>
-                </header>
-            </section>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-12 clearfix-height20"></div>
-                        <div class='col-sm-6'>
-                            <div class="form-group">
-                                <label class="control-label">PayConfig Name <span class="required">*</span></label>
-                                <div class="input-group btn-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-cab"></i>
-                                    </span>
-                                    @Html.TextBoxFor(M => M.PayConfigName, new { @class = "form-control", @id = "txtPayConfigName" })
-                                </div>
-                                <span id="msgPayConfigNameedit" class="ms-error" style="color:red;"></span>
+    .panel-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 16px;
+        margin: 0;
+    }
 
-                            </div>
-                        </div>
-                        <div class='col-sm-6'>
-                            <div class="form-group">
-                                <label class="control-label">PayConfig Type<span class="required">*</span></label>
-                                <div class="input-group btn-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-cab"></i>
-                                    </span>
-                                    <select class="form-control" id="ddlPayConfigTypeedit" name="StudentGender">
-                                        <option value="0">Select Type</option>
-                                        <option value="Allowances">Allowances</option>
-                                        <option value="Deduction">Deduction</option>
-                                        <option value="CC">Company Contribution</option>
-                                    </select>
-                                    
-                                </div>
-                                <span id="msgPayConfigTypeedit" style="color:red;"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-12 clearfix-height20"></div>
-                        <div class='col-sm-12'>
-                            <div class="form-group">
-                                <label class="control-label">Entry Capital <span class="required">*</span></label>
-                                <select class="form-control" id="ddlPayConfigentryedit" name="StudentGender">
-                                    <option value="2">Select Type</option>
-                                    <option value="0">Manual</option>
-                                    <option value="1">Calculative</option>
-                                </select>
-                                <span id="msgPayConfigentrytypeedit" class="ms-error" style="color:red;"></span>
+    .panel-body {
+        padding: 0; /* Remove padding to let table hit edges */
+    }
 
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" id="btnUpdatePayConfig" class="btn btn-tertiary" onclick="return UpdatePayConfig()">
-                    <i class="fa fa-plus-square space-right"></i> Update Pay Config
-                </button>
-            </div>
+    /* --- MODERN TABLE --- */
+    .table-modern {
+        width: 100%;
+        margin-bottom: 0;
+    }
 
-            <div id="progress" style="display:none;">
-                <div class="col-md-12 text-center">
-                    <img src="~/Contents/images/ajax-loader.gif" />
-                </div>
-            </div>
+        .table-modern thead th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border-color);
+            border-top: none;
+        }
 
-        </div>
-    </div>
-</div>
+        .table-modern tbody td {
+            padding: 16px 24px;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-main);
+        }
 
-@*Pay Config List*@
+        .table-modern tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+    /* --- BADGES --- */
+    .badge-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .badge-gray {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .badge-blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .badge-green {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .badge-amber {
+        background: #fffbeb;
+        color: #d97706;
+    }
+
+    .badge-red {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    /* --- BUTTONS --- */
+    .btn-modern-primary {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+
+        .btn-modern-primary:hover {
+            background: var(--accent-hover);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        color: var(--text-muted);
+        background: white;
+        transition: 0.2s;
+    }
+
+        .btn-icon:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+    /* --- PAGINATION & FOOTER --- */
+    .grid-footer {
+        padding: 16px 24px;
+        border-top: 1px solid var(--border-color);
+        background: #fff;
+        border-radius: 0 0 8px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .pagination-modern {
+        margin: 0;
+        display: flex;
+        list-style: none;
+        padding: 0;
+        gap: 4px;
+    }
+
+        .pagination-modern li a {
+            display: block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 12px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .pagination-modern li.active a {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .pagination-modern li a:hover:not(.active) {
+            background: #f1f5f9;
+        }
+
+        .pagination-modern li.disabled a {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+    /* --- MODAL INPUTS --- */
+    .form-control-modern {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 13px;
+        color: var(--text-main);
+    }
+
+        .form-control-modern:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+    /* RADIO CARDS */
+    .radio-card-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .radio-card {
+        flex: 1;
+        cursor: pointer;
+        position: relative;
+    }
+
+        .radio-card input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-card .card-content {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            transition: 0.2s;
+            background: #fff;
+        }
+
+        .radio-card input:checked + .card-content {
+            border-color: var(--accent);
+            background: #eff6ff;
+            color: var(--accent);
+        }
+</style>
+
 <section role="main" class="content-body">
-    <input type="hidden" id="hdnPayConfigId" value="0" />
+
     <header class="page-header">
-        <h2>Pay Config</h2>
+        <h2 style="font-weight:700; color: var(--primary); margin-top: 10px;">Tax Rule Configuration</h2>
+        <p class="text-muted" style="font-size:13px; margin-bottom: 20px;">Manage deductions, exemptions, and tax slab definitions.</p>
     </header>
-    <!-- start: page -->
+
     <section class="panel">
+
         <header class="panel-heading">
-            <div class="panel-actions">
-                
-                <button id="" onclick="AddPayConfigLoad();" data-toggle="modal" data-target="#payConfig" class="mb-sm mt-xs mr-xs btn btn-sm btn-tertiary text-sm text-weight-semibold">Add PayConfig<i class="fa fa-plus ml-lg"></i></button>
-            </div>
-            <h2 class="panel-title">PayConfig List</h2>
+            <h2 class="panel-title">
+                <i class="fa fa-layer-group text-primary mr-2"></i> Active Tax Rules
+            </h2>
+            <button class="btn btn-modern-primary" onclick="openRuleModal()">
+                <i class="fa fa-plus-circle"></i> Add Rule
+            </button>
         </header>
+
         <div class="panel-body">
 
-            <table class="table table-responsive mb-none" id="datatable-users">
-                <thead>
-                    <tr>
-                        
-                        <th><i class="fa fa-credit-card text-muted space-right"></i>PayConfig Name</th>
-                        <th><i class="fa fa-credit-card text-muted space-right"></i>PayConfig Type</th>
-                        <th><i class="fa fa-credit-card text-muted space-right"></i>Entry Capital</th>
-                        <th class="center">MORE</th>
-                        <th class="center">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="listVehicle">
-                    @foreach (var item in Model.PayConfigList)
-                    {
-                        
-                        <tr class="gradeX">
-                           
+            <div class="table-responsive">
+                <table class="table table-modern mb-none">
+                    <thead>
+                        <tr>
+                            <th>FY</th>
+                            <th>Regime</th>
+                            <th>Section</th>
+                            <th>Rule Name</th>
+                            <th>Mapping Strategy</th>
+                            <th>Max Limit</th>
+                            <th>Status</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span style="font-weight:600;">2025-26</span></td>
+                            <td><span class="badge-pill badge-gray">OLD REGIME</span></td>
                             <td>
-                                @item.PayConfigName
+                                <div style="font-weight:600;">80C</div>
+                                <span class="badge-pill badge-red" style="font-size:9px; padding:2px 6px;">DEDUCTION</span>
                             </td>
                             <td>
-                                @item.PayConfigType
+                                <div style="font-weight:600; color:var(--primary);">Employee PF Contribution</div>
+                                <div class="text-muted" style="font-size:11px;">Code: PF_EE_80C</div>
                             </td>
-                             <td>
-                                @item.EntryType   
+                            <td>
+                                <span class="badge-pill badge-green">
+                                    <i class="fa fa-link mr-1"></i> PAYROLL
+                                </span>
                             </td>
-
-                            <td class="center">
-                                <a href="#" onclick="return GetPayConfig(@item.PayConfigId);" data-toggle="modal" data-target="#detail">
-                                    <i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i>
-                                </a>
-                            </td>
-                            <td class="center">
-                                <a href="#" onclick="return DeletePayConfig(@item.PayConfigId);" data-toggle="" data-target="">
-                                    <i class="bg-gradient-danger text-danger fa fa-trash fa-lg"></i>
-                                </a>
+                            <td style="font-family: monospace;">₹ 1,50,000</td>
+                            <td><i class="fa fa-circle text-success" style="font-size:8px;"></i></td>
+                            <td class="text-right">
+                                <button class="btn-icon" onclick="openRuleModal()" title="Edit">
+                                    <i class="fa fa-pen"></i>
+                                </button>
                             </td>
                         </tr>
-                    }
+                        <tr>
+                            <td><span style="font-weight:600;">2025-26</span></td>
+                            <td><span class="badge-pill badge-blue">NEW REGIME</span></td>
+                            <td>
+                                <div style="font-weight:600;">80CCD(2)</div>
+                                <span class="badge-pill badge-green" style="font-size:9px; padding:2px 6px;">EXEMPTION</span>
+                            </td>
+                            <td>
+                                <div style="font-weight:600; color:var(--primary);">National Pension Scheme</div>
+                                <div class="text-muted" style="font-size:11px;">Code: NPS_ER</div>
+                            </td>
+                            <td>
+                                <span class="badge-pill badge-amber">
+                                    <i class="fa fa-keyboard mr-1"></i> MANUAL
+                                </span>
+                            </td>
+                            <td style="font-family: monospace;">--</td>
+                            <td><i class="fa fa-circle text-success" style="font-size:8px;"></i></td>
+                            <td class="text-right">
+                                <button class="btn-icon" onclick="openRuleModal()" title="Edit">
+                                    <i class="fa fa-pen"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                </tbody>
-            </table>
+            <div class="grid-footer">
+                <div class="text-muted" style="font-size: 12px;">
+                    Showing <strong>1</strong> to <strong>10</strong> of <strong>32</strong> entries
+                </div>
+                <div>
+                    <ul class="pagination-modern">
+                        <li class="disabled"><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+                        <li class="active"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                    </ul>
+                </div>
+            </div>
 
         </div>
-        
-
     </section>
-    <!-- end: page -->
 </section>
 
-@*Pay Config Details*@
-<div class="modal fade modal-header-color zoom-anim-dialog" id="detail" tabindex="-1" role="dialog" aria-labelledby="">
-    <div class="modal-dialog" role="">
-        <div class="modal-content">
-            <section class="">
-                <header class="panel-heading bg-quartenary">
-                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h2 class="panel-title  text-white">Pay Config Details</h2>
-                </header>
-            </section>
-            <div class="modal-body">
+<div class="modal fade" id="taxRuleModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border:none; border-radius:12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+
+            <div class="modal-header" style="background:#fff; border-bottom:1px solid #e2e8f0; padding:20px 25px; border-radius:12px 12px 0 0;">
+                <button type="button" class="close" data-dismiss="modal" style="font-size:24px; color:#94a3b8; outline:none;">&times;</button>
+                <h4 class="modal-title" style="font-weight:700; color:var(--primary); margin:0;">Configure Rule</h4>
+            </div>
+
+            <div class="modal-body" style="padding: 25px; background:#fff;">
+
+                <div class="row" style="margin-bottom:15px;">
+                    <div class="col-md-3">
+                        <label class="control-label" style="font-size:12px; font-weight:600;">Fiscal Year</label>
+                        <select class="form-control-modern"><option>2025-26</option></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label" style="font-size:12px; font-weight:600;">Regime</label>
+                        <select class="form-control-modern" onchange="loadSlabAndConstant()"><option>Old Regime</option><option>New Regime</option></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label" style="font-size:12px; font-weight:600;">Section</label>
+                        <select class="form-control-modern"><option>80C</option><option>80D</option></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label" style="font-size:12px; font-weight:600;">Code</label>
+                        <input class="form-control-modern" placeholder="e.g. PF_EE_80C">
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom:25px;">
+                    <div class="col-md-8">
+                        <label class="control-label" style="font-size:12px; font-weight:600;">Rule Name</label>
+                        <input class="form-control-modern" placeholder="e.g. Employee Provident Fund">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="control-label" style="font-size:12px; font-weight:600;">Max Limit</label>
+                        <input class="form-control-modern" placeholder="150000">
+                    </div>
+                </div>
+
+                <label class="control-label text-muted" style="font-size:11px; font-weight:700; text-transform:uppercase;">Calculation Strategy</label>
+                <div class="radio-card-group" style="margin-bottom:15px;">
+                    <label class="radio-card">
+                        <input type="radio" name="mapType" checked onclick="toggleMapping('PAYROLL')">
+                        <div class="card-content">
+                            <i class="fa fa-link text-success"></i><br>
+                            <span style="font-size:12px; font-weight:600;">Payroll</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="mapType" onclick="toggleMapping('MANUAL')">
+                        <div class="card-content">
+                            <i class="fa fa-keyboard text-primary"></i><br>
+                            <span style="font-size:12px; font-weight:600;">Manual</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="mapType" onclick="toggleMapping('STATUTORY')">
+                        <div class="card-content">
+                            <i class="fa fa-gavel text-warning"></i><br>
+                            <span style="font-size:12px; font-weight:600;">Statutory</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div id="payrollBox" style="background:#f0fdf4; padding:15px; border-radius:8px; border:1px solid #bbf7d0; display:block;">
+                    <label class="control-label text-success" style="font-weight:600; font-size:12px;">Linked Salary Component</label>
+                    <select class="form-control-modern" style="border-color:#86efac;">
+                        <option>Basic Salary</option>
+                        <option>PF Employee Share</option>
+                    </select>
+                </div>
+
+                <hr style="margin: 25px 0;">
+
                 <div class="row">
-
-                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">PayConfig Name </a></div>
-                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblPayConfigName"></label></a></div>
-                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
-
-                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">PayConfig Type </a></div>
-                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblPayConfigType"></label></a></div>
-                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
-
-                    <div class="col-sm-5 col-xs-5"><a class="text-muted text-weight-bold">Entry Capital </a></div>
-                    <div class="col-sm-7 col-xs-7"><a class="text-blue text-weight-semibold"><label id="lblPayConfigEntryType"></label></a></div>
-                    <div class="col-sm-12 col-xs-12 pull-left"><hr class="solid short mt-xs"></hr></div>
-
+                    <div class="col-md-6" style="border-right:1px solid #e2e8f0;">
+                        <label class="control-label" style="font-size:12px; font-weight:600;">Tax Slabs (Auto)</label>
+                        <table class="table table-bordered table-condensed table-striped" style="font-size:11px; margin-bottom:0;">
+                            <thead><tr><th>From</th><th>To</th><th>%</th></tr></thead>
+                            <tbody id="taxSlabBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="control-label" style="font-size:12px; font-weight:600;">Constants</label>
+                        <div class="row">
+                            <div class="col-xs-6 mb-sm"><input class="form-control-modern input-sm" readonly id="txtCess" placeholder="Cess"></div>
+                            <div class="col-xs-6 mb-sm"><input class="form-control-modern input-sm" readonly id="txtStdDeduction" placeholder="Std Ded"></div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-quartenary" data-toggle="modal" data-target="#editpayConfig" data-dismiss="modal">
-                    <i class="fa fa-pencil-square-o space-right"></i> Edit
-                </button>
+
+            <div class="modal-footer" style="background:#f8fafc; border-top:1px solid #e2e8f0; padding:15px 25px; border-radius:0 0 12px 12px;">
+                <button class="btn btn-default" data-dismiss="modal" style="border:1px solid #cbd5e1; background:#fff; color:#475569;">Cancel</button>
+                <button class="btn btn-modern-primary">Save Configuration</button>
             </div>
+
         </div>
     </div>
 </div>
 
-@*Save Pay Config*@
 <script>
-    function SavePayConfig() {
-        var jq = jQuery.noConflict();
-        
-        var PayConfigName = jq("#PayConfigName").val();
-        var PayConfigType = jq("#ddlPayConfigType").val();
-        var PayConfigent = jq("#ddlPayConfigentry").val();
-        if (PayConfigName == "") {
-            jq("#msgPayConfigName").html("Please Enter Payconfig");
-            return false;
-        }
-        else {
-            jq("#msgPayConfigName").html("");
-        }
-        if (PayConfigType == "0") {
-            jq("#msgPayConfigType").html("Please select Payconfig type");
-            return false;
-        }
-        else {
-            jq("#msgPayConfigType").html("");
-        }
-        if (PayConfigent == "2") {
-            jq("#msgPayConfigentrytype").html("Please select Payconfig entry type");
-            return false;
-        }
-        else {
-            jq("#msgPayConfigentrytype").html("");
-        }
-        var IScalculative;
-        if (PayConfigent == "0") {
-            IScalculative = "false";
-        }
-        else {
-            IScalculative = "true";;
-        }
-
-        jq.ajax({
-            type: "POST",
-            url: '/PayConfig/SavePayConfig',
-            
-            data: {
-                "PayConfigName": PayConfigName, "PayConfigType": PayConfigType, "IScalculative": IScalculative
-            },
-            datatype: "JSON",
-            success: function (data) {
-                
-                if (data == "Saved Successfully") {
-
-                    swal({
-                        title: "Success!",
-                        text: "Pay Config has been Added Successfully!",
-                        type: "success"
-                    }).then(function () {
-                        window.location.href = "/PayConfig";
-                    });
-                }
-
-
-            },
-            error: function (er) {
-                console.log(er);
-            }
-        });
-    }
-</script>
-
-@*Update Pay Group*@
-<script>
-    function UpdatePayConfig() {
-        var jq = jQuery.noConflict();
-        
-        var PayConfigName = jq("#txtPayConfigName").val();
-        var PayConfigType = jq("#ddlPayConfigTypeedit").val();
-        var PayconfigId = jq("#hdnPayConfigId").val();
-        var PayConfigent = jq("#ddlPayConfigentryedit").val();
-        if (PayConfigName == "") {
-            jq("#msgPayConfigNameedit").html("Please Enter PayConfig");
-            return false;
-        }
-        else {
-            jq("#msgPayConfigNameedit").html("");
-        }
-        if (PayConfigType == "") {
-            jq("#msgPayConfigTypeedit").html("Please select PayConfigType");
-            return false;
-        }
-        else {
-            jq("#msgPayConfigTypeedit").html("");
-        }
-        if (PayConfigent == "2") {
-            jq("#msgPayConfigentrytypeedit").html("Please select Payconfig entry type");
-            return false;
-        }
-        else {
-            jq("#msgPayConfigentrytypeedit").html("");
-        }
-        var IScalculative;
-        if (PayConfigent == "0") {
-            IScalculative = "false";
-        }
-        else {
-            IScalculative = "true";;
-        }
-        jq.ajax({
-            type: "POST",
-            url: '/PayConfig/UpdatePayConfig',
-            
-            data: {
-                "PayConfigId": PayconfigId, "PayConfigName": PayConfigName, "PayConfigType": PayConfigType, "IScalculative": IScalculative
-            },
-            datatype: "JSON",
-            success: function (data) {
-                
-                if (data == "Saved Successfully") {
-
-                    swal({
-                        title: "Success!",
-                        text: "Pay Config has been Updated Successfully!",
-                        type: "success"
-                    }).then(function () {
-                        window.location.href = "/PayConfig";
-                    });
-                }
-
-            },
-            error: function (er) {
-                console.log(er);
-            }
-        });
+    function openRuleModal() {
+        $('#taxRuleModal').modal('show');
+        loadSlabAndConstant();
     }
 
-</script>
-
-@*Get Pay Group By Id*@
-<script>
-    function GetPayConfig(PayConfigID) {
-        
-        var jq = jQuery.noConflict();
-        jq.ajax({
-            type: "POST",
-            url: '/PayConfig/GetPayConfig',
-            data: { "PayConfigID": PayConfigID },
-            datatype: JSON,
-            success: function (response) {
-                
-                RecordLength = response.length;
-                jq("#hdnPayConfigId").val(response[0].PayConfigId);
-                jq("#lblPayConfigName").text(response[0].PayConfigName);
-                jq("#lblPayConfigType").text(response[0].PayConfigType);
-                var a = response[0].IScalculative;
-                if (a == false) {
-                    IScalculative = "0";
-                    entrytype = "Manual";
-                }
-                else {
-                    IScalculative = "1";
-                    entrytype = "Calculative";
-                }
-                jq("#lblPayConfigEntryType").text(entrytype);
-                jq("#txtPayConfigName").val(response[0].PayConfigName);
-                jq("#ddlPayConfigTypeedit").val(response[0].PayConfigType);
-                jq("#ddlPayConfigentryedit").val(IScalculative);
-            },
-            error: function (er) {
-
-                console.log(er);
-            }
-        });
+    function toggleMapping(type) {
+        // Simple toggle logic (expand as needed)
+        if (type === 'PAYROLL') $('#payrollBox').show();
+        else $('#payrollBox').hide();
     }
-</script>  
-<script>
-    function DeletePayConfig(PayConfigID) {
-        var jq = jQuery.noConflict();
-        
-        //var form = event.target.form;
-        //event.preventDefault();
-        //event.preventDefault();
-        //swal({
-        //    title: "Do you want to save it?",
-        //    text: "Please check Information before Submiting!",
-        //    type: "warning",
-        //    showCancelButton: true,
-        //    confirmButtonColor: "#DD6B55",
-        //    confirmButtonText: "Delete",
-        //    cancelButtonText: "Cancel",
-        //    closeOnConfirm: false,
-        //    closeOnCancel: false
-        //},
-        //    function (isConfirm) {
-        //        
-        //        if (isConfirm) {
-        //            //if (validateData() == true) {
-        //            alert("Success");
-        //            //}
-        //        }
-        //        //} else {
-        //        //    swal("Cancelled", "You have Cancelled Form Submission!", "error");
-        //        //}
 
-        //    });   
-
-        var result = confirm("Do you want to delete");
-        if (result == true) {
-            jq.ajax({
-                type: "POST",
-                url: '/PayConfig/DeletePayConfig',
-                data: { "PayConfigID": PayConfigID },
-                datatype: JSON,
-                success: function (response) {
-                    if (response == "Delete Successfull") {
-                        swal({
-                            title: "Success!",
-                            text: "Pay Config has been Deleted Successfully!",
-                            type: "success"
-                        }).then(function () {
-                            window.location.href = "/PayConfig";
-                        });
-                    }
-
-                },
-                error: function (er) {
-
-                    console.log(er);
-                }
-            });
-        }
+    function loadSlabAndConstant() {
+        $('#taxSlabBody').html(`
+            <tr><td>0</td><td>4L</td><td>0%</td></tr>
+            <tr><td>4L</td><td>8L</td><td>5%</td></tr>
+            <tr><td>8L</td><td>12L</td><td>10%</td></tr>
+        `);
+        $('#txtCess').val('4%');
+        $('#txtStdDeduction').val('75k');
     }
-    
 </script>

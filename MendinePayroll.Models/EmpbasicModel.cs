@@ -15,6 +15,7 @@ namespace MendinePayroll.Models
             selectListItems = new List<SelectListItem>();
         }
         public int empid { get; set; }
+        public string TenantID { get; set; }
         public string empinitialname { get; set; }
         public string empfirstname { get; set; }
         public string empmiddlename { get; set; }

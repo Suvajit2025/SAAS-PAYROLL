@@ -234,3 +234,21 @@ D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Models\obj\Release\MendinePa
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Models\obj\Release\MendinePayroll.Models.csproj.CopyComplete
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Models\obj\Release\MendinePayroll.Models.dll
 D:\COMPANY\MENDINE PAYROLL\PayrollUI\MendinePayroll.Models\obj\Release\MendinePayroll.Models.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\MendinePayroll.Models.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\MendinePayroll.Models.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\System.Web.Razor.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\System.Web.WebPages.Razor.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\System.Web.WebPages.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\Microsoft.Web.Infrastructure.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\System.Web.WebPages.Deployment.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\System.Web.Mvc.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\System.Web.Razor.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\System.Web.WebPages.Razor.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\System.Web.WebPages.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\Microsoft.Web.Infrastructure.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Release\System.Web.WebPages.Deployment.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Release\MendinePayroll.Models.csproj.AssemblyReference.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Release\MendinePayroll.Models.csproj.CoreCompileInputs.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Release\MendineP.DBBBFFCE.Up2Date
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Release\MendinePayroll.Models.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Release\MendinePayroll.Models.pdb

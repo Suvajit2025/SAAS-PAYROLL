@@ -1478,3 +1478,299 @@ D:\WORKING\PayrollUI\PayrollUI\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.csp
 D:\WORKING\PayrollUI\PayrollUI\MendinePayrollAPI\obj\Debug\MendineP.876FB2FC.Up2Date
 D:\WORKING\PayrollUI\PayrollUI\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.dll
 D:\WORKING\PayrollUI\PayrollUI\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.pdb
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\csc.exe
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\csc.exe.config
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\csc.rsp
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\csi.exe
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\csi.rsp
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\vbc.exe
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\vbc.rsp
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\EntityFramework.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Helpers.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Http.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Mvc.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Optimization.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Razor.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.WebPages.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\WebGrease.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\EntityFramework.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Helpers.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Http.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Mvc.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Optimization.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.Razor.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.WebPages.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+D:\Archive\PayrollUI\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\Archive\PayrollUI\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.csproj.AssemblyReference.cache
+D:\Archive\PayrollUI\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+D:\Archive\PayrollUI\MendinePayrollAPI\obj\Debug\MendineP.876FB2FC.Up2Date
+D:\Archive\PayrollUI\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.dll
+D:\Archive\PayrollUI\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.pdb
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\csc.exe
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\csc.exe.config
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\csc.rsp
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\csi.exe
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\csi.rsp
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\vbc.exe
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\vbc.rsp
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\EntityFramework.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Helpers.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Http.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Mvc.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Optimization.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Razor.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.WebPages.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\WebGrease.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\EntityFramework.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Helpers.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Http.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Mvc.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Optimization.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.Razor.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.WebPages.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.csproj.AssemblyReference.cache
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\obj\Debug\MendineP.876FB2FC.Up2Date
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.dll
+D:\Archive\PayrollUI-MENDINE\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.pdb
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csc.exe
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csc.exe.config
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csc.rsp
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csi.exe
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csi.rsp
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\vbc.exe
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\vbc.rsp
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\EntityFramework.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Helpers.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Http.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Mvc.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Optimization.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Razor.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\WebGrease.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\EntityFramework.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Helpers.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Http.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Mvc.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Optimization.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Razor.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+D:\PayrollUI-SAAS\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.csproj.AssemblyReference.cache
+D:\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+D:\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendineP.876FB2FC.Up2Date
+D:\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.dll
+D:\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayrollAPI.dll.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayrollAPI.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayrollAPI.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csc.exe
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csc.exe.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csc.rsp
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csi.exe
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\csi.rsp
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.CSharp.Core.targets
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.AppContext.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.Collections.Immutable.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\System.Reflection.Metadata.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\vbc.exe
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\vbc.exe.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\vbc.rsp
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\roslyn\VBCSCompiler.exe.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\Antlr3.Runtime.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\EntityFramework.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\EntityFramework.SqlServer.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Core.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Data.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Models.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\Microsoft.Web.Infrastructure.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\Newtonsoft.Json.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Net.Http.Formatting.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Helpers.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Http.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Http.WebHost.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Mvc.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Optimization.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Razor.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.Razor.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\WebGrease.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Core.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Core.dll.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Data.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Data.dll.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\MendinePayroll.Models.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\EntityFramework.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\EntityFramework.SqlServer.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\Newtonsoft.Json.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Net.Http.Formatting.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Helpers.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Http.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Http.WebHost.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Mvc.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Optimization.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.Razor.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.Deployment.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\System.Web.WebPages.Razor.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\Antlr3.Runtime.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.csproj.AssemblyReference.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.csproj.CoreCompileInputs.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendineP.876FB2FC.Up2Date
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayrollAPI\obj\Debug\MendinePayrollAPI.pdb

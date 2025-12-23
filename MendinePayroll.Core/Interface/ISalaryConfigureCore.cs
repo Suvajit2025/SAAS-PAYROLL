@@ -10,7 +10,7 @@ namespace MendinePayroll.Core.Interface
 {
     public interface ISalaryConfigureCore
     {
-        List<SalaryConfigureModel> Salaryconfiglist();
+        List<SalaryConfigureModel> Salaryconfiglist(string tenantID);
         List<SalaryConfigureModel> GetSalaryConfigById(SalaryConfigureModel salaryConfigureModel);
         int SavesalaryConfigure(SalaryConfigureModel salaryConfigureModel);
     }

@@ -1,0 +1,1573 @@
+﻿@{
+    ViewBag.Title = "Tax Rule Configuration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    :root {
+        --primary: #0f172a; /* Slate 900 */
+        --secondary: #64748b; /* Slate 500 */
+        --accent: #2563eb; /* Royal Blue */
+        --accent-hover: #1d4ed8;
+        --border: #e2e8f0; /* Light Gray */
+        --bg-body: #f1f5f9;
+        --radius: 8px;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg-body);
+        color: var(--primary);
+        transform: scale(0.9);
+        transform-origin: top left;
+        width: 111.11%;
+    } 
+    /* ================= PANEL & HEADER ================= */
+    .panel {
+        border: none;
+        border-radius: var(--radius);
+        background: #ffffff;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        margin-bottom: 20px;
+    }
+
+    .panel-heading {
+        background: #ffffff;
+        border-bottom: 1px solid var(--border);
+        padding: 16px 24px; /* Adjusted padding for alignment */
+        border-radius: var(--radius) var(--radius) 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .panel-title {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+    }
+
+    /* --- NEW HEADER CONTROLS --- */
+    .header-tools {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Search Box */
+    .header-search {
+        position: relative;
+    }
+
+        .header-search input {
+            padding-left: 32px; /* Space for icon */
+            padding-right: 12px;
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            width: 220px;
+            color: var(--primary);
+            outline: none;
+            transition: 0.2s;
+        }
+
+            .header-search input:focus {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+            }
+
+        .header-search i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary);
+            font-size: 12px;
+        }
+
+    /* Rows Dropdown */
+    .header-select {
+        height: 36px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: #fff;
+        font-size: 13px;
+        color: var(--primary);
+        padding: 0 30px 0 12px; /* Extra padding right for arrow */
+        cursor: pointer;
+        outline: none;
+        appearance: none; /* Hide default arrow to use custom if needed, or keep simple */
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 8px auto;
+    }
+
+        .header-select:focus {
+            border-color: var(--accent);
+        }
+
+    .panel-body {
+        padding: 0;
+    }
+
+    /* ================= TABLE STYLES ================= */
+    .table-modern {
+        width: 100%;
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .table-modern thead th {
+            background: #f8fafc;
+            color: var(--secondary);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-modern tbody td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            color: #334155;
+            vertical-align: middle;
+            background: #fff;
+        }
+
+        .table-modern tbody tr:hover td {
+            background-color: #f8fafc;
+            transition: 0.2s;
+        }
+
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    /* ================= BADGES & BUTTONS ================= */
+    .badge-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    .bg-soft-blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .bg-soft-green {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .bg-soft-gray {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .bg-soft-orange {
+        background: #fffbeb;
+        color: #d97706;
+    }
+
+    .bg-soft-red {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    /* Buttons */
+    .btn-modern {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 0 16px;
+        height: 36px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 13px;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .btn-modern:hover {
+            background: var(--accent-hover);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: white;
+        color: var(--secondary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .btn-icon:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+    /* ================= PAGINATION ================= */
+    .panel-footer-custom {
+        padding: 14px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .pagination-modern {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: 5px;
+    }
+
+        .pagination-modern li a {
+            display: block;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            color: #334155;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .pagination-modern li.active a {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .pagination-modern li a:hover:not(.active) {
+            background: #f1f5f9;
+        }
+
+    /* ================= MODAL STYLES ================= */
+    .modal-content {
+        border: none;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .modal-header-modern {
+        background: #fff;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title-modern {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary);
+        margin: 0;
+    }
+
+    .modal-body-modern {
+        padding: 15px;
+        background: #fff;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .modal-footer-modern {
+        background: #f8fafc;
+        padding: 16px 24px;
+        border-top: 1px solid var(--border);
+        text-align: right;
+    }
+
+    .form-control-modern {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 13px;
+        color: var(--primary);
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+    }
+
+        .form-control-modern:focus {
+            border-color: var(--accent);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+    .input-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary);
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .btn-primary-modern {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 13px;
+    }
+
+        .btn-primary-modern:hover {
+            background: var(--accent-hover);
+            color: white;
+        }
+
+    /* Selection Cards */
+    .selection-grid {
+        display: flex;
+        gap: 15px;
+        margin-bottom:6px;
+    }
+
+    .selection-card {
+        flex: 1;
+        position: relative;
+        cursor: pointer;
+        font-weight: normal;
+        margin: 0;
+    }
+
+        .selection-card input {
+            position: absolute;
+            opacity: 0;
+        }
+
+    .selection-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #fff;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+        .selection-content i {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--secondary);
+        }
+
+        .selection-content .title {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--primary);
+            display: block;
+        }
+
+        .selection-content .desc {
+            font-size: 11px;
+            color: var(--secondary);
+            display: block;
+        }
+
+    .selection-card input:checked + .selection-content {
+        border-color: var(--accent);
+        background: #eff6ff;
+    }
+
+        .selection-card input:checked + .selection-content i, .selection-card input:checked + .selection-content .title {
+            color: var(--accent);
+        }
+
+    /* Utilities */
+    .p-3 {
+        padding: 1rem;
+    }
+
+    .bg-light {
+        background: #f8fafc;
+    }
+
+    .border-rounded {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+    }
+
+    .text-muted {
+        color: #64748b;
+    }
+    .badge-pill {
+        padding: 4px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+        letter-spacing: .3px;
+    }
+
+    .badge-pill {
+        padding: 4px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+    }
+
+    .badge-deduction {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-exemption {
+        background: #e0f2fe;
+        color: #075985;
+    }
+
+    .badge-rebate {
+        background: #dcfce7;
+        color: #166534;
+    }
+    .pagination-modern li.disabled a {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+</style>
+
+<section role="main" class="content-body">
+
+    <header class="page-header">
+        <h2 style="font-weight:700; margin: 0; padding: 10px 0;">Tax Rule Configuration</h2>
+    </header>
+
+    <section class="panel">
+
+        <header class="panel-heading">
+            <h2 class="panel-title">
+                <i class="fa fa-sliders text-primary"></i> Tax Rules
+            </h2>
+            <input type="hidden" id="hdnTaxRuleId" name="hdnTaxRuleId" />
+            <div class="header-tools">
+                <div class="header-search">
+                    <i class="fa fa-search"></i>
+                    <input type="text" placeholder="Search rules, codes...">
+                </div>
+
+                <select class="header-select" onchange="changePageSize(this.value)">
+                    <option value="10">10 Rows</option>
+                    <option value="25">25 Rows</option>
+                    <option value="50">50 Rows</option>
+                </select>
+
+
+                <button class="btn btn-modern" onclick="openRuleModal()">
+                    <i class="fa fa-plus mr-1"></i> Add Rule
+                </button>
+            </div>
+        </header>
+
+        <div class="panel-body">
+
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th>FY</th>
+                            <th>Regime</th>
+                            <th>Section</th>
+                            <th>Rule Definition</th>
+                            <th>Mapping</th>
+                            <th>Limit</th>
+                            <th>Status</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            @*<div class="panel-footer-custom">
+                <div style="font-size: 12px; color: #64748b;">
+                    Showing <strong>1</strong> to <strong>10</strong> of <strong>32</strong> entries
+                </div>
+                <ul class="pagination-modern">
+                    <li><a href="#" style="opacity: 0.5;"><i class="fa fa-chevron-left"></i></a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+                </ul>
+            </div>*@
+
+            <div class="panel-footer-custom">
+                <div class="table-info">
+                    Showing <strong id="lblFrom">0</strong>
+                    to <strong id="lblTo">0</strong>
+                    of <strong id="lblTotal">0</strong> entries
+                </div>
+
+                <ul class="pagination-modern" id="pagination"></ul>
+            </div>
+
+        </div>
+    </section>
+</section>
+
+<div class="modal fade" id="taxRuleModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" style="width: 850px; max-width: 95%;">
+        <div class="modal-content">
+            <input type="hidden" id="hdnIsAutoCalc" />
+            <input type="hidden" id="hdnIsPercentage" />
+            <input type="hidden" id="hdnIsProofRequired" />
+            <input type="hidden" id="hdncalFormula" name="hdncalFormula" />
+
+
+            <div class="modal-header-modern">
+                <h4 class="modal-title-modern">Configure Tax Rule</h4>
+                <button type="button" class="close" style="font-size: 24px; color: #94a3b8; outline:none;" onclick="closeRuleModal()">&times;</button>
+            </div>
+
+            <div class="modal-body-modern">
+
+                <div class="row mb-3 p-3">
+
+                    <div class="col-md-3">
+                        <label class="input-label">Financial Year</label>
+                        <select id="ddlFinancialYear" class="form-control-modern" onchange="loadSlabAndConstant()"></select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="input-label">Regime</label>
+                        <select id="ddlRegime" class="form-control-modern" onchange="loadSlabAndConstant()"></select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="input-label">IT Section</label>
+                        <select id="ddlITSection"
+                                class="form-control-modern"
+                                onchange="onITSectionChange()">
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="input-label">Category</label>
+
+                        <div class="form-control-modern d-flex align-items-center gap-2"
+                             style="background:#f8fafc;border:none;"
+                             id="categoryContainer">
+
+                            <span class="badge-pill" id="lblCategory">--</span>
+
+                            <!-- Info Icon -->
+                            <i class="fa fa-info-circle text-muted"
+                               id="categoryInfo"
+                               style="cursor:pointer;"
+                               title="Select IT Section to view details">
+                            </i>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                <div class="p-3 bg-light border-rounded mb-3">
+                    <div class="row">
+                        <!-- Rule Friendly Name (Editable) -->
+                        <div class="col-md-6">
+                            <label class="input-label">
+                                Rule Friendly Name
+                                <i class="fa fa-info-circle text-muted"
+                                   title="Editable display name shown in payroll and tax reports"></i>
+                            </label>
+                            <input type="text"
+                                   id="txtRuleName"
+                                   class="form-control-modern"
+                                   placeholder="e.g. Employer PF Contribution"
+                                   maxlength="100">
+                        </div>
+
+                        <!-- System Code (Read-only) -->
+                        <div class="col-md-3">
+                            <label class="input-label">
+                                System Code
+                                <i class="fa fa-lock text-muted"
+                                   title="System generated. Cannot be changed"></i>
+                            </label>
+                            <input type="text"
+                                   id="txtRuleCode"
+                                   class="form-control-modern"
+                                   readonly
+                                   style="font-family: monospace; background:#f8fafc;">
+                        </div>
+
+                        <!-- Max Limit -->
+                        <div class="col-md-3">
+                            <label class="input-label">
+                                Max Limit (₹)
+                                <i class="fa fa-info-circle text-muted"
+                                   title="Leave blank to use government default limit"></i>
+                            </label>
+                            <input type="number"
+                                   id="txtMaxLimit"
+                                   class="form-control-modern"
+                                   min="0"
+                                   placeholder="e.g. 150000">
+                        </div>
+                    </div>
+
+                </div>
+                @*<div class="p-3 border-rounded mb-3" style="background:#f8fafc;">
+                <label class="input-label text-muted mb-2">
+                    Rule Characteristics (Auto)
+                </label>
+
+                <div class="d-flex gap-2 flex-wrap">
+
+                    <span class="badge-pill bg-soft-gray" id="tagAutoCalc">
+                        <i class="fa fa-robot mr-1"></i> Auto Calculated
+                    </span>
+
+                    <span class="badge-pill bg-soft-blue" id="tagPercentage">
+                        <i class="fa fa-percent mr-1"></i> Percentage Based
+                    </span>
+
+                    <span class="badge-pill bg-soft-orange" id="tagProof">
+                        <i class="fa fa-file-upload mr-1"></i> Proof Required
+                    </span>
+
+                </div>
+            </div>*@
+
+
+                <label class="input-label text-muted text-uppercase" style="font-size:11px; letter-spacing:0.05em;">Calculation Mapping Strategy</label>
+                <!-- ✅ RULE CHARACTERISTICS BLOCK (PLACE HERE) -->
+                <div id="ruleCharacteristics"
+                     class="p-3 border-rounded mb-3"
+                     style="background:#f8fafc; display:block;margin-bottom:6px;">
+
+                    <label class="input-label text-muted mb-2">
+                        Rule Characteristics (Auto)
+                    </label>
+
+                    <div class="d-flex gap-2 flex-wrap">
+
+                        <span class="badge-pill bg-soft-gray" id="tagAutoCalc">
+                            <i class="fa fa-robot mr-1"></i>
+                            Auto Calculated: <strong id="valAutoCalc">--</strong>
+                        </span>
+
+                        <span class="badge-pill bg-soft-blue" id="tagPercentage">
+                            <i class="fa fa-percent mr-1"></i>
+                            Percentage Based: <strong id="valPercentage">--</strong>
+                        </span>
+
+                        <span class="badge-pill bg-soft-orange" id="tagProof">
+                            <i class="fa fa-file-upload mr-1"></i>
+                            Proof Required: <strong id="valProof">--</strong>
+                        </span>
+
+                    </div>
+                </div>
+
+                <div class="selection-grid mb-3">
+
+                    <!-- MANUAL -->
+                    <label class="selection-card">
+                        <input type="radio"
+                               id="mapManual"
+                               name="mapType"
+                               value="MANUAL"
+                               onclick="toggleMapping('MANUAL')">
+                        <div class="selection-content">
+                            <i class="fa-regular fa-keyboard"></i>
+                            <div class="title">Manual Entry</div>
+                            <div class="desc">User enters declaration</div>
+                        </div>
+                    </label>
+
+                    <!-- PAYROLL -->
+                    <label class="selection-card">
+                        <input type="radio"
+                               id="mapPayroll"
+                               name="mapType"
+                               value="PAYROLL"
+                               onclick="toggleMapping('PAYROLL')">
+                        <div class="selection-content">
+                            <i class="fa-solid fa-calculator"></i>
+                            <div class="title">Payroll Component</div>
+                            <div class="desc">Linked to Salary Structure</div>
+                        </div>
+                    </label>
+
+                    <!-- STATUTORY -->
+                    <label class="selection-card">
+                        <input type="radio"
+                               id="mapStatutory"
+                               name="mapType"
+                               value="STATUTORY"
+                               onclick="toggleMapping('STATUTORY')">
+                        <div class="selection-content">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            <div class="title">Statutory Rule</div>
+                            <div class="desc">Govt mandated calculation</div>
+                        </div>
+                    </label>
+
+                </div>
+                <div id="payrollBox"
+                     class="p-3 border-rounded mb-3"
+                     style="background:#eff6ff; border-color:#bfdbfe; display:none;">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="input-label" style="color:#1e40af;">
+                                <i class="fa fa-link mr-1"></i> Select Salary Component
+                            </label>
+
+                            <select id="ddlPayrollComponent"
+                                    class="form-control-modern"
+                                    style="border-color:#93c5fd;">
+                                <option value="">-- Select Component --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="statutoryBox"
+                     class="p-3 border-rounded mb-3"
+                     style="background:#fffbeb; border-color:#fde68a; display:none;">
+
+                    <label class="input-label" style="color:#92400e;">
+                        <i class="fa fa-gavel mr-1"></i> Statutory Logic
+                    </label>
+
+                    <select id="ddlStatutoryComponent"
+                            class="form-control-modern"
+                            style="border-color:#fcd34d;">
+                        <option value="">-- Select Statutory Rule --</option>
+                    </select>
+                </div>
+
+                <hr style="border-top:1px dashed #e2e8f0; margin: 25px 0;">
+
+                <div class="row">
+                    <div class="col-md-5" style="border-right: 1px solid #e2e8f0;">
+                        <label class="input-label text-muted">Applicable Tax Slabs (Auto)</label>
+                        <table class="table table-bordered table-sm data-table-sm mb-0">
+                            <thead>
+                                <tr><th>Range From</th><th>Range To</th><th>Rate</th></tr>
+                            </thead>
+                            <tbody id="taxSlabBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-7">
+                        <label class="input-label text-muted">Global Constants</label>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label class="text-xs text-muted mb-1">Cess %</label>
+                                <input class="form-control-modern" readonly id="txtCess" style="background:#f8fafc;">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="text-xs text-muted mb-1">Std Deduction</label>
+                                <input class="form-control-modern" readonly id="txtStdDeduction" style="background:#f8fafc;">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-xs text-muted mb-1">Rebate Limit</label>
+                                <input class="form-control-modern" readonly id="txtRebateLimit" style="background:#f8fafc;">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-xs text-muted mb-1">Rebate Threshold</label>
+                                <input class="form-control-modern" readonly id="txtRebateThreshold" style="background:#f8fafc;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer-modern">
+                <button type="button" class="btn btn-default" onclick="closeRuleModal()" style="border:1px solid #e2e8f0; background:#fff; color:#475569; padding:8px 16px; border-radius:6px; margin-right:8px;">Cancel</button>
+                <button type="button" class="btn btn-primary-modern" onclick="saveConfiguration()">
+                    <i class="fa fa-save mr-1"></i> Save Configuration
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<!-- Toastr -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    let payConfigs = [];
+    let isEditMode = false;
+    let allTaxRules = [];
+    let pageSize = 10;
+    let currentPage = 1;
+
+    $(document).ready(function () {
+        loadTaxRuleGrid();
+        bindFinancialYears();
+        bindTaxRegimes();
+    });
+    /* ===============LOAD RULES==================== */
+    function loadTaxRuleGrid() {
+
+        $.get('/PayrollTds/GetTaxRuleList', function (res) {
+
+            let tbody = $('.table-modern tbody');
+            tbody.empty();
+
+            if (!res || res.length === 0) {
+                tbody.append(`
+                <tr>
+                    <td colspan="8" class="text-center text-muted">
+                        No Tax Rules Found
+                    </td>
+                </tr>
+            `);
+                return;
+            }
+            allTaxRules = res || [];
+            currentPage = 1;
+            renderPage(); 
+        });
+    }
+    function renderPage() {
+
+        let tbody = $('.table-modern tbody');
+        tbody.empty();
+
+        let total = allTaxRules.length;
+        let start = (currentPage - 1) * pageSize;
+        let end = Math.min(start + pageSize, total);
+        let pageData = allTaxRules.slice(start, end);
+
+        if (pageData.length === 0) {
+            tbody.append(`
+            <tr>
+                <td colspan="8" class="text-center text-muted">
+                    No Tax Rules Found
+                </td>
+            </tr>
+        `);
+        }
+
+        pageData.forEach(x => {
+
+            let regimeBadge = x.RegimeCode === 'NEW'
+                ? `<span class="badge-pill bg-soft-blue">NEW REGIME</span>`
+                : `<span class="badge-pill bg-soft-gray">OLD REGIME</span>`;
+
+            let categoryBadgeClass =
+                x.Category === 'DEDUCTION' ? 'badge-deduction' :
+                    x.Category === 'EXEMPTION' ? 'badge-exemption' :
+                        'badge-rebate';
+
+            let categoryBadge = `
+            <span class="badge-pill ${categoryBadgeClass}">
+                ${x.Category}
+            </span>`;
+
+            let mappingBadge =
+                x.MappingType === 'PAYROLL'
+                    ? `<span class="badge-pill bg-soft-green">PAYROLL</span>`
+                    : x.MappingType === 'STATUTORY'
+                        ? `<span class="badge-pill bg-soft-orange">STATUTORY</span>`
+                        : `<span class="badge-pill bg-soft-gray">MANUAL</span>`;
+
+            tbody.append(`
+            <tr>
+                <td><strong>${x.FinancialYear}</strong></td>
+                <td>${regimeBadge}</td>
+                <td>
+                    <div style="font-weight:600">${x.SectionCode}</div>
+                    ${categoryBadge}
+                </td>
+                <td>
+                    <div style="font-weight:600">${x.RuleName}</div>
+                    <div style="font-size:11px;color:#64748b">
+                        &lt;/&gt; ${x.RuleCode}
+                    </div>
+                </td>
+                <td>${mappingBadge}</td>
+                <td style="font-family:monospace">${x.Limit || '-'}</td>
+                <td>
+                    <i class="fa fa-circle text-success" style="font-size:8px;"></i>
+                </td>
+                <td class="text-right">
+                    <button class="btn-icon" onclick="editTaxRule(${x.TaxRuleId})">
+                        <i class="fa fa-pen"></i>
+                    </button>
+                </td>
+            </tr>
+        `);
+        });
+
+        updateFooter(start, end, total);
+        buildPagination(total);
+    }
+    function updateFooter(start, end, total) {
+        $('#lblFrom').text(total === 0 ? 0 : start + 1);
+        $('#lblTo').text(end);
+        $('#lblTotal').text(total);
+    }
+
+    function buildPagination(total) {
+
+        let totalPages = Math.ceil(total / pageSize);
+        let ul = $('#pagination');
+        ul.empty();
+
+        // PREVIOUS
+        ul.append(`
+        <li class="${currentPage === 1 ? 'disabled' : ''}">
+            <a href="javascript:void(0)" onclick="gotoPage(${currentPage - 1})">
+                <i class="fa fa-chevron-left"></i>
+            </a>
+        </li>
+    `);
+
+        for (let i = 1; i <= totalPages; i++) {
+            ul.append(`
+            <li class="${i === currentPage ? 'active' : ''}">
+                <a href="javascript:void(0)" onclick="gotoPage(${i})">${i}</a>
+            </li>
+        `);
+        }
+
+        // NEXT
+        ul.append(`
+        <li class="${currentPage === totalPages ? 'disabled' : ''}">
+            <a href="javascript:void(0)" onclick="gotoPage(${currentPage + 1})">
+                <i class="fa fa-chevron-right"></i>
+            </a>
+        </li>
+    `);
+    }
+    function gotoPage(page) {
+        let totalPages = Math.ceil(allTaxRules.length / pageSize);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderPage();
+    }
+    function changePageSize(size) {
+        pageSize = parseInt(size);
+        currentPage = 1;
+        renderPage();
+    }
+
+    /*=================EDIT TAX RULE===================*/
+    function editTaxRule(taxRuleId) {
+
+        closeRuleModal(); // ✅ clear everything first
+        isEditMode = true;
+        $.get('/PayrollTds/GetTaxRuleById',
+            { taxRuleId: taxRuleId },
+            function (res) {
+
+                if (!res) {
+                    toastr.error('Unable to load tax rule');
+                    return;
+                }
+
+                // Store ID
+                $('#hdnTaxRuleId').val(res.TaxRuleId);
+
+                // Financial Year (TEXT based)
+                $('#ddlFinancialYear option')
+                    .filter(function () {
+                        return $(this).text() === res.FinancialYear;
+                    })
+                    .prop('selected', true);
+
+                $('#ddlRegime').val(res.RegimeId);
+
+                // Financial Year already set before this
+                loadSlabAndConstant(); // this will call bindTaxSections
+
+                // Pass selected section AFTER load
+                bindTaxSections(
+                    $('#ddlFinancialYear option:selected').text(),
+                    res.RegimeId,
+                    res.SectionId
+                );
+
+                $('#txtRuleName').val(res.RuleName);
+                $('#txtRuleCode').val(res.RuleCode);
+
+                if (res.PercentageOfAmount) {
+                    $('#txtMaxLimit').val(res.PercentageOfAmount);
+                    $('#hdnIsPercentage').val(true);
+                } else {
+                    $('#txtMaxLimit').val(res.MaxLimitAmount);
+                    $('#hdnIsPercentage').val(false);
+                }
+
+                $('#hdnIsAutoCalc').val(res.IsAutoCalculated);
+                $('#hdnIsProofRequired').val(res.IsProofRequired);
+                $('#hdncalFormula').val(res.CalculationFormula || '');
+
+                updateRuleTags(
+                    res.IsAutoCalculated,
+                    $('#hdnIsPercentage').val() === 'true',
+                    res.IsProofRequired
+                );
+
+                 
+                loadPayConfigMaster(() => {
+
+                    if (res.MappingType === 'PAYROLL') {
+
+                        $('#mapPayroll').prop('checked', true);
+                        loadPayrollComponents(null);
+                        $('#ddlPayrollComponent').val(res.LinkedPayComponentId);
+                        $('#payrollBox').show();
+
+                    }
+                    else if (res.MappingType === 'STATUTORY') {
+
+                        $('#mapStatutory').prop('checked', true);
+                        loadStatutoryComponents(null);
+                        $('#ddlStatutoryComponent').val(res.StatutoryCode);
+                        $('#statutoryBox').show();
+
+                    }
+                    else {
+                        $('#mapManual').prop('checked', true);
+                    }
+                });
+
+                $('#taxRuleModal').modal('show');
+            }
+        );
+    }
+
+    /* ===================== BIND MASTER ===================== */
+
+    function bindFinancialYears() {
+        $.get('/PayrollTds/GetFinancialYears', function (data) {
+            let ddl = $('#ddlFinancialYear').empty()
+                .append('<option value="">-- Select Year --</option>');
+            $.each(data, function (i, x) {
+                ddl.append(`<option value="${x.value}">${x.text}</option>`);
+            });
+        });
+    }
+
+    function bindTaxRegimes() {
+        $.get('/PayrollTds/GetTaxRegimes', function (data) {
+            let ddl = $('#ddlRegime').empty()
+                .append('<option value="">-- Select Regime --</option>');
+            $.each(data, function (i, x) {
+                ddl.append(`<option value="${x.value}">${x.text}</option>`);
+            });
+        });
+    }
+
+    function bindTaxSections(financialYear, regimeId, selectedSectionId) {
+        if (!financialYear) return;
+
+        $.get('/PayrollTds/GetTaxSections', { financialYear, regimeId }, function (data) {
+
+            let ddl = $('#ddlITSection').empty()
+                .append('<option value="">-- Select Section --</option>');
+
+            $.each(data, function (i, x) {
+                ddl.append(`
+                <option value="${x.id}"
+                        data-code="${x.code}"
+                        data-category="${x.category}"
+                        data-proof="${x.proof}"
+                        data-isauto="${x.IsAuto}"
+                        data-ispercentage="${x.isPercentage}"
+                        data-calctype="${x.calculationBase}"
+                        data-maxlimit="${x.maxLimit ?? ''}"
+                        data-allowance="${x.allowanceKeys ?? ''}"
+                        data-statutory="${x.statutoryKeys ?? ''}"
+                        data-cal-formula="${x.calFormula ?? ''}"
+                        data-info="${x.text}">
+                    ${x.code}
+                </option>
+            `);
+            });
+
+            // ✅ SET VALUE AFTER OPTIONS ARE READY
+            if (selectedSectionId) {
+                ddl.val(selectedSectionId).trigger('change');
+            }
+        });
+    }
+
+
+    function onITSectionChange() {
+
+        let opt = $('#ddlITSection option:selected');
+        if (!opt.val()) return;
+
+        let isAutoCalculated = opt.data('isauto') == 1 || opt.data('isauto') === true;
+        let isPercentage = opt.data('ispercentage') == 1 || opt.data('ispercentage') === true;
+        let isProofRequired = opt.data('proof') == 1 || opt.data('proof') === true;
+        let calculationFormula = opt.data('calFormula') || '';
+
+        $('#hdnIsAutoCalc').val(isAutoCalculated);
+        $('#hdnIsPercentage').val(isPercentage);
+        $('#hdnIsProofRequired').val(isProofRequired);
+        $('#hdncalFormula').val(calculationFormula);
+
+        let category = opt.data('category');
+        let calcType = opt.data('calctype');
+        let maxLimit = opt.data('maxlimit');
+        let allowanceKeys = opt.data('allowance');
+        let statutoryKeys = opt.data('statutory');
+
+
+        updateRuleTags(isAutoCalculated, isPercentage, isProofRequired);
+
+
+        // Apply UI
+        applyPercentageUI(isPercentage);
+        // ---------------------------
+        // 1️⃣ CATEGORY BADGE
+        // ---------------------------
+        $('#lblCategory')
+            .text(category)
+            .removeClass('badge-deduction badge-exemption badge-rebate')
+            .addClass(getBadgeClass(category));
+
+        // ✅ Correct tooltip binding
+        let infoText = opt.data('info');
+
+        $('#categoryInfo')
+            .attr('title', infoText || 'No details available');
+
+        // ---------------------------
+        // 2️⃣ SYSTEM CODE (AUTO)
+        // ---------------------------
+        let sysCode = generateSystemCode(opt.data('code'), calcType);
+        $('#txtRuleCode').val(sysCode);
+
+        // ---------------------------
+        // 3️⃣ MAX LIMIT
+        // ---------------------------
+        if (!isEditMode) {
+            if (maxLimit) {
+                $('#txtMaxLimit').val(maxLimit);
+            } else {
+                $('#txtMaxLimit').val('');
+            }
+        }
+
+        // ---------------------------
+        // 4️⃣ MAPPING STRATEGY AUTO
+        // ---------------------------
+        autoSelectMapping(calcType, allowanceKeys, statutoryKeys);
+    }
+    function updateRuleTags(isAuto, isPercentage, isProof) {
+
+        $('#valAutoCalc').text(isAuto ? 'YES' : 'NO');
+        $('#valPercentage').text(isPercentage ? 'YES' : 'NO');
+        $('#valProof').text(isProof ? 'YES' : 'NO');
+
+        $('#tagAutoCalc')
+            .toggleClass('bg-soft-green', isAuto)
+            .toggleClass('bg-soft-gray', !isAuto);
+
+        $('#tagPercentage')
+            .toggleClass('bg-soft-green', isPercentage)
+            .toggleClass('bg-soft-blue', !isPercentage);
+
+        $('#tagProof')
+            .toggleClass('bg-soft-green', isProof)
+            .toggleClass('bg-soft-orange', !isProof);
+    }
+
+
+    function autoSelectMapping(calcType, allowanceKeys, statutoryKeys) {
+
+        // RESET
+        $('input[name="mapType"]').prop('checked', false);
+        $('#payrollBox, #statutoryBox').hide();
+
+        allowanceKeys = allowanceKeys && allowanceKeys.trim() !== '' ? allowanceKeys : null;
+        statutoryKeys = statutoryKeys && statutoryKeys.trim() !== '' ? statutoryKeys : null;
+
+        switch (calcType) {
+
+            case 'MANUAL':
+            case 'FIXED':
+                $('#mapManual').prop('checked', true);
+                break;
+
+            case 'TAG_BASED':
+
+                if (allowanceKeys) {
+                    $('#mapPayroll').prop('checked', true);
+                    loadPayrollComponents(allowanceKeys);
+                    $('#payrollBox').fadeIn(200);
+                }
+                else if (statutoryKeys) {
+                    $('#mapStatutory').prop('checked', true);
+                    loadStatutoryComponents(statutoryKeys);
+                    $('#statutoryBox').fadeIn(200);
+                }
+                else {
+                    $('#mapManual').prop('checked', true);
+                }
+                break;
+
+            case 'BASIC':
+            case 'GROSS':
+                $('#mapPayroll').prop('checked', true);
+                loadPayrollComponents(null);
+                $('#payrollBox').fadeIn(200);
+                break;
+        }
+    }
+
+    function applyPercentageUI(isPercentage) {
+
+        let $label = $('#txtMaxLimit').closest('.col-md-3').find('.input-label');
+
+        if (isPercentage) {
+
+            $label.html(
+                'Percentage (%) <i class="fa fa-info-circle text-muted" title="Enter percentage value"></i>'
+            );
+
+            $('#txtMaxLimit')
+                .attr({ min: 0, max: 100, step: 0.01 })
+                .attr('placeholder', 'e.g. 10');
+
+        } else {
+
+            $label.html(
+                'Max Limit (₹) <i class="fa fa-info-circle text-muted" title="Maximum allowed amount"></i>'
+            );
+
+            $('#txtMaxLimit')
+                .removeAttr('max')
+                .attr({ min: 0, step: 1 })
+                .attr('placeholder', 'e.g. 150000');
+        }
+    }
+
+
+    function generateSystemCode(sectionCode, calcType) {
+
+        let map = {
+            'TAG_BASED': 'TAG',
+            'BASIC': 'BASIC',
+            'GROSS': 'GROSS',
+            'MANUAL': 'MAN',
+            'FIXED': 'FIX',
+            'STATUTORY': 'STAT'
+        };
+
+        let suffix = map[calcType] || 'GEN';
+
+        return `${sectionCode}_${suffix}`;
+    }
+
+
+
+    function getBadgeClass(category) {
+        switch (category) {
+            case 'DEDUCTION': return 'badge-deduction';
+            case 'EXEMPTION': return 'badge-exemption';
+            case 'REBATE': return 'badge-rebate';
+            default: return '';
+        }
+    }
+
+
+
+    function openRuleModal() {
+        $('#taxRuleModal').modal('show');
+        loadPayConfigMaster();
+    }
+
+
+
+    function loadPayConfigMaster(callback) {
+
+        if (payConfigs.length > 0) {
+            if (callback) callback();
+            return;
+        }
+
+        $.get('/PayrollTds/GetAllPayConfig', function (data) {
+            payConfigs = data || [];
+            if (callback) callback();
+        });
+    }
+
+    function toggleMapping(type) {
+
+        $('#payrollBox, #statutoryBox').hide();
+
+        if (type === 'PAYROLL') {
+            loadPayrollComponents(null);
+            $('#payrollBox').fadeIn(200);
+        }
+
+        if (type === 'STATUTORY') {
+            loadStatutoryComponents(null);
+            $('#statutoryBox').fadeIn(200);
+        }
+    }
+
+    function loadSlabAndConstant() {
+
+        let financialYear = $('#ddlFinancialYear option:selected').text();
+        let regimeId = $('#ddlRegime').val();
+
+        if (!financialYear || !regimeId) return;
+        bindTaxSections(financialYear, regimeId, null);
+
+        $.ajax({
+            url: '/PayrollTds/GetTaxSlabAndConstant',
+            type: 'GET',
+            data: {
+                financialYear: financialYear,
+                regimeId: regimeId
+            },
+            success: function (res) {
+
+                if (!res) return;
+
+                // ------------------------------
+                // 1️⃣ Bind Tax Slabs
+                // ------------------------------
+                let slabHtml = '';
+                $.each(res.slabs, function (i, x) {
+                    let fromAmount = (x.from === 0 || x.from === "0" || x.from === 0.00)
+                        ? '0.00'
+                        : formatCurrency(x.from);
+
+                    let toAmount = x.to ? formatCurrency(x.to) : 'Above';
+
+                    slabHtml += `
+                    <tr>
+                        <td>${fromAmount}</td>
+                        <td>${toAmount}</td>
+                        <td>${x.rate}%</td>
+                    </tr>
+                `;
+                });
+
+                $('#taxSlabBody').html(slabHtml);
+
+                // ------------------------------
+                // 2️⃣ Bind Tax Constants
+                // ------------------------------
+                $('#txtCess').val(res.constant.cessRate + ' %');
+                $('#txtStdDeduction').val(formatCurrency(res.constant.standardDeduction));
+                $('#txtRebateLimit').val(formatCurrency(res.constant.rebateLimit));
+                $('#txtRebateThreshold').val(formatCurrency(res.constant.rebateThreshold));
+            }
+        });
+    }
+
+    function formatCurrency(val) {
+        if (!val) return '';
+        return '₹ ' + parseFloat(val).toLocaleString('en-IN');
+    }
+
+    function loadPayrollComponents(allowanceKey) {
+
+        let ddl = $('#ddlPayrollComponent').empty()
+            .append('<option value="">-- Select Component --</option>');
+
+        let filtered = payConfigs.filter(x =>
+            x.isActive &&
+            (x.isAllowance || x.isBasicComponent) &&
+            !x.isStatutory
+        );
+
+        if (allowanceKey) {
+            filtered = filtered.filter(x => x.allowanceType === allowanceKey);
+        }
+
+        filtered.forEach(x => {
+            ddl.append(`<option value="${x.payConfigId}">${x.payConfigName}</option>`);
+        });
+
+        if (filtered.length === 1) {
+            ddl.val(filtered[0].payConfigId);
+        }
+    }
+    function loadStatutoryComponents(statutoryKey) {
+
+        let ddl = $('#ddlStatutoryComponent').empty()
+            .append('<option value="">-- Select Statutory Rule --</option>');
+
+        let filtered = payConfigs.filter(x =>
+            x.isActive &&
+            x.isStatutory &&
+            x.statutoryType !== 'TDS'
+        );
+
+        if (statutoryKey) {
+            filtered = filtered.filter(x => x.statutoryType === statutoryKey);
+        }
+
+        filtered.forEach(x => {
+            ddl.append(`<option value="${x.payConfigId}">${x.payConfigName}</option>`);
+        });
+
+        if (filtered.length === 1) {
+            ddl.val(filtered[0].payConfigId);
+        }
+    }
+    function closeRuleModal() {
+
+        // Hide modal
+        $('#taxRuleModal').modal('hide');
+        isEditMode = false;
+        // Reset hidden ids
+        $('#hdnTaxRuleId').val(0);
+        $('#hdnIsAutoCalc').val('');
+        $('#hdnIsPercentage').val('');
+        $('#hdnIsProofRequired').val('');
+        $('#hdncalFormula').val('');
+
+        // Reset dropdowns
+        $('#ddlFinancialYear').val('');
+        $('#ddlRegime').val('');
+        $('#ddlITSection').empty().append('<option value="">-- Select Section --</option>');
+
+        // Reset inputs
+        $('#txtRuleName').val('');
+        $('#txtRuleCode').val('');
+        $('#txtMaxLimit').val('');
+
+        // Reset radio buttons
+        $('input[name="mapType"]').prop('checked', false);
+
+        // Hide conditional blocks
+        $('#payrollBox, #statutoryBox').hide();
+        $('#ddlPayrollComponent').val('');
+        $('#ddlStatutoryComponent').val('');
+
+        // Reset category badge
+        $('#lblCategory')
+            .text('--')
+            .removeClass('badge-deduction badge-exemption badge-rebate');
+
+        $('#categoryInfo')
+            .attr('title', 'Select IT Section to view details');
+
+        // Reset rule characteristics
+        updateRuleTags(false, false, false);
+
+        // Clear slabs & constants
+        $('#taxSlabBody').empty();
+        $('#txtCess, #txtStdDeduction, #txtRebateLimit, #txtRebateThreshold').val('');
+        loadTaxRuleGrid();
+    }
+
+    
+    function saveConfiguration() {
+
+        let isPercentageBased = $('#hdnIsPercentage').val() === 'true';
+        let inputValue = $('#txtMaxLimit').val();
+
+        let model = {
+            TaxRuleId: parseInt($('#hdnTaxRuleId').val() || 0), 
+            FinancialYear: $('#ddlFinancialYear option:selected').text(),
+            RegimeId: parseInt($('#ddlRegime').val()),
+            SectionId: parseInt($('#ddlITSection').val()),
+
+            RuleName: $('#txtRuleName').val().trim(),
+            RuleCode: $('#txtRuleCode').val(),
+
+            MappingType: $('input[name="mapType"]:checked').val(),
+            LinkedPayComponentId: $('#ddlPayrollComponent').val() || null,
+            StatutoryCode: $('#ddlStatutoryComponent').val() || null,
+
+            // ✅ NEW FEATURE CORRECTED
+            MaxLimitAmount: isPercentageBased ? null : (inputValue || null),
+            PercentageOfAmount: isPercentageBased ? (inputValue || null) : null,
+
+            IsAutoCalculated: $('#hdnIsAutoCalc').val() === 'true',
+            IsProofRequired: $('#hdnIsProofRequired').val() === 'true',
+            IsPercentageBased: isPercentageBased,
+            CalculationFormula: $('#hdncalFormula').val() || null
+        };
+
+        // ---------------- VALIDATION ----------------
+        if (!model.FinancialYear) return toastr.warning('Please select Financial Year');
+        if (!model.RegimeId) return toastr.warning('Please select Tax Regime');
+        if (!model.SectionId) return toastr.warning('Please select IT Section');
+        if (!model.RuleName) return toastr.warning('Rule Friendly Name is required');
+
+        if (model.MappingType === 'PAYROLL' && !model.LinkedPayComponentId)
+            return toastr.warning('Please select Salary Component');
+
+        if (model.MappingType === 'STATUTORY' && !model.StatutoryCode)
+            return toastr.warning('Please select Statutory Rule');
+
+        if (isPercentageBased && (!inputValue || inputValue <= 0 || inputValue > 100))
+            return toastr.warning('Percentage must be between 0 and 100');
+
+        // ---------------- SAVE ----------------
+        $.ajax({
+            url: '/PayrollTds/SaveTaxRuleConfiguration',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(model),
+            success: function (res) {
+                if (res && res.success) {
+                    toastr.success(res.message || 'Tax Rule Configuration saved successfully');
+                    closeRuleModal();
+                } else {
+                    toastr.error(res.message || 'Unable to save configuration');
+                }
+            },
+            error: function () {
+                toastr.error('Server error while saving configuration');
+            }
+        });
+    }
+
+
+</script>

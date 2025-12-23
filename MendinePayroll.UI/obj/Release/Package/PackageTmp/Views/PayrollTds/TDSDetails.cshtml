@@ -1,0 +1,912 @@
+﻿
+@{
+    ViewBag.Title = "TDSDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Modal overlay */
+    #customModal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        overflow: auto;
+    }
+        /* Modal content */
+        #customModal .modal-content {
+            background: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 450px;
+            position: relative;
+        }
+        /* Close button */
+        #customModal .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        /* Label spacing */
+        #customModal label {
+            margin-top: 10px;
+            display: block;
+        }
+</style>
+<section role="main" class="content-body">
+    <header class="page-header"></header>
+    <section class="panel" style="position:relative;">
+        <header class="panel-heading">
+            <h2 class="panel-title">Employee TDS Calculation </h2>
+            <div class="panel-actions">
+                <button onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs btn btn-sm btn-default text-sm text-weight-semibold">
+                    <i class="text-tertiary fa fa-arrow-circle-left ml-lg"></i>Back
+                </button>
+            </div>
+        </header>
+        <div class="panel-body">
+            <div class="card">
+                <input type="hidden" id="hdnEmployeeId" value="@Model" />
+                <input type="hidden" id="hdnAnnualTaxBeforeCess" />
+                <input type="hidden" id="hdnCessAmount" />
+                <input type="hidden" id="hdnTotalAnnualTax" />
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="ddlFinancialYear" class="form-label">Financial Year</label>
+                        <select id="ddlFinancialYear" class="form-control"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="ddlRegime" class="form-label">Tax Regime</label>
+                        <select id="ddlRegime" class="form-control"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="ddlFrequency" class="form-label">TDS Frequency</label>
+                        <select id="ddlFrequency" class="form-control"></select>
+                    </div>
+                </div>
+                <div class="row mt-3 text-center">
+                    <div class="col-12">
+                        <button type="button" id="btnShow" class="btn btn-primary" onclick="return loadTDSInputForm();" style="margin: 10px 0;">
+                            <i class="fa fa-eye space-right"></i> Show TDS Setup
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="TDSDetailsForCalculation">
+                <table class="table table-bordered table-sm" id="tdsComputationTable">
+                    <thead class="table-secondary">
+                        <tr><th colspan="3">TDS Computation Sheet</th></tr>
+                        <tr>
+                            <th>Source Of Income</th>
+                            <th>Annual Amount (₹)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Gross Salary Section -->
+                        <tr><td colspan="3"><strong>1. Gross Salary</strong></td></tr>
+                        <tr>
+                            <td>Salary as per sec. 17(1)</td>
+                            <td><input type="number" class="form-control form-control-sm" id="salary17" readonly /></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Perquisites</td>
+                            <td><input type="number" class="form-control form-control-sm" id="perquisites" value="0" /></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Profits in lieu of salary</td>
+                            <td><input type="number" class="form-control form-control-sm" id="profits" value="0" /></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Gross Salary</strong></td>
+                            <td id="grossSalaryTotal">0.00</td>
+                            <td></td>
+                        </tr>
+
+                        <!-- Deductions Section -->
+                        <tr><td colspan="3"><strong>2. Deductions</strong></td></tr>
+                    </tbody>
+                    <tbody id="standardDeductionRow"></tbody>
+                    <tbody id="deductionListFixedRows"></tbody>
+                    <tbody id="deductionSetUpEditableRows"></tbody>
+                    <tbody id="deductionTotalRow"></tbody>
+
+                    <!-- Exemptions Section -->
+                    <tbody>
+                        <tr><td colspan="3"><strong>3. Exemptions</strong></td></tr>
+                    </tbody>
+                    <tbody id="exemptionListBody"></tbody>
+                    <tbody id="exemptionTotalRow"></tbody>
+
+                    <!-- Taxable Income Section -->
+                    <tbody>
+                        <tr><td colspan="3"><strong>4. Taxable Income</strong></td></tr>
+                    </tbody>
+                    <tbody id="Totaltaxableincome"></tbody>
+                </table>
+                <div class="box-footer" style="text-align:center;margin-top:10px; ">
+                    <div class="col-md-12">
+                        <button type="button" id="btnEmpTDS" class="btn btn-tertiary" onclick="return CalculateTDS();" style="margin:10px;">
+                            <i class="fa fa-plus-square space-right"></i> Calculate
+                        </button>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div id="taxCalculationResult" style="margin-top: 20px;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="taxCalculationbreakup" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+                <div class="box-footer" style="text-align:center;margin-top:10px; ">
+                    <div class="col-md-12">
+                        <button type="button" id="btnEmpTDSSave" class="btn btn-tertiary" onclick="return saveTDSCalculation();;" style="margin:10px;">
+                            <i class="fa fa-plus-square space-right"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal container -->
+            <div id="customModal" aria-hidden="true">
+                <div class="modal-content">
+                    <span class="close-btn" id="modalCloseBtn">&times;</span>
+                    <h5 id="modalTitle">Exemption Rule</h5>
+                    <p><strong>Section:</strong> <span id="modalSection"></span></p>
+                    <p><strong>Maximum Limit:</strong> ₹<span id="modalMaxLimit"></span></p>
+                    <div id="modalInputsContainer"></div>
+                    <button id="modalSaveBtn" class="btn btn-primary btn-sm mt-3">Save</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var qsparam = new Array(10);
+    //qsparam.splice(0, 10);
+    var query = window.location.search.substring(1);
+    var parms = query.split('&&');
+    for (var i = 0; i < parms.length; i++) {
+        var pos = parms[i].indexOf('=');
+        if (pos > 0) {
+            var key = parms[i].substring(0, pos);
+            var val = parms[i].substring(pos + 1);
+            qsparam[i] = val;
+        }
+    }
+    $(document).ready(function () {
+        $('#TDSDetailsForCalculation').hide();
+        loadmasterData();
+
+        $('#perquisites, #profits').on('input', updateGrossTotal);
+        $('#deductionSetUpEditableRows').on('input', 'input[type=number]', updateTotalDeductions);
+        $('#deductionSetUpEditableRows').on('change', 'input[type=checkbox]', function () {
+            const inputId = $(this).attr('id').replace('proofRequired', 'deductionInput');
+            handleProofToggle(inputId, this.id);
+        });
+        $('#exemptionListBody').on('input', 'input[type=number]', updateTotalExemptions);
+
+        $('#modalCloseBtn').click(closeModal);
+        $('#modalSaveBtn').click(saveModal);
+        $(document).on('click', '.rule-btn', function () {
+            openModal($(this).data('index'));
+        });
+        $('#customModal').click(function (e) {
+            if (e.target === this) closeModal();
+        });
+    });
+    //function BacktoEmpList() {
+    //    window.location.href = "/EmployeeList";
+    //}
+    function BacktoEmpList() {
+
+
+        window.location.href = "/EmployeeList/Index?SearchValue=" + qsparam[1] + "";
+    }
+</script>
+
+<script>
+        // Load master data dropdowns
+    function loadmasterData() {
+        const empId = $('#hdnEmployeeId').val();
+            $.ajax({
+                url: '/PayrollTds/GetTDSMasterData',
+                type: 'GET',
+                data: { empId: empId },
+                dataType: 'json',
+                success: function (data) {
+                    populateFinancialYearDropdown('#ddlFinancialYear', data.financialYears, 'IDFinancialYear', 'FinancialYearCode', 'AssessmentYearCode');
+                    populateDropdown('#ddlRegime', data.taxRegimes, 'RegimeId', 'RegimeName');
+                    populateDropdown('#ddlFrequency', data.frequencies, 'IDFrequency', 'FrequencyName');
+
+                    // **NOW** pre‐select the previous values if they exist
+                    if (data.previousFY) {
+                        // find the option whose text equals the previous FY code
+                        $('#ddlFinancialYear option')
+                            .filter((_, opt) => $(opt).text() === data.previousFY)
+                            .prop('selected', true);
+                    }
+                    if (data.previousRegimeId) {
+                        $('#ddlRegime').val(data.previousRegimeId);
+                    }
+                    if (data.previousFrequencyId) {
+                        $('#ddlFrequency').val(data.previousFrequencyId);
+                    }
+
+                    // Optionally auto‐show the form when revising:
+                    if (data.previousFY) {
+                        loadTDSInputForm();
+                    }
+                },
+                error: function (err) {
+                    console.error('Failed to load master data:', err);
+                }
+            });
+        }
+        function populateFinancialYearDropdown(selector, data, valueField, textField, dataAttrField) {
+            var dropdown = $(selector);
+            dropdown.empty();
+            dropdown.append($('<option></option>').val('').html('-- Select --'));
+            $.each(data, function (i, item) {
+                // Add assessment year as data attribute
+                dropdown.append(
+                    $('<option></option>')
+                        .val(item[valueField])
+                        .html(item[textField])
+                        .attr('data-assessmentyear', item[dataAttrField])
+                );
+            });
+        }
+
+        function populateDropdown(selector, data, valueField, textField) {
+            var dropdown = $(selector);
+            dropdown.empty();
+            dropdown.append($('<option></option>').val('').html('-- Select --'));
+            $.each(data, function (i, item) {
+                dropdown.append($('<option></option>').val(item[valueField]).html(item[textField]));
+            });
+        }
+
+        // Load TDS Input Form data and render sections
+        function loadTDSInputForm() {
+            const finYear = $('#ddlFinancialYear option:selected').text();
+            const regimeId = $('#ddlRegime').val();
+            const hdnEmployeeId = $('#hdnEmployeeId').val();
+
+            if (!finYear || !regimeId) {
+                alert("Please select both Financial Year and Tax Regime.");
+                return;
+            }
+
+            $.ajax({
+                url: '/PayrollTds/GetTDSInputForm',
+                type: 'GET',
+                data: { financialYear: finYear, regimeId: regimeId, empId: hdnEmployeeId },
+                success: function (data) {
+                    if (!data.success) {
+                        alert(data.message);
+                        return;
+                    }
+                    bindGrossSalarySection(data);
+                    renderDeductions(data);
+                    renderexemptions(data);
+                    $('#TDSDetailsForCalculation').slideDown('fast');
+                    //$('#TDSDetailsForCalculation').show();
+                },
+                error: function () {
+                    alert("Error occurred while loading TDS Input Form.");
+                }
+            });
+        }
+
+        // Bind Gross Salary Section and input change handlers
+        function bindGrossSalarySection(data) {
+            const salary17 = data.incomeList.find(x => x.Details === "Gross Amount")?.AnnualSalary || 0;
+            $('#salary17').val(salary17.toFixed(2));
+
+            updateGrossTotal();
+
+            $('#perquisites, #profits').off('input').on('input', updateGrossTotal);
+        }
+
+        function updateGrossTotal() {
+            const salary = parseFloat($('#salary17').val()) || 0;
+            const perq = parseFloat($('#perquisites').val()) || 0;
+            const profits = parseFloat($('#profits').val()) || 0;
+
+            const total = salary + perq + profits;
+            $('#grossSalaryTotal').text(total.toFixed(2));
+
+            updateTotals();
+        }
+
+        // Render deductions section
+        function renderDeductions(data) {
+            const stdRow = $("#standardDeductionRow");
+            stdRow.empty();
+
+            if (data.standardDeduction) {
+                const stdItem = data.standardDeduction;
+                const row = `<tr>
+                    <td>${stdItem.Details} (${stdItem.Section})</td>
+                    <td>${parseFloat(stdItem.Amount).toFixed(2)}</td>
+                </tr>`;
+                stdRow.append(row);
+            }
+
+            const fixedRows = $("#deductionListFixedRows");
+            fixedRows.empty();
+
+            (data.deductionList || []).forEach(item => {
+                const row = `<tr>
+                    <td>${item.Details} (${item.Section})</td>
+                    <td>${parseFloat(item.AnnualAmount).toFixed(2)}</td>
+                </tr>`;
+                fixedRows.append(row);
+            });
+
+            const deductionSetUpList = data.deductionSetUpList || [];
+            const deductionTable = $("#deductionSetUpEditableRows");
+            deductionTable.empty();
+
+            deductionSetUpList.forEach((item, index) => {
+                const inputId = `deductionInput_${index}`;
+                const checkboxId = `proofRequired_${index}`;
+                const isProof = item.IsProofRequired;
+
+                const checkboxHtml = isProof
+                    ? `<td class="text-center">
+                        <input type="checkbox" id="${checkboxId}" onchange="handleProofToggle('${inputId}', '${checkboxId}')" />
+                      </td>`
+                    : `<td></td>`;
+
+                const inputDisabled = isProof ? 'disabled' : '';
+                const inputValue = isProof ? '' : item.Amount;
+
+                const row = `<tr>
+                    <td>${item.Details} (${item.Section})</td>
+                    <td>
+                        <input type="number" id="${inputId}" class="form-control form-control-sm" value="${inputValue}" max="${item.maxlimit}" data-max="${item.maxlimit}" ${inputDisabled} />
+                    </td>
+                    ${checkboxHtml}
+                </tr>`;
+
+                deductionTable.append(row);
+            });
+
+            updateTotalDeductions();
+        }
+
+        // Calculate total deductions
+        function updateTotalDeductions() {
+            let totalDeductions = 0;
+
+            $('#standardDeductionRow tr td:nth-child(2)').each(function () {
+                totalDeductions += parseFloat($(this).text()) || 0;
+            });
+
+            $('#deductionListFixedRows tr td:nth-child(2)').each(function () {
+                totalDeductions += parseFloat($(this).text()) || 0;
+            });
+
+            $('#deductionSetUpEditableRows input[type=number]').each(function () {
+                totalDeductions += parseFloat($(this).val()) || 0;
+            });
+
+            if ($('#totalDeductionsRow').length === 0) {
+                $('#deductionTotalRow').append(`
+                    <tr id="totalDeductionsRow">
+                        <td><strong>Total Deductions</strong></td>
+                        <td><strong>${totalDeductions.toFixed(2)}</strong></td>
+                        <td></td>
+                    </tr>
+                `);
+            } else {
+                $('#totalDeductionsRow td:nth-child(2)').text(totalDeductions.toFixed(2));
+            }
+            updateTaxableIncome();
+        }
+
+        // Handle proof checkbox toggle
+        function handleProofToggle(inputId, checkboxId) {
+            const input = document.getElementById(inputId);
+            const checkbox = document.getElementById(checkboxId);
+
+            if (checkbox.checked) {
+                input.disabled = false;
+                input.value = "";
+            } else {
+                input.disabled = true;
+                input.value = 0;
+            }
+            updateTotalDeductions();
+        }
+
+        // Render exemptions section
+        function renderexemptions(data) {
+            exemptionData = data.exemptionList || [];
+            const tbody = $('#exemptionListBody');
+            tbody.empty();
+
+            exemptionData.forEach((item, index) => {
+                const deductionName = item.Details || "-";
+                const sectionCode = item.Section || "-";
+                const maxLimit = parseFloat(item.MaxLimit || 0).toFixed(2);
+
+                tbody.append(`
+                    <tr>
+                        <td>${deductionName} (${sectionCode})</td>
+                        <td><input type="number" class="form-control form-control-sm" id="exemptionInput_${index}" value="0" max="${maxLimit}" readonly /></td>
+                        <td><button class="btn btn-outline-info btn-sm rule-btn" data-index="${index}">Rule</button></td>
+                    </tr>
+                `);
+            });
+            updateTotalExemptions();
+        }
+
+        // Calculate total exemptions
+        function updateTotalExemptions() {
+            let totalExemptions = 0;
+            $('#exemptionListBody input[type=number]').each(function () {
+                totalExemptions += parseFloat($(this).val()) || 0;
+            });
+
+            if ($('#totalExemptionsRow').length === 0) {
+                $('#exemptionTotalRow').append(`
+                    <tr id="totalExemptionsRow">
+                        <td><strong>Total Exemptions</strong></td>
+                        <td><strong>${totalExemptions.toFixed(2)}</strong></td>
+                        <td></td>
+                    </tr>
+                `);
+            } else {
+                $('#totalExemptionsRow td:nth-child(2)').text(totalExemptions.toFixed(2));
+            }
+            updateTaxableIncome();
+        }
+
+        // Calculate and render taxable income
+        function updateTaxableIncome() {
+            let grossSalary = parseFloat($('#grossSalaryTotal').text()) || 0;
+            let totalDeductions = 0;
+            if ($('#deductionTotalRow td:nth-child(2)').length) {
+                totalDeductions = parseFloat($('#deductionTotalRow td:nth-child(2)').text()) || 0;
+            }
+            let totalExemptions = 0;
+            if ($('#exemptionTotalRow td:nth-child(2)').length) {
+                totalExemptions = parseFloat($('#exemptionTotalRow td:nth-child(2)').text()) || 0;
+            }
+
+            let taxableIncome = grossSalary - (totalDeductions + totalExemptions);
+            if (taxableIncome < 0) taxableIncome = 0;
+
+            const tbody = $('#Totaltaxableincome');
+            tbody.empty();
+            tbody.append(`
+                <tr>
+                    <td><strong>Taxable Income</strong></td>
+                    <td><strong>${taxableIncome.toFixed(2)}</strong></td>
+                    <td></td>
+                </tr>
+            `);
+        }
+
+        // Update all totals
+        function updateTotals() {
+            updateTotalDeductions();
+            updateTotalExemptions();
+            updateTaxableIncome();
+        }
+
+        // Modal and interaction handlers
+        function getExemptionInputs(sectionCode, index) {
+            const basicDA = exemptionData[index].annualBasicPlusDAAmount || 0;
+
+            if (sectionCode === "10(13A)") {
+                return `
+                    <label>Rent Paid (Annual)</label>
+                    <input type="number" id="rentPaid" class="form-control form-control-sm" placeholder="Enter Rent Paid" />
+
+                    <label class="mt-2">Metro City?</label>
+                    <div>
+                        <label><input type="radio" name="metro" value="yes" checked> Yes</label>
+                        <label><input type="radio" name="metro" value="no"> No</label>
+                    </div>
+
+                    <label class="mt-2">Basic Salary + DA (Annual)</label>
+                    <input type="number" id="basicDA" class="form-control form-control-sm" value="${basicDA.toFixed(2)}" readonly />
+                    <small class="form-text text-muted">* Basic Salary + DA is read-only for HRA calculation</small>
+                `;
+            }
+
+            if (sectionCode === "10(14)") {
+                return `
+                    <label>No. of Children (max 2)</label>
+                    <input type="number" id="childrenCount" class="form-control form-control-sm" min="0" max="2" />
+                `;
+            }
+
+            return `
+                <label>Enter Amount</label>
+                <input type="number" id="defaultAmount" class="form-control form-control-sm" />
+            `;
+        }
+
+        function openModal(index) {
+            currentExemptionIndex = index;
+            const item = exemptionData[index];
+            $('#modalTitle').text(`Exemption Rule: ${item.Details} (${item.Section})`);
+            $('#modalSection').text(item.section);
+            $('#modalMaxLimit').text(parseFloat(item.MaxLimit).toFixed(2));
+            $('#modalInputsContainer').html(getExemptionInputs(item.Section, index));
+
+            $('#customModal').fadeIn();
+            $('#customModal').attr('aria-hidden', 'false');
+        }
+
+        function saveModal() {
+            if (currentExemptionIndex === null) return;
+            const item = exemptionData[currentExemptionIndex];
+            let newAmount = 0;
+
+            if (item.Section === "10(14)") {
+                const children = parseInt($('#childrenCount').val()) || 0;
+                newAmount = Math.min(children, 2) * 100 * 12;
+            } else if (item.Section === "10(13A)") {
+                const rent = parseFloat($('#rentPaid').val()) || 0;
+                const isMetro = $('input[name="metro"]:checked').val() === 'yes';
+                const basicDA = parseFloat($('#basicDA').val()) || 0;
+
+                if (basicDA <= 0) {
+                    alert("Please enter valid Basic Salary + DA");
+                    return;
+                }
+                if (rent <= 0) {
+                    alert("Please enter valid Rent Paid");
+                    return;
+                }
+
+                let actualHRAAnnual = parseFloat(exemptionData[currentExemptionIndex].AnnualAmount) || 0;
+                const limit1 = actualHRAAnnual;
+                const limit2 = (isMetro ? 0.5 : 0.4) * basicDA;
+                const limit3 = rent - 0.1 * basicDA;
+                newAmount = Math.min(limit1, limit2, Math.max(limit3, 0));
+                newAmount = Math.round(newAmount);
+            } else {
+                newAmount = parseFloat($('#defaultAmount').val()) || 0;
+            }
+
+            if (newAmount > item.maxlimit) newAmount = item.maxlimit;
+
+            $(`#exemptionInput_${currentExemptionIndex}`).val(newAmount.toFixed(2));
+            updateTotalExemptions();
+            closeModal();
+        }
+        function closeModal() {
+            $('#customModal').fadeOut();
+            $('#customModal').attr('aria-hidden', 'true');
+        }
+</script>
+<script>
+
+    function CalculateTDS() {
+        let taxableIncome = parseFloat($('#Totaltaxableincome td:nth-child(2)').text()) || 0;
+        let financialYear = $('#ddlFinancialYear option:selected').text();
+        let regimeId = parseInt($('#ddlRegime').val());
+
+        if (!financialYear || !regimeId) {
+            alert('Please select Financial Year and Tax Regime first.');
+            return false;
+        }
+
+        if (taxableIncome <= 0) {
+            alert('Taxable Income should be greater than zero.');
+            return false;
+        }
+
+        $.ajax({
+            url: '/PayrollTds/CalculateTDS',
+            type: 'GET',
+            data: {
+                financialYear: financialYear,
+                regimeId: regimeId,
+                taxableIncome: taxableIncome
+            },
+            success: function (response) {
+                if (!response.success) {
+                    alert(response.message || 'Failed to calculate tax.');
+                    return;
+                }
+
+                let html = `<h5>Calculation of Income Tax (${regimeId === 1 ? 'Old Regime' : 'New Regime'}):</h5>`;
+                html += `<table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Details</th>
+                                <th class="text-end">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                if (response.rows && response.rows.length > 0) {
+                    response.rows.forEach(item => {
+                        const isHighlight = item.Details.toLowerCase().includes("total tax payable");
+                        html += `<tr class="${isHighlight ? 'table-success' : ''}">
+                                <td>${item.Details}</td>
+                                <td class="text-end">${item.Amount}</td>
+                             </tr>`;
+                    });
+                } else {
+                    html += `<tr><td colspan="2" class="text-center text-danger">No tax summary data available.</td></tr>`;
+                }
+
+                html += `</tbody></table>`;
+                $('#taxCalculationResult').html(html);
+
+                // Set hidden fields
+                $('#hdnAnnualTaxBeforeCess').val(response.totalTaxBeforeRebate || 0);
+                $('#hdnCessAmount').val(response.cessAmount || 0);
+                $('#hdnTotalAnnualTax').val(response.totalTaxPayable || 0);
+
+                showTaxBreakup(response.totalTaxPayable);
+            },
+            error: function () {
+                alert('Error occurred while calculating tax.');
+            }
+        });
+
+        return false;
+    }
+
+    function formatToYMD(date) {
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    }
+
+    function showTaxBreakup(totalTaxPayable) {
+        let financialYear = $('#ddlFinancialYear option:selected').text(); // e.g. "2025-26"
+        let regimeId = parseInt($('#ddlRegime').val());
+        let taxfrequency = $('#ddlFrequency').val();
+
+        if (!financialYear || !regimeId || !taxfrequency) {
+            alert('Please select Financial Year, Tax Regime, and TDS Frequency first.');
+            return false;
+        }
+
+        let years = financialYear.split("-");
+        let startYear = parseInt(years[0]);
+        const empId = $('#hdnEmployeeId').val();
+        $.ajax({
+            url: '/PayrollTds/GetTaxBreakUp',
+            type: 'GET',
+            data: {
+
+                financialYear: financialYear,
+                regimeId: regimeId,
+                totalTaxPayable: totalTaxPayable,
+                taxfrequency: taxfrequency,
+                empId: empId
+            },
+            //success: function (response) {
+            //    if (!response.success) {
+            //        alert(response.message || 'Failed to get tax breakup.');
+            //        return;
+            //    }
+
+            //    let noOfPeriods = response.noOfPeriods || 12;
+            //    let basePerPeriod = Math.floor((totalTaxPayable / noOfPeriods) / 10) * 10;
+            //    let baseSum = basePerPeriod * (noOfPeriods - 1);
+            //    let lastPeriodTax = Math.round((totalTaxPayable - baseSum) / 10) * 10;
+
+            //    let html = `<h5>Tax Payable Breakdown (${noOfPeriods} ${$('#ddlFrequency option:selected').text()} Periods)</h5>`;
+            //    html += `<table class="table table-bordered table-striped">
+            //            <thead>
+            //                <tr>
+            //                    <th>Period</th>
+            //                    <th>Start Date</th>
+            //                    <th>End Date</th>
+            //                    <th class="text-end">Amount (₹)</th>
+            //                </tr>
+            //            </thead>
+            //            <tbody>`;
+
+            //    let currentStart = new Date(startYear, 3, 1); // 1 April (month 3)
+            //    let monthIncrement = 1;
+
+            //    switch (response.frequency) {
+            //        case "QUARTERLY": monthIncrement = 3; break;
+            //        case "HALFYEARLY": monthIncrement = 6; break;
+            //        case "YEARLY": monthIncrement = 12; break;
+            //        default: monthIncrement = 1; break;
+            //    }
+            //    for (let i = 0; i < noOfPeriods; i++) {
+            //        let periodTax = (i === noOfPeriods - 1) ? lastPeriodTax : basePerPeriod;
+
+            //        let periodStart = new Date(currentStart);
+            //        let periodEnd = new Date(periodStart.getFullYear(), periodStart.getMonth() + monthIncrement, 0);
+
+            //        let readableStart = periodStart.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            //        let readableEnd = periodEnd.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+            //        let isoStart = formatToYMD(periodStart);
+            //        let isoEnd = formatToYMD(periodEnd);
+
+            //        html += `<tr>
+            //                <td>Period ${i + 1}</td>
+            //                <td>${readableStart}</td>
+            //                <td>${readableEnd}</td>
+            //                <td class="text-end">₹${periodTax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            //             </tr>`;
+
+            //        html += `<input type="hidden" name="PeriodStart_${i + 1}" value="${isoStart}" />`;
+            //        html += `<input type="hidden" name="PeriodEnd_${i + 1}" value="${isoEnd}" />`;
+
+            //        currentStart.setMonth(currentStart.getMonth() + monthIncrement);
+            //    }
+
+            //    html += `</tbody></table>`;
+            //    $('#taxCalculationbreakup').html(html);
+            //}
+            success: function (response) {
+                if (!response.success) {
+                    alert(response.message || 'Failed to get tax breakup.');
+                    return;
+                }
+
+                const noOfPeriods = response.noOfPeriods;
+                const basePerPeriod = response.basePerPeriod;
+                const lastPeriodTax = response.lastPeriodTax;
+                const breakups = response.allBreakups || [];
+                const freqName = $('#ddlFrequency option:selected').text();
+
+                let html = `<h5>Tax Payable Breakdown (${noOfPeriods} ${freqName} Periods)</h5>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Period</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Paid?</th>
+            <th class="text-end">Amount (₹)</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+                breakups.forEach((b, i) => {
+                    const amt = b.IsPaid
+                        ? b.TDSAmount
+                        : (i === breakups.length - 1 ? lastPeriodTax : basePerPeriod);
+
+                    const cls = b.IsPaid ? 'text-muted' : 'table-warning';
+                    const paidText = b.IsPaid ? 'Yes' : 'No';
+
+                    const start = new Date(b.PeriodStart)
+                        .toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                    const end = new Date(b.PeriodEnd)
+                        .toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                    html += `<tr class="${cls}">
+          <td>Period ${i + 1}</td>
+          <td>${start}</td>
+          <td>${end}</td>
+          <td>${paidText}</td>
+          <td class="text-end">₹${amt.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })}</td>
+        </tr>`;
+                });
+
+                html += `</tbody></table>`;
+                $('#taxCalculationbreakup').html(html);
+            },
+            error: function () {
+                alert('Error occurred while calculating tax breakup.');
+            }
+        });
+    }
+
+
+</script>
+<script>
+    function saveTDSCalculation() {
+        // Prepare the JSON object to send
+        const requestData = {
+            IDEmployee: parseInt($('#hdnEmployeeId').val()),
+            FinancialYear: $('#ddlFinancialYear option:selected').text(),
+            AssessmentYear: $('#ddlFinancialYear option:selected').data('assessmentyear') || "",
+            RegimeId: parseInt($('#ddlRegime').val()),
+            CalcFrequency: parseInt($('#ddlFrequency').val()),
+            AnnualGrossIncome: parseFloat($('#grossSalaryTotal').text()) || 0,
+            TotalExemptions: parseFloat($('#totalExemptionsRow td:nth-child(2)').text()) || 0,
+            TotalDeductions: parseFloat($('#totalDeductionsRow td:nth-child(2)').text()) || 0,
+            TaxableIncome: parseFloat($('#Totaltaxableincome td:nth-child(2)').text()) || 0,
+            AnnualTaxBeforeCess: parseFloat($('#hdnAnnualTaxBeforeCess').val()) || 0,
+            CessAmount: parseFloat($('#hdnCessAmount').val()) || 0,
+            TotalAnnualTax: parseFloat($('#hdnTotalAnnualTax').val()) || 0,
+            TDSPerPeriod: 0,          // Calculate or fetch from breakup
+            Remarks: "",
+            TDSBreakups: [],          // Populate this array with period-wise tax breakup
+            TDSDeclarations: collectTDSDeclarations()      // Populate this array if declaration data exists
+        };
+
+        // Prepare data for saving TDS breakup with PeriodStart and PeriodEnd
+        $('#taxCalculationbreakup table tbody tr').each(function (i, row) {
+            let periodText = $(row).find('td').eq(0).text(); // "Period 1"
+            let amountText = $(row).find('td').eq(3).text(); // "₹7,130.00"
+
+            let match = amountText.match(/₹([\d,\.]+)/);
+            if (match) {
+                let periodStart = $(`input[name='PeriodStart_${i + 1}']`).val() || null;
+                let periodEnd = $(`input[name='PeriodEnd_${i + 1}']`).val() || null;
+
+                requestData.TDSBreakups.push({
+                    PeriodStart: periodStart,
+                    PeriodEnd: periodEnd,
+                    TDSAmount: parseFloat(match[1].replace(/,/g, ''))
+                });
+            }
+        });
+
+
+        // If you have declarations, add them similarly to TDSDeclarations
+
+        // Now POST the JSON to backend
+        $.ajax({
+            url: '/PayrollTds/SaveTDSCalculation',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(requestData),
+            success: function (response) {
+                if (response.success) {
+                    alert('TDS Calculation saved successfully!');
+                } else {
+                    alert('Failed to save TDS Calculation: ' + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('Error saving TDS Calculation: ' + error);
+            }
+        });
+    }
+    function collectTDSDeclarations() {
+        let declarations = [];
+        $('#deductionSetUpEditableRows tr').each(function () {
+            // Extract SectionCode from text inside the first <td>
+            let label = $(this).find('td:first').text().trim(); // e.g., "PPF Investment (80C)"
+            let sectionMatch = label.match(/\((.*?)\)/); // extract "80C" from "(80C)"
+            let sectionCode = sectionMatch ? sectionMatch[1] : null;
+
+            let declaredAmount = parseFloat($(this).find('input[type="number"]').val()) || 0;
+            let proofSubmitted = $(this).find('input[type="checkbox"]').is(':checked');
+
+            if (proofSubmitted) {
+                declarations.push({
+                    SectionCode: sectionCode,
+                    DeclaredAmount: declaredAmount,
+                    IsProofSubmitted: proofSubmitted,
+                    UploadedFilePath: "",
+                    FinancialYear: $('#ddlFinancialYear option:selected').text()
+                });
+            }
+        });
+        return declarations;
+    }
+
+</script>

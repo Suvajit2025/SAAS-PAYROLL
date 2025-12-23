@@ -166,19 +166,19 @@
       <DependentUpon>MendinePayrollDB.tt</DependentUpon>
     </Compile>
     <Compile Include="MendinePayrollDB.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>MendinePayrollDB.Context.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="MendinePayrollDB.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>MendinePayrollDB.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="MendinePayrollDB.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>MendinePayrollDB.edmx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="PayConfig.cs">
       <DependentUpon>MendinePayrollDB.tt</DependentUpon>
@@ -288,10 +288,6 @@
     <None Include="App.Config">
       <SubType>Designer</SubType>
     </None>
-    <EntityDeploy Include="MendinePayrollDB.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>MendinePayrollDB.Designer.cs</LastGenOutput>
-    </EntityDeploy>
     <None Include="MendinePayrollDB.edmx.diagram">
       <DependentUpon>MendinePayrollDB.edmx</DependentUpon>
     </None>
@@ -301,14 +297,20 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <EntityDeploy Include="MendinePayrollDB.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>MendinePayrollDB.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="MendinePayrollDB.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>MendinePayrollDB.edmx</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MendinePayrollDB.Context.cs</LastGenOutput>
     </Content>
     <Content Include="MendinePayrollDB.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>MendinePayrollDB.edmx</DependentUpon>
+      <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MendinePayrollDB.cs</LastGenOutput>
     </Content>
   </ItemGroup>

@@ -401,60 +401,132 @@
         
     }
 
+    //function SaveEmployeeManualSalaryValue(EmployeeSalaryConfigid) {
+    //    var ManualSalarylist = new Array();
+    //    var PayConfigID = [];
+    //    var Values = [];
+    //    var SalaryConfiglist = {};
+    //    var i = 0;
+
+    //    $("#DynamicmanualData .abc").each(function () {
+
+
+    //        if ($('#div_' + i + '').length > 0) {
+
+    //            var ManualPayConfigId = $("#hdnManual_" + i + "").val();
+    //            var manualValue = $("#txt_" + ManualPayConfigId + "").val();
+    //            PayConfigID.push(ManualPayConfigId);
+    //            Values.push(manualValue);
+    //            //SalaryConfiglist.EmployeeSalaryConfigid = EmployeeSalaryConfigid;
+
+    //            //SalaryConfiglist.PayConfigID = ManualPayConfigId;
+    //            //SalaryConfiglist.Values = $("#txt_" + ManualPayConfigId + "").val();
+    //            //ManualSalarylist.push(SalaryConfiglist);
+
+    //        }
+    //        else {
+    //            var x = 1;
+    //        }
+
+    //        i++;
+
+    //    });
+
+    //    SalaryConfiglist.EmployeeSalaryConfigid = EmployeeSalaryConfigid;
+
+    //    SalaryConfiglist.PayConfigID = PayConfigID;
+    //    SalaryConfiglist.Values = Values;
+    //    ManualSalarylist.push(SalaryConfiglist);
+
+    //    $.ajax({
+
+    //        url: '/EmployeeList/SaveEmployeeManualSalary',
+    //        type: 'POST',
+    //        data: function () {
+    //            var data = new FormData();
+    //            data.append("modelParameter", Values);
+    //            data.append("PayConfigID", PayConfigID);
+    //            data.append("EmployeeSalaryConfigid", EmployeeSalaryConfigid);
+    //            return data;
+    //        }(),
+    //        contentType: false,
+    //        processData: false,
+    //        success: function (data) {
+    //            //
+    //            if (data != "0") {
+
+    //                swal({
+    //                    title: "Success!",
+    //                    text: "Employee Salary has been Added Successfully!",
+    //                    type: "success"
+    //                }).then(function () {
+    //                    window.location.href = "/EmployeeList";
+    //                });
+
+    //            }
+
+
+    //        },
+    //        error: function (er) {
+    //            console.log(er);
+    //        }
+    //    });
+
+    //    //return false;
+    //    //$.ajax({
+    //    //    type: "POST",
+    //    //    url: '/EmployeeList/SaveEmployeeManualSalary',
+    //    //    data: JSON.stringify({ 'ManualSalarylist': ManualSalarylist }),
+    //    //    datatype: "JSON",
+    //    //    contentType: 'application/json; charset=utf-8',
+    //    //    success: function (data) {
+    //    //
+    //    //        if (data == "Saved Successfully") {
+
+    //    //            swal({
+    //    //                title: "Success!",
+    //    //                text: "Employee Salary has been Added Successfully!",
+    //    //                type: "success"
+    //    //            }).then(function () {
+    //    //                window.location.href = "/EmployeeList";
+    //    //            });
+    //    //        }
+
+
+    //    //    },
+    //    //    error: function (er) {
+    //    //        console.log(er);
+    //    //    }
+    //    //});
+    //}
+
+
+    // Updated On :14-10-2025
+    //Updated By : Suvajit Das
+
     function SaveEmployeeManualSalaryValue(EmployeeSalaryConfigid) {
-        var ManualSalarylist = new Array();
-        var PayConfigID = [];
-        var Values = [];
-        var SalaryConfiglist = {};
-        var i = 0;
-        
+        var ManualSalaryList = [];
+
         $("#DynamicmanualData .abc").each(function () {
-            
-            
-            if ($('#div_' + i + '').length > 0) {
-                
-                var ManualPayConfigId = $("#hdnManual_" + i + "").val();
-                var manualValue = $("#txt_" + ManualPayConfigId + "").val();
-                PayConfigID.push(ManualPayConfigId);
-                Values.push(manualValue);
-                //SalaryConfiglist.EmployeeSalaryConfigid = EmployeeSalaryConfigid;
-               
-                //SalaryConfiglist.PayConfigID = ManualPayConfigId;
-                //SalaryConfiglist.Values = $("#txt_" + ManualPayConfigId + "").val();
-                //ManualSalarylist.push(SalaryConfiglist);
+            var ManualPayConfigId = $(this).find("[id^='hdnManual_']").val();
+            var manualValue = $("#txt_" + ManualPayConfigId).val();
 
+            if (ManualPayConfigId && manualValue !== undefined) {
+                ManualSalaryList.push({
+                    EmployeeSalaryConfigid: EmployeeSalaryConfigid,
+                    PayConfigID: ManualPayConfigId,
+                    Value: manualValue
+                });
             }
-            else {
-                var x = 1;
-            }
-
-            i++;
-
         });
-        
-        SalaryConfiglist.EmployeeSalaryConfigid = EmployeeSalaryConfigid;
-
-        SalaryConfiglist.PayConfigID = PayConfigID;
-        SalaryConfiglist.Values = Values;
-        ManualSalarylist.push(SalaryConfiglist);
 
         $.ajax({
-
             url: '/EmployeeList/SaveEmployeeManualSalary',
             type: 'POST',
-            data: function () {
-                var data = new FormData();
-                data.append("modelParameter", Values);
-                data.append("PayConfigID", PayConfigID);
-                data.append("EmployeeSalaryConfigid", EmployeeSalaryConfigid);
-                return data;
-            }(),
-            contentType: false,
-            processData: false,
+            data: JSON.stringify({ ManualSalaryList: ManualSalaryList }),
+            contentType: 'application/json; charset=utf-8',
             success: function (data) {
-                //
-                if (data != "0") {
-
+                if (data === "Saved Successfully") {
                     swal({
                         title: "Success!",
                         text: "Employee Salary has been Added Successfully!",
@@ -462,43 +534,15 @@
                     }).then(function () {
                         window.location.href = "/EmployeeList";
                     });
-
                 }
-
-
             },
             error: function (er) {
                 console.log(er);
             }
         });
-
-        //return false;
-        //$.ajax({
-        //    type: "POST",
-        //    url: '/EmployeeList/SaveEmployeeManualSalary',           
-        //    data: JSON.stringify({ 'ManualSalarylist': ManualSalarylist }),
-        //    datatype: "JSON",
-        //    contentType: 'application/json; charset=utf-8',
-        //    success: function (data) {
-        //        
-        //        if (data == "Saved Successfully") {
-
-        //            swal({
-        //                title: "Success!",
-        //                text: "Employee Salary has been Added Successfully!",
-        //                type: "success"
-        //            }).then(function () {
-        //                window.location.href = "/EmployeeList";
-        //            });
-        //        }
-
-
-        //    },
-        //    error: function (er) {
-        //        console.log(er);
-        //    }
-        //});
     }
+
+
 </script>
 
 

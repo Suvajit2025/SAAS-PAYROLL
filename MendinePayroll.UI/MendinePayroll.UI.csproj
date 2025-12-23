@@ -233,8 +233,10 @@
     <Compile Include="Common\clsAppVariables.cs" />
     <Compile Include="Common\clsHelper.cs" />
     <Compile Include="Common\CryptorEngine.cs" />
+    <Compile Include="Common\PayrollDelegates.cs" />
     <Compile Include="Controllers\AnnexureController.cs" />
     <Compile Include="Controllers\BonusController.cs" />
+    <Compile Include="Controllers\bulkSalaryProcessController.cs" />
     <Compile Include="Controllers\ConfigureSalaryComponentController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\EmployeeListController.cs" />
@@ -252,8 +254,10 @@
     <Compile Include="Controllers\PTaxSlabController.cs" />
     <Compile Include="Controllers\SalaryComponentController.cs" />
     <Compile Include="Controllers\SalaryComponentTypeController.cs" />
+    <Compile Include="Controllers\SalaryConfigController.cs" />
     <Compile Include="Controllers\SalaryConfigurationController.cs" />
     <Compile Include="Controllers\ModificationController.cs" />
+    <Compile Include="Controllers\SalaryCTCController.cs" />
     <Compile Include="Controllers\SalaryProcessValidationController.cs" />
     <Compile Include="Controllers\SalaryReportsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -272,6 +276,7 @@
     <Compile Include="Models\clsSalaryProcessValidationInfo.cs" />
     <Compile Include="Models\clsLoanInfo.cs" />
     <Compile Include="Models\clsLoanProcessed.cs" />
+    <Compile Include="Models\payrollProcess.cs" />
     <Compile Include="Models\payslip.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -379,6 +384,7 @@
     <Content Include="Contents\css\bootstrap.css" />
     <Content Include="Contents\css\bootstrap.min.css" />
     <Content Include="Contents\css\custom-icon-set.css" />
+    <Content Include="Contents\css\salary-process.css" />
     <Content Include="Contents\css\Site.css" />
     <Content Include="Contents\css\skins\default.css" />
     <Content Include="Contents\css\skins\extension.css" />
@@ -2036,6 +2042,7 @@
     <Content Include="plugins\ui-elements\examples.portlets.js" />
     <Content Include="plugins\ui-elements\examples.treeview.js" />
     <Content Include="plugins\ui-elements\examples.widgets.js" />
+    <Content Include="ProjectJS\BulkEmployeeLoanProcess.js" />
     <Content Include="ProjectJS\Form16UPLoad.js" />
     <Content Include="ProjectJS\Form16.js" />
     <Content Include="ProjectJS\Layout.js" />
@@ -2043,6 +2050,7 @@
     <Content Include="ProjectJS\LoanApplication.js" />
     <Content Include="ProjectJS\Annexure92B.js" />
     <Content Include="ProjectJS\LoanProcess.js" />
+    <Content Include="ProjectJS\salary-process.js" />
     <Content Include="ProjectJS\SalaryModification.js" />
     <Content Include="ProjectJS\SalaryConfiguration.js" />
     <Content Include="ProjectJS\Bonus.js" />
@@ -2350,6 +2358,16 @@
     <Content Include="Views\EmployeeList\ESIC_SetUp.cshtml" />
     <Content Include="Views\EmployeeList\LoanRegister.cshtml" />
     <Content Include="Views\PayrollTds\IncrementSetup.cshtml" />
+    <Content Include="Views\ConfigureSalaryComponent\dynamicConfigureSalary.cshtml" />
+    <Content Include="Views\ConfigureSalaryComponent\NewUpdateSalaryConfigure.cshtml" />
+    <Content Include="Views\SalaryConfig\StatutoryRuls.cshtml" />
+    <Content Include="Views\SalaryCTC\Index.cshtml" />
+    <Content Include="Views\SalaryConfig\PayComponentMaster.cshtml" />
+    <Content Include="Views\SalaryConfig\SalaryStructureConfiguration.cshtml" />
+    <Content Include="Views\Loan\NewLoanEntry.cshtml" />
+    <Content Include="Views\Loan\BulkEmployeeLoan.cshtml" />
+    <Content Include="Views\bulkSalaryProcess\Index.cshtml" />
+    <Content Include="Views\PayrollTds\PayrollTdsSettings.cshtml" />
     <None Include="Web References\LoginWebService\logincontrol.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

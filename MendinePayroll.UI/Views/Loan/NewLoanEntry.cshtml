@@ -1,0 +1,1681 @@
+﻿@{
+    ViewBag.Title = "Loan Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+<style>
+    /* --- MODERN THEME OVERRIDES --- */
+    :root {
+        --primary: #0F766E; /* Teal 700 */
+        --primary-light: #F0FDFA; /* Teal 50 */
+        --accent: #0088cc; /* Theme Blue */
+        --text-dark: #1f2937;
+        --text-muted: #6b7280;
+        --border-color: #e5e7eb;
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif !important;
+        color: var(--text-dark);
+        background-color: #f3f4f6;
+    }
+
+    /* --- PANELS (Cards) --- */
+    .panel {
+        border: none !important;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        background: #fff;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .panel-heading {
+        background: #fff !important;
+        border-bottom: 1px solid var(--border-color);
+        padding: 18px 25px;
+    }
+
+    .panel-title {
+        color: var(--text-dark);
+        font-weight: 700;
+        font-size: 18px;
+        text-transform: none;
+    }
+
+    .panel-body {
+        padding: 25px;
+    }
+
+    /* --- INPUTS --- */
+    .form-control {
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-color);
+        padding: 10px 12px;
+        height: 42px; /* Taller inputs */
+        font-size: 13px;
+        box-shadow: none;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+        }
+
+        .input-sm,
+        select.input-sm,
+        .form-control.input-sm {
+            height: 36px !important; /* !important forces the override */
+            font-size: 12px;
+            line-height: normal; /* Fixes text alignment inside */
+        }
+
+    /* --- BUTTONS --- */
+    .btn {
+        border-radius: var(--radius-sm);
+        font-weight: 500;
+        padding: 4px 16px;
+        text-transform: none;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .btn-tertiary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+        .btn-tertiary:hover {
+            background-color: #0d9488;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+    .btn-default {
+        background-color: #fff;
+        border-color: var(--border-color);
+        color: var(--text-dark);
+    }
+
+        .btn-default:hover {
+            background-color: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+    /* --- TABLES --- */
+    .table-responsive {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+        .table > thead > tr > th {
+            background-color: #f9fafb;
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px;
+            border-top: none;
+        }
+
+        .table > tbody > tr > td {
+            padding: 15px;
+            vertical-align: middle;
+            border-top: 1px solid #f3f4f6;
+            color: #374151;
+            font-size: 13px;
+        }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: #fff;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(even) {
+        background-color: #f9fafb;
+    }
+
+    /* --- BADGES (Pills) --- */
+    .badge {
+        border-radius: 50rem; /* Pill shape */
+        padding: 4px 10px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .badge-processed {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-paid {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .badge-skipped {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-upcoming {
+        background-color: #f3f4f6;
+        color: #4b5563;
+    }
+
+    /* --- MODALS --- */
+    .modal-content {
+        border-radius: var(--radius-lg);
+        border: none;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header-color .panel-heading {
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        background: linear-gradient(135deg, var(--primary), #0d9488) !important;
+        padding: 20px 25px;
+        border: none;
+    }
+
+    .modal-title, .panel-subtitle {
+        color: white !important;
+    }
+
+    .modal-footer {
+        background-color: #f9fafb;
+        border-top: 1px solid var(--border-color);
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        padding: 15px 25px;
+    }
+
+    /* --- TOGGLE SWITCH --- */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 22px;
+        vertical-align: middle;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e1;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+    input:checked + .slider {
+        background-color: var(--primary);
+    }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+    /* --- SIMULATION BOX --- */
+    .impact-box {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+    }
+
+    .impact-val-box {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        text-align: right;
+        margin-top: 5px;
+    }
+
+    .sim-input {
+        border: 2px solid #e5e7eb;
+        border-radius: var(--radius-sm);
+        padding: 5px 10px;
+        font-weight: 700;
+        color: var(--primary);
+        width: 100px;
+        text-align: right;
+        transition: 0.2s;
+    }
+
+        .sim-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .sim-input:disabled {
+            background: #f3f4f6;
+            border-color: transparent;
+            color: #9ca3af;
+        }
+
+    /* --- PAGINATION --- */
+    .page-btn {
+        background: white;
+        border: 1px solid var(--border-color);
+        color: var(--text-dark);
+        padding: 6px 12px;
+        margin: 0 3px;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+
+        .page-btn:hover {
+            background: #f9fafb;
+            text-decoration: none;
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            color: #d1d5db;
+            cursor: not-allowed;
+        }
+
+    /* Highlight Input */
+    .input-highlight {
+        background-color: var(--primary-light) !important;
+        border-color: var(--primary) !important;
+        font-weight: 600;
+        color: var(--primary);
+    }
+    .ui-autocomplete {
+        z-index: 999999 !important;
+        position: absolute !important;
+    }
+    /* --- LAYOUT FIXES FOR 100% ZOOM --- */
+
+    /* 1. Make Modal Wider */
+    @@media (min-width: 992px) {
+        .modal-xl-custom {
+            width: 90% !important; /* Widen from standard 900px */
+            max-width: 1200px !important;
+        }
+    }
+
+    /* 2. Compact Inputs (Prevent "Big" look) */
+    .form-control {
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        padding: 6px 10px;
+        height: 34px !important; /* Reduced from 42px */
+        font-size: 13px;
+        box-shadow: none;
+    }
+    .input-sm, select.input-sm {
+        height: 30px !important; /* Compact specific inputs */
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    /* 3. Compact Labels */
+    .control-label {
+        margin-bottom: 2px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #444;
+        white-space: nowrap; /* Prevent label wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* 4. Panel & Spacing Tweaks */
+    .panel-body { padding: 15px; }
+    .form-group { margin-bottom: 12px; } /* Reduce gap between rows */
+
+    /* 5. Switch Toggle Fix */
+    .switch { width: 36px; height: 20px; }
+    .slider:before { height: 14px; width: 14px; left: 3px; bottom: 3px; }
+    input:checked + .slider:before { transform: translateX(16px); }
+
+    /* Keep existing theme colors */
+    :root { --primary: #0F766E; --primary-light: #F0FDFA; }
+    .input-highlight { background-color: var(--primary-light) !important; border-color: var(--primary) !important; font-weight: 700; color: var(--primary); }
+
+    /* Table Fixes */
+    .table > thead > tr > th { font-size: 11px; padding: 10px; }
+    .table > tbody > tr > td { font-size: 12px; padding: 8px 10px; }
+</style>
+
+<section role="main" class="content-body">
+    <header class="page-header" >
+        <h2 style="font-weight:700; margin:0;">Loan Management</h2>
+    </header>
+
+    <section class="panel">
+        <header class="panel-heading" style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 class="panel-title"><i class="fas fa-file-invoice-dollar text-primary mr-sm"></i> Employee Loans</h2>
+            <button onclick="openCreateModal()" class="btn btn-tertiary btn-sm">
+                <i class="fa fa-plus mr-xs"></i> New Application
+            </button>
+        </header>
+
+        <div class="panel-body">
+            <div class="row mb-md">
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon" style="background:#fff; border-right:none; border-radius:var(--radius-sm) 0 0 var(--radius-sm);">
+                            <i class="fa fa-search text-muted"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control" style="border-left:none;" placeholder="Search by Loan No, Name..." onkeyup="applyFilters()">
+                    </div>
+                </div>
+                <div class="col-sm-8 text-right">
+                    <div class="btn-group">
+                        <button class="btn btn-default btn-sm" onclick="toggleFilterPanel()">
+                            <i class="fa fa-filter mr-xs"></i> Filter
+                        </button>
+                        <button class="btn btn-default btn-sm" onclick="exportMainGrid()">
+                            <i class="fa fa-file-excel-o mr-xs" style="color:#16a34a;"></i> Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="filterPanel" style="display:none; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:15px; margin-bottom:15px;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label text-xs">Status</label>
+                        <select id="fltStatus" class="form-control input-sm" onchange="applyFilters()">
+                            <option value="">All Statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label text-xs">Loan Type</label>
+                        <select id="fltType" class="form-control input-sm" onchange="applyFilters()">
+                            <option value="">All Types</option>
+                            <option value="OPENING">OPENING</option>
+                            <option value="TRANSACTION">TRANSACTION</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 text-right" style="padding-top:20px;">
+                        <button class="btn btn-xs btn-default" onclick="clearFilters()">Clear All</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped mb-none">
+                    <thead>
+                        <tr>
+                            <th>Loan No</th>
+                            <th>Employee Name</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mt-lg" style="align-items:center;">
+                <div class="col-sm-6">
+                    <div id="paginationInfo" class="text-muted text-xs" style="font-weight:500;">Loading data...</div>
+                </div>
+                <div class="col-sm-6 text-right" id="paginationBtns">
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+<div class="modal fade modal-header-color zoom-anim-dialog" id="createModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg modal-xl-custom" role="document">
+        <div class="modal-content">
+
+            <header class="panel-heading" style="background: linear-gradient(135deg, #1e293b, #334155) !important; padding: 15px 20px;">
+                <button type="button" class="close pull-right" style="color:white; opacity:0.8; text-shadow:none;" data-dismiss="modal">&times;</button>
+
+                <h2 class="panel-title" id="createModalTitle" style="color: white !important; font-size: 18px; font-weight: 600;">
+                    <i class="fa fa-plus-circle mr-sm"></i>Create New Loan
+                </h2>
+
+                <p class="panel-subtitle" id="createModalSubtitle" style="color: #cbd5e1 !important; font-size: 12px; margin-top: 4px; margin-bottom: 0;">
+                    Enter loan details and financial terms
+                </p>
+            </header>
+
+            <div class="modal-body" style="padding: 30px; max-height: 70vh; overflow-y: auto;">
+                <form id="createLoanForm">
+
+                    <h5 style="color:var(--primary); font-weight:700; margin-top:0; margin-bottom:15px; text-transform:uppercase; font-size:12px; letter-spacing:1px;">
+                        <i class="fa fa-id-card-o mr-xs"></i> Identification
+                    </h5>
+
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:var(--radius-md); padding:20px; margin-bottom:25px;">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-muted text-xs">Loan Type <span class="text-danger">*</span></label>
+                                    <select name="type" class="form-control input-sm" id="c_LoanType">
+                                        <option value="Select Type">Select Type</option>
+                                        <option value="OPENING">OPENING</option>
+                                        <option value="TRANSACTION">TRANSACTION</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-muted text-xs">Loan No</label>
+                                    <input type="text" id="c_LoanNo" class="form-control input-sm" value="AUTO-GEN" readonly style="background:#f1f5f9; color:#64748b;">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-muted text-xs">Employee Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon" style="background:white;"><i class="fa fa-user text-muted"></i></span>
+                                        <input type="text" class="form-control input-sm" id="c_EmpName" placeholder="Search employee...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-muted text-xs">Emp Code</label>
+                                    <input type="text" id="c_EmpCode" class="form-control input-sm" readonly style="background:#f1f5f9;">
+                                    <input type="hidden" id="c_EmpId">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-md">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-muted text-xs">Loan Date <span class="text-danger">*</span></label>
+                                    <input type="date" id="c_LoanDate" class="form-control input-sm" onchange="calcDates()">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-muted text-xs">End Date</label>
+                                    <input type="date" id="c_EndDate" class="form-control input-sm" readonly style="background:#f1f5f9;">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-muted text-xs">Ref. No</label>
+                                    <input type="text" id="c_RefNo" class="form-control input-sm">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-muted text-xs">Ref. Date</label>
+                                    <input type="date" id="c_RefDate" class="form-control input-sm" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="align-items:center; margin-bottom:10px;">
+                        <div class="col-md-6">
+                            <h5 style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:12px; letter-spacing:1px; margin:0;">
+                                <i class="fa fa-calculator mr-xs"></i> Financial Terms
+                            </h5>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <span class="text-muted text-xs mr-sm" style="vertical-align:middle;">Mode:</span>
+                            <span id="calcModeLabel" style="font-size:11px; font-weight:700; color:var(--primary); vertical-align:middle;">Tenure → EMI</span>
+                            <label class="switch ml-xs">
+                                <input type="checkbox" id="toggleCalcMode" onchange="switchCalcMode()">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="background:#fff; border:1px solid #e2e8f0; border-radius:var(--radius-md); padding:20px; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-dark text-xs">Loan Amount <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon" style="font-weight:bold;">₹</span>
+                                        <input type="number" step="any" id="c_LoanAmount" class="form-control input-sm text-weight-bold" style="font-size:14px;" placeholder="0.00" oninput="recalculate()">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-dark text-xs">Tenure (M) <span class="text-danger">*</span></label>
+                                    <input type="number" step="any" id="c_Tenure" class="form-control input-sm text-center" placeholder="12" oninput="recalculate()">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-dark text-xs">Int. % / Yr</label>
+                                    <input type="number" step="any" id="c_Interest" class="form-control input-sm text-center" placeholder="0" oninput="recalculate()">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-primary text-xs">EMI Amount <span class="text-danger">*</span></label>
+                                    <input type="number" step="any" id="c_EMIInput" class="form-control input-sm input-highlight" placeholder="0.00" readonly oninput="recalculate()">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label text-weight-semibold text-muted text-xs">Grace (M)</label>
+                                    <input type="number" id="c_GracePeriod" class="form-control input-sm text-center" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background:#f0fdfa; border:1px solid #ccfbf1; border-radius:var(--radius-md); padding:15px; margin-top:20px;">
+                        <h6 style="color:#115e59; font-weight:700; margin-top:0; font-size:11px; text-transform:uppercase;">Breakdown (Auto-Calculated)</h6>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label class="text-xs text-muted d-block">Monthly Principal</label>
+                                <strong class="text-dark" id="display_Principal">-</strong>
+                                <input type="hidden" id="c_MonthlyPrincipal">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="text-xs text-muted d-block">Monthly Interest</label>
+                                <strong class="text-dark" id="display_Interest">-</strong>
+                                <input type="hidden" id="c_MonthlyInterest">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="text-xs text-primary d-block">Target EMI</label>
+                                <strong class="text-primary" id="display_TotalMonthly">-</strong>
+                                <input type="hidden" id="c_TotalMonthly">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="text-xs text-muted d-block">Total Interest</label>
+                                <strong class="text-dark" id="display_TotalInt">-</strong>
+                                <input type="hidden" id="c_TotalInterest">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="text-xs text-muted d-block">Total Repayable</label>
+                                <strong class="text-primary" style="font-size:14px;" id="display_TotalLoan">-</strong>
+                                <input type="hidden" id="c_TotalLoan">
+                            </div>
+                        </div>
+                        <div class="row mt-sm" style="border-top:1px dashed #ccfbf1; padding-top:10px;">
+                            <div class="col-md-6">
+                                <label class="text-xs text-muted">Repayment Starts:</label>
+                                <div style="display:flex; gap:5px;">
+                                    <select id="c_StartMonth" class="form-control input-sm">
+                                        <option value="">Select Month</option>
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                    <input type="number" id="c_StartYear" class="form-control input-sm" style="width:70%;" placeholder="Year">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-xs text-muted">Remarks</label>
+                                <input type="text" id="c_Remarks" class="form-control input-sm" placeholder="Optional notes...">
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-tertiary" onclick="submitNewLoan()">
+                    <i class="fa fa-check mr-xs"></i> Save Application
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal-header-color zoom-anim-dialog" id="adjustModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg modal-xl-custom" role="document">
+        <div class="modal-content">
+            <header class="panel-heading" style="background: linear-gradient(135deg, #1e293b, #334155) !important;">
+                <button type="button" class="close pull-right" style="color:white; opacity:0.8;" data-dismiss="modal">&times;</button>
+
+                <h2 class="panel-title" style="color: white !important;">
+                    <i class="fa fa-sliders mr-sm"></i>Adjust Loan / Repayment
+                </h2>
+
+                <p class="panel-subtitle" style="color: #cbd5e1 !important; font-size:12px; margin-top:2px;" id="modalHeaderInfo">Ref: ...</p>
+            </header>
+            <div class="modal-body" style="padding: 25px;">
+                <div class="row display-flex" style="display:flex;">
+                    <div class="col-md-7" style="display:flex; flex-direction:column;">
+                        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:var(--radius-md); padding:20px; flex:1;">
+                            <h5 style="margin-top:0; font-weight:700; color:#374151; font-size:13px; text-transform:uppercase;">
+                                <i class="fa fa-money mr-xs text-primary"></i> Payment Entry
+                            </h5>
+
+                            <div class="alert alert-warning" style="border-radius:var(--radius-sm); padding:10px; font-size:12px; margin-bottom:20px; border:none; background:#fff7ed; color:#9a3412;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><i class="fa fa-info-circle mr-xs"></i> Current Balance:</span>
+                                    <strong style="font-size:14px;">₹ <span id="lblCurrentBalDisplay">0.00</span></strong>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label text-xs text-weight-semibold">Payment Date</label>
+                                        <input type="date" id="payDate" class="form-control input-sm">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label text-xs text-weight-semibold">Amount Paid</label>
+                                        <div class="input-group">
+                                            <input type="number" id="payAmount" class="form-control input-sm input-highlight" placeholder="0.00" oninput="runCalculation('lumpsum')">
+                                            <span class="input-group-addon" style="padding:0 8px; background:white; border-left:none;">
+                                                <label class="switch" style="margin:0; transform:scale(0.8);">
+                                                    <input type="checkbox" id="chkFullPaid" onchange="setFullPaidAmount()">
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-sm">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label text-xs text-weight-semibold">Mode</label>
+                                        <select id="payMode" class="form-control input-sm">
+                                            <option value="">Select Mode</option>
+                                            <option value="CASH">Cash</option>
+                                            <option value="CHEQUE">Cheque</option>
+                                            <option value="BANK">Bank Transfer</option>
+                                            <option value="UPI">UPI</option>
+                                            <option value="OTH">Others</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label text-xs text-weight-semibold">Ref No</label>
+                                        <input type="text" id="payRef" class="form-control input-sm">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-sm">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label text-xs text-weight-semibold">Remarks</label>
+                                        <textarea class="form-control input-sm" id="payRemarks" rows="2" placeholder="Reason for adjustment..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5" style="display:flex; flex-direction:column;">
+                        <div class="impact-box" style="flex:1; background:#f8fafc;">
+                            <h5 style="margin-top:0; font-weight:700; color:#374151; font-size:13px; text-transform:uppercase;">
+                                <i class="fa fa-line-chart mr-xs text-primary"></i> Result
+                            </h5>
+
+                            <div style="text-align:center; padding:15px 0;">
+                                <small class="text-muted text-uppercase" style="font-size:10px; font-weight:600; letter-spacing:1px;">New Balance</small>
+                                <div id="newBalance" style="font-size:28px; font-weight:800; color:var(--primary);">0.00</div>
+                            </div>
+
+                            <hr style="border-top:1px dashed #cbd5e1; margin:10px 0 20px 0;">
+
+                            <div class="form-group" style="margin-bottom:20px;">
+                                <label class="text-xs text-weight-bold text-dark d-block mb-xs">Adjustment Strategy:</label>
+                                <div style="display:flex; flex-direction:column; gap:8px;">
+                                    <label style="font-size:12px; cursor:pointer; display:flex; align-items:center;">
+                                        <input type="radio" name="strategy" value="reduce_emi" checked onchange="toggleStrategy()" style="margin-right:8px;">
+                                        <span>Reduce <b>EMI Amount</b> <small class="text-muted">(Keep tenure same)</small></span>
+                                    </label>
+                                    <label style="font-size:12px; cursor:pointer; display:flex; align-items:center;">
+                                        <input type="radio" name="strategy" value="reduce_tenure" onchange="toggleStrategy()" style="margin-right:8px;">
+                                        <span>Reduce <b>Tenure</b> <small class="text-muted">(Keep EMI same)</small></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div style="background:white; border:1px solid #e2e8f0; border-radius:var(--radius-md); padding:15px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                    <div>
+                                        <span class="d-block text-xs text-weight-bold text-dark">Monthly EMI</span>
+                                        <small class="text-muted" style="font-size:10px;">Current: <span id="lblOldEMI">0.00</span></small>
+                                    </div>
+                                    <input type="number" id="simEMI" class="sim-input" oninput="runCalculation('emi')">
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <div>
+                                        <span class="d-block text-xs text-weight-bold text-dark">Remaining Months</span>
+                                        <small class="text-muted" style="font-size:10px;">Current: <span id="lblOldTenure">0</span></small>
+                                    </div>
+                                    <input type="number" id="simTenure" class="sim-input" oninput="runCalculation('tenure')">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">Close</button>
+                <button class="btn btn-tertiary" onclick="saveAdjustment()">Confirm & Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+<div class="modal fade" id="loanLedgerModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg modal-xl-custom" role="document">
+        <div class="modal-content">
+            <header class="panel-heading" style="background: linear-gradient(135deg, #1e293b, #334155) !important; padding: 15px 20px;">
+
+                <div class="pull-right">
+                    <button id="btnExportLedger" class="btn btn-success btn-sm mr-sm" style="border:none;">
+                        <i class="fa fa-file-excel-o"></i> Excel
+                    </button>
+                    <button type="button" class="close" style="color:white; opacity:0.8; text-shadow:none;" data-dismiss="modal">&times;</button>
+                </div>
+
+                <h2 class="panel-title" style="color: white !important; font-size: 18px; font-weight: 600;">
+                    <i class="fa fa-list-alt mr-sm"></i>Loan Ledger
+                </h2>
+
+                <p class="panel-subtitle" id="ledgerLoanInfo" style="color: #cbd5e1 !important; font-size: 13px; margin-top: 5px; margin-bottom: 0;">
+                    Transaction history
+                </p>
+            </header>
+
+            <div class="modal-body" style="background:#f9fafb; padding:0; max-height: 70vh; overflow-y: auto;">
+                <table class="table table-striped mb-none" id="ledgerTable" style="border:none;">
+                    <thead style="position:sticky; top:0; z-index:10; box-shadow:0 1px 2px rgba(0,0,0,0.05); background:#fff;">
+                        <tr>
+                            <th>#</th>
+                            <th>Month</th>
+                            <th class="text-right">Principal</th>
+                            <th class="text-right">Interest</th>
+                            <th class="text-right">Total Due</th>
+                            <th class="text-right">Bal Before</th>
+                            <th class="text-right">Bal After</th>
+                            <th class="text-right">Paid</th>
+                            <th class="text-right">Source</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loanLedgerBody" style="background:white;"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+
+<script>
+    /* ==========================================
+       JAVASCRIPT LOGIC - STRICTLY UNCHANGED
+       (Only minor display helper function added for updating auto-calc text)
+       ========================================== */
+
+    document.getElementById("c_StartYear").value = new Date().getFullYear();
+
+    $(document).ready(function () {
+        loadLoanGrid();
+        defaultEmployeeLoad();
+        $("#c_LoanType").change(function () {
+            let type = $("#c_LoanType").val();
+            $.get("/Loan/GetAutoLoanNo", { Type: type }, function (data) {
+                $("#c_LoanNo").val(data);
+            });
+        });
+    });
+
+    function defaultEmployeeLoad() {
+        $.getJSON("/Loan/GetEmpDetails", function (data) {
+            $("#c_EmpName").autocomplete({
+                minLength: 1, autoFocus: true,
+                source: function (request, response) {
+                    const filtered = data.filter(item => item.label.toLowerCase().includes(request.term.toLowerCase()));
+                    response(filtered);
+                },
+                select: function (event, ui) {
+                    $("#c_EmpName").val(ui.item.label);
+                    $("#c_EmpId").val(ui.item.id);
+                    let parts = ui.item.label.split("-");
+                    if (parts.length > 1) $("#c_EmpCode").val(parts[1]);
+                    return false;
+                }
+            });
+        });
+    }
+
+    $("#c_EmpName").on('change', function () {
+        let empDetails = $("#c_EmpName").val();
+        let nameArray = empDetails.split("-");
+        if (nameArray.length > 1) $("#c_EmpCode").val(nameArray[1]);
+    });
+
+    let allLoans = [], filteredData = [], currentPage = 1;
+    const rowsPerPage = 10;
+    let ctx = { balance: 0, emi: 0, tenure: 0 };
+
+    function loadLoanGrid(employeeId = 0) {
+        $.get("/Loan/GetAllLoans", { employeeId: employeeId }, function (data) {
+            allLoans = data.map(l => ({
+                id: l.IDLoan, no: l.LoanNo, emp: l.EmpName ?? "", type: l.LoanType ?? "",
+                date: formatDate(l.LoanDate), amount: Number(l.LoanAmount || 0), balance: Number(l.BalanceAmount || 0),
+                emi: Number(l.RevisedEMI || l.MonthlyInstallment || 0), tenure: Number(l.RemainingTenure || l.LoanTenure || 0),
+                paidCount: Number(l.PaidInstallments || 0), status: l.LoanStatus ?? "",
+                received: l.Received, waived: l.Waived
+            }));
+            filteredData = [...allLoans];
+            currentPage = 1;
+            renderTable();
+        }).fail(function (xhr, status, err) {
+            console.error("Error loading loans:", { status, err, xhr });
+        });
+    }
+
+    function formatDate(dateVal) {
+        if (!dateVal) return "";
+        const d = new Date(dateVal);
+        if (isNaN(d.getTime())) return "";
+        return d.toISOString().split("T")[0];
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('gridBody');
+        tbody.innerHTML = '';
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageData = filteredData.slice(start, end);
+
+        if (pageData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted" style="padding:30px;">No records found</td></tr>`;
+            return;
+        }
+
+        pageData.forEach(l => {
+            const allowEditDelete = Number(l.balance) === Number(l.amount) && Number(l.received ?? 0) === 0 && Number(l.waived ?? 0) === 0;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+            <td style="color:var(--primary); font-weight:700;">${l.no}</td>
+            <td style="font-weight:600;">${l.emp ?? ""}</td>
+            <td><span class="text-xs text-muted text-uppercase">${l.type ?? ""}</span></td>
+            <td>${l.date ?? ""}</td>
+            <td>${Number(l.amount).toLocaleString()}</td>
+            <td style="font-weight:700; color:#111827;">${Number(l.balance).toLocaleString()}</td>
+            <td><span class="badge ${getStatusBadge(l.status)}">${l.status}</span></td>
+            <td class="text-right">
+                ${allowEditDelete ? `
+                    <button class="btn btn-default btn-xs" onclick="editLoan(${l.id})" title="Edit"><i class="fa fa-pencil"></i></button>
+                    <button class="btn btn-default btn-xs text-danger" onclick="deleteLoan(${l.id})" title="Delete"><i class="fa fa-trash"></i></button>
+                ` : ``}
+                <button class="btn btn-default btn-xs" onclick="viewLoan(${l.id},'${l.no}','${jsSafe(l.emp)}')" title="Ledger"><i class="fa fa-list-alt"></i></button>
+                <button class="btn btn-default btn-xs text-primary" onclick="openAdjustModal('${l.no}','${jsSafe(l.emp)}', ${l.balance}, ${l.emi}, ${l.tenure}, ${l.paidCount}, ${l.id})" title="Adjust"><i class="fa fa-sliders"></i></button>
+            </td>`;
+            tbody.appendChild(tr);
+        });
+        renderPagination();
+    }
+
+    function getStatusBadge(status) {
+        if (status === 'Active') return 'badge-processed';
+        if (status === 'Closed') return 'badge-paid';
+        return 'badge-upcoming';
+    }
+
+    function jsSafe(v) { return (v || "").replace(/'/g, "\\'").replace(/"/g, '\\"'); }
+
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        const info = document.getElementById('paginationInfo');
+        const btns = document.getElementById('paginationBtns');
+        const start = (currentPage - 1) * rowsPerPage + 1;
+        const end = Math.min(start + rowsPerPage - 1, filteredData.length);
+        info.innerText = `Showing ${start} to ${end} of ${filteredData.length}`;
+        let html = `<button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        }
+        html += `<button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+        btns.innerHTML = html;
+    }
+
+    function changePage(page) {
+        const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderTable();
+    }
+
+    function filterTable() {
+        const term = document.getElementById('searchInput').value.toLowerCase().trim();
+        filteredData = allLoans.filter(l => (l.no?.toLowerCase().includes(term)) || (l.emp?.toLowerCase().includes(term)) || (l.type?.toLowerCase().includes(term)));
+        currentPage = 1;
+        renderTable();
+    }
+
+    let calcMode = "TENURE";
+    let userEditedStartMonth = false; let userEditedStartYear = false;
+    $("#c_StartMonth").change(() => userEditedStartMonth = true);
+    $("#c_StartYear").change(() => userEditedStartYear = true);
+
+    function switchCalcMode() {
+        const toggle = $("#toggleCalcMode")[0];
+        const tenure = $("#c_Tenure")[0];
+        const emi = $("#c_EMIInput")[0];
+        if (toggle.checked) {
+            calcMode = "EMI"; $("#calcModeLabel").text("EMI → Tenure");
+            emi.readOnly = false; tenure.readOnly = true;
+        } else {
+            calcMode = "TENURE"; $("#calcModeLabel").text("Tenure → EMI");
+            emi.readOnly = true; tenure.readOnly = false;
+        }
+        calcFinancials();
+    }
+
+    function recalculate() { calcFinancials(); calcDates(); }
+
+    function calcFinancials() {
+        const amount = parseFloat($("#c_LoanAmount").val()) || 0;
+        let tenure = parseFloat($("#c_Tenure").val()) || 0;
+        let emi = parseFloat($("#c_EMIInput").val()) || 0;
+        const rate = parseFloat($("#c_Interest").val()) || 0;
+
+        if (amount <= 0) return;
+        const monthlyRate = (rate / 100) / 12;
+        const monthlyInterest = amount * monthlyRate;
+        let monthlyPrincipal = 0;
+
+        if (calcMode === "TENURE" && tenure > 0) {
+            monthlyPrincipal = amount / tenure;
+            emi = monthlyPrincipal + monthlyInterest;
+            $("#c_EMIInput").val(emi.toFixed(2));
+        }
+        if (calcMode === "EMI" && emi > monthlyInterest) {
+            tenure = Math.ceil(amount / (emi - monthlyInterest));
+            $("#c_Tenure").val(tenure);
+        }
+        if (tenure > 0 && emi > 0) {
+            monthlyPrincipal = amount / tenure;
+            let totalInterest = monthlyInterest * tenure;
+            let totalLoan = amount + totalInterest;
+
+            $("#c_MonthlyPrincipal").val(monthlyPrincipal.toFixed(2));
+            $("#c_MonthlyInterest").val(monthlyInterest.toFixed(2));
+            // 1. Update the hidden input (for database saving)
+            $("#c_TotalMonthly").val(emi.toFixed(2)); 
+            // 2. Update the visible text label (for user display)
+            $("#display_TotalMonthly").text(emi.toFixed(2));
+            $("#c_TotalInterest").val(totalInterest.toFixed(2));
+            $("#c_TotalLoan").val(totalLoan.toFixed(2));
+
+            // Display text update for the new design
+            $("#display_Principal").text(monthlyPrincipal.toFixed(2));
+            $("#display_Interest").text(monthlyInterest.toFixed(2));
+            $("#display_TotalInt").text(totalInterest.toFixed(2));
+            $("#display_TotalLoan").text(totalLoan.toFixed(2));
+        }
+        calcDates();
+    }
+
+    function calcDates() {
+        const loanDateStr = $("#c_LoanDate").val();
+        if (!loanDateStr) return;
+        const ld = new Date(loanDateStr);
+        const grace = parseInt($("#c_GracePeriod").val()) || 0;
+        const tenure = parseInt($("#c_Tenure").val()) || 0;
+        if (tenure <= 0) return;
+
+        let start = new Date(ld.getFullYear(), ld.getMonth() + grace, 1);
+        if (!userEditedStartMonth) $("#c_StartMonth").val(start.getMonth() + 1);
+        if (!userEditedStartYear) $("#c_StartYear").val(start.getFullYear());
+
+        let end = new Date(start);
+        end.setMonth(end.getMonth() + (tenure - 1));
+        let endDate = new Date(end.getFullYear(), end.getMonth() + 1, 0);
+        $("#c_EndDate").val(endDate.toISOString().split("T")[0]);
+    }
+
+    $("#c_GracePeriod").on("input", () => { userEditedStartMonth = false; userEditedStartYear = false; calcDates(); });
+    $("#c_Tenure").on("input", () => { calcDates(); });
+    $("#c_LoanDate").on("change", () => { userEditedStartMonth = false; userEditedStartYear = false; calcDates(); });
+
+    function openCreateModal() {
+        document.getElementById('createLoanForm').reset();
+        document.getElementById('c_LoanDate').valueAsDate = new Date();
+        document.getElementById('c_RefDate').valueAsDate = new Date();
+        // Reset display texts
+        $("#display_Principal, #display_Interest, #display_TotalInt, #display_TotalLoan").text("-");
+        // 4. RESET HEADER TEXT (Back to Create Mode)
+        $("#createModalTitle").html('<i class="fa fa-plus-circle mr-sm"></i>Create New Loan');
+        $("#createModalSubtitle").text("Enter loan details and financial terms");
+
+        $("#createModal").modal('show');
+    }
+
+    function openAdjustModal(no, emp, bal, emi, remainingTenure, paidCount, loanId) {
+        remainingTenure = Number(remainingTenure);
+        if (isNaN(remainingTenure) || remainingTenure <= 0) remainingTenure = 1;
+        ctx = { loanId: loanId, balance: Number(bal), emi: Number(emi), tenure: remainingTenure };
+
+        document.getElementById('modalHeaderInfo').innerHTML = `Ref: <b>${no}</b> | ${emp}`;
+        document.getElementById('lblCurrentBalDisplay').innerText = bal.toLocaleString();
+        document.getElementById('lblOldEMI').innerText = emi.toFixed(2);
+        document.getElementById('lblOldTenure').innerText = remainingTenure;
+
+        document.getElementById('payDate').valueAsDate = new Date();
+        document.getElementById('payAmount').value = '';
+        document.querySelector('input[name="strategy"][value="reduce_emi"]').checked = true;
+        toggleStrategy();
+        runCalculation('lumpsum');
+        $("#adjustModal").modal('show');
+    }
+
+    //function closeModal(id) { $(`#${id}`).modal('hide'); }
+
+    function toggleStrategy() {
+        const strategy = document.querySelector('input[name="strategy"]:checked').value;
+        const emiInput = document.getElementById('simEMI');
+        const tenureInput = document.getElementById('simTenure');
+        if (strategy === 'reduce_emi') {
+            emiInput.disabled = false; tenureInput.disabled = true; emiInput.focus();
+        } else {
+            emiInput.disabled = true; tenureInput.disabled = false; tenureInput.focus();
+        }
+        runCalculation('lumpsum');
+    }
+
+    function runCalculation(source) {
+        const payAmount = parseFloat(document.getElementById('payAmount').value) || 0;
+        const strategy = document.querySelector('input[name="strategy"]:checked').value;
+        let newBal = ctx.balance - payAmount;
+        if (newBal < 0) newBal = 0;
+        document.getElementById('newBalance').innerText = newBal.toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+        if (strategy === 'reduce_emi') {
+            if (source === 'lumpsum') {
+                let suggestedEMI = (ctx.tenure > 0) ? (newBal / ctx.tenure) : 0;
+                document.getElementById('simEMI').value = suggestedEMI.toFixed(2);
+                document.getElementById('simTenure').value = Math.ceil(ctx.tenure);
+            } else if (source === 'emi') {
+                let userEMI = parseFloat(document.getElementById('simEMI').value) || 0;
+                if (userEMI > 0) {
+                    let calcTenure = newBal / userEMI;
+                    document.getElementById('simTenure').value = Math.ceil(calcTenure);
+                } else { document.getElementById('simTenure').value = "0"; }
+            }
+        } else {
+            if (source === 'lumpsum') {
+                let suggestedTenure = (ctx.emi > 0) ? (newBal / ctx.emi) : 0;
+                document.getElementById('simTenure').value = Math.ceil(suggestedTenure);
+                document.getElementById('simEMI').value = ctx.emi.toFixed(2);
+            } else if (source === 'tenure') {
+                let userTenure = parseFloat(document.getElementById('simTenure').value) || 0;
+                if (userTenure > 0) {
+                    let calcEMI = newBal / userTenure;
+                    document.getElementById('simEMI').value = calcEMI.toFixed(2);
+                } else { document.getElementById('simEMI').value = "0.00"; }
+            }
+        }
+    }
+
+    function setFullPaidAmount() {
+        let isFullPaid = document.getElementById("chkFullPaid").checked;
+
+        // REMOVE COMMA before converting to number
+        let fullBalText = document.getElementById("lblCurrentBalDisplay").innerText.replace(/,/g, "");
+        let fullBalance = parseFloat(fullBalText) || 0;
+
+        let amountInput = document.getElementById("payAmount");
+
+        if (isFullPaid) {
+            amountInput.value = fullBalance.toFixed(2);  // correctly sets 12000.00
+            amountInput.readOnly = true;
+
+            runCalculation('lumpsum');
+        } else {
+            amountInput.readOnly = false;
+            amountInput.value = "";
+            runCalculation('lumpsum');
+        }
+    }
+
+    function viewLoan(loanId, loanNo, empName) {
+
+        // Show Loan Title + Employee in the header
+        $("#ledgerLoanInfo").html(
+            `Loan No: <b>${loanNo}</b> &nbsp; | &nbsp; Employee: <b>${empName}</b>`
+        );
+        // ---------------------------------------------------------
+        // 2. DYNAMICALLY UPDATE EXPORT BUTTON PARAMETERS
+        // ---------------------------------------------------------
+        // We use .attr() to rewrite the onclick with the specific LoanNo and Name
+        // We use jsSafe() to handle names with quotes (e.g., O'Connor)
+        $("#btnExportLedger").attr("onclick", `exportLedgerToExcel('${loanNo}', '${jsSafe(empName)}')`);
+
+        $.get("/Loan/ViewLoanSchedule?loanId=" + loanId, function (data) {
+
+            let body = "";
+            data.forEach(row => {
+
+                // Map status to your new CSS badge classes
+                let badgeClass = {
+                    "Processed": "badge-processed",
+                    "Paid": "badge-paid",
+                    "Skipped": "badge-skipped",
+                    "Pending": "badge-pending",
+                    "Upcoming": "badge-upcoming"
+                }[row.Status] || "badge-upcoming";
+
+                // Build the table row
+                body += `
+            <tr>
+                <td>${row.EMI_No}</td>
+                <td>${row.MonthName} ${row.YearNo}</td>
+                <td class="text-right">${row.PrincipalDue.toFixed(2)}</td>
+                <td class="text-right">${row.InterestDue.toFixed(2)}</td>
+                <td class="text-right text-weight-bold">${row.TotalDue.toFixed(2)}</td>
+
+                <td class="text-right text-muted">${row.BalanceBefore.toFixed(2)}</td>
+                <td class="text-right text-muted">${row.BalanceAfter.toFixed(2)}</td>
+
+                <td class="text-right text-primary" style="font-weight:bold;">${(row.AmountPaid ?? 0).toFixed(2)}</td>
+                <td class="text-right">${row.ProcessSource || '-'}</td>
+                <td class="text-center"><span class="badge ${badgeClass}">${row.Status}</span></td>
+            </tr>
+            `;
+            });
+
+            // Inject HTML
+            $("#loanLedgerBody").html(body);
+
+            // ✅ CORRECT WAY to open Bootstrap Modal
+            $("#loanLedgerModal").modal('show');
+        });
+    }
+
+
+
+
+    function submitNewLoan() {
+
+        // --- 1. VALIDATION ---
+        let loanType = $("#c_LoanType").val();
+        let loanAmount = $("#c_LoanAmount").val();
+        let tenure = $("#c_Tenure").val();
+        let employeeId = $("#c_EmpId").val();
+        let loanDate = $("#c_LoanDate").val();
+
+        if (loanType === "" || loanType === "Select Type") {
+            alert("Please select Loan Type");
+            return;
+        }
+        if (employeeId === "") {
+            alert("Please select Employee");
+            return;
+        }
+        if (loanAmount === "" || parseFloat(loanAmount) <= 0) {
+            alert("Loan Amount must be greater than 0");
+            return;
+        }
+        if (tenure === "" || parseInt(tenure) <= 0) {
+            alert("Tenure must be greater than 0");
+            return;
+        }
+        if (loanDate === "") {
+            alert("Please choose Loan Date");
+            return;
+        }
+
+        // --- 2. BUILD JSON PAYLOAD FOR API/SP ---
+        let model = {
+            LoanType: loanType,
+            LoanNo: $("#c_LoanNo").val(),
+            IDEmployee: parseInt(employeeId),
+            EmpCode: $("#c_EmpCode").val(),
+            LoanDate: loanDate,
+            EndDate: $("#c_EndDate").val(),
+
+            RefNo: $("#c_RefNo").val(),
+            RefDate: $("#c_RefDate").val(),
+
+            LoanAmount: parseFloat($("#c_LoanAmount").val()),
+            Tenure: parseInt($("#c_Tenure").val()),
+            InterestRate: parseFloat($("#c_Interest").val()) || 0,
+            GracePeriod: parseInt($("#c_GracePeriod").val()) || 0,
+
+            MonthlyPrincipal: $("#c_MonthlyPrincipal").val(),
+            MonthlyInterest: $("#c_MonthlyInterest").val(),
+            TotalEMI: $("#c_TotalMonthly").val(),
+            TotalInterest: $("#c_TotalInterest").val(),
+            TotalLoan: $("#c_TotalLoan").val(),
+
+            RepaymentStartMonth: parseInt($("#c_StartMonth").val()),
+            RepaymentStartYear: parseInt($("#c_StartYear").val()),
+
+            Remarks: $("#c_Remarks").val()
+        };
+
+        console.log(model);
+
+        // --- 3. SEND TO CONTROLLER (NO CHANGE TO ACTION/SP) ---
+        $.ajax({
+            url: "/Loan/SaveandUpdateLoan",   // Your MVC controller action
+            type: "POST",
+            data: JSON.stringify(model),
+            contentType: "application/json; charset=utf-8",
+
+            success: function (res) {
+                if (res.Code === 1) {
+                    toastr.success(res.Message);
+                    closeModal('createModal');
+                    // 🔥 reload fresh loan list from DB
+                    loadLoanGrid();
+                }
+                else {
+                    toastr.error(res.Message);
+                }
+            },
+
+            error: function (err) {
+                console.error(err);
+                alert("Error saving loan");
+            }
+        });
+    }
+
+    //--ADJUSTMENT UPDATE LOAN
+    function saveAdjustment() {
+
+        // ---------------- SAFE INPUT PARSING ----------------
+        let amount = Number($("#payAmount").val());
+        if (isNaN(amount) || amount < 0) amount = 0;
+
+        let date = $("#payDate").val() || null;
+        let mode = $("#payMode").val() || null;
+        let refNo = $("#payRef").val() || null;
+        let remarks = $("#payRemarks").val() || null;
+
+        // NEW EMI
+        let newEMI = Number($("#simEMI").val());
+        if (isNaN(newEMI) || newEMI <= 0) newEMI = Number(ctx.emi);
+
+        // NEW TENURE
+        let newTenure = parseInt($("#simTenure").val());
+        if (isNaN(newTenure) || newTenure <= 0) newTenure = Number(ctx.tenure);
+
+        // NEW BALANCE
+        let newBalance = Number($("#newBalance").text().replace(/,/g, ""));
+        if (isNaN(newBalance)) newBalance = Number(ctx.balance);
+
+        let strategy = document.querySelector('input[name="strategy"]:checked').value;
+
+
+        // ---------------------- VALIDATION ----------------------
+
+        // ❌ If user enters amount, date is mandatory
+        if (amount > 0 && !date) {
+            toastr.error("Please select payment date for the transaction.");
+            return;
+        }
+        if (amount > 0 && !mode) {
+            toastr.error("Please select payment Mode for the transaction.");
+            return;
+        }
+        // ✔ If amount = 0 → loan revision only → no validation required
+
+
+        // ---------------------- BUILD CLEAN DTO ----------------------
+        let sendData = {
+            LoanId: ctx.loanId,
+
+            // Payment section (may be empty)
+            AmountPaid: amount,
+            PaymentDate: date,
+            PaymentMode: mode,
+            RefNo: refNo,
+            Remarks: remarks,
+
+            // Simulation + Loan Header Updates
+            NewEMI: newEMI,
+            NewTenure: newTenure,
+            NewBalance: newBalance,
+            Strategy: strategy
+        };
+
+
+        // ---------------------- AJAX ----------------------
+        $.ajax({
+            url: "/Loan/AdjustLoan",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(sendData),
+
+            success: function (res) {
+                if (res.success) {
+                    toastr.success(res.message || "Loan adjusted successfully");
+
+                    closeModal("adjustModal");
+                    loadLoanGrid(); // Reload loan list grid
+                } else {
+                    toastr.error(res.message || "Loan adjustment failed");
+                }
+            },
+
+            error: function () {
+                toastr.error("Server error occurred.");
+            }
+        });
+    }
+
+
+
+
+    // --- GLOBAL: CLOSE MODALS (Fixed for Bootstrap) ---
+    function closeModal(id) {
+
+        // ✅ CORRECT WAY: Use Bootstrap's jQuery method
+        $("#" + id).modal('hide');
+
+        // Keep your reset logic for the Adjust Modal
+        if (id === "adjustModal") {
+
+            // Reset Full Paid toggle
+            const chk = document.getElementById("chkFullPaid");
+            if (chk) chk.checked = false;
+
+            // Reset payment amount box
+            const amt = document.getElementById("payAmount");
+            if (amt) {
+                amt.value = "";
+                amt.readOnly = false;
+            }
+
+            // Reset simulation fields
+            $("#payMode").val("");
+            $("#payRef").val("");
+            $("#simEMI").val("");
+            $("#payRemarks").val("");
+            $("#simTenure").val("");
+            $("#newBalance").text("0.00");
+        }
+    }
+
+
+    function editLoan(loanId) {
+        $.get("/Loan/GetLoanById?id=" + loanId, function (res) {
+
+            if (!res.success) {
+                toastr.error(res.message);
+                return;
+            }
+
+            let d = res.data;
+
+            // -- 1. UPDATE MODAL HEADER (Using IDs) --
+            $("#createModalTitle").html('<i class="fa fa-pencil mr-sm"></i> Edit Loan');
+            $("#createModalSubtitle").text("Update Loan Information");
+
+            // -- 2. FILL FORM FIELDS --
+            $("#c_LoanType").val(d.LoanType);
+            $("#c_LoanNo").val(d.LoanNo).prop("readonly", true); // ID cannot be changed
+
+            $("#c_EmpName").val(d.EmployeeName);
+            $("#c_EmpId").val(d.IDEmployee);
+            $("#c_EmpCode").val(d.EmpCode);
+
+            // Handle Date Formats (ensure yyyy-mm-dd)
+            $("#c_LoanDate").val(formatDateValue(d.LoanDate));
+            $("#c_EndDate").val(formatDateValue(d.EndDate));
+            $("#c_RefDate").val(formatDateValue(d.RefDate));
+
+            $("#c_RefNo").val(d.RefNo);
+            $("#c_LoanAmount").val(d.LoanAmount);
+            $("#c_Tenure").val(d.LoanTenure);
+            $("#c_Interest").val(d.LoanInterestPcn);
+            $("#c_EMIInput").val(d.MonthlyInstallment);
+            $("#c_GracePeriod").val(d.GracePeriodMonths);
+
+            $("#c_StartMonth").val(d.RepaymentStartMonth);
+            $("#c_StartYear").val(d.RepaymentStartYear);
+            $("#c_Remarks").val(d.Remarks);
+
+            // -- 3. OPEN MODAL (BOOTSTRAP WAY) --
+            // ❌ OLD: document.getElementById("createModal").classList.add("active");
+            // ✅ NEW:
+            $("#createModal").modal('show');
+
+            // -- 4. RECALCULATE UI --
+            // This will update the new Strong Labels (display_*) automatically
+            recalculate();
+        });
+    }
+
+    // Helper to ensure dates fit the input type="date"
+    function formatDateValue(dateStr) {
+        if (!dateStr) return "";
+        var d = new Date(dateStr);
+        var month = '' + (d.getMonth() + 1);
+        var day = '' + d.getDate();
+        var year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+    function exportLedgerToExcel(loanNo, empName) {
+        // 1. Select the table element
+        var table = document.getElementById("ledgerTable");
+        if (!table) {
+            toastr.error("Table data not found.");
+            return;
+        }
+
+        // 2. Create a Workbook Object from the Table
+        // 'sheet: "Ledger"' names the tab inside Excel
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Ledger" });
+
+        // 3. Clean strings for filename (remove special chars)
+        var safeLoanNo = (loanNo || "Loan").replace(/[^a-zA-Z0-9-_]/g, "");
+        var safeEmpName = (empName || "Employee").replace(/[^a-zA-Z0-9-_ ]/g, "").trim();
+
+        // 4. Create Filename: Loan_L101_JohnDoe.xlsx
+        var filename = `Loan_${safeLoanNo}_${safeEmpName}.xlsx`;
+
+        // 5. Trigger Download
+        XLSX.writeFile(wb, filename);
+    }
+
+    function deleteLoan(loanId) {
+
+        // 1. User Confirmation
+        if (!confirm("Are you sure you want to delete this loan record? This action cannot be undone.")) {
+            return;
+        }
+
+        // 2. AJAX Request
+        $.ajax({
+            url: "/Loan/DeleteLoan",  // Ensure this matches your Controller Action name
+            type: "POST",             // Usually Delete operations are POST or DELETE
+            data: { id: loanId },     // Sending the ID
+            success: function (res) {
+
+                // 3. Check Response (Adjust property names based on your API)
+                if (res.success || res.Code === 1) {
+                    toastr.success(res.message || res.Message || "Loan deleted successfully");
+
+                    // 4. Refresh the Grid
+                    loadLoanGrid();
+                } else {
+                    toastr.error(res.message || res.Message || "Unable to delete loan");
+                }
+            },
+            error: function (err) {
+                console.error(err);
+                toastr.error("Server error occurred while deleting.");
+            }
+        });
+    }
+    /* ==========================================
+   FILTER & EXPORT LOGIC
+   ========================================== */
+
+    // 1. Toggle Filter Panel
+    function toggleFilterPanel() {
+        $("#filterPanel").slideToggle(200);
+    }
+
+    // 2. Clear Filters
+    function clearFilters() {
+        $("#searchInput").val("");
+        $("#fltStatus").val("");
+        $("#fltType").val("");
+        applyFilters();
+    }
+
+    // 3. Multi-Criteria Filter Logic (Replaces old filterTable)
+    function applyFilters() {
+        // Get values
+        const term = $("#searchInput").val().toLowerCase().trim();
+        const status = $("#fltStatus").val();
+        const type = $("#fltType").val();
+
+        // Filter the master array (allLoans)
+        filteredData = allLoans.filter(l => {
+            // 1. Search Text Match (Loan No OR Name)
+            const matchesTerm = (term === "") ||
+                (l.no?.toLowerCase().includes(term)) ||
+                (l.emp?.toLowerCase().includes(term));
+
+            // 2. Status Match
+            const matchesStatus = (status === "") || (l.status === status);
+
+            // 3. Type Match
+            const matchesType = (type === "") || (l.type === type);
+
+            return matchesTerm && matchesStatus && matchesType;
+        });
+
+        // Reset to Page 1 and render
+        currentPage = 1;
+        renderTable();
+    }
+
+    // 4. Export Main Grid to Excel
+    function exportMainGrid() {
+        if (!filteredData || filteredData.length === 0) {
+            toastr.warning("No data available to export.");
+            return;
+        }
+
+        // A. Map data to clean headers for Excel
+        // This ensures we export ALL filtered rows, not just the 10 visible ones
+        const dataToExport = filteredData.map(item => ({
+            "Loan No": item.no,
+            "Employee": item.emp,
+            "Type": item.type,
+            "Loan Date": item.date,
+            "Amount": item.amount,
+            "Current Balance": item.balance,
+            "EMI": item.emi,
+            "Status": item.status
+        }));
+
+        // B. Create Workbook using SheetJS
+        const ws = XLSX.utils.json_to_sheet(dataToExport);
+
+        // Optional: Auto-width columns (visual polish)
+        const wscols = [
+            { wch: 15 }, // Loan No
+            { wch: 25 }, // Name
+            { wch: 15 }, // Type
+            { wch: 12 }, // Date
+            { wch: 12 }, // Amount
+            { wch: 12 }, // Balance
+            { wch: 10 }, // EMI
+            { wch: 10 }  // Status
+        ];
+        ws['!cols'] = wscols;
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Loans");
+
+        // C. Save File
+        XLSX.writeFile(wb, "Loan_List_Export.xlsx");
+    }
+</script>

@@ -35,12 +35,12 @@ namespace MendinePayroll.Core.Implementation
             }
         }
 
-        public List<SalaryConfigureModel> Salaryconfiglist()
+        public List<SalaryConfigureModel> Salaryconfiglist(string tenantID)
         {
             List<SalaryConfigureModel> listmodel = new List<SalaryConfigureModel>();
             try
             {
-                List<SalaryConfigure_GetAll_Result> payconfiglist = esspEntities.SalaryConfigure_GetAll().ToList();
+                List<SalaryConfigure_GetAll_Result> payconfiglist = esspEntities.SalaryConfigure_GetAll(tenantID).ToList();
                 listmodel = payconfiglist.Select(X =>
                 {
                     return new SalaryConfigureModel

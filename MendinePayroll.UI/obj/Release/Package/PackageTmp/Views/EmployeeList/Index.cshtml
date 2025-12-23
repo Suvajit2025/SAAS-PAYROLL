@@ -69,6 +69,8 @@
                         <th><i class="fa fa-credit-card text-muted space-right"></i>Salary Details</th>
                         <th><i class="fa fa-credit-card text-muted space-right"></i>Loan Details</th>
                         <th><i class="fa fa-credit-card text-muted space-right"></i>OverTime Details</th>
+                        <th><i class="fa fa-credit-card text-muted space-right"></i>CTC Details</th>
+                        <th><i class="fa fa-credit-card text-muted space-right"></i>TDS Details</th>
                         <th class="center">MORE</th>
 
                     </tr>
@@ -416,6 +418,12 @@
                             '<a href = "#" onclick = "return GetEmployeeOverTimedetails(' + "'" + response.emplist[I].sempid + "'" + ');" >' +
                             '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a > ' +
                             ' </td><td class="center">' +
+                            '<a href="#" onclick="return GetEmployeSalarydetailsCTC(' + "'" + response.emplist[I].sempid + "'" + ',' + "'" + response.emplist[I].PayGroupID + "'" + ');" data-toggle="modal" data-target="#detail">' +
+                            '<i class= "text-tertiary fa fa-arrow-circle-o-right fa-lg" ></i ></a > ' +
+                            ' </td><td class="center">' +
+                            '<a href = "#" onclick = "return GetEmployeeTDSdetails(' + "'" + response.emplist[I].sempid + "'" + ');" >' +
+                            '<i class="text-tertiary fa fa-arrow-circle-o-right fa-lg"></i></a > ' +
+                            ' </td><td class="center">' +
                             '<a href="#" onclick="return GetEmployeedetails(' + "'" + response.emplist[I].sempid + "'" + ');" data-toggle="modal" data-target="#detail">' +
                             '<i class= "text-tertiary fa fa-arrow-circle-o-right fa-lg" ></i ></a > ' +
                             '</td></tr>');
@@ -644,7 +652,15 @@
         var Search = $("#searchbox").val();
         window.location.href = "/EmployeeList/EmployeeSalaryDetails?Empid=" + Empid + "&&PayGroupID=" + PayGroupID + "&&SearchValue=" + Search + "";
     }
+    function GetEmployeeTDSdetails(Empid) {
 
+        var Search = $("#searchbox").val();
+        window.location.href = "/PayrollTds/TDSDetails?Empid=" + Empid + "&&SearchValue=" + Search + "";
+    }
+    function GetEmployeSalarydetailsCTC(Empid, PayGroupID) {
+        var Search = $("#searchbox").val();
+        window.location.href = "/PayrollTds/EmployeeSalaryDetailsCTC?Empid=" + Empid + "&&PayGroupID=" + PayGroupID + "&&SearchValue=" + Search + "";
+    }
     function PreviewSalary(empid) {
         var Search = $("#searchbox").val();
         window.location.href = "/EmployeeList/EmployeePayableSalary?cal=" + empid + "&&SearchValue=" + Search + "";

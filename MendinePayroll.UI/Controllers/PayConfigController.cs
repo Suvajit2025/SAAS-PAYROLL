@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using MendinePayroll.Models;
 using UI.BLL;
 using MendinePayroll.UI.Models;
+using System.Data;
+using Common.Utility;
 namespace MendinePayroll.UI.Controllers
 {
     public class PayConfigController : Controller
@@ -18,10 +20,12 @@ namespace MendinePayroll.UI.Controllers
         public ActionResult Index()
         {
            
-            if (Session["UserName"] == null)
+            if (Session["UserName"] == null && Session["TenantID"]== null)
             {
                 return RedirectToAction("Index", "Login");
             }
+
+
 
             // Access Log Data Insert 
             clsAccessLogInfo info = new clsAccessLogInfo();
@@ -32,6 +36,7 @@ namespace MendinePayroll.UI.Controllers
             PayConfigModel payConfigModel = new PayConfigModel();
            
             payConfigModel.PayConfigId = 0;
+            payConfigModel.TenantID = Session["TenantID"].ToString();
             string contents = JsonConvert.SerializeObject(payConfigModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/GetAllPayconfig", contents);
             if (response.IsSuccessStatusCode)
@@ -45,8 +50,8 @@ namespace MendinePayroll.UI.Controllers
             }
             return View(payConfigModel);
         }
-        #region Save PayGroup
-        public JsonResult SavePayConfig(string PayConfigName, string PayConfigType,string IScalculative)
+        #region Save PayConfig
+        public JsonResult SavePayConfig(string PayConfigName, string PayConfigType,string IScalculative, bool IsStatutory)
         {
             var data = "";
             PayConfigModel payConfigModel = new PayConfigModel();
@@ -54,7 +59,9 @@ namespace MendinePayroll.UI.Controllers
             payConfigModel.PayConfigName = PayConfigName;
             payConfigModel.PayConfigType = PayConfigType;
             payConfigModel.IScalculative =Convert.ToBoolean(IScalculative);
-
+            payConfigModel.IsStatutory=IsStatutory;
+            payConfigModel.TenantID = Session["TenantID"].ToString();
+            payConfigModel.EntryUser = Session["UserEmail"].ToString();
 
             string contents = JsonConvert.SerializeObject(payConfigModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/SavePayconfig", contents);
@@ -74,8 +81,8 @@ namespace MendinePayroll.UI.Controllers
         }
         #endregion
 
-        #region Update PayGroup
-        public JsonResult UpdatePayConfig(string PayConfigId,  string PayConfigName, string PayConfigType, string IScalculative)
+        #region Update PayConfig
+        public JsonResult UpdatePayConfig(string PayConfigId,  string PayConfigName, string PayConfigType, string IScalculative, bool IsStatutory)
         {
             var data = "";
             PayConfigModel payConfigModel = new PayConfigModel();
@@ -83,7 +90,9 @@ namespace MendinePayroll.UI.Controllers
             payConfigModel.PayConfigName = PayConfigName;
             payConfigModel.PayConfigType = PayConfigType;
             payConfigModel.IScalculative = Convert.ToBoolean(IScalculative);
-
+            payConfigModel.IsStatutory = IsStatutory;
+            payConfigModel.TenantID = Session["TenantID"].ToString();
+            payConfigModel.EntryUser = Session["UserEmail"].ToString();
 
             string contents = JsonConvert.SerializeObject(payConfigModel);
             HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/SavePayconfig", contents);
@@ -108,18 +117,35 @@ namespace MendinePayroll.UI.Controllers
         {
             List<PayConfigModel> data = new List<PayConfigModel>();
             PayConfigModel payConfigModel = new PayConfigModel();
-            payConfigModel.PayConfigId = Convert.ToInt32(PayConfigID);
-            string contents = JsonConvert.SerializeObject(payConfigModel);
-            HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/GetAllPayconfigbyid", contents);
-            if (response.IsSuccessStatusCode)
+            DataTable dt = clsDatabase.fnDataTable("PayConfig_GetById", PayConfigID);
+            if (dt != null && dt.Rows.Count > 0)
             {
-                string responseString = response.Content.ReadAsStringAsync().Result;
-
-                if (!string.IsNullOrEmpty(responseString))
+                foreach (DataRow dr in dt.Rows)
                 {
-                    data = JsonConvert.DeserializeObject<List<PayConfigModel>>(responseString); ;
+                    data.Add(new PayConfigModel
+                    {
+                        PayConfigId = Convert.ToInt32(dr["PayConfigId"]),
+                        PayConfigName = dr["PayConfigName"].ToString(),
+                        PayConfigType = dr["PayConfigType"].ToString(),
+                        IScalculative = dr["IScalculative"] != DBNull.Value && Convert.ToBoolean(dr["IScalculative"]),
+                        IsStatutory = dr["IsStatutory"] != DBNull.Value && Convert.ToBoolean(dr["IsStatutory"])
+                    });
                 }
             }
+
+
+            //payConfigModel.PayConfigId = Convert.ToInt32(PayConfigID); 
+            //string contents = JsonConvert.SerializeObject(payConfigModel);
+            //HttpResponseMessage response = ObjAPI.CallAPI("api/PayConfig/GetAllPayconfigbyid", contents);
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    string responseString = response.Content.ReadAsStringAsync().Result;
+
+            //    if (!string.IsNullOrEmpty(responseString))
+            //    {
+            //        data = JsonConvert.DeserializeObject<List<PayConfigModel>>(responseString); ;
+            //    }
+            //}
 
             return Json(data, JsonRequestBehavior.AllowGet);
         }
@@ -140,7 +166,7 @@ namespace MendinePayroll.UI.Controllers
                 if (!string.IsNullOrEmpty(responseString))
                 {
                     data = JsonConvert.DeserializeObject(responseString).ToString() ;
-                }
+                } 
             }
 
             return Json(data, JsonRequestBehavior.AllowGet);

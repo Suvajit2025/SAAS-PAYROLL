@@ -1,0 +1,288 @@
+﻿@model MendinePayroll.Models.EmployeeSalaryModel
+@{
+    ViewBag.Title = "ESIC_SetUp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .select2-container--open {
+        z-index: 9999 !important;
+    }
+</style>
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2>Employee ESIC SetUp</h2>
+    </header>
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button type="button" id="btnBack" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+            <h2 class="panel-title">Employee ESIC SetUp</h2>
+        </header>
+        <div class="modal-body">
+            <!--<div class="form-inline">
+                <label for="ddlMonth">Month:</label>
+                <select id="ddlMonth" class="form-control input-sm" style="margin-right:10px;">
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+
+                <!-- Year Dropdown -->
+            <!--<label for="ddlYear">Year:</label>
+            <select id="ddlYear" class="form-control input-sm" style="margin-right:10px;">
+                @for (int y = DateTime.Now.Year; y >= 2000; y--)
+                {
+                    <option value="@y" @(y == DateTime.Now.Year ? "selected" : "")>@y</option>
+                }
+            </select>
+
+
+            <button type="button" id="btnViewsalary" class="btn btn-primary btn-sm" style="margin-left:10px;">
+                <i class="fa fa-eye"></i> View
+            </button>-->
+            <!-- Right aligned block -->-->
+            <!--@*<div class="pull-right">
+                        <button type="button" id="btnDownloadExcel" class="btn btn-success btn-sm" style="margin-right:5px;">
+                            <i class="fa fa-file-excel-o"></i> Excel
+                        </button>
+                        <button type="button" id="btnDownloadPdf" class="btn btn-danger btn-sm">
+                            <i class="fa fa-file-pdf-o"></i> PDF
+                        </button>
+                    </div>*@
+            </div>-->
+        </div>
+        <div class="panel-body">
+
+            <div class="clearfix mb-3">
+                <h5 class="pull-left">ESIC Employee Slab Mapping</h5>
+                <button class="btn btn-success btn-sm pull-right" data-toggle="modal" data-target="#addSlabModal">
+                    <i class="fa fa-plus"></i> Add
+                </button>
+            </div>
+            <!-- Table -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="tblEmployeeSlab">
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th>Slab</th>
+                            <th>Eligible</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be added dynamically -->
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="modal fade" id="addSlabModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">×</button>
+                            <h4 class="modal-title">Add ESIC Slab</h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Employee</label>
+                                    @*<select class="form-control" id="ddlEmployee">
+                                            <option value="">-- Select Employee --</option>
+                                            <option value="2159">John Doe</option>
+                                            <option value="2199">Amit Kumar</option>
+                                            <option value="2191">Sita Sharma</option>
+                                        </select>*@
+                                    @Html.DropDownListFor(M => M.EmployeeName, Model.masterModel.selectListItems, new { @class = "form-control", id = "EmployeeName" })
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Slab</label>
+                                    <select class="form-control" id="ddlSlab">
+                                        <option value="">-- Select Slab --</option>
+                                        <option value="1">Apr-Sep</option>
+                                        <option value="2">Oct-Mar</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Remarks</label>
+                                    <textarea id="txtRemark" name="Remark" class="form-control" rows="3" placeholder="Enter remarks here..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="btnSaveSlab">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</section>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap.min.css">
+
+<!-- jQuery (required for DataTables) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap.min.js"></script>
+<script>
+    var table;
+    $(document).ready(function () {
+
+        // ✅ Initialize DataTable and assign it to table variable
+        table = $('#tblEmployeeSlab').DataTable();
+
+        $("#EmployeeName").select2({
+            width: "275px",
+            dropdownParent: $('#addSlabModal')
+        });
+
+        // ✅ Function to load data
+        function loadEmployeeSlabs() {
+            $.ajax({
+                url: '/EmployeeList/GetEmployeeSlabs',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    // ✅ Clear existing rows
+                    table.clear();
+
+                    // ✅ Add rows from response
+                    $.each(response, function (i, item) {
+                        table.row.add([
+                            item.EmployeeName,
+                            item.SlabName,
+                            item.IsEligible ? "Yes" : "No",
+                            '<button class="btn btn-danger btn-xs btnDelete" data-id="' + item.EmployeeSlabId + '">' +
+                            '<i class="fa fa-trash"></i></button>'
+                        ]);
+                    });
+
+                    // ✅ Redraw after adding rows (once)
+                    table.draw();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                    swal("Error", "Could not load Employee Slabs!", "error");
+                }
+            });
+        }
+
+        // Load data on first page load
+        loadEmployeeSlabs();
+
+        // Rest of your code (Save, Delete) remains same
+    });
+</script>
+<script>
+
+
+    // ✅ Save Button Click
+    $("#btnSaveSlab").on("click", function () {
+        var empId = $("#EmployeeName").val();
+        var empName = $("#EmployeeName option:selected").text();
+        var slabId = $("#ddlSlab").val();
+        var slabName = $("#ddlSlab option:selected").text();
+        var remarks = $("#txtRemark").val();
+
+        if (empId && slabId) {
+            $.ajax({
+                url: '/EmployeeList/SaveEmployeeSlab',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    EmployeeId: empId,
+                    SlabId: slabId,
+                    IsEligible: 1,
+                    Remark: remarks
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $("#ddlEmployee").val("");
+                        $("#ddlSlab").val("");
+                        $("#txtRemark").val("");
+                        $("#addSlabModal").modal("hide");
+
+                        swal("Success", "Saved successfully!", "success")
+                            .then(function () {
+                                // ✅ Reload the whole page
+                                location.reload();
+                            });
+                    } else {
+                        swal("Error", response.message || "Failed to save!", "error");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                    swal("Error", "Something went wrong!", "error");
+                }
+            });
+        } else {
+            swal("Error", "Please select Employee and Slab.", "error");
+        }
+    });
+
+    // ✅ Delete Function (EmployeeSlabId wise)
+    $('#tblEmployeeSlab tbody').on('click', '.btnDelete', function () {
+        var empSlabId = $(this).data("id");
+
+        swal({
+            title: "Are you sure?",
+            text: "This record will be deleted!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!"
+        }).then(function (isConfirm) {
+            if (isConfirm) {
+                $.ajax({
+                    url: '/EmployeeList/DeleteEmployeeSlab',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { EmployeeSlabId: empSlabId },
+                    success: function (response) {
+                        if (response.success) {
+                            swal("Deleted!", "Employee Slab deleted.", "success")
+                                .then(function () {
+                                    // ✅ Reload the page after delete
+                                    location.reload();
+                                });
+                        } else {
+                            swal("Error", response.message || "Failed to delete!", "error");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                        swal("Error", "Something went wrong!", "error");
+                    }
+                });
+            }
+        });
+    });
+
+
+</script>
+<script>
+    function BacktoEmpList() {
+        window.location.href = '/EmployeeList/';
+    }
+</script>

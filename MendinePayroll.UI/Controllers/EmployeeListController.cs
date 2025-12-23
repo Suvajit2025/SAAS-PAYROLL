@@ -64,25 +64,7 @@ namespace MendinePayroll.UI.Controllers
             {
                 return RedirectToAction("Index", "Login");
             }
-
-
-
-            //// Access Log Data Insert 
-            //clsAccessLogInfo info = new clsAccessLogInfo();
-            //info.AccessType = "EMPLOYEE-LIST-ENTRY";
-            //clsAccessLog.AccessLog_Save(info);
-
-
-
-            //employeeListModel.emplist = GetAllEmployee();
-            //if (employeeListModel.emplist.Count > 0)
-            //{
-            //    for (int i = 0; i < employeeListModel.emplist.Count; i++)
-            //    {
-            //        employeeListModel.emplist[i].sempid = DataEncryption.Encrypt(Convert.ToString(employeeListModel.emplist[i].empid), "passKey");
-            //    }
-            //}
-
+ 
             return View();
         }
         #region GetAll Employee
@@ -4154,8 +4136,8 @@ namespace MendinePayroll.UI.Controllers
 
                 // 4. Grand total row
                 var grand = new Dictionary<string, object>();
-                grand["Department"] = "Grand Total";
-                grand["Employee Name"] = "";
+                grand["Department"] = "";
+                grand["Employee Name"] = "Grand Total";
 
                 foreach (DataColumn col in dt.Columns)
                 {
@@ -4285,6 +4267,11 @@ namespace MendinePayroll.UI.Controllers
 
                 // 4. Build CSV
                 var csv = new StringBuilder();
+
+                // === Add header title ===
+                csv.AppendLine($"Loan Register {Year} as on {DateTime.Now:dd-MMM-yyyy}");
+                csv.AppendLine(); // blank line
+
 
                 // Header
                 for (int i = 0; i < grouped.Columns.Count; i++)

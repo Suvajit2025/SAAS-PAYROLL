@@ -23,7 +23,7 @@ namespace MendinePayrollAPI.Controllers
 
             try
             {            
-              var list   = groupCore.PayGroupList();
+              var list   = groupCore.PayGroupList(payGroup.TenantID);
 
                 if (list != null)
                 {

@@ -1,0 +1,946 @@
+﻿@{
+    ViewBag.Title = "Pay Component Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+
+<style>
+    /* --- SCOPED STYLES FOR THIS VIEW --- */
+    :root {
+        --primary: #0E7777;
+        --primary-dark: #095555;
+        --primary-light: #e0f2f2;
+        --text-dark: #2c3e50;
+        --text-light: #636e72;
+        --border: #dfe6e9;
+        --white: #ffffff;
+        --bg: #f4f7f6;
+    }
+
+    /* --- UPDATED: WRAPPER 90% WIDTH + SMALLER BASE FONT --- */
+    .comp-master-wrapper {
+        font-family: 'Segoe UI', Inter, sans-serif;
+        color: var(--text-dark);
+
+        /* 1. Width Setting */
+         
+        margin: 0 auto;
+        max-width: 100%;
+
+        /* 2. Global Compact Font Setting */
+        font-size: 12px;
+    }
+
+    /* --- 1. HEADER ROW (Compact) --- */
+    .custom-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--white);
+        padding: 10px 20px; /* Reduced Padding */
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 15px;
+        height: 50px; /* Reduced Height from 60px */
+    }
+
+    .custom-title {
+        font-size: 16px; /* Reduced from 20px */
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* --- BUTTONS (Compact) --- */
+    .btn-add {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0 15px;
+        height: 30px; /* Reduced from 38px */
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 12px; /* Reduced Font */
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+        text-decoration: none;
+        line-height: 30px;
+    }
+
+        .btn-add:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(14,119,119,0.2);
+            color: white;
+            text-decoration: none;
+        }
+
+    /* --- 2. DATA GRID (Compact) --- */
+    .grid-card {
+        background: var(--white);
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .comp-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px; /* Force small font in table */
+        margin: 0;
+    }
+
+    .comp-table th {
+        background: #f8f9fa;
+        text-align: left;
+        padding: 8px 12px; /* Tighter Header Padding */
+        font-weight: 700;
+        color: var(--text-light);
+        border-bottom: 2px solid var(--border);
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+    }
+
+    .comp-table td {
+        padding: 8px 12px; /* Tighter Cell Padding (Was 12px 20px) */
+        border-bottom: 1px solid #f1f1f1;
+        vertical-align: middle;
+        color: #333;
+    }
+
+    .comp-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .comp-table tr:hover {
+        background-color: #faffff;
+    }
+
+    /* --- BADGES (Smaller) --- */
+    .type-badge {
+        padding: 3px 8px; /* Reduced padding */
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 9px;   /* Reduced font */
+        text-transform: uppercase;
+        display: inline-block;
+        width: 80px;      /* Reduced width */
+        text-align: center;
+    }
+
+    .type-earn { background: #ecfdf5; color: #10b981; border: 1px solid #d1fae5; }
+    .type-deduct { background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; }
+    .type-cc { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+    .type-manual { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+
+    .flag-badge {
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-size: 9px;
+        font-weight: 700;
+        margin-right: 4px;
+        display: inline-block;
+    }
+
+    .bg-green { background: #e6fffa; color: #00b894; border: 1px solid #b2f5ea; }
+    .bg-blue { background: #e3f2fd; color: #0984e3; border: 1px solid #bbdefb; }
+    .bg-orange { background: #fff3cd; color: #d35400; border: 1px solid #ffeeba; }
+    .bg-purple { background: #f3e5f5; color: #8e44ad; border: 1px solid #e1bee7; }
+
+    .action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        color: #95a5a6;
+        padding: 4px;
+        transition: 0.2s;
+        border-radius: 4px;
+    }
+
+    .action-btn:hover { color: var(--primary); background: #e0f2f2; }
+    .action-del:hover { color: #e74c3c; background: #ffecec; }
+
+    /* --- 3. MODAL (Compact) --- */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9999;
+        backdrop-filter: blur(3px);
+    }
+
+    .modal-box {
+        background: var(--white);
+        width: 800px; /* Slightly smaller width */
+        margin: 30px auto;
+        border-radius: 8px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+        display: flex;
+        flex-direction: column;
+        max-height: 85vh;
+        animation: slideUp 0.3s ease;
+    }
+
+    @@keyframes slideUp {
+        from { width: 90% !important; transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+        padding: 10px 20px;
+        background: var(--primary-light);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .modal-body {
+        padding: 20px;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px; /* Reduced Gap */
+    }
+
+    .form-group {
+        margin-bottom: 12px; /* Reduced Margin */
+    }
+
+    .form-label {
+        display: block;
+        font-size: 11px; /* Smaller Label */
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 4px 10px;
+        border: 1px solid #cbd5e0;
+        border-radius: 4px;
+        font-size: 12px; /* Smaller Input Text */
+        box-sizing: border-box;
+        height: 32px;    /* Compact Height (Was 38px) */
+    }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #faffff;
+        }
+
+    /* Toggles */
+    .settings-panel {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 0 15px;
+    }
+
+    .toggle-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0; /* Reduced Padding */
+        border-bottom: 1px dashed #eee;
+    }
+
+        .toggle-row:last-child { border-bottom: none; }
+
+    .toggle-info strong {
+        font-size: 12px; /* Smaller Text */
+        display: block;
+        color: #333;
+    }
+
+    .toggle-info small {
+        font-size: 10px;
+        color: #888;
+    }
+
+    /* Switch - Compact */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 32px;  /* Smaller Width */
+        height: 18px; /* Smaller Height */
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 14px; /* Smaller Circle */
+        width: 14px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider { background-color: var(--primary); }
+    input:checked + .slider:before { transform: translateX(14px); }
+
+    .modal-footer {
+        padding: 10px 20px;
+        background: #f8f9fa;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn-cancel {
+        background: white;
+        border: 1px solid #ccc;
+        color: #555;
+    }
+
+    .btn-cancel:hover { background: #eee; }
+
+    #txtName { text-transform: uppercase; }
+    #chkVar, #chkLoan { display: none; }
+</style>
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2>Pay Component</h2>
+    </header>
+    <div class="comp-master-wrapper">
+
+        <header class="custom-header">
+            <h2 class="custom-title">
+                <i class="fas fa-cogs"></i> Pay Component Master
+            </h2>
+            <button class="btn-add" onclick="openModal(false)">
+                <i class="fas fa-plus"></i> Add New Component
+            </button>
+        </header>
+        <section class="panel">
+            <div class="panel-body">
+
+                <table id="compTable" class="comp-table">
+                    <thead>
+                        <tr>
+                            <th style="width:40px">ID</th>
+                            <th>Component Name</th>
+                            <th>Type</th>
+                            <th style="text-align:center">Calc?</th>
+                            <th>System Flags</th>
+                            <th>Statutory</th>
+                            <th>Others</th>
+                            <th>Allowances</th>
+                            <th style="text-align:right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridBody">
+                    </tbody>
+                </table>
+
+            </div>
+        </section>
+    </div>
+
+</section>
+
+<div id="entryModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Configure Component</h3>
+            <button class="btn-close" onclick="closeModal()">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <form id="entryForm">
+                <div class="form-grid">
+                    <div>
+                        <h4 style="color:var(--primary); margin-top:0; border-bottom:1px solid #eee; padding-bottom:8px; font-size:13px; font-weight:700;">BASIC DETAILS</h4>
+
+                        <div class="form-group">
+                            <label class="form-label">Component Name</label>
+                            <input type="text" id="txtName" class="form-control"
+                                   onkeyup="this.value = this.value.toUpperCase();"
+                                   placeholder="e.g. BASIC SALARY">
+
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Pay Type</label>
+                            <select id="ddlType" class="form-control">
+                                <option value="Allowances">Allowance (Earning)</option>
+                                <option value="Manual">Manual Input (System Driver)</option>
+                                <option value="Deduction">Deduction</option>
+                                <option value="CC">Company Contribution</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Calculation Method</label>
+                            <select id="ddlCalc" class="form-control">
+                                <option value="1">Formula Based (% of Gross/Basic)</option>
+                                <option value="0">Flat Amount / Manual Input</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Sort Order</label>
+                            <input type="number" id="txtSort" class="form-control" value="0">
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="color:var(--primary); margin-top:0; border-bottom:1px solid #eee; padding-bottom:8px; font-size:13px; font-weight:700;">CONFIGURATION RULES</h4>
+
+                        <div class="settings-panel">
+                            <div class="toggle-row">
+                                <div class="toggle-info"><strong>Is Basic Component?</strong><small>Root for PF/Gratuity</small></div>
+                                <label class="switch"><input type="checkbox" id="chkBasic"><span class="slider"></span></label>
+                            </div>
+                            <div class="toggle-row">
+                                <div class="toggle-info"><strong>Is Gross Component?</strong><small>Input Driver for CTC</small></div>
+                                <label class="switch"><input type="checkbox" id="chkGross"><span class="slider"></span></label>
+                            </div>
+                            <div class="toggle-row">
+                                <div class="toggle-info"><strong>Is Allowance?</strong><small>Tax & Exemption Classification</small></div>
+                                <label class="switch"><input type="checkbox" id="chkAllowance" onchange="toggleAllowancePanel()"><span class="slider"></span></label>
+                            </div>
+
+                            <div id="allowancePanel" style="display:none;background:#f9f9f9;padding:15px;border-radius:6px;">
+                                <label class="form-label">Allowance Key</label>
+                                <select id="ddlAllowanceType" class="form-control"></select>
+                            </div>
+                            <div class="toggle-row">
+                                <div class="toggle-info"><strong>Is Statutory?</strong><small>Compliance Rules</small></div>
+                                <label class="switch"><input type="checkbox" id="chkStat" onchange="toggleStatPanel()"><span class="slider"></span></label>
+                            </div>
+
+                            <div id="statPanel" style="display:none;background:#f9f9f9;padding:15px;border-radius:6px;">
+                                <label class="form-label">Statutory Key</label>
+                                <select id="ddlStatType" class="form-control"></select>
+                            </div>
+
+
+                            <div class="toggle-row" style="border-bottom:none;">
+                                <div class="toggle-info"><strong>Is Others?</strong><small>Non-Statutory Extra Pay Elements</small></div>
+                                <label class="switch"><input type="checkbox" id="chkOthers" onchange="toggleOtherPanel()"><span class="slider"></span></label>
+                            </div>
+
+                            <div id="otherPanel" style="display:none; background:#f9f9f9; padding:15px; border-radius:4px; margin-top:5px; border:1px solid #eee;">
+                                <label class="form-label">Other Type</label>
+                                <select id="ddlOtherType" class="form-control">
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-add btn-cancel" onclick="closeModal()">Cancel</button>
+            <button type="button" class="btn-add" onclick="saveData()">Save Component</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+        refreshGrid();
+    });
+
+    // ==================================================
+    // LOAD GRID → RENDER ROWS → RESTART DATATABLE
+    // ==================================================
+    function refreshGrid() {
+        $.get('/SalaryConfig/GetPayComponents', function (response) {
+            renderGrid(response);
+        });
+    }
+
+    function renderGrid(data) {
+
+        // 1️⃣ Destroy DataTable before modifying DOM
+        if ($.fn.DataTable.isDataTable("#compTable")) {
+            $('#compTable').DataTable().clear().destroy();
+        }
+
+        // 2️⃣ Clear tbody
+        var $tbody = $("#gridBody");
+        $tbody.empty();
+
+        // 3️⃣ Append new rows
+        $.each(data, function (i, row) {
+
+            var typeClass = "";
+            switch (row.type) {
+                case "Allowances": typeClass = "type-earn"; break;
+                case "Deduction": typeClass = "type-deduct"; break;
+                case "CC": typeClass = "type-cc"; break;
+                case "Manual": typeClass = "type-manual"; break;
+            }
+
+            var flags = "";
+            if (row.isBasic) flags += `<span class='flag-badge bg-green'>BASIC</span>`;
+            if (row.isGross) flags += `<span class='flag-badge bg-blue'>GROSS</span>`;
+            if (!flags) flags = `<span style="color:#ccc; font-size:11px;">-</span>`;
+
+            var statHtml = row.statKey
+                ? `<strong style="font-size:11px;">${row.statKey}</strong>`
+                : `<span style="color:#ccc;">-</span>`;
+            var otherHtml = row.otherKey
+                ? `<strong style="font-size:11px;">${row.otherKey}</strong>`
+                : `<span style="color:#ccc;">-</span>`;
+            var allowanceHtml = row.allowanceKey
+                ? `<strong style="font-size:11px;">${row.allowanceKey}</strong>`
+                : `<span style="color:#ccc;">-</span>`;
+
+            var calcHtml = row.isCalc
+                ? `<i class="fas fa-calculator" style="color:#0E7777;"></i>`
+                : `<span style="color:#aaa; font-size:11px;">Fixed</span>`;
+
+            var $tr = $("<tr></tr>");
+
+            $tr.append(`<td>${row.id}</td>`);
+            $tr.append(`<td><strong>${row.name}</strong></td>`);
+            $tr.append(`<td><span class="type-badge ${typeClass}">${row.type}</span></td>`);
+            $tr.append(`<td style="text-align:center;">${calcHtml}</td>`);
+            $tr.append(`<td>${flags}</td>`);
+            $tr.append(`<td>${statHtml}</td>`);
+            $tr.append(`<td>${otherHtml}</td>`);
+            $tr.append(`<td>${allowanceHtml}</td>`);
+            $tr.append(`
+            <td style="text-align:right;">
+                <button class="action-btn btn-edit" data-id="${row.id}">
+                    <i class="fas fa-pen"></i>
+                </button>
+                <button class="action-btn btn-delete" data-id="${row.id}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `);
+
+            $tbody.append($tr);
+        });
+
+        // 4️⃣ Rebind events
+        $(".btn-edit").off().on("click", function () {
+            editRow($(this).data("id"));
+        });
+
+        $(".btn-delete").off().on("click", function () {
+            deleteRow($(this).data("id"));
+        });
+
+        // 5️⃣ Reinitialize DataTable
+        $('#compTable').DataTable({
+            paging: true,
+            searching: true,
+            lengthChange: true,
+            pageLength: 10,
+            ordering: true,
+            responsive: true,
+            autoWidth: false,
+            language: {
+                //search: "Component:",
+                lengthMenu: "Show _MENU_ entries"
+            },
+            columnDefs: [
+                { orderable: false, targets: [6] }
+            ]
+        });
+    }
+
+
+    // ==================================================
+    // DELETE COMPONENT
+    // ==================================================
+    function deleteRow(id) {
+
+        if (!confirm("Are you sure you want to delete this component?")) return;
+
+        $.ajax({
+            url: "/SalaryConfig/DeletePayComponent",
+            type: "POST",
+            data: { id: id },
+            success: function (res) {
+
+                if (res.Code === 1) {
+                    toastr.success("Deleted Successfully");
+                    refreshGrid();
+                } else {
+                    toastr.error(res.Message);
+                }
+            }
+        });
+
+    }
+    // ==================================================
+    // LOAD ALLOWANCE KEYS
+    // ==================================================
+    function loadAllowanceKeys(callback) {
+        $.ajax({
+            url: "/SalaryConfig/GetAllowanceKeys",
+            type: "GET",
+            success: function (data) {
+                var $ddl = $("#ddlAllowanceType");
+                $ddl.empty().append(`<option value="">-- Select Allowance Type --</option>`);
+
+                $.each(data, function (i, item) {
+                    $ddl.append(`<option value="${item.key}">${item.name}</option>`);
+                });
+
+                if (callback) callback();
+            }
+        });
+    }
+
+
+
+    // ==================================================
+    // LOAD STATUTORY KEYS
+    // ==================================================
+    function loadStatutoryKeys() {
+        $.ajax({
+            url: "/SalaryConfig/GetStatutoryKeys",
+            type: "GET",
+            success: function (data) {
+
+                var $ddl = $("#ddlStatType");
+                $ddl.empty();
+                $ddl.append(`<option value="">-- Select Statutory Key--</option>`);
+
+                $.each(data, function (i, item) {
+                    $ddl.append(`<option value="${item.key}">${item.name}</option>`);
+                });
+            }
+        });
+    }
+    // ==================================================
+    // LOAD OTHERS KEYS
+    // ==================================================
+    function loadOtherKeys() {
+        $.ajax({
+            url: "/SalaryConfig/GetOtherKeys",
+            type: "GET",
+            success: function (data) {
+                var $ddl = $("#ddlOtherType");
+                $ddl.empty();
+                $ddl.append(`<option value="">-- Select Others Key--</option>`);
+
+                $.each(data, function (i, item) {
+                    $ddl.append(`<option value="${item.key}">${item.name}</option>`);
+                });
+            }
+        });
+    }
+    // ==================================================
+    // ADD / EDIT MODAL
+    // ==================================================
+    //function openModal() {
+    //    $("#entryForm")[0].reset();
+    //    $("#statPanel").hide();
+    //    $("#entryModal").show();
+    //    $("#modalTitle").text("Add New Component");
+    //    $("#entryForm").removeData("edit-id");
+    //    loadStatutoryKeys();
+    //    loadOtherKeys();
+    //    loadAllowanceKeys();
+    //}
+    function openModal(isEdit = false) {
+
+        if (!isEdit) {
+            $("#entryForm")[0].reset(); // ✅ ONLY for ADD
+        }
+
+        $("#statPanel, #otherPanel, #allowancePanel").hide();
+        $("#chkStat, #chkOthers, #chkAllowance").prop("checked", false);
+
+        $("#entryModal").show();
+
+        if (!isEdit) {
+            $("#modalTitle").text("Add New Component");
+            $("#entryForm").removeData("edit-id");
+        }
+
+        // ✅ Load dropdowns ONLY ON ADD
+        if (!isEdit) {
+            loadStatutoryKeys();
+            loadOtherKeys();
+            loadAllowanceKeys();
+        }
+    }
+
+    //function closeModal() {
+    //    $("#entryModal").hide();
+    //    refreshGrid();
+    //}
+    function closeModal() {
+
+        // 1️⃣ Hide modal
+        $("#entryModal").hide();
+
+        // 2️⃣ Fully reset form
+        $("#entryForm")[0].reset();
+        $("#entryForm").removeData("edit-id");
+
+        // 3️⃣ Hide all conditional panels
+        $("#statPanel, #otherPanel, #allowancePanel").hide();
+
+        // 4️⃣ Reset toggles explicitly
+        $("#chkStat, #chkOthers, #chkAllowance").prop("checked", false);
+
+        // 5️⃣ Reset dropdowns safely
+        $("#ddlStatType, #ddlOtherType, #ddlAllowanceType")
+            .val("")
+            .trigger("change");
+
+        // 6️⃣ Refresh grid AFTER cleanup
+        refreshGrid();
+    }
+
+    // ==================================================
+    // EDIT COMPONENT
+    // ==================================================
+    function editRow(id) {
+
+        $.ajax({
+            url: "/SalaryConfig/GetPayComponentById",
+            type: "GET",
+            data: { Id: id },
+            success: function (res) {
+
+                if (!res) {
+                    alert("Record not found!");
+                    return;
+                }
+                console.log(res);
+                openModal(true);
+                $("#modalTitle").text("Edit Component");
+
+                $("#txtName").val(res.name);
+                $("#ddlType").val(res.type);
+                $("#ddlCalc").val(res.isCalc ? "1" : "0");
+                $("#txtSort").val(res.sort);
+
+                $("#chkBasic").prop("checked", res.isBasic);
+                $("#chkGross").prop("checked", res.isGross);
+                //$("#chkVar").prop("checked", res.isVar);
+                //$("#chkLoan").prop("checked", res.isLoan);
+
+                // Reset panels
+                $("#statPanel, #otherPanel, #allowancePanel").hide();
+                $("#chkStat, #chkOthers, #chkAllowance").prop("checked", false);
+
+                // -------------------------
+                // STATUTORY
+                // -------------------------
+                if (res.isStat) {
+                    $("#chkStat").prop("checked", true);
+                    $("#statPanel").show();
+                    loadStatutoryKeys();
+
+                    setTimeout(() => {
+                        $("#ddlStatType").val(res.statKey);
+                    }, 300);
+                }
+
+                // -------------------------
+                // OTHERS
+                // -------------------------
+                else if (res.isOthers) {
+                    $("#chkOthers").prop("checked", true);
+                    $("#otherPanel").show();
+                    loadOtherKeys();
+
+                    setTimeout(() => {
+                        $("#ddlOtherType").val(res.otherKey);
+                    }, 300);
+                }
+
+                // -------------------------
+                // ALLOWANCE  ✅ NEW
+                // -------------------------
+                else if (res.isAllowance) {
+
+                    $("#chkAllowance").prop("checked", true);
+                    $("#allowancePanel").show();
+
+                    loadAllowanceKeys(); // ✅ load FIRST
+
+                    setTimeout(() => {
+                        $("#ddlAllowanceType").val(res.allowanceKey);
+                    }, 200);
+                }
+
+
+
+                $("#entryForm").data("edit-id", id);
+            }
+        });
+    }
+
+    // ==================================================
+    // COLLECT FORM DATA
+    // ==================================================
+    function collectFormData() {
+
+        var isStat = $("#chkStat").is(":checked");
+
+        return {
+            PayConfigId: $("#entryForm").data("edit-id") || 0,
+            PayConfigName: $("#txtName").val(),
+            PayConfigType: $("#ddlType").val(),
+            IsCalculative: parseInt($("#ddlCalc").val()),
+
+            SortOrder: parseInt($("#txtSort").val()),
+
+            IsBasicComponent: $("#chkBasic").is(":checked"),
+            IsGrossComponent: $("#chkGross").is(":checked"),
+            IsVariableAmt: parseInt(0),
+            IsLoanComponent: parseInt(0),
+
+            IsStatutory: $("#chkStat").is(":checked"),
+            StatutoryType: $("#chkStat").is(":checked") ? $("#ddlStatType").val() : "",
+
+            IsOther: $("#chkOthers").is(":checked"),
+            OtherType: $("#chkOthers").is(":checked") ? $("#ddlOtherType").val() : "",
+
+            IsAllowance: $("#chkAllowance").is(":checked"),
+            AllowanceType: $("#chkAllowance").is(":checked") ? $("#ddlAllowanceType").val() : ""
+        };
+    }
+
+    // ==================================================
+    // SAVE (INSERT + UPDATE)
+    // ==================================================
+    function saveData() {
+
+        var model = collectFormData();
+
+        $.ajax({
+            url: "/SalaryConfig/SavePayComponent",
+            type: "POST",
+            data: model,
+            success: function (res) {
+                if (res.Code === 1) {
+                    toastr.success(res.Message);
+                    closeModal();
+                    refreshGrid();
+                }
+                else {
+                    toastr.error(res.Message);
+                }
+            }
+        });
+    }
+
+    //function toggleStatPanel() {
+    //    const isStat = document.getElementById('chkStat').checked;
+    //    document.getElementById('statPanel').style.display = isStat ? 'block' : 'none';
+    //}
+    function toggleAllowancePanel() {
+
+        const isAllowance = $("#chkAllowance").is(":checked");
+        $("#allowancePanel").toggle(isAllowance);
+
+        if (isAllowance) {
+            // Mutually exclusive
+            $("#chkStat").prop("checked", false);
+            $("#statPanel").hide();
+
+            $("#chkOthers").prop("checked", false);
+            $("#otherPanel").hide();
+        }
+        loadAllowanceKeys();
+    }
+
+    function toggleStatPanel() {
+
+        const isStat = $("#chkStat").is(":checked");
+        $("#statPanel").toggle(isStat);
+
+        if (isStat) {
+            // Mutually exclusive
+            $("#chkAllowance").prop("checked", false);
+            $("#allowancePanel").hide();
+
+            $("#chkOthers").prop("checked", false);
+            $("#otherPanel").hide();
+        }
+        loadStatutoryKeys();
+    }
+
+
+    function toggleOtherPanel() {
+
+        const isOthers = $("#chkOthers").is(":checked");
+        $("#otherPanel").toggle(isOthers);
+
+        if (isOthers) {
+            // Mutually exclusive
+            $("#chkStat").prop("checked", false);
+            $("#statPanel").hide();
+
+            $("#chkAllowance").prop("checked", false);
+            $("#allowancePanel").hide();
+        }
+        loadOtherKeys();
+    }
+
+
+</script>

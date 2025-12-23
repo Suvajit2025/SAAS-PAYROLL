@@ -37,40 +37,51 @@
 
     }
     $("#btnShow").on('click', function () {
-        if (Validation() == true) {
+
+        if (Validation() === true) {
+
             let url = "/Loan/LoanProcessData";
-            info = {
-                "IDEmployee": $("#ddlEmployee").val() === "0" ? "0" : $("#ddlEmployee").val()
-            }
+
+            let info = {
+                "IDEmployee": $("#ddlEmployee").val() === "0" ? "0" : $("#ddlEmployee").val(),
+                "Year": $("#ddlYear").val(),
+                "Month": $("#ddlMonth").val()
+            };
+
             $.get(url, info, function (data) {
+
                 let newdata = JSON.parse(data);
                 $("#LoanProcessBody").empty();
-                newdata.map(function (obj) {
-                    var row = '';
-                    row = row + '<tr>';
-                    row = row + '<td><label id="lblEmployeeno"> ' + obj.EmployeeNo + '</label></td>';
-                    row = row + '<td><label id="lblEmployeename"> ' + obj.EmployeeName + '</td>';
-                    row = row + '<td><label id="lblLondate"> ' + obj.LoanDate + '</td>';
-                    row = row + '<td><label id="lblLoanno"> ' + obj.LoanNo + '</td>';
-                    row = row + '<td><label id="lblInsMonth"> ' + obj.InstallmentMonth + '</td>';
-                    row = row + '<td><label id="lblInsYear"> ' + obj.InstallmentYear + '</td>';
-                    row = row + '<td><label id="lblMonthly"> ' + obj.MonthlyLoan + '</td>';
-                    if (obj.Processed == true) {
-                        row = row + '<td><input type="checkbox" id="chkProcess" checked></td>';
-                    }
-                    else {
-                        row = row + '<td><input type="checkbox" id="chkProcess"></td>';
-                    }
-                    row = row + '<td><input type="hidden" id="hdIDLoan" value=' + obj.IDLoan + ' />';
-                    row = row + '<input type="hidden" id="hdIDSRL" value=' + obj.SRL + ' />';
-                    row = row + '<input type="hidden" id="hdIDDetail" value=' + obj.IDDetail + ' /></td>';
-                    row = row + '</tr>';
+
+                $.each(newdata, function (index, obj) {
+
+                    let row = `
+                    <tr>
+                        <td><label class="lblEmployeeno">${obj.EmpCode ?? ''}</label></td>
+                        <td><label class="lblEmployeename">${obj.EmployeeName ?? ''}</label></td>
+                        <td><label class="lblLondate">${obj.LoanDate ?? ''}</label></td>
+                        <td><label class="lblLoanno">${obj.LoanNo ?? ''}</label></td>
+                        <td><label class="lblInsMonth">${obj.InstallmentMonth ?? ''}</label></td>
+                        <td><label class="lblInsYear">${obj.InstallmentYear ?? ''}</label></td>
+                        <td><label class="lblMonthly">${obj.InsAmount ?? ''}</label></td>
+                        <td>
+                            <input type="checkbox" class="chkProcess" ${obj.Processed ? 'checked' : ''}>
+                            <input type="hidden" class="hdIDLoan" value="${obj.IDLoan}"> 
+                            <input type="hidden" class="hdClosingBalance" value="${obj.ClosingBalance ?? 0}">
+                        </td>
+                    </tr>
+                `;
+
                     $("#LoanProcessBody").append(row);
                 });
 
+            }).fail(function (xhr, status, error) {
+                console.error("Error:", error);
+                alert("Error fetching loan process data. Please try again.");
             });
         }
     });
+
     function Validation() {
         let Year = $("#ddlYear :selected").val();
         let Month = $("#ddlMonth :selected").val();
@@ -93,14 +104,14 @@
 
         return true;
     }
-    $("#chkAll").on('click', function () {
-        let value = this.checked;
-        let ctl = null;
-        console.log(value);
-        $("#LoanProcessBody tr").each(function () {
-            $(this).find("#chkProcess").prop('checked', value);
-        });
-    });
+    //$("#chkAll").on('click', function () {
+    //    let value = this.checked;
+    //    let ctl = null;
+    //    console.log(value);
+    //    $("#LoanProcessBody tr").each(function () {
+    //        $(this).find("#chkProcess").prop('checked', value);
+    //    });
+    //});
 
     // Show Loan Sanctioned, Loan Realised And Loan Due
     $('body').on('click', '#chkProcess', function () {
@@ -136,70 +147,70 @@
         }
     });
 
-    $("#btnProcess").on('click', function () {
-        if (ProcessValidation() == true) {
-            let records = [];
-            let obj = {};
-            $("#LoanProcessBody tr").each(function () {
-                obj = {
-                    "SRL": $(this).find("#hdIDSRL").val(),
-                    "IDDetail": $(this).find("#hdIDDetail").val(),
-                    "IDLoan": $(this).find("#hdIDLoan").val(),
-                    "ReceivedAmount": $(this).find("#chkProcess").prop("checked") == true ? $(this).find("#lblMonthly").text().trim() : "0",
-                    "EmployeeName": $(this).find("#lblEmployeename").text().trim(),
-                    "EmployeeNo": $(this).find("#lblEmployeeno").text().trim()
-                };
-                records.push(obj);
-            });
+    //$("#btnProcess").on('click', function () {
+    //    if (ProcessValidation() == true) {
+    //        let records = [];
+    //        let obj = {};
+    //        $("#LoanProcessBody tr").each(function () {
+    //            obj = {
+    //                "IDLoan": $(this).find("#hdIDLoan").val(),
+    //                "ReceivedAmount": $(this).find("#chkProcess").prop("checked") == true ? $(this).find("#lblMonthly").text().trim() : "0",
+    //                "EmployeeName": $(this).find("#lblEmployeename").text().trim(),
+    //                "EmployeeNo": $(this).find("#lblEmployeeno").text().trim(),
+    //                "Year": $("#ddlYear").val(),
+    //                "Month": $("#ddlMonth").val()
+    //            };
+    //            records.push(obj);
+    //        });
 
-            // Distinct  Loan No 
-            let distinctloan = [...new Set(records.map(x => x.IDLoan))];
-            distinctloan.map(function (value) {
-                let insdata = records.filter(obj => obj.IDLoan === value);
-                let emploan = [];
-                let total = 0;
-                insdata.map(function (z) {
-                    let obj = {
-                        "SRL": z.SRL,
-                        "IDDetail": z.IDDetail,
-                        "IDLoan": z.IDLoan,
-                        "ReceivedAmount": z.ReceivedAmount
-                    };
-                    total = total + parseFloat(z.ReceivedAmount);
-                    emploan.push(obj);
-                });
-                console.log(total);
-                if (total > 0) {
-                    let url = "/Loan/LoanProcessed";
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        data: JSON.stringify(emploan),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (data) {
-                            alert(data.Result == "" ? "Record successfully saved...." : Result);
-                        }
-                    });
-                }
-            });
-        }
-        $("#imgLoader").hide();
-    });
-    function ProcessValidation() {
-        let value = false;
-        $("#LoanProcessBody tr").each(function () {
-            if ($(this).find("#chkProcess").prop('checked') === true) {
-                value = true;
-                return;
-            }
-        });
-        if (value === false) {
-            alert("No selection found....");
-            return false;
-        }
-        return value;
-    }
+    //        // Distinct  Loan No
+    //        let distinctloan = [...new Set(records.map(x => x.IDLoan))];
+    //        distinctloan.map(function (value) {
+    //            let insdata = records.filter(obj => obj.IDLoan === value);
+    //            let emploan = [];
+    //            let total = 0;
+    //            insdata.map(function (z) {
+    //                let obj = {
+    //                    "SRL": z.SRL,
+    //                    "IDDetail": z.IDDetail,
+    //                    "IDLoan": z.IDLoan,
+    //                    "ReceivedAmount": z.ReceivedAmount
+    //                };
+    //                total = total + parseFloat(z.ReceivedAmount);
+    //                emploan.push(obj);
+    //            });
+    //            console.log(total);
+    //            if (total > 0) {
+    //                let url = "/Loan/LoanProcessed";
+    //                $.ajax({
+    //                    type: "POST",
+    //                    url: url,
+    //                    data: JSON.stringify(emploan),
+    //                    contentType: "application/json; charset=utf-8",
+    //                    dataType: "json",
+    //                    success: function (data) {
+    //                        alert(data.Result == "" ? "Record successfully saved...." : Result);
+    //                    }
+    //                });
+    //            }
+    //        });
+    //    }
+    //    $("#imgLoader").hide();
+    //});
+    //function ProcessValidation() {
+    //    let value = false;
+    //    $("#LoanProcessBody tr").each(function () {
+    //        if ($(this).find("#chkProcess").prop('checked') === true) {
+    //            value = true;
+    //            return;
+    //        }
+    //    });
+    //    if (value === false) {
+    //        alert("No selection found....");
+    //        return false;
+    //    }
+    //    return value;
+    //}
 
     //$("#txtempname").on('change', function () {
     //    let empDetails = $("#txtempname").val();
@@ -277,7 +288,7 @@
     //                row = row + '<td>' + obj.ClosingAmount + '</td>';
     //                row = row + '<td>' + obj.InstallmentMonth + '</td>';
     //                row = row + '<td>' + obj.InstallmentYear + '</td>';
-    //                // IN case Freeze is there 
+    //                // IN case Freeze is there
     //                if (obj.Freeze == true || obj.RowActive == 'N') {
     //                    row = row + '<td><input type="checkbox" id="chkProcessed" class="text-center chbProcessed" disabled></td>';
     //                }
@@ -295,15 +306,15 @@
     //                $("#tblModalLoanDetailsBody").append(row);
     //            });
 
-    //            // ON Success 
-    //            // Salary Month 
+    //            // ON Success
+    //            // Salary Month
     //            url = "/Loan/SalaryMonthsList"
     //            $.get(url, info, function (res) {
     //                $("#ddlMonth").empty();
     //                res.map(function (x) {
     //                    $("#ddlMonth").append('<option value=' + x.Name + '>' + x.Name + '</option>');
     //                });
-    //                // ON Success 
+    //                // ON Success
     //                // Salary Year
     //                url = "/Loan/SalaryYearList"
     //                $.get(url, info, function (data) {
@@ -369,7 +380,7 @@
     //        }
     //    });
     //});
-    //// Change Loan 
+    //// Change Loan
     //$("#btnChangeLoan").click(function () {
     //    //Valuatation
     //    let txtInsAmount = $("#txtInsAmount").val();
@@ -441,4 +452,79 @@
     //        });
     //    }
     //});
+
+    // ======= VALIDATION FUNCTION =======
+    function ProcessValidation() {
+        // Count how many checkboxes are checked
+        const checkedCount = $(".chkProcess:checked").length;
+
+        if (checkedCount === 0) {
+            alert("No selection found...");
+            return false;
+        }
+
+        return true;
+    }
+
+    // ======= CHECK ALL FUNCTION =======
+    $("#chkAll").on("click", function () {
+        $(".chkProcess").prop("checked", this.checked);
+    });
+
+    // ======= PROCESS BUTTON CLICK =======
+    $("#btnProcess").on("click", function () {
+        if (!ProcessValidation()) return;
+
+        let records = [];
+
+        $("#LoanProcessBody tr").each(function () {
+            const $row = $(this);
+            const isChecked = $row.find(".chkProcess").prop("checked");
+
+            const obj = {
+                IDLoan: $row.find(".hdIDLoan").val(),
+                ReceivedAmount: isChecked ? $row.find(".lblMonthly").text().trim() : "0",
+                EmployeeName: $row.find(".lblEmployeename").text().trim(),
+                EmployeeNo: $row.find(".lblEmployeeno").text().trim(),
+                Year: $row.find(".lblInsYear").text().trim(),
+                Month: $row.find(".lblInsMonth").text().trim(),
+                ClosingBalance: $row.find(".hdClosingBalance").val()
+            };
+
+            records.push(obj);
+        });
+
+        // Keep only the rows where Process = true
+        const selectedRecords = records.filter(x => parseFloat(x.ReceivedAmount) > 0);
+
+        if (selectedRecords.length === 0) {
+            alert("No valid record selected.");
+            return;
+        }
+
+        // Distinct by IDLoan
+        const distinctLoans = [...new Set(selectedRecords.map(x => x.IDLoan))];
+
+        distinctLoans.forEach(idLoan => {
+            const loanRows = selectedRecords.filter(x => x.IDLoan === idLoan);
+            const total = loanRows.reduce((sum, x) => sum + parseFloat(x.ReceivedAmount), 0);
+
+            if (total > 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Loan/LoanProcessed",
+                    data: JSON.stringify(loanRows),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        alert(data.Result === "" ? "Record successfully saved." : data.Result);
+                        location.reload();
+                    },
+                    error: function (xhr, status, err) {
+                        console.error("Error saving loan process:", err);
+                    }
+                });
+            }
+        });
+    });
 });

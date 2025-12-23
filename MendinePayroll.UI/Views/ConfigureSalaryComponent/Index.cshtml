@@ -149,8 +149,8 @@
 <script>
     function AddconfigureSalaryComponentLoad() {
         var jq = jQuery.noConflict();
-        
-        document.location.href = "/ConfigureSalaryComponent/NewConfigureSalary";
+        document.location.href = "/ConfigureSalaryComponent/dynamicConfigureSalary";
+        //document.location.href = "/ConfigureSalaryComponent/NewConfigureSalary";
     }
 </script>
 <script type="text/javascript">
@@ -235,8 +235,7 @@
 </script>
 <script>
     function GetConfigureSalaryComponent(SalaryConfigureID) {
-
-      window.location.href = "/ConfigureSalaryComponent/UpdateSalaryConfigure?cal=" + SalaryConfigureID + "";
+        window.location.href = "/ConfigureSalaryComponent/NewUpdateSalaryConfigure?id=" + SalaryConfigureID;
     }
 </script>
 

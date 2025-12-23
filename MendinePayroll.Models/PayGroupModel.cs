@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -24,5 +25,7 @@ namespace MendinePayroll.Models
             public int? ConcernHRPersonnel { get; set; }
             public EmpbasicModel masterModel { get; set; }
             public List<SelectListItem> selectListItems { get; set; }
+            public string TenantID { get; set; }=string.Empty;
+            public string EntryUser { get; set; }=String.Empty;
     }
 }

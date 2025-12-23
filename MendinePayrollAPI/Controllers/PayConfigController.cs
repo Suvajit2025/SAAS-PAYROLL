@@ -19,7 +19,7 @@ namespace MendinePayrollAPI.Controllers
         {
             try
             {
-                var list = groupCore.Payconfiglist();
+                var list = groupCore.Payconfiglist(payConfigModel.TenantID);
                 if (list != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, list);

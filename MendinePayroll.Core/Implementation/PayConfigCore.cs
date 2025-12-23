@@ -13,12 +13,12 @@ namespace MendinePayroll.Core.Implementation
     {
         esspEntities esspEntities = new esspEntities();
         PayConfigModel payConfigModel = new PayConfigModel();
-        public  List<PayConfigModel> Payconfiglist()
+        public  List<PayConfigModel> Payconfiglist(string tenantID)
         {
             List<PayConfigModel> listmodel = new List<PayConfigModel>();
             try
             {
-                List<PayConfig_GetAll_Result> payconfiglist = esspEntities.PayConfig_GetAll().ToList();
+                List<PayConfig_GetAll_Result> payconfiglist = esspEntities.PayConfig_GetAll(tenantID).ToList();
                 listmodel = payconfiglist.Select(X =>
                 {
                     return new PayConfigModel
@@ -51,7 +51,7 @@ namespace MendinePayroll.Core.Implementation
                         PayConfigId = X.PayConfigId,
                         PayConfigName = X.PayConfigName,
                         PayConfigType = X.PayConfigType,
-                        IScalculative=X.IScalculative
+                        IScalculative=X.IScalculative 
                     };
                 }).ToList();
             }
@@ -67,7 +67,7 @@ namespace MendinePayroll.Core.Implementation
             List<PayConfigModel> PayList = new List<PayConfigModel>();
             try
             {
-                List<PayConfig_GetByType_Result> listmodel = esspEntities.PayConfig_GetByType(payConfigModel.PayConfigType).ToList();
+                List<PayConfig_GetByType_Result> listmodel = esspEntities.PayConfig_GetByType(payConfigModel.PayConfigType,payConfigModel.TenantID).ToList();
                 PayList = listmodel.Select(X =>
                 {
                     return new PayConfigModel
@@ -90,7 +90,7 @@ namespace MendinePayroll.Core.Implementation
         {
             try
             {
-                int Savepayconfig = esspEntities.PayConfig_Save(payConfigModel.PayConfigId, payConfigModel.PayConfigName, payConfigModel.PayConfigType,payConfigModel.IScalculative);
+                int Savepayconfig = esspEntities.PayConfig_Save(payConfigModel.PayConfigId, payConfigModel.PayConfigName, payConfigModel.PayConfigType,payConfigModel.IScalculative,payConfigModel.IsStatutory,payConfigModel.TenantID,payConfigModel.EntryUser);
                 if(Savepayconfig!=0)
                 {
                     return Savepayconfig;

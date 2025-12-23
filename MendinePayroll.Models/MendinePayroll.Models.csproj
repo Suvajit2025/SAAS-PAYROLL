@@ -67,6 +67,8 @@
     <Compile Include="SalaryComponentModel.cs" />
     <Compile Include="SalaryComponentTypeModel.cs" />
     <Compile Include="SalaryConfigureModel.cs" />
+    <Compile Include="StatutoryRuleModel.cs" />
+    <Compile Include="TaxModel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

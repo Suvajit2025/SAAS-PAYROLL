@@ -37,7 +37,7 @@
                                 <input type="hidden" id="txtMobileall" value="0" />
                                 @*<input type="hidden" id="txtInternetall" value="0" />
 
-                                    <input type="hidden" id="txtContinuousAllowance" value="0" />*@
+                            <input type="hidden" id="txtContinuousAllowance" value="0" />*@
                                 <input type="hidden" id="txtClosingBlnc" value="0" />
 
                             </div>
@@ -318,7 +318,7 @@
 
 
                     @*@if (Convert.ToString(Session["UserEmail"]) == Convert.ToString(TempData["LeaveEdit"]))
-                        {*@
+                {*@
                     <tr>
 
                         <th scope="row" style="width:25%;">Leave Without Pay</th>
@@ -338,26 +338,26 @@
                     </tr>
 
                     @*}
-                        else
-                        {
-                            <tr>
+                else
+                {
+                    <tr>
 
-                                <th scope="row" style="width:25%;">Leave Without Pay</th>
-                                <td style="width:25%;">
-                                    <input type="text" readonly id="txtLeaveWithoutpay" class="form-control" name="LeaveWithoutPay" onchange="return ChangeLeaveDetails(this.name, this.value);" />
-                                </td>
-                                <th scope="row" style="width:25%;">Leave Amount</th>
-                                <td style="width:25%;"><span id="lblLeaveWithoutPayamt"></span></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" style="width:25%;">No of Leave Deduction Due To Late</th>
-                                <td style="width:25%;">
-                                    <input type="text" readonly id="txtlatedays" class="form-control" name="latedays" onchange="return ChangeLeaveDetails(this.name, this.value);" />
-                                </td>
-                                <th scope="row" style="width:25%;">Leave Amount Due To Late</th>
-                                <td style="width:25%;"><span id="lbllatedaysamt"></span></td>
-                            </tr>
-                        }*@
+                        <th scope="row" style="width:25%;">Leave Without Pay</th>
+                        <td style="width:25%;">
+                            <input type="text" readonly id="txtLeaveWithoutpay" class="form-control" name="LeaveWithoutPay" onchange="return ChangeLeaveDetails(this.name, this.value);" />
+                        </td>
+                        <th scope="row" style="width:25%;">Leave Amount</th>
+                        <td style="width:25%;"><span id="lblLeaveWithoutPayamt"></span></td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="width:25%;">No of Leave Deduction Due To Late</th>
+                        <td style="width:25%;">
+                            <input type="text" readonly id="txtlatedays" class="form-control" name="latedays" onchange="return ChangeLeaveDetails(this.name, this.value);" />
+                        </td>
+                        <th scope="row" style="width:25%;">Leave Amount Due To Late</th>
+                        <td style="width:25%;"><span id="lbllatedaysamt"></span></td>
+                    </tr>
+                }*@
                     <tr>
 
                         <th scope="row" style="width:25%;" colspan="2">Absent Day</th>
@@ -371,7 +371,20 @@
             {
                 <button type="button" id="btnSaveLeave" class="=btn btn-primary" style="float:right" onclick="SaveLeaveDetails();">Save</button>
             }
-            <div class="col-md-12 clearfix-height20"></div>
+            <div class="col-md-12"></div>
+            <div class="col-md-12"><br /></div>
+            <table style="width:100%; margin:auto; margin-bottom:10px;" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="4" style="background-color:greenyellow">Loan Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                     
+                </tbody>
+
+
+            </table>
             <div class='col-sm-3'>
                 <div class="form-group">
                     <label class="control-label">Select Month<span class="required">*</span></label>
@@ -457,7 +470,7 @@
             </div>
 
 
-    </section>
+</section>
     <!-- end: page -->
 </section>
 
@@ -794,6 +807,7 @@
                         //$("#txtBasic").val(gamount);
 
                         $("#TotalAllowance").val(parseFloat(totalAllowances));
+                        //alert(gamount)
                         //$("#txtfgrossamount").val(parseFloat(gamount) - parseFloat($("#txtinternet").val()));
                         //$(".GROSSAMOUNT").val(gamount);
                     }
@@ -888,7 +902,9 @@
                 for (ID; ID < RecordLength; ID++) {
 
                     if (response[ID].PayConfigType == "Allowances") {
+                        
                         amount = parseFloat(amount) + parseFloat($("#tPriceedit_" + response[ID].PayConfigId + "").val());
+                        //alert("#tPriceedit_" + response[ID].PayConfigId+amount)
 
                         if ($("#tPriceedit_" + response[ID].PayConfigId + "").val() == "0" &&
                             (response[ID].PayConfigName.toUpperCase().replace(/[^a-z0-9\s]/gi, '').replace(/[-\s]/g, '') == "STIPEND"
@@ -905,17 +921,19 @@
                             arrears = $("#tPriceedit_" + response[ID].PayConfigId + "").val();
                         }
                         //amount = parseFloat(amount) + parseFloat(mobile) + parseFloat(basic);
+                        amount = parseFloat(amount);
+                        //alert(amount)
                     }
                     if (response[ID].PayConfigType == "Deduction") {
                         damount = parseFloat(damount) + parseFloat($("#tPriceeditDeducation_" + response[ID].PayConfigId + "").val());
                     }
 
                 }
-
+                //alert(SalaryConfigureType)
                 if (SalaryConfigureType !== 1) {
                     basic = parseFloat(amount) - parseFloat(arrears);
                 }
-
+                //alert(basic)
                 $(".GROSSAMOUNT").val(basic);
                 var installment = $("#txtInstallment").val();
                 //var leaveamount = $("#txtleaveamt").val();
@@ -969,12 +987,12 @@
                     var totamount = $("#txtfinalamount").val();
                     TotalAllowance = parseFloat(response[0].ContinuousAllowance) +
                         parseFloat(response[0].ProductionBonus) + parseFloat(response[0].OvertimeAllowance);
-
+                    
                     var grossamount = parseFloat(gamount) + parseFloat(response[0].ContinuousAllowance) +
                         parseFloat(response[0].ProductionBonus) + parseFloat(response[0].OvertimeAllowance);
 
                     $("#txtfgrossamount").val(grossamount);
-
+                    //alert("net1-" + grossamount)
                     totamount = parseFloat(totamount) + parseFloat(response[0].ContinuousAllowance) + parseFloat(arrears) +
                         parseFloat(response[0].ProductionBonus) + parseFloat(response[0].OvertimeAllowance);
                     var totamount = $("#txtfinalamount").val(Math.round(totamount));
@@ -990,7 +1008,7 @@
                     var grossamount = parseFloat(gamount) + parseFloat(0) +
                         parseFloat(response[0].ProductionBonus) + parseFloat(response[0].OvertimeAllowance);
                     $("#txtfgrossamount").val(grossamount);
-
+                     
                     totamount = parseFloat(totamount) + parseFloat(0) + parseFloat(arrears) +
                         parseFloat(response[0].ProductionBonus) + parseFloat(response[0].OvertimeAllowance);
                     var totamount = $("#txtfinalamount").val(Math.round(totamount));
@@ -1130,11 +1148,13 @@
         // In case all total Allowence is 0 and Gross is given
         if (totallowance != 0) {
             $("#txtfgrossamount").val(totallowance);
+            //alert("net2-" + grossamount)
         }
         else {
             Gross = parseInt($("#txtfgrossamount").val());
             totallowance = Gross - Math.round((Gross / wdays) * lwp);
             $("#txtfgrossamount").val(totallowance);
+            //alert("net3-" + grossamount)
         }
 
         $("#TotalAllowance").val(totallowance - basicamount);

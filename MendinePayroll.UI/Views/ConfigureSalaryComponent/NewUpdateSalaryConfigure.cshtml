@@ -1,0 +1,695 @@
+﻿@{
+    ViewBag.Title = "Update Salary Configuration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2>Update Salary Configuration</h2>
+    </header>
+
+    <input type="hidden" id="hdnSalaryConfigureID" value="@ViewBag.SalaryConfigureID" />
+
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+
+                <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+            <h2 class="panel-title">Configure Salary Component</h2>
+        </header>
+
+        <div class="panel-body">
+            <form role="form">
+                <div class="box-body">
+                    <!-- HEADER SECTION -->
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Salary Configure Name: <span class="required">*</span></label>
+                            <div class="input-group btn-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-cab"></i>
+                                </span>
+                                <input type="text" id="txtSalaryConfigureName" class="form-control" />
+                            </div>
+                            <span id="msgSalaryConfigureName" class="ms-error" style="color:red;"></span>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Salary Configure Type<span class="required">*</span></label>
+                            <select id="ddlSalaryType" class="form-control">
+                                <option value="0">Select Salary Type</option>
+                                <option value="1">Normal</option>
+                                <option value="2">Factory</option>
+                            </select>
+                            <span id="msgSalaryConfigureType" class="ms-error" style="color:red;"></span>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12"></div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="control-label">Pay Group Name: <span class="required">*</span></label>
+                            <div class="input-group btn-group">
+                                <span class="input-group-addon">
+                                    <i class="fa fa-cab"></i>
+                                </span>
+                                <select id="ddlPaygroup" class="form-control" name="Model.PaymentTerm" value="0" @*onchange="return checkDuplicatepaygroup(this.value);"*@></select>
+                            </div>
+                            <span id="msgPaygroup" class="ms-error" style="color:red;"></span>
+
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="col-md-12"></div>
+                    <div class="col-sm-12">
+                        <div class="form-group" style="margin-bottom:0px;">
+                            <div class="table-responsive" style="overflow-x: initial;">
+                                <table class="table" style="margin-bottom:0px;">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="7">
+                                                Manual Salary Configure
+                                                <input id="divDynamicManual" type="hidden" value="1">
+
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="7" style="background: #e9eef1;">
+
+                                                <div id="Manualmain">
+
+
+
+                                                    <div id="divDynamicManualentrys"></div>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group" style="margin-bottom:0px;">
+                            <div class="table-responsive" style="overflow-x: initial;">
+                                <table class="table" style="margin-bottom:0px;">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="7">
+                                                <input id="divallowancesID" type="hidden" value="1">
+                                                Allowances
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="7" style="background: #e9eef1;">
+
+                                                <div id="main">
+
+
+
+                                                    <div id="divDynamicAllowances"></div>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="box-footer" style="text-align:right; ">
+                                    <a href="#" onclick="return Payconfig();" class="btn btn-tertiary"> <i class="fa fa-plus-square space-right"></i> Add Allowances</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group" style="margin-bottom:0px;">
+                            <div class="table-responsive" style="overflow-x: initial;">
+                                <table class="table" style="margin-bottom:0px;">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="7">
+                                                Deducations
+                                                <input id="divID" type="hidden" value="1">
+
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="7" style="background: #e9eef1;">
+
+                                                <div id="main2">
+
+
+
+                                                    <div id="divDynamicDeducations"></div>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="box-footer" style="text-align:right; ">
+                                    <a href="#" onclick="return Payconfig();" class="btn btn-tertiary"> <i class="fa fa-plus-square space-right"></i> Add Deducation</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group" style="margin-bottom:0px;">
+                            <div class="table-responsive" style="overflow-x: initial;">
+                                <table class="table" style="margin-bottom:0px;">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="7">
+                                                Company Contribution
+                                                <input id="divID" type="hidden" value="1">
+
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="7" style="background: #e9eef1;">
+
+                                                <div id="main2">
+
+
+
+                                                    <div id="divDynamicCC"></div>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="box-footer" style="text-align:right; ">
+                                    <a href="#" onclick="return Payconfig();" class="btn btn-tertiary"> <i class="fa fa-plus-square space-right"></i> Add Company Contribution</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="form-group" style="margin-bottom:0px;">
+                            <div class="table-responsive" style="overflow-x: initial;">
+                                <table class="table" style="margin-bottom:0px;">
+                                    <thead>
+                                        <tr>
+                                            <td colspan="7">
+                                                Legends
+                                                <input id="divID" type="hidden" value="1">
+
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="7" style="background: #e9eef1;">
+
+                                                <div id="main3">
+
+
+
+                                                    <div id="divDynamicLegends"></div>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <div class="text-center mb-3">
+            <button id="btnUpdate" class="btn btn-success btn-m">
+                <i class="fa fa-save"></i> Update
+            </button>
+        </div>
+    </section>
+</section>
+<div id="pageLoader"
+     style="
+        display:none;
+        position: fixed;
+        top:0; left:0;
+        width:100%; height:100%;
+        background: rgba(255,255,255,0.6);
+        z-index: 9999;
+        text-align:center;
+        padding-top:18%;
+     ">
+ 
+    <img src="~/Images/Loader.gif" style="width:80px;height:80px;" />
+    <div style="font-size:18px; margin-top:10px; color:#444;">Please wait...</div>
+</div>
+
+<script>
+
+    // ======================================================================
+    // PAGE INIT
+    // ======================================================================
+    $(function () {
+
+        showLoader(); // <-- ADD THIS
+
+        const salaryConfigureId = $("#hdnSalaryConfigureID").val();
+
+        loadPayGroup().done(function () {
+            $.when(
+                loadManualMaster(),
+                loadAllowanceMaster(),
+                loadDeductionMaster(),
+                loadCompanyContributionMaster(),
+                loadLegendMaster()
+            ).done(function () {
+
+                $.when(
+                    loadHeader(salaryConfigureId),
+                    loadSelectedDetails(salaryConfigureId)
+                ).done(function () {
+                    hideLoader(); // <-- LOAD FINISHED
+                });
+
+            });
+        });
+
+        $("#btnUpdate").on("click", saveConfigureSalaryComponent);
+    });
+
+    function showLoader() {
+        $("#pageLoader").show();
+    }
+
+    function hideLoader() {
+        $("#pageLoader").hide();
+    }
+    // ======================================================================
+    // NAVIGATION
+    // ======================================================================
+    function Payconfig() {
+        window.location.href = "/PayConfig";
+    }
+
+    function BacktoEmpList() {
+        window.location.href = "/ConfigureSalaryComponent";
+    }
+
+    // ======================================================================
+    // HEADER
+    // ======================================================================
+    function loadHeader(id) {
+        return $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetSalaryConfigureByID",
+            data: { SalaryConfigureID: id },
+            success: function (res) {
+                if (res && res.length > 0) {
+                    $("#txtSalaryConfigureName").val(res[0].SalaryConfigureName);
+                    $("#ddlSalaryType").val(res[0].SalaryConfigureType);
+                    $("#ddlPaygroup").val(res[0].PayGroupID);
+                }
+            }
+        });
+    }
+
+    // ======================================================================
+    // PAY GROUP MASTER
+    // ======================================================================
+    function loadPayGroup() {
+        return $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetPayGroup",
+            success: function (res) {
+                const ddl = $("#ddlPaygroup");
+                //ddl.empty().append('<option value="0">Select Pay Group</option>');
+                res.forEach(x => ddl.append(`<option value="${x.Value}">${x.Text}</option>`));
+            }
+        });
+    }
+
+    // ======================================================================
+    // MASTER LOADERS
+    // ======================================================================
+
+    function loadManualMaster() {
+        return $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetAllPayConfig",
+            success: function (response) {
+
+                const section = $("#divDynamicManualentrys");
+                section.empty();
+
+                let idx = 0;
+                response.forEach(item => {
+                    if (item.EntryType === "Manual") {
+                        section.append(`
+                        <div class="col-md-4 mb-1" id="manual_${idx}" style="display:flex;align-items:center;">
+                            <input type="checkbox" id="chkManual_${idx}" style="height:18px;width:18px;">
+                            <label id="lblManuals_${idx}" class="ms-1"style="margin-top: 4px;">&nbsp;${item.PayConfigName}</label>
+                            <input type="hidden" id="hdnManual_${idx}" value="${item.PayConfigId}">
+                        </div>
+
+                    `);
+                        idx++;
+                    }
+                });
+            }
+        });
+    }
+
+    function loadAllowanceMaster() {
+        return $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetPayConfigbyTypeAllowances",
+            success: function (response) {
+
+                const container = $("#divDynamicAllowances");
+                container.empty();
+                // -------------------------------
+                // DO NOT CREATE TABLE IF NO DATA
+                // -------------------------------
+                if (!response || response.length === 0) {
+                    return;  // STOP HERE → No table created
+                }
+                // If data exists → Create table
+                container.append(buildTableTemplate("Allowances", "table-primary", "tblAllowancesBody"));
+
+                response.forEach((item, i) => {
+                    if (item.IScalculative) {
+                        $("#tblAllowancesBody").append(buildConfigRow(i, item, "A", "select-allowance"));
+                    }
+                });
+
+                attachEnableHandler(".select-allowance");
+            }
+        });
+    }
+
+    function loadDeductionMaster() {
+        return $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetPayConfigbyTypeDeducation",
+            success: function (response) {
+
+                const container = $("#divDynamicDeducations");
+                container.empty();
+                // -------------------------------
+                // DO NOT CREATE TABLE IF NO DATA
+                // -------------------------------
+                if (!response || response.length === 0) {
+                    return;  // STOP HERE → No table created
+                }
+                // If data exists → Create table
+                container.append(buildTableTemplate("Deduction", "table-danger", "tblDeductionsBody"));
+
+                response.forEach((item, i) => {
+                    if (item.IScalculative) {
+                        $("#tblDeductionsBody").append(buildConfigRow(i, item, "D", "select-deduction"));
+                    }
+                });
+
+                attachEnableHandler(".select-deduction");
+            }
+        });
+    }
+
+    function loadCompanyContributionMaster() {
+        return $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetPayConfigbyTypeCC",
+            success: function (response) {
+
+                const container = $("#divDynamicCC");
+                container.empty();
+                // -------------------------------
+                // DO NOT CREATE TABLE IF NO DATA
+                // -------------------------------
+                if (!response || response.length === 0) {
+                    return;  // STOP HERE → No table created
+                }
+                // If data exists → Create table
+                container.append(buildTableTemplate("Contribution", "table-info", "tblCompanyContributionBody"));
+
+                response.forEach((item, i) => {
+                    $("#tblCompanyContributionBody").append(buildConfigRow(i, item, "CC", "select-cc"));
+                });
+
+                attachEnableHandler(".select-cc");
+            }
+        });
+    }
+
+    function loadLegendMaster() {
+        return $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetAllPayConfig",
+            success: function (response) {
+                const container = $("#divDynamicLegends");
+                container.empty();
+                response.forEach((item, i) => {
+                    container.append(`
+                    <div class="col-md-2 mb-1">
+                        <label>${item.PayConfigName}</label>
+                        <input type="hidden" id="hdnlegends_${i}" value="${item.PayConfigId}">
+                    </div>
+                `);
+                });
+            }
+        });
+    }
+
+    // ======================================================================
+    // REUSABLE TABLE + ROW BUILDERS
+    // ======================================================================
+
+    function buildTableTemplate(title, headerClass, bodyId) {
+        return `
+        <div class="table-responsive mb-3">
+            <table class="table table-bordered table-striped">
+                <thead class="${headerClass}">
+                    <tr>
+                        <th style="width:60px;">Select</th>
+                        <th>${title} Name</th>
+                        <th>Formula</th>
+                        <th style="width:60px;">%</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody id="${bodyId}"></tbody>
+            </table>
+        </div>
+    `;
+    }
+
+    function buildConfigRow(i, item, prefix, cssClass) {
+        return `
+        <tr id="row${prefix}_${i}">
+            <td class="text-center">
+                <input type="checkbox" id="chk${prefix}_${i}" class="form-check-input ${cssClass}">
+            </td>
+            <td>
+                <label id="lbl${prefix}_${i}">${item.PayConfigName}</label>
+                <input type="hidden" id="hdn${prefix}_${i}" value="${item.PayConfigId}">
+            </td>
+            <td><input type="text" class="form-control form-control-sm" id="tPricecal${prefix}_${i}" disabled></td>
+            <td class="text-center">
+                <input type="checkbox" id="tchk${prefix}_${i}" disabled>
+            </td>
+            <td><input type="text" class="form-control form-control-sm" id="tPriceedit${prefix}_${i}" disabled></td>
+        </tr>
+    `;
+    }
+
+    function attachEnableHandler(selector) {
+        $(document).off("change", selector).on("change", selector, function () {
+            const row = $(this).closest("tr");
+            const enable = $(this).is(":checked");
+            row.find("input[type='text'], input[type='checkbox']").not(this).prop("disabled", !enable);
+        });
+    }
+
+    // ======================================================================
+    // LOAD SELECTED DETAILS
+    // ======================================================================
+    function loadSelectedDetails(id) {
+
+        $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/GetConfigureSalaryComponentData",
+            data: JSON.stringify({ SalaryConfigureID: id }),
+            contentType: "application/json",
+            success: function (res) {
+
+                if (!res.Success) {
+                    alert(res.Message || "Unable to load details.");
+                    return;
+                }
+
+                if (res.Manual.length) bindManual(res.Manual);
+                if (res.Allowances.length) bindAllowances(res.Allowances);
+                if (res.Deduction.length) bindDeductions(res.Deduction);
+                if (res.CompanyContribution.length) bindCC(res.CompanyContribution);
+            }
+        });
+    }
+
+    // ======================================================================
+    // BINDING FUNCTIONS
+    // ======================================================================
+
+    function bindManual(list) {
+        list.forEach(item => {
+            $("input[id^='hdnManual_']").each(function () {
+                if ($(this).val() == item.PayConfigId) {
+                    const idx = this.id.split("_")[1];
+                    $("#chkManual_" + idx).prop("checked", true);
+                }
+            });
+        });
+    }
+
+    function bindAllowances(list) {
+        list.forEach(item => {
+            $("input[id^='hdnA_'], input[id^='hdnallowances_']").each(function () {
+                if ($(this).val() == item.PayConfigId) {
+                    const idx = this.id.split("_")[1];
+
+                    $("#chkA_" + idx).prop("checked", true).trigger("change");
+                    $("#tPricecalA_" + idx).val(item.CalculationFormula || "");
+                    $("#tPriceeditA_" + idx).val(item.ManualRate || "");
+                    $("#tchkA_" + idx).prop("checked", item.ISPercentage == true);
+                }
+            });
+        });
+    }
+
+
+    function bindDeductions(list) {
+
+        list.forEach(item => {
+
+            $("input[id^='hdnD_']").each(function () {
+
+                if ($(this).val() == item.PayConfigId) {
+
+                    const idx = this.id.split("_")[1];
+
+                    $("#chkD_" + idx).prop("checked", true).trigger("change");
+                    $("#tPricecalD_" + idx).val(item.CalculationFormula || "");
+                    $("#tPriceeditD_" + idx).val(item.ManualRate || "");
+                    $("#tchkD_" + idx).prop("checked", item.ISPercentage === true);
+                }
+            });
+        });
+    }
+
+
+    function bindCC(list) {
+        list.forEach(item => {
+            $("input[id^='hdnCC_']").each(function () {
+                if ($(this).val() == item.PayConfigId) {
+                    const idx = this.id.split("_")[1];
+
+                    $("#chkCC_" + idx).prop("checked", true).trigger("change");
+                    $("#tPricecalCC_" + idx).val(item.CalculationFormula || "");
+                    $("#tPriceeditCC_" + idx).val(item.ManualRate || "");
+                    $("#tchkCC_" + idx).prop("checked", item.ISPercentage == true);
+                }
+            });
+        });
+    }
+
+    // ======================================================================
+    // SAVE CONFIGURATION
+    // ======================================================================
+    function saveConfigureSalaryComponent() {
+
+        const SalaryConfigureID = $("#hdnSalaryConfigureID").val();
+        const name = $("#txtSalaryConfigureName").val().trim();
+        const payGroup = $("#ddlPaygroup").val();
+        const type = $("#ddlSalaryType").val();
+
+        if (!name) return alert("Name required");
+        if (payGroup === "0") return alert("Select Pay Group");
+        if (type === "0") return alert("Select Type");
+
+        const Head = { SalaryConfigureID, SalaryConfigureName: name, PayGroupID: payGroup, SalaryConfigureType: type };
+        const DetailList = [];
+
+        collectSelectedRows("Manual", DetailList);
+        collectSelectedRows("A", DetailList);
+        collectSelectedRows("D", DetailList);
+        collectSelectedRows("CC", DetailList);
+        showLoader(); // <-- SHOW LOADER BEFORE AJAX
+        $.ajax({
+            type: "POST",
+            url: "/ConfigureSalaryComponent/SaveConfigureSalaryComponent",
+            data: JSON.stringify({ Head, Detail: DetailList }),
+            contentType: "application/json",
+            success: function (res) {
+
+                hideLoader(); // <-- HIDE LOADER AFTER RESPONSE
+
+                alert(res.Message);
+
+                if (res.Success)
+                    window.location.href = "/ConfigureSalaryComponent";
+            },
+        });
+    }
+
+    // ======================================================================
+    // GENERIC ROW COLLECTOR FOR SAVING
+    // ======================================================================
+    function collectSelectedRows(prefix, detailArray) {
+
+        $(`input[id^='chk${prefix}_']`).each(function () {
+
+            if (!$(this).is(":checked")) return;
+
+            const idx = this.id.split("_")[1];
+            // AUTO MAP THE PAYTYPE
+            let payType = "";
+            switch (prefix) {
+                case "Manual": payType = "Manual"; break;
+                case "A": payType = "Addition"; break;
+                case "D": payType = "Deduction"; break;
+                case "CC": payType = "CompanyContribution"; break;
+            }
+            detailArray.push({
+                ConfigureSalaryID: $("#hdnSalaryConfigureID").val(),
+                PayConfigId: $(`#hdn${prefix}_${idx}`).val(),
+                CalculationFormula: $(`#tPricecal${prefix}_${idx}`).val() || "",
+                ManualRate: $(`#tPriceedit${prefix}_${idx}`).val() || 0,
+                ISPercentage: $(`#tchk${prefix}_${idx}`).is(":checked"),
+                MasterPayConfigID: 0,   // always 0 as you wanted
+                PayType: payType        // <-- NEW FIELD ADDED
+            });
+        });
+    }
+
+</script>
+
+

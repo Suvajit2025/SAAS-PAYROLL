@@ -1,0 +1,409 @@
+﻿
+@{
+    ViewBag.Title = "Arrear Calculation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #ExportButtons .btn {
+        margin-right: 10px;
+        padding: 1px;
+    }
+</style>
+<style>
+    #loader-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+        #loader-overlay p {
+            color: white;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+</style>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<section role="main" class="content-body">
+    <header class="page-header">
+    </header>
+    <div id="loader-overlay">
+        <div class="text-center">
+            <img src="~/Contents/images/ajax-loader.gif" alt="Loading..." />
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <section class="panel" style="position:relative;">
+        <header class="panel-heading">
+            <h2 class="panel-title">TDS Financial YearWise SetUp</h2>
+            <div class="panel-actions">
+                <button id="" onclick="BacktoEmpList();" class="mb-sm mt-xs mr-xs  btn btn-sm btn-default text-sm text-weight-semibold"><i class="text-tertiary fa fa-arrow-circle-left  ml-lg"></i>Back</button>
+            </div>
+        </header>
+        <div class="panel-body">
+            <form role="form">
+                <div class="box-body">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="label-design" for="FinancialYear">Financial Year <span class="required">*</span></label>
+                                <select id="ddlFinancialYear" class="form-control" value="0"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="label-design" for="Status">Arrear Date From<span class="required">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input type="date" id="txtEffectiveFrom" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <input type="file" name="excelFile" id="excelFile" accept=".xlsx, .xls" required />
+                    </div>
+
+
+                </div>
+            </form>
+            <div class="box-footer mt-lg" style="text-align:center;">
+                <div class="col-md-12">
+                    <button type="button" id="uploadButton" class="btn btn-tertiary" style="margin:10px;">
+                        <i class="fa fa-upload space-right"></i>Upload
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- New card for table -->
+    <section class="panel mt-3">
+        <header class="panel-heading">
+            <h2 class="panel-title">Arrear Calculation List</h2>
+        </header>
+        <div class="panel-body" style="overflow:auto; max-height:400px;">
+            <div style="min-width:1200px;">
+                <!-- Export button aligned right -->
+                <div class="text-left my-2 pb-sm">
+                    <button id="btnExportExcel" class="btn btn-success">
+                        @*onclick="exportTableToExcel('TempArrearData', 'PreApproval_Arrear_Summary')" class="btn btn-sm btn-success"*@
+                        <i class="fa fa-file-excel-o"></i> Export to Excel
+                    </button>
+                </div>
+
+                <table id="TempArrearData" class="table table-bordered table-striped display nowrap" style="width:100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Financial Year</th>
+                            <th style="display:none">Arrear Type</th>
+                            <th style="display:none">Employee ID</th>
+                            <th>Employee Name</th>
+
+                            <th style="display:none">Old Basic</th>
+                            <th style="display:none">Old Gross</th>
+                            <th style="display:none">Old PF</th>
+                            <th style="display:none">New Basic</th>
+                            <th style="display:none">New Gross</th>
+                            <th style="display:none">New PF</th>
+
+                            <th>Arrear From</th>
+                            <th>Arrear To</th>
+                            <th>Arrear Month</th>
+
+                            <th>Total Months</th>
+                            <th>Basic Diff</th>
+                            <th>PF Diff</th>
+
+                            <th>Gross Diff</th>
+                            <th>Net Diff</th>
+                            <th>Total Gross Arrear</th>
+                            <th>Total Net Arrear</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="TempArrearDatabody" style="font-size:1.1rem"></tbody>
+                </table>
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-success" id="btnSaveArrear" onclick="finalsave()">
+                        <i class="fa fa-save"></i> Save Arrear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</section>
+
+<script>
+
+    function loadmasterData() {
+        const empId = "0";
+        $.ajax({
+            url: '/PayrollTds/GetTDSMasterData',
+            type: 'GET',
+            data: { empId: empId },
+            dataType: 'json',
+            success: function (data) {
+                populateFinancialYearDropdown('#ddlFinancialYear', data.financialYears, 'IDFinancialYear', 'FinancialYearCode', 'AssessmentYearCode');
+
+            },
+            error: function (err) {
+                console.error('Failed to load master data:', err);
+            }
+        });
+    }
+    function populateFinancialYearDropdown(selector, data, valueField, textField, dataAttrField) {
+        var dropdown = $(selector);
+        dropdown.empty();
+        dropdown.append($('<option></option>').val("0").html('-- Select --'));
+        $.each(data, function (i, item) {
+            // Add assessment year as data attribute
+            dropdown.append(
+                $('<option></option>')
+                    .val(item[valueField])
+                    .html(item[textField])
+                    .attr('data-assessmentyear', item[dataAttrField])
+            );
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        loadmasterData();
+        $("#loader").hide();
+        $("#loader-overlay").fadeOut();
+    });
+    $("#uploadButton").click(function () {
+        const fileInput = $("#excelFile")[0];
+        const effectiveFrom = $("#txtEffectiveFrom").val();
+        const finYearValue = $("#ddlFinancialYear").val();
+        const finYearText = $("#ddlFinancialYear option:selected").text().trim();
+
+        if (!fileInput.files.length) return alert("Please select a file.");
+        if (!effectiveFrom) return alert("Please select 'Arrear Date From'.");
+        if (finYearValue === "0") return alert("Please select a valid Financial Year.");
+
+        // Show the loader
+        $("#loader-overlay").show();
+        $("#loader-overlay").fadeIn();
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        formData.append("effectiveFrom", effectiveFrom);
+        formData.append("finYear", finYearText);
+
+        $.ajax({
+            url: '/PayrollTds/ParseExcel',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                const data = response?.data || response;
+                let tbody = $("#TempArrearDatabody");
+                tbody.empty();
+
+                if (!data || data.length === 0) {
+                    tbody.append(`<tr><td colspan="21" class="text-center text-danger">No data available</td></tr>`);
+                } else {
+                    $.each(data, function (index, item) {
+                        const row = `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.FinancialYear || ''}</td>
+                                    <td style="display:none">${item.ArrearType || ''}</td>
+                                    <td style="display:none">${item.EmpID || ''}</td>
+                                    <td>${item.EmployeeName || ''}</td>
+
+                                    <td style="display:none">${item.OldBasic || 0}</td>
+                                    <td style="display:none">${item.OldGross || 0}</td>
+                                    <td style="display:none">${item.OldPF || 0}</td>
+
+                                    <td style="display:none">${item.NewBasic || 0}</td>
+                                    <td style="display:none">${item.NewGross || 0}</td>
+                                    <td style="display:none">${item.NewPF || 0}</td>
+
+                                    <td>${item.ArrearFrom || ''}</td>
+                                    <td>${item.ArrearTo || ''}</td>
+                                    <td>${formatMonth(item.ArrearMonth) || ''}</td>
+
+                                    <td>${item.TotalMonths || 0}</td>
+                                    <td>${formatDecimal(item.BasicDifference)}</td>
+                                    <td>${formatDecimal(item.PFDifference)}</td>
+
+                                    <td>${formatDecimal(item.GrossDifference)}</td>
+                                    <td>${formatDecimal(item.NetDifference)}</td>
+                                    <td>${formatDecimal(item.TotalGrossArrear)}</td>
+                                    <td>${formatDecimal(item.TotalNetArrear)}</td>
+                                </tr>`;
+                        tbody.append(row);
+                    });
+
+                }
+                $("#loader").hide();
+                $("#loader-overlay").fadeOut();
+            },
+            error: function () {
+                $("#TempArrearDatabody").html("<tr><td colspan='21' class='text-danger text-center'>Upload failed. Please try again.</td></tr>");
+                $("#loader").hide();
+                $("#loader-overlay").fadeOut();
+            }
+        });
+    });
+    // Helpers
+    function parseDotNetDate(value) {
+        const match = /\/Date\((\d+)\)\//.exec(value) || /Date\((\d+)\)/.exec(value);
+        return match ? new Date(parseInt(match[1], 10)) : new Date(value);
+    }
+
+    //function formatDate(value) {
+    //    const date = parseDotNetDate(value);
+    //    if (isNaN(date)) return '';
+    //    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+    //}
+    function formatDate(value) {
+        // If it's already a string, return as-is
+        if (typeof value === 'string') return value;
+
+        // If it's a number, assume it's an Excel serial date
+        if (typeof value === 'number') {
+            const excelEpoch = new Date(1899, 11, 30); // Excel epoch starts at 1899-12-30
+            const millis = value * 86400000;
+            const date = new Date(excelEpoch.getTime() + millis);
+
+            // Fix floating-point errors (if any)
+            if (isNaN(date)) return '';
+
+            return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+        }
+
+        return '';
+    }
+
+    function formatMonth(value) {
+        const date = parseDotNetDate(value);
+        if (isNaN(date)) return '';
+        return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+    }
+    function formatDecimal(value) {
+        if (value == null || isNaN(value)) return '0.00';
+        return parseFloat(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+</script>
+
+<script>
+    $('#btnExportExcel').click(function () {
+        const finYear = $('#ddlFinancialYear option:selected').text().trim();
+        if (finYear === "-- Select --") {
+            alert("Please select a Financial Year.");
+            return;
+        }
+
+        fetch('/PayrollTds/ExportArrearSummaryToExcel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `finYear=${encodeURIComponent(finYear)}`
+        })
+            .then(response => response.blob())
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'PreApproval_Arrear_Summary.xlsx';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(err => alert("Download failed"));
+    });
+
+</script>
+
+
+<script>
+    function finalsave() {
+        const rows = $("#TempArrearData tbody tr");
+        let arrearDataList = [];
+        // Show the loader
+        $("#loader-overlay").show();
+        $("#loader-overlay").fadeIn();
+        // Disable the save button
+        $("#btnSaveArrear").prop("disabled", true).text("Saving...");
+
+        rows.each(function () {
+            const columns = $(this).find("td");
+            if (columns.length < 21 || columns.eq(0).text().includes("No data")) return;
+
+            const data = {
+                FinancialYear: columns.eq(1).text(),
+                ArrearType: columns.eq(2).text(),
+                EmpID: columns.eq(3).text(),
+                EmployeeName: columns.eq(4).text(),
+                OldBasic: parseFloat(columns.eq(5).text()),
+                OldGross: parseFloat(columns.eq(6).text()),
+                NewBasic: parseFloat(columns.eq(7).text()),
+                NewGross: parseFloat(columns.eq(8).text()),
+                ArrearFrom: columns.eq(9).text(),
+                ArrearTo: columns.eq(10).text(),
+                ArrearMonth: columns.eq(11).text(),
+                TotalMonths: parseInt(columns.eq(12).text()),
+                GrossDifference: parseFloat(columns.eq(13).text()),
+                NetDifference: parseFloat(columns.eq(14).text()),
+                TotalGrossArrear: parseFloat(columns.eq(15).text()),
+                TotalNetArrear: parseFloat(columns.eq(16).text())
+            };
+            arrearDataList.push(data);
+        });
+
+        if (arrearDataList.length === 0) {
+            alert("No data to save.");
+            return;
+        }
+
+        $.ajax({
+            url: '/PayrollTds/SaveArrearData',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(arrearDataList),
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    $('#TempArrearData tbody').empty();
+                } else {
+                    alert("Failed: " + (response.message || "Unknown error"));
+                }
+                $("#btnSaveArrear").prop("disabled", false).html('<i class="fa fa-save"></i> Save Arrear');
+                $("#loader").hide();
+                $("#loader-overlay").fadeOut();
+            },
+            error: function (xhr) {
+                $("#btnSaveArrear").prop("disabled", false).html('<i class="fa fa-save"></i> Save Arrear');
+                alert("Error saving data: " + xhr.statusText);
+                $("#loader").hide();
+                $("#loader-overlay").fadeOut();
+            }
+        });
+    }
+    function BacktoEmpList() {
+        window.location.href = "/Dashboard/Index";
+    }
+</script>
+
+
+

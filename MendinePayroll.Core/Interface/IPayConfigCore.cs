@@ -10,7 +10,7 @@ namespace MendinePayroll.Core.Interface
 {
     public interface IPayConfigCore
     {
-        List<PayConfigModel> Payconfiglist();
+        List<PayConfigModel> Payconfiglist(string TenantID);
         List<PayConfigModel> GetPayConfigById(PayConfigModel payConfigModel);
         List<PayConfigModel> GetPayConfigByType(PayConfigModel payConfigModel);
         int SavePayConfig(PayConfigModel payConfigModel);

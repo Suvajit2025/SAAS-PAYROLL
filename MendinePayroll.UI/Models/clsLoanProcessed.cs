@@ -13,6 +13,9 @@ namespace UI.Models
         public long IDDetail { get; set; }
         public long IDLoan { get; set; }
         public Decimal ReceivedAmount { get; set; }
+        public string Year { get; set; }= String.Empty;
+        public string Month { get; set; } = String.Empty;
+        public string ClosingBalance { get; set; } = String.Empty;
     }
     public class clsChangeLoanInfo
     {

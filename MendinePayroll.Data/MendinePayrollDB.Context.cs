@@ -120,13 +120,13 @@ namespace MendinePayroll.Data
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("ConfigureSalaryComponent_Save", configureSalaryIDParameter, payConfigIdParameter, calculationFormulaParameter, manualRateParameter, masterPayConfigIDParameter, iSPercentageParameter);
         }
     
-        public virtual ObjectResult<Employee_GetByDesignationID_Result> Employee_GetByDesignationID(Nullable<int> empdesignation)
+        public virtual ObjectResult<Employee_GetByDesignationID_Result> Employee_GetByDesignationID(string tenantID)
         {
-            var empdesignationParameter = empdesignation.HasValue ?
-                new ObjectParameter("empdesignation", empdesignation) :
-                new ObjectParameter("empdesignation", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Employee_GetByDesignationID_Result>("Employee_GetByDesignationID", empdesignationParameter);
+            var tenantIDParameter = tenantID != null ?
+                new ObjectParameter("TenantID", tenantID) :
+                new ObjectParameter("TenantID", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Employee_GetByDesignationID_Result>("Employee_GetByDesignationID", tenantIDParameter);
         }
     
         public virtual ObjectResult<EmployeeLoan_GetByID_Result> EmployeeLoan_GetByID(Nullable<int> empid)
@@ -197,9 +197,12 @@ namespace MendinePayroll.Data
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("LoanTransaction_save", loanIdParameter, empidParameter, installmentAmountParameter, openingBalanceParameter, closingBalanceParameter);
         }
     
-        public virtual ObjectResult<PayConfig_GetAll_Result> PayConfig_GetAll()
+        public virtual ObjectResult<PayConfig_GetAll_Result> PayConfig_GetAll(string tenantID)
         {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PayConfig_GetAll_Result>("PayConfig_GetAll");
+            var tenantIDParameter = tenantID != null ?
+                new ObjectParameter("TenantID", tenantID) :
+                new ObjectParameter("TenantID", typeof(string));
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PayConfig_GetAll_Result>("PayConfig_GetAll", tenantIDParameter);
         }
     
         public virtual ObjectResult<PayConfig_GetById_Result> PayConfig_GetById(Nullable<int> payConfigId)
@@ -211,16 +214,20 @@ namespace MendinePayroll.Data
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PayConfig_GetById_Result>("PayConfig_GetById", payConfigIdParameter);
         }
     
-        public virtual ObjectResult<PayConfig_GetByType_Result> PayConfig_GetByType(string payConfigType)
+        public virtual ObjectResult<PayConfig_GetByType_Result> PayConfig_GetByType(string payConfigType,string tenantID)
         {
             var payConfigTypeParameter = payConfigType != null ?
                 new ObjectParameter("PayConfigType", payConfigType) :
                 new ObjectParameter("PayConfigType", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PayConfig_GetByType_Result>("PayConfig_GetByType", payConfigTypeParameter);
+
+            var tenantIDParameter = tenantID != null ?
+                 new ObjectParameter("TenantID", tenantID) :
+                 new ObjectParameter("TenantID", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PayConfig_GetByType_Result>("PayConfig_GetByType", payConfigTypeParameter, tenantIDParameter);
         }
     
-        public virtual int PayConfig_Save(Nullable<int> payConfigId, string payConfigName, string payConfigType, Nullable<bool> iScalculative)
+        public virtual int PayConfig_Save(Nullable<int> payConfigId, string payConfigName, string payConfigType, Nullable<bool> iScalculative, Nullable<bool> iSstatutory,string tenantId,string entryUser)
         {
             var payConfigIdParameter = payConfigId.HasValue ?
                 new ObjectParameter("PayConfigId", payConfigId) :
@@ -237,8 +244,19 @@ namespace MendinePayroll.Data
             var iScalculativeParameter = iScalculative.HasValue ?
                 new ObjectParameter("IScalculative", iScalculative) :
                 new ObjectParameter("IScalculative", typeof(bool));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PayConfig_Save", payConfigIdParameter, payConfigNameParameter, payConfigTypeParameter, iScalculativeParameter);
+
+            var iSstatutoryParameter = iSstatutory.HasValue ?
+                new ObjectParameter("IsStatutory", iSstatutory) :
+                new ObjectParameter("IsStatutory", typeof(bool));
+
+            var tenantIdParameter = tenantId != null ?
+                new ObjectParameter("TenantID", tenantId) :
+                new ObjectParameter("TenantID", typeof(string));
+            var entryUserParameter = entryUser != null ?
+                new ObjectParameter("EntryUser", entryUser) :
+                new ObjectParameter("EntryUser", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PayConfig_Save", payConfigIdParameter, payConfigNameParameter, payConfigTypeParameter, iScalculativeParameter,iSstatutoryParameter,tenantIdParameter,entryUserParameter);
         }
     
         public virtual int PayGroup_Delete(Nullable<int> id)
@@ -250,12 +268,15 @@ namespace MendinePayroll.Data
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PayGroup_Delete", idParameter);
         }
     
-        public virtual ObjectResult<PayGroup_GetAll_Result> PayGroup_GetAll()
+        public virtual ObjectResult<PayGroup_GetAll_Result> PayGroup_GetAll(string tenantID)
         {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PayGroup_GetAll_Result>("PayGroup_GetAll");
+            var tenantIDParameter = tenantID != null ?
+               new ObjectParameter("TenantID", tenantID) :
+               new ObjectParameter("TenantID", typeof(string));
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PayGroup_GetAll_Result>("PayGroup_GetAll", tenantIDParameter);
         }
     
-        public virtual ObjectResult<PayGroup_Save_Result> PayGroup_Save(Nullable<int> id, string payGroupName, string description, string payGroupMasterCode, Nullable<int> concernHRPersonnel)
+        public virtual ObjectResult<PayGroup_Save_Result> PayGroup_Save(Nullable<int> id, string payGroupName, string description, string payGroupMasterCode, Nullable<int> concernHRPersonnel,string tenantID,string entryUser)
         {
             var idParameter = id.HasValue ?
                 new ObjectParameter("Id", id) :
@@ -276,8 +297,14 @@ namespace MendinePayroll.Data
             var concernHRPersonnelParameter = concernHRPersonnel.HasValue ?
                 new ObjectParameter("ConcernHRPersonnel", concernHRPersonnel) :
                 new ObjectParameter("ConcernHRPersonnel", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PayGroup_Save_Result>("PayGroup_Save", idParameter, payGroupNameParameter, descriptionParameter, payGroupMasterCodeParameter, concernHRPersonnelParameter);
+            var tenantIDParameter = tenantID != null ?
+                new ObjectParameter("TenantID", tenantID) :
+                new ObjectParameter("TenantID", typeof(string));
+            var entryUserParameter = entryUser != null ?
+                new ObjectParameter("EntryUser", entryUser) :
+                new ObjectParameter("EntryUser", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PayGroup_Save_Result>("PayGroup_Save", idParameter, payGroupNameParameter, descriptionParameter, payGroupMasterCodeParameter, concernHRPersonnelParameter,tenantIDParameter,entryUserParameter);
         }
     
         public virtual int PayGroupEmployeeMapping_Delete(Nullable<int> payGroupID, Nullable<int> employeeID)
@@ -403,9 +430,12 @@ namespace MendinePayroll.Data
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SalaryComponentType_Save", idParameter, salaryComponentTypeParameter);
         }
     
-        public virtual ObjectResult<SalaryConfigure_GetAll_Result> SalaryConfigure_GetAll()
+        public virtual ObjectResult<SalaryConfigure_GetAll_Result> SalaryConfigure_GetAll(string tenantID)
         {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SalaryConfigure_GetAll_Result>("SalaryConfigure_GetAll");
+            var tenantIDParameter = tenantID != null ?
+                new ObjectParameter("TenantID", tenantID) :
+                new ObjectParameter("TenantID", typeof(string));
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SalaryConfigure_GetAll_Result>("SalaryConfigure_GetAll", tenantIDParameter);
         }
     
         public virtual ObjectResult<SalaryConfigure_GetById_Result> SalaryConfigure_GetById(Nullable<int> salaryConfigureID)
