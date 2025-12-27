@@ -24,13 +24,13 @@ namespace MendinePayroll.UI.Models
     {
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; } 
-        public int PaidDays { get; set; }
+        public decimal PaidDays { get; set; }
     }
     public class EmployeeSalaryResponse
     {
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; }
-        public int PaidDays { get; set; }
+        public decimal PaidDays { get; set; }
 
         public decimal TotalEarnings { get; set; }
         public decimal TotalDeductions { get; set; }
@@ -88,8 +88,8 @@ namespace MendinePayroll.UI.Models
         /* =========================
            Attendance Context
         ========================= */
-        public int PaidDays { get; set; }
-        public int TotalDays { get; set; }
+        public decimal PaidDays { get; set; }
+        public decimal TotalDays { get; set; }
 
         /* =========================
            Limits & Rounding
@@ -150,13 +150,16 @@ namespace MendinePayroll.UI.Models
         public bool IsWaivable { get; set; }       // Loan waive
         public int DisplayOrder { get; set; }
 
+        public bool IsBasicComponent { get; set; } // Used for PF base
+        public bool IsGrossComponent { get; set; } // Used for ESIC / PTAX base
+
     }
 
     public class PivotRowDto
     {
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; }
-        public int PaidDays { get; set; }
+        public decimal PaidDays { get; set; }
 
         public decimal TotalEarnings { get; set; }
         public decimal TotalDeductions { get; set; }
@@ -182,5 +185,89 @@ namespace MendinePayroll.UI.Models
         public bool IsWaived { get; set; }         // default false, UI can toggle
         public decimal OriginalAmount { get; set; } // keep original when waived
     }
+    /*====Save Employee Salary DTO============*/
+    public class PayrollBatchSaveDto
+    {
+        
+
+        // ===== Reference =====
+        public string RefNo { get; set; }
+        public DateTime RefDate { get; set; }
+
+        // ===== Payroll Context =====
+        public int PayGroupId { get; set; }
+        public int PayrollType { get; set; } // 1 = Monthly, 2 = Contractual
+
+        // Monthly payroll
+        public int? ProcessMonth { get; set; }
+        public int? ProcessYear { get; set; }
+
+        // Contractual payroll
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+
+        // ===== Calculated (Server Side) =====
+        public int TotalEmployees { get; set; }
+        public decimal TotalCost { get; set; }      // Sum of Gross
+        public decimal TotalNetPay { get; set; }
+
+        // ===== Optional =====
+        public string Comments { get; set; }
+
+        // ===== Employees =====
+        public List<PayrollBatchEmployeeDto> Employees { get; set; }
+            = new List<PayrollBatchEmployeeDto>();
+    }
+
+    public class PayrollBatchEmployeeDto
+    {
+        // ===== Identity =====
+        public int EmployeeId { get; set; }
+        public string EmployeeCode { get; set; }   // Snapshot safety
+        public int PayGroupId { get; set; }
+
+        // ===== Attendance =====
+        public decimal PaidDays { get; set; }
+        public decimal? TotalHours { get; set; }
+
+        // ===== Earnings =====
+        public decimal TotalGross { get; set; }
+        public decimal TotalAddition { get; set; }
+        public decimal ManualAddition { get; set; }
+
+        // ===== Deductions =====
+        public decimal TotalDeduction { get; set; }
+        public decimal ManualDeduction { get; set; }
+        public decimal LoanDeduction { get; set; }
+        public bool LoanWaivedYN { get; set; }
+
+        // ===== Net =====
+        public decimal NetPay { get; set; }
+
+        // ===== UI-Only (NOT persisted) =====
+        public decimal MonthlyCTC { get; set; }
+
+        // ===== Salary Components =====
+        public List<PayrollBatchEmployeeComponentDto> Components { get; set; }
+            = new List<PayrollBatchEmployeeComponentDto>();
+    }
+
+    public class PayrollBatchEmployeeComponentDto
+    {
+        // ===== Pay Structure =====
+        public int PayConfigId { get; set; }
+        public string PayConfigName { get; set; }
+        public string PayConfigType { get; set; }      // EARNING / DEDUCTION / STATUTORY
+
+        // ===== Calculation =====
+        public string CalculationSource { get; set; } // FIXED / FORMULA / MANUAL / LOAN / TDS
+        public decimal PayValue { get; set; }
+
+        // ===== Loan / Adjustment (UI-Only) =====
+        public decimal? OriginalAmount { get; set; }
+        public bool IsWaived { get; set; }
+    }
+
+
 
 }

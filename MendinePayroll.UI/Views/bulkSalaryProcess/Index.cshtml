@@ -406,7 +406,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 20px;
+        padding: 4px 2px;
         background: #fff;
         border-bottom: 1px solid var(--border);
         height: 40px;
@@ -415,7 +415,8 @@
     .stats-left {
         display: flex;
         align-items: center;
-        gap: 40px;
+        gap: 20px;
+        white-space: nowrap;
     }
 
     .stats-right {
@@ -426,7 +427,7 @@
 
     .stat-label {
         font-size: 10px;
-        font-weight: 700;
+        font-weight: 400;
         color: #64748b;
         text-transform: uppercase;
     }
@@ -451,8 +452,8 @@
 
     .divider {
         width: 1px;
-        height: 16px;
-        background: #e2e8f0;
+        height: 18px;
+        background: #e5e7eb;
     }
 
     /* Gen Modal Styles */
@@ -752,6 +753,7 @@
     .text-right {
         text-align: right !important;
     }
+
     .accordion-section {
         border-bottom: 1px solid #e2e8f0;
     }
@@ -903,7 +905,7 @@
 
     #detailModal .stats-bar {
         background: white;
-        padding: 15px 25px;
+        padding: 4px 3px;
         height: auto;
         border-bottom: 2px solid #e2e8f0;
         box-shadow: 0 2px 4px rgba(0,0,0,0.02);
@@ -911,13 +913,14 @@
 
     .stat-item {
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        gap: 6px;
     }
 
     .stat-label {
         font-size: 11px;
         letter-spacing: 0.5px;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
     }
 
     .stat-value {
@@ -927,7 +930,7 @@
 
     /* --- THE EXCEL GRID OVERHAUL --- */
     .excel-wrapper {
-        margin: 15px;
+        /*margin: 15px;*/
         border-radius: 8px;
         border: 1px solid #cbd5e1;
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
@@ -1038,6 +1041,7 @@
     .manual-text {
         border-bottom: 1px dashed #f59e0b;
     }
+
     .header-ctc {
         background-color: #f1f5f9 !important;
         color: #64748b !important;
@@ -1057,6 +1061,7 @@
             background: #f8fafc;
             z-index: 10; /* baseline */
         }
+
         #salaryTable thead {
             position: sticky !important;
             top: 0;
@@ -1103,6 +1108,20 @@
     .header-manual {
         background: #fef3c7;
     }
+    .manual-input {
+        width: 80px;
+        text-align: right;
+        padding: 3px 6px;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+
+        .manual-input:focus {
+            outline: none;
+            border-color: #0E7777;
+            background-color: #f0fdfa;
+        }
 
 </style>
 
@@ -1131,26 +1150,29 @@
                 <div class="batch-card">
                     <div id="view_group_wise">
                         <table class="batch-table" id="dashboardTable">
-                            <thead><tr><th>Ref No</th><th>Period</th><th>Pay Group</th><th>Type</th><th class="text-center">Employees</th><th class="text-right">Total Cost</th><th class="text-right">Net Payout</th><th>Status</th><th class="text-right">Action</th></tr></thead>
-                            <tbody>
-                                <tr id="row_1002">
-                                    <td><strong>REF-49261</strong></td>
-                                    <td>Oct 2025</td>
-                                    <td>PG_OFFICE</td>
-                                    <td>Monthly</td>
-                                    <td class="text-center">45</td>
-                                    <td class="text-right">₹ 28,50,000</td>
-                                    <td class="text-right" style="font-weight:700; color:var(--primary)">₹ 25,10,000</td>
-                                    <td><span style="background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid #bbf7d0; font-weight:600;">FINALIZED</span></td>
-                                    <td class="text-right"><button class="btn-outline" onclick="openDetailModal(true)"><i class="fa fa-eye"></i></button></td>
+                            <thead>
+                                <tr>
+                                    <th>Ref No</th>
+                                    <th>Period</th>
+                                    <th>Pay Group</th>
+                                    <th>Type</th>
+                                    <th class="text-center">Employees</th>
+                                    <th class="text-right">Total Cost</th>
+                                    <th class="text-right">Net Payout</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Action</th>
                                 </tr>
+                            </thead>
+                            <tbody>
+                                <!-- 🔄 Loaded dynamically -->
                             </tbody>
                         </table>
+
                     </div>
 
                     <div id="view_employee_wise" class="hidden" style="padding:10px;">
                         <table class="batch-table display" id="empWiseTable" style="width:100%">
-                            <thead><tr><th class="text-center" style="width:30px;"><input type="checkbox" id="chkAllEmpWise"></th><th>Emp Code</th><th>Employee Name</th><th>Pay Group</th><th>Period</th><th class="text-right">Basic Pay</th><th class="text-right">Net Payout</th><th>Status</th><th class="text-right">Action</th></tr></thead>
+                            <thead><tr><th class="text-center" style="width:30px;"><input type="checkbox" id="chkAllEmpWise"></th><th>Emp Code</th><th>Employee Name</th><th>Pay Group</th><th>Period</th><th class="text-right">Gross Pay</th><th class="text-right">Deduction</th><th class="text-right">Net Payout</th><th>Status</th><th class="text-right">Action</th></tr></thead>
                             <tbody id="empWiseBody"></tbody>
                         </table>
                     </div>
@@ -1237,7 +1259,7 @@
         </div>
     </div>
 
-    
+
     <div id="attModal" class="modal-overlay">
         <div class="modal-box modal-lg">
 
@@ -1289,7 +1311,7 @@
                         </div>
 
                     </div>
-                </div> 
+                </div>
                 <!-- ACCORDION 2 : ATTENDANCE GRID -->
                 <div class="accordion-section">
 
@@ -1308,20 +1330,20 @@
                         </table>
 
                     </div>
-                </div> 
+                </div>
             </div>
 
             <!-- FOOTER -->
             <div class="modal-footer-custom">
                 <button class="btn-outline"
-                        onclick="closeModal('attModal'); $('#genModal').fadeIn();">
+                        onclick="rejectattendance()">
                     Back
                 </button>
 
                 <button class="btn-create" onclick="processFinalPayroll()">
                     Process Payroll <i class="fas fa-cogs"></i>
                 </button>
-            </div> 
+            </div>
         </div>
     </div>
 
@@ -1333,13 +1355,13 @@
             </div>
             <div class="stats-bar">
                 <div class="stats-left">
-                    <div class="stat-item"><span class="stat-label">Total Earnings</span><span class="stat-value val-earn" id="lblEarn">₹ 0</span></div><div class="divider"></div>
-                    <div class="stat-item"><span class="stat-label">Total Deductions</span><span class="stat-value val-ded" id="lblDed">₹ 0</span></div><div class="divider"></div>
-                    <div class="stat-item"><span class="stat-label">Total Net Pay</span><span class="stat-value val-net" id="lblNet">₹ 0</span></div>
+                    <div class="stat-item"><span class="stat-label">Total Earnings :</span><span class="stat-value val-earn" id="lblEarn">₹ 0</span></div><div class="divider"></div>
+                    <div class="stat-item"><span class="stat-label">Total Deductions :</span><span class="stat-value val-ded" id="lblDed">₹ 0</span></div><div class="divider"></div>
+                    <div class="stat-item"><span class="stat-label">Total Net Pay :</span><span class="stat-value val-net" id="lblNet">₹ 0</span></div>
                 </div>
                 <div class="stats-right">
                     <button class="btn-export" onclick="alert('Downloading Excel...')"><i class="fas fa-file-excel" style="color:#16a34a"></i> Excel</button>
-                    <button class="btn-export" onclick="alert('Downloading PDF...')"><i class="fas fa-file-pdf" style="color:#dc2626"></i> PDF</button>
+
                 </div>
             </div>
             <div class="grid-container excel-wrapper">
@@ -1426,10 +1448,17 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
- @*Toastr*@ 
+@*Toastr*@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
+    $(document).ready(function () {
+
+        // Load payroll batch dashboard on first load
+        loadPayrollBatchGrid();
+
+    });
+
     let selectedEmployees = [];
     let attendanceData = {};
     let empDtInstance = null;
@@ -1438,33 +1467,143 @@
     let currentData = [];
 
     // --- 1. TOGGLE & EMPLOYEE GRID ---
+    //function switchMainView(view) {
+    //    $('.view-toggle-btn').removeClass('active');
+    //    if (view === 'group') {
+    //        $('#btnViewGroup').addClass('active'); $('#view_group_wise').removeClass('hidden'); $('#view_employee_wise').addClass('hidden'); $('#filterContainer').addClass('hidden');
+    //        if (empDtInstance) { empDtInstance.destroy(); empDtInstance = null; }
+    //    } else {
+    //        $('#btnViewEmp').addClass('active'); $('#view_group_wise').addClass('hidden'); $('#view_employee_wise').removeClass('hidden'); $('#filterContainer').removeClass('hidden');
+    //        loadEmployeeGrid();
+    //    }
+    //}
     function switchMainView(view) {
+
         $('.view-toggle-btn').removeClass('active');
+
         if (view === 'group') {
-            $('#btnViewGroup').addClass('active'); $('#view_group_wise').removeClass('hidden'); $('#view_employee_wise').addClass('hidden'); $('#filterContainer').addClass('hidden');
-            if (empDtInstance) { empDtInstance.destroy(); empDtInstance = null; }
+
+            $('#btnViewGroup').addClass('active');
+            $('#view_group_wise').removeClass('hidden');
+            $('#view_employee_wise').addClass('hidden');
+            $('#filterContainer').addClass('hidden');
+
+            if (empDtInstance) {
+                empDtInstance.destroy();
+                empDtInstance = null;
+            }
+
         } else {
-            $('#btnViewEmp').addClass('active'); $('#view_group_wise').addClass('hidden'); $('#view_employee_wise').removeClass('hidden'); $('#filterContainer').removeClass('hidden');
-            loadEmployeeGrid();
+
+            $('#btnViewEmp').addClass('active');
+            $('#view_group_wise').addClass('hidden');
+            $('#view_employee_wise').removeClass('hidden');
+            $('#filterContainer').removeClass('hidden');
+
+            loadEmployeeWiseBatchGrid();   // ✅ AJAX LOAD
         }
     }
 
-    function loadEmployeeGrid() {
-        const tbody = $("#empWiseBody").empty();
-        const ddlFilter = $("#ddlFilterGroup").empty();
-        ddlFilter.append('<option value="">All Pay Groups</option>');
-        [...new Set(employeesDB.map(e => e.group))].forEach(g => ddlFilter.append(`<option value="${g}">${g}</option>`));
+    //function loadEmployeeGrid() {
+    //    const tbody = $("#empWiseBody").empty();
+    //    const ddlFilter = $("#ddlFilterGroup").empty();
+    //    ddlFilter.append('<option value="">All Pay Groups</option>');
+    //    [...new Set(employeesDB.map(e => e.group))].forEach(g => ddlFilter.append(`<option value="${g}">${g}</option>`));
 
-        employeesDB.forEach(emp => {
-            let net = emp.basic > 0 ? emp.basic * 0.88 : emp.rate * 26;
-            let row = `<tr><td class="text-center"><input type="checkbox" class="chk-row-emp" value="${emp.id}"></td><td><strong>${emp.id}</strong></td><td>${emp.name}</td><td>${emp.group}</td><td>Oct 2025</td><td class="text-right">₹ ${emp.basic > 0 ? emp.basic.toLocaleString() : emp.rate + '/hr'}</td><td class="text-right" style="font-weight:700; color:var(--primary)" id="net_${emp.id}">₹ ${net.toLocaleString()}</td><td><span style="background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid #bbf7d0; font-weight:600;">PROCESSED</span></td><td class="text-right"><button class="btn-outline" onclick="openEditSalaryModal('${emp.id}')"><i class="fas fa-edit"></i> Edit</button></td></tr>`;
-            tbody.append(row);
+    //    employeesDB.forEach(emp => {
+    //        let net = emp.basic > 0 ? emp.basic * 0.88 : emp.rate * 26;
+    //        let row = `<tr><td class="text-center"><input type="checkbox" class="chk-row-emp" value="${emp.id}"></td><td><strong>${emp.id}</strong></td><td>${emp.name}</td><td>${emp.group}</td><td>Oct 2025</td><td class="text-right">₹ ${emp.basic > 0 ? emp.basic.toLocaleString() : emp.rate + '/hr'}</td><td class="text-right" style="font-weight:700; color:var(--primary)" id="net_${emp.id}">₹ ${net.toLocaleString()}</td><td><span style="background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid #bbf7d0; font-weight:600;">PROCESSED</span></td><td class="text-right"><button class="btn-outline" onclick="openEditSalaryModal('${emp.id}')"><i class="fas fa-edit"></i> Edit</button></td></tr>`;
+    //        tbody.append(row);
+    //    });
+
+    //    if (empDtInstance) empDtInstance.destroy();
+    //    empDtInstance = $('#empWiseTable').DataTable({ paging: true, pageLength: 5, searching: true, info: true, language: { paginate: { previous: '<i class="fas fa-chevron-left"></i>', next: '<i class="fas fa-chevron-right"></i>' }, search: "_INPUT_", searchPlaceholder: "Search Employee..." }, dom: 'frtip' });
+    //    $('#ddlFilterGroup').off('change').on('change', function () { empDtInstance.column(3).search(this.value).draw(); });
+    //    $('#chkAllEmpWise').on('change', function () { $('.chk-row-emp').prop('checked', this.checked); });
+    //}
+    function loadEmployeeWiseBatchGrid() {
+
+        // destroy previous instance safely
+        if ($.fn.DataTable.isDataTable('#empWiseTable')) {
+            $('#empWiseTable').DataTable().destroy();
+        }
+
+        $("#empWiseBody").html(`
+        <tr>
+            <td colspan="9" class="text-center">
+                <i class="fas fa-circle-notch fa-spin"></i> Loading...
+            </td>
+        </tr>
+    `);
+
+        $.ajax({
+            url: '/bulkSalaryProcess/GetPayrollEmployeeWiseDashboard',
+            type: 'GET',
+            success: function (res) {
+
+                const tbody = $("#empWiseBody").empty();
+
+                if (!res || res.length === 0) {
+                    tbody.html(`<tr><td colspan="9" class="text-center">No data found</td></tr>`);
+                    return;
+                }
+
+                res.forEach(r => {
+
+                    tbody.append(`
+                    <tr>
+                        <td class="text-center">
+                            <input type="checkbox" class="chk-row-emp" value="${r.EmployeeId}">
+                        </td>
+                        <td><strong>${r.EmployeeCode}</strong></td>
+                        <td>${r.EmployeeName}</td>
+                        <td>${r.PayGroupName}</td>
+                        <td>${r.PeriodText}</td>
+                        <td class="text-right">₹ ${Number(r.GrossPay).toLocaleString()}</td>
+                        <td class="text-right">₹ ${Number(r.Deduction).toLocaleString()}</td>
+                        <td class="text-right" style="font-weight:700;color:var(--primary)">
+                            ₹ ${Number(r.NetPay).toLocaleString()}
+                        </td>
+                        <td>
+                            <span class="status-badge ${r.StatusClass}">
+                                ${r.StatusText}
+                            </span>
+                        </td>
+                        <td class="text-right">
+                            <button class="btn-outline"
+                                    onclick="openEmployeePayrollView(${r.PayrollProcessEmployeeID})">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `);
+                });
+
+                empDtInstance = $('#empWiseTable').DataTable({
+                    pageLength: 10,
+                    ordering: false,
+                    searching: true,
+                    lengthChange: false,
+                    info: true,
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search employee...",
+                        paginate: {
+                            previous: '<i class="fas fa-chevron-left"></i>',
+                            next: '<i class="fas fa-chevron-right"></i>'
+                        }
+                    }
+                });
+
+                // Select all checkbox
+                $('#chkAllEmpWise').off('change').on('change', function () {
+                    $('.chk-row-emp').prop('checked', this.checked);
+                });
+            },
+            error: function () {
+                toastr.error("Failed to load employee-wise payroll data");
+            }
         });
-
-        if (empDtInstance) empDtInstance.destroy();
-        empDtInstance = $('#empWiseTable').DataTable({ paging: true, pageLength: 5, searching: true, info: true, language: { paginate: { previous: '<i class="fas fa-chevron-left"></i>', next: '<i class="fas fa-chevron-right"></i>' }, search: "_INPUT_", searchPlaceholder: "Search Employee..." }, dom: 'frtip' });
-        $('#ddlFilterGroup').off('change').on('change', function () { empDtInstance.column(3).search(this.value).draw(); });
-        $('#chkAllEmpWise').on('change', function () { $('.chk-row-emp').prop('checked', this.checked); });
     }
 
     // --- 2. EDIT SALARY MODAL (Calculations with Manual Adj) ---
@@ -1530,7 +1669,7 @@
         $(`#net_${editingEmpId}`).text(netText).css('color', '#d97706');
         alert("Salary Adjusted Successfully!");
         closeModal('editSalaryModal');
-    } 
+    }
 
     /*================Attendance And File Upload Accodian=====================*/
     function openAttendanceModal() {
@@ -1651,7 +1790,7 @@
     function renderAttendanceGrid(res) {
 
         const columns = res.columns || [];
-        const rows = res.data || []; 
+        const rows = res.data || [];
         const head = $("#attTableHead").empty();
         const body = $("#attTableBody").empty();
 
@@ -1667,7 +1806,7 @@
         rows.forEach(r => {
 
             // ✅ Store EmployeeId safely
-            let tr = `<tr data-employeeid="${r.EmployeeId}" data-name="${r.EmployeeName}">`; 
+            let tr = `<tr data-employeeid="${r.EmployeeId}" data-name="${r.EmployeeName}">`;
             columns.forEach(col => {
 
                 if (col === "PaidUnits") {
@@ -1689,12 +1828,12 @@
     }
     function toggleAccordion(id) {
 
-    const body = $("#" + id);
-    const icon = $("#icon-" + id);
+        const body = $("#" + id);
+        const icon = $("#icon-" + id);
 
-    body.toggleClass("hidden");
-    icon.toggleClass("acc-open");
-} 
+        body.toggleClass("hidden");
+        icon.toggleClass("acc-open");
+    }
     function handleFileUpload(input) {
         if (input.files && input.files[0]) {
             alert(`Uploading and processing ${input.files[0].name}...`);
@@ -1709,11 +1848,14 @@
             }, 800);
         }
     }
-    function calcPaid(id) { const p = parseFloat($(`#prs_${id}`).val()) || 0; const l = parseFloat($(`#lve_${id}`).val()) || 0; const h = parseFloat($(`#hol_${id}`).val()) || 0; $(`#paid_${id}`).val(p + l + h); } 
-     
+    function calcPaid(id) { const p = parseFloat($(`#prs_${id}`).val()) || 0; const l = parseFloat($(`#lve_${id}`).val()) || 0; const h = parseFloat($(`#hol_${id}`).val()) || 0; $(`#paid_${id}`).val(p + l + h); }
+
     /* ================Open General Modal================== */
     function openGenModal() {
+        // 🔹 CLEAR EMPLOYEE SELECTION STATE
+        clearEmployeeSelection();
 
+        // 🔹 RESET HEADER FIELDS
         $("#genRefNo").val('');
         $("#txtComments").val('');
 
@@ -1728,6 +1870,21 @@
 
         handleTypeChange();
     }
+    function clearEmployeeSelection() {
+
+        // Clear UI lists
+        $("#listActive").empty();
+        $("#listInactive").empty();
+
+        // Reset counters
+        $("#cntActive").text("0");
+        $("#cntInactive").text("0");
+
+        // Clear selection state
+        $(".chk-emp").prop("checked", false);
+        selectedEmployees = [];
+    }
+
     function setLastMonthRange() {
         const today = new Date();
 
@@ -1757,7 +1914,7 @@
 
             companies.forEach(c => {
                 ddl.append(`<option value="${c.value}" data-code="${c.code}">${c.text}</option>`);
-            }); 
+            });
         });
         handleCompanyChange();
     }
@@ -1765,13 +1922,14 @@
 
         // Ref No depends on Company
         tryGenerateRefNo();
-
+        tryGenerateComments();
         // Employee list depends on Company
         loadEmployeeList();
-    } 
-    function handlemonthChange(){
+    }
+    function handlemonthChange() {
         // Ref No depends on Company
         tryGenerateRefNo();
+        tryGenerateComments();
     }
     /*========== Ref No Create ============*/
     function tryGenerateRefNo() {
@@ -1812,7 +1970,74 @@
             .fail(function (err) {
                 console.error("GenerateRefNo failed", err);
             });
-    } 
+    }
+    function tryGenerateComments() {
+
+        const companyCode = $("#ddlCompany option:selected").data("code");
+        const groupId = $("#ddlGroup").val();
+        const groupName = $("#ddlGroup option:selected").text();
+        const type = $("#ddlType").val();
+        const refDateVal = $("#genRefDate").val(); // yyyy-MM-dd
+
+        if (!companyCode || !groupId || !type || !refDateVal) return;
+
+        const refDate = new Date(refDateVal);
+        const refDateText = refDate.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+
+        let comment = "Payroll Process for ";
+
+        // ======================
+        // Monthly Payroll
+        // ======================
+        if (type === '1') {
+
+            const ym = $("#txtMonthYear").val(); // yyyy-MM
+            if (!ym) return;
+
+            const [year, month] = ym.split('-');
+            const monthName = new Date(year, month - 1, 1).toLocaleDateString('en-US', {
+                month: 'long'
+            });
+
+            comment += `the Month of ${monthName}, ${year}`;
+
+        }
+        // ======================
+        // Casual / Contractual
+        // ======================
+        else if (type === '2') {
+
+            const from = $("#txtFromDate").val();
+            const to = $("#txtToDate").val();
+            if (!from || !to) return;
+
+            const fromText = new Date(from).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+
+            const toText = new Date(to).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+
+            comment += `the Period of ${fromText} to ${toText}`;
+        }
+
+        // ======================
+        // Final Text
+        // ======================
+        comment += ` for Pay Group ${groupName} as on ${refDateText}`;
+
+        $("#txtComments").val(comment);
+    }
+
     /* ======Load PayGroup =============== */
     function handleTypeChange() {
         const type = $("#ddlType").val();
@@ -1829,8 +2054,9 @@
     }
     function handleGroupChange() {
         tryGenerateRefNo();   // Ref No depends on PayGroup
-        loadEmployeeList();   // Employees depend on PayGroup
-    } 
+        loadEmployeeList(); // Employees depend on PayGroup
+        tryGenerateComments();
+    }
     function loadPayGroups(type) {
         const ddl = $("#ddlGroup").empty();
 
@@ -1840,9 +2066,9 @@
                 ddl.append(`<option value="${g.value}">${g.text}</option>`);
             });
         });
-    } 
+    }
     /*====== Load Employee List =============== */
- 
+
     function loadEmployeeList() {
         const group = $("#ddlGroup").val();
         const type = $("#ddlType").val();
@@ -1960,7 +2186,7 @@
             // ✅ SAFE ID EXTRACTION
             const employeeId = parseInt($(this).data("employeeid"), 10);
             //const employeeId = parseInt($row.data("employeeid"), 10);
-            const employeeName = $(this).data("name"); 
+            const employeeName = $(this).data("name");
 
             if (!employeeId || employeeId <= 0) return;
 
@@ -1971,7 +2197,7 @@
 
             employees.push({
                 EmployeeId: employeeId,
-                EmployeeName: employeeName, 
+                EmployeeName: employeeName,
                 PaidDays: paidDays
             });
         });
@@ -2035,133 +2261,426 @@
     }
 
     let pivotData = null;
+    //function openDetailModal(isViewMode, serverResult) {
 
+    //    // 🔒 Validate server result FIRST
+    //    if (!serverResult || !serverResult.Rows || !serverResult.Columns) {
+    //        console.error("Invalid server result", serverResult);
+    //        return;
+    //    }
+
+    //    // 🔒 Set global state ONCE
+    //    pivotData = serverResult;
+    //    currentData = serverResult;
+
+    //    // 🔹 Set reference number
+    //    const ref = $("#genRefNo").val() || "--";
+    //    $("#lblRef").text(ref);
+
+    //    // 🔹 Open modal
+    //    $("#detailModal").fadeIn(200);
+
+    //    // 🔹 Footer handling
+    //    const footer = $("#detailFooter");
+
+    //    if (isViewMode) {
+    //        footer.html(`
+    //        <button class="btn-reject" onclick="deleteBatchView()">
+    //            <i class="fas fa-times"></i> Reject & Delete
+    //        </button>
+    //        <button class="btn-approve" onclick="approveBatch()">
+    //            <i class="fas fa-check"></i> Approve
+    //        </button>
+    //    `);
+
+    //        // optional: keep selected employees in view mode
+    //        if (!Array.isArray(selectedEmployees)) {
+    //            selectedEmployees = [];
+    //        }
+    //    }
+    //    else {
+    //        footer.html(`
+    //        <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
+    //            * Modifying returns to Attendance screen.
+    //        </div>
+    //        <button class="btn-outline"
+    //                style="border-color:#d97706; color:#d97706;"
+    //                onclick="rejectBatch()">
+    //            <i class="fas fa-undo"></i> Back
+    //        </button>
+    //        <button class="btn-create"
+    //                onclick="submitBatchForApproval()">
+    //            <i class="fas fa-paper-plane"></i> Submit
+    //        </button>
+    //    `);
+    //    }
+
+    //    // 🔹 Render grid from SINGLE SOURCE OF TRUTH
+    //    renderSalaryGrid(pivotData);
+    //}
     function openDetailModal(isViewMode, serverResult) {
-        // set reference number
-        if (!pivotData || !pivotData.Rows) {
-            console.error("pivotData not ready");
-            return;
-        }
-        const ref = $("#genRefNo").val() || "--";
-        $("#lblRef").text(ref);
-        $("#detailModal").fadeIn(200);
 
+        // 🔒 Validate server result FIRST
         if (!serverResult || !serverResult.Rows || !serverResult.Columns) {
             console.error("Invalid server result", serverResult);
             return;
         }
+
+        // 🔒 Set global state ONCE
+        pivotData = serverResult;
+        currentData = serverResult;
+
+        // ==================================================
+        // ✅ ONE-TIME INITIALIZATION (CRITICAL)
+        // Prevents compounding when manual values change
+        // ==================================================
+        pivotData.Rows.forEach(r => {
+
+            // UI-editable fields
+            r.ManualAddition ??= 0;
+            r.ManualDeduction ??= 0; 
+        });
+
+        // 🔹 Set reference number
+        const ref = $("#genRefNo").val() || "--";
+        $("#lblRef").text(ref);
+
+        // 🔹 Open modal
+        $("#detailModal").fadeIn(200);
+
+        // 🔹 Footer handling
         const footer = $("#detailFooter");
+
         if (isViewMode) {
+
             footer.html(`
-                <button class="btn-reject" onclick="deleteBatchView()"><i class="fas fa-times"></i> Reject & Delete</button>
-                <button class="btn-approve" onclick="approveBatch()"><i class="fas fa-check"></i> Approve</button>
-            `);
-            if (currentData.length === 0) selectedEmployees = employeesDB.map(e => e.id);
+            <button class="btn-reject" onclick="deleteBatchView()">
+                <i class="fas fa-times"></i> Reject & Delete
+            </button>
+            <button class="btn-approve" onclick="approveBatch()">
+                <i class="fas fa-check"></i> Approve
+            </button>
+        `);
+
+            // optional: keep selected employees in view mode
+            if (!Array.isArray(selectedEmployees)) {
+                selectedEmployees = [];
+            }
+
         } else {
+
             footer.html(`
-                <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">* Modifying returns to Attendance screen.</div>
-                <button class="btn-outline" style="border-color:#d97706; color:#d97706;" onclick="rejectBatch()"><i class="fas fa-undo"></i> Modify</button>
-                <button class="btn-create" onclick="alert('Submitted for Approval!')"><i class="fas fa-paper-plane"></i> Submit</button>
-            `);
+            <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
+                * Modifying returns to Attendance screen.
+            </div>
+            <button class="btn-outline"
+                    style="border-color:#d97706; color:#d97706;"
+                    onclick="rejectBatch()">
+                <i class="fas fa-undo"></i> Back
+            </button>
+            <button class="btn-create"
+                    onclick="submitBatchForApproval()">
+                <i class="fas fa-paper-plane"></i> Submit
+            </button>
+        `);
         }
-        currentData = serverResult;   // store full pivot
-        renderSalaryGrid(serverResult);   // pass pivot, not employees
+
+        // 🔹 Render grid from SINGLE SOURCE OF TRUTH
+        renderSalaryGrid(pivotData);
     }
+    //function renderSalaryGrid(pivot) {
+    //    if (!pivot || !pivot.Rows || pivot.Rows.length === 0) return;
+
+    //    const rows = pivot.Rows;
+    //    const columns = pivot.Columns;
+
+    //    //// 1. Find the last Deduction index to place Net Salary
+    //    //let lastAllowanceIndex = -1;
+    //    //let lastDeductionIndex = -1;
+    //    //let grossIndex = -1;
+    //    //columns.forEach((col, idx) => {
+    //    //    if ((col.PayType || '').toUpperCase() === 'DEDUCTION') {
+    //    //        lastDeductionIndex = idx;
+    //    //    }
+    //    //});
+
+    //    // Index of the LAST allowance / earning column
+    //    // Used to inject "Manual Addition" immediately after all allowance columns
+    //    let lastAllowanceIndex = -1;
+
+    //    // Index of the LAST deduction column
+    //    // Used to inject "Manual Deduction" and "Net Salary" after deductions
+    //    let lastDeductionIndex = -1;
+
+    //    // Index of the Gross salary column
+    //    // Used to ensure Manual Addition appears BEFORE Gross
+    //    let grossIndex = -1;
+
+    //    columns.forEach((col, idx) => {
+
+    //        // Normalize PayType for safe comparison
+    //        const type = (col.PayType || '').toUpperCase();
+
+    //        // Track the last allowance / earning column
+    //        // Covers Allowance + Earnings (Basic, HRA, etc.)
+    //        if (type === 'ALLOWANCE' || type === 'EARNING') {
+    //            lastAllowanceIndex = idx;
+    //        }
+
+    //        // Track the last deduction column
+    //        // Includes PF, ESIC, PT, Loan Recovery, etc.
+    //        if (type === 'DEDUCTION') {
+    //            lastDeductionIndex = idx;
+    //        }
+
+    //        // Identify the Gross column
+    //        // Prefer explicit IsGross flag; fallback to name check
+    //        if (col.IsGross === true || col.PayConfigName === 'GROSS') {
+    //            grossIndex = idx;
+    //        }
+    //    });
+
+
+
+    //    let html = `<thead>
+    //    <tr>
+    //        <th class="sticky-col left">Employee</th>
+    //        <th class="sticky-col-2 text-center">Paid Days</th>`;
+
+    //    // 🔹 Component headers + Net Salary injection
+    //    columns.forEach((c, idx) => {
+    //        const type = (c.PayType || '').toUpperCase();
+    //        const cls =
+    //            type === 'MANUAL' ? 'header-manual' :
+    //                type === 'DEDUCTION' ? 'header-deduction' : '';
+
+    //        html += `<th class="text-right ${cls}">
+    //        ${c.PayConfigName}
+    //    </th>`;
+
+    //        // ✅ Inject Net Salary header AFTER last deduction
+    //        if (idx === lastDeductionIndex) {
+    //            html += `<th class="text-right header-net">Net Salary</th>`;
+    //        }
+    //    });
+
+    //    // ✅ Monthly CTC always LAST
+    //    html += `<th class="text-right header-ctc">Monthly CTC</th></tr></thead><tbody>`;
+
+
+
+
+    //    // 🔹 Build Rows
+    //    rows.forEach(row => {
+    //        html += `<tr>
+    //        <td class="sticky-col left">
+    //            <div style="font-weight:600;color:#0E7777" data-employeeid="${row.EmployeeId}">${row.EmployeeName}</div>
+    //        </td>
+    //        <td class="sticky-col-2 text-center">${row.PaidDays}</td>`;
+
+    //        columns.forEach((col, idx) => {
+    //            const cell = row.Cells.find(x => x.PayConfigId === col.PayConfigId);
+    //            const amount = cell ? cell.Amount : 0;
+    //            const type = (col.PayType || '').toUpperCase();
+    //            if (col.IsOther && col.OtherType === "LOANRECOVERY") {
+
+    //                const hasLoan = cell && cell.OriginalAmount > 0;
+
+    //                // 🔒 No loan → show only 0
+    //                if (!hasLoan) {
+    //                    html += `<td class="text-right cell-deduction" style="font-family:monospace">
+    //                                0
+    //                            </td>`;
+    //                }
+    //                else {
+    //                    html += `
+    //                            <td class="text-right">
+    //                                <div style="
+    //                                    display:flex;
+    //                                    align-items:center;
+    //                                    justify-content:flex-end;
+    //                                    gap:8px;
+    //                                    white-space:nowrap;
+    //                                ">
+    //                                    <span style="font-weight:600;color:#991b1b">
+    //                                        ${amount.toLocaleString()}
+    //                                    </span>
+
+    //                                    ${cell.IsWaivable
+    //                            ? `<label style="font-size:11px; cursor:pointer;">
+    //                                                   <input type="checkbox"
+    //                                                    ${cell.IsWaived ? 'checked' : ''}
+    //                                                          onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
+    //                                                   Skip
+    //                                               </label>`
+    //                            : ``
+    //                        }
+    //                                </div>
+    //                            </td>`;
+    //                }
+    //            }
+
+    //            else {
+    //                const cellClass = type === 'MANUAL' ? 'cell-manual' : (type === 'DEDUCTION' ? 'cell-deduction' : '');
+    //                html += `<td class="text-right ${cellClass}" style="font-family:monospace">
+    //                ${amount.toLocaleString()}
+    //            </td>`;
+    //            }
+
+    //            // Injected Net Salary
+    //            if (idx === lastDeductionIndex) {
+    //                html += `<td class="text-right cell-net">₹ ${row.NetPay.toLocaleString()}</td>`;
+    //            }
+    //        });
+
+    //        // 3. Add CTC Data Cell at the VERY end
+    //        html += `<td class="text-right" style="font-weight:600; background-color:#f8fafc">
+    //        ₹ ${(row.MonthlyCTC || 0).toLocaleString()}
+    //    </td></tr>`;
+    //    });
+
+    //    html += "</tbody>";
+    //    $("#salaryTable").html(html);
+    //    updateStatsFromPivot(pivot.Rows);
+    //}
     function renderSalaryGrid(pivot) {
         if (!pivot || !pivot.Rows || pivot.Rows.length === 0) return;
 
         const rows = pivot.Rows;
         const columns = pivot.Columns;
 
-        // 1. Find the last Deduction index to place Net Salary
+        // 🔹 Find indexes
+        let lastAllowanceIndex = -1;
         let lastDeductionIndex = -1;
+        let grossIndex = -1;
+
         columns.forEach((col, idx) => {
-            if ((col.PayType || '').toUpperCase() === 'DEDUCTION') {
+            const type = (col.PayType || '').toUpperCase();
+
+            if (type === 'ALLOWANCES') {
+                lastAllowanceIndex = idx;
+            }
+            if (type === 'DEDUCTION') {
                 lastDeductionIndex = idx;
+            }
+            if (col.IsGrossComponent === true) {
+                grossIndex = idx;
             }
         });
 
-        let html = `<thead>
-        <tr>
-            <th class="sticky-col left">Employee</th>
-            <th class="sticky-col-2 text-center">Paid Days</th>`;
+        // ================= HEADER =================
+        let html = `<thead><tr>
+        <th class="sticky-col left">Employee</th>
+        <th class="sticky-col-2 text-center">Paid Days</th>`;
 
-            // 🔹 Component headers + Net Salary injection
-            columns.forEach((c, idx) => {
-                const type = (c.PayType || '').toUpperCase();
-                const cls =
-                    type === 'MANUAL' ? 'header-manual' :
-                        type === 'DEDUCTION' ? 'header-deduction' : '';
+        columns.forEach((c, idx) => {
+            const type = (c.PayType || '').toUpperCase();
+            const cls = type === 'DEDUCTION' ? 'header-deduction' : '';
 
-                html += `<th class="text-right ${cls}">
-            ${c.PayConfigName}
-        </th>`;
+            html += `<th class="text-right ${cls}">${c.PayConfigName}</th>`;
 
-            // ✅ Inject Net Salary header AFTER last deduction
+            // ➕ Manual Addition (after allowance, before gross) 
+            if (idx === grossIndex - 1) {
+                html += `<th class="text-right header-manual">Manual Addition</th>`;
+            }
+
+
+            // ➕ Manual Deduction + Net (after deduction)
             if (idx === lastDeductionIndex) {
+                html += `<th class="text-right header-manual">Manual Deduction</th>`;
                 html += `<th class="text-right header-net">Net Salary</th>`;
             }
         });
 
-        // ✅ Monthly CTC always LAST
         html += `<th class="text-right header-ctc">Monthly CTC</th></tr></thead><tbody>`;
 
-
-         
-
-        // 🔹 Build Rows
+        // ================= ROWS =================
         rows.forEach(row => {
+
+            // defaults (NO overwrite)
+            row.ManualAddition ??= 0;
+            row.ManualDeduction ??= 0;
+
             html += `<tr>
             <td class="sticky-col left">
-                <div style="font-weight:600;color:#0E7777" data-employeeid="${row.EmployeeId}">${row.EmployeeName}</div>
+                <div style="font-weight:600;color:#0E7777">${row.EmployeeName}</div>
             </td>
             <td class="sticky-col-2 text-center">${row.PaidDays}</td>`;
 
             columns.forEach((col, idx) => {
+
                 const cell = row.Cells.find(x => x.PayConfigId === col.PayConfigId);
                 const amount = cell ? cell.Amount : 0;
                 const type = (col.PayType || '').toUpperCase();
 
+                // ===== Loan logic untouched =====
                 if (col.IsOther && col.OtherType === "LOANRECOVERY") {
+
                     const hasLoan = cell && cell.OriginalAmount > 0;
 
-                    // 🔒 No loan → show only 0 (no Waive)
                     if (!hasLoan) {
                         html += `<td class="text-right cell-deduction" style="font-family:monospace">
-                                    0
-                                </td>`;
-                    }
+                                  0
+                              </td>`;
+                    } 
                     else {
                         html += `
-                            <td class="text-right">
-                                <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;white-space:nowrap;">
-                                    <span style="font-weight:600;color:#991b1b">${amount.toLocaleString()}</span>
-                                    <label style="font-size:11px; cursor:pointer;">
-                                        <input type="checkbox"
-                                               ${cell.IsWaived ? 'checked' : ''}
-                                               onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
-                                        Waive
-                                    </label> 
-                                </div>
-                            </td>`;
+                                <td class="text-right">
+                                    <div style="
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:flex-end;
+                                        gap:8px;
+                                        white-space:nowrap;
+                                    ">
+                                        <span style="font-weight:600;color:#991b1b">
+                                            ${amount.toLocaleString()}
+                                        </span>
 
+                                        ${cell.IsWaivable
+                                ? `<label style="font-size:11px; cursor:pointer;">
+                                                        <input type="checkbox"
+                                                        ${cell.IsWaived ? 'checked' : ''}
+                                                                onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
+                                                        Skip
+                                                    </label>`
+                                : ``
+                            }
+                                    </div>
+                                </td>`;
                     }
                 }
-                else {
-                    const cellClass = type === 'MANUAL' ? 'cell-manual' : (type === 'DEDUCTION' ? 'cell-deduction' : '');
-                    html += `<td class="text-right ${cellClass}" style="font-family:monospace">
+                 else {
+                    html += `<td class="text-right ${type === 'DEDUCTION' ? 'cell-deduction' : ''}">
                     ${amount.toLocaleString()}
                 </td>`;
-                } 
+                }
 
-                // Injected Net Salary
+                // ➕ Manual Addition INPUT
+                if (idx === grossIndex - 1) {
+                    html += `<td class="text-right">
+                    <input type="number" class="manual-input"
+                           value="${row.ManualAddition}"
+                           onchange="onManualAddChange(${row.EmployeeId}, this.value)">
+                </td>`;
+                }
+
+
+                // ➕ Manual Deduction INPUT + Net
                 if (idx === lastDeductionIndex) {
-                    html += `<td class="text-right cell-net">₹ ${row.NetPay.toLocaleString()}</td>`;
+                    html += `<td class="text-right">
+                    <input type="number" class="manual-input"
+                           value="${row.ManualDeduction}"
+                           onchange="onManualDedChange(${row.EmployeeId}, this.value)">
+                </td>`;
+
+                    html += `<td class="text-right cell-net">
+                    ₹ ${row.NetPay.toLocaleString()}
+                </td>`;
                 }
             });
 
-            // 3. Add CTC Data Cell at the VERY end
-            html += `<td class="text-right" style="font-weight:600; background-color:#f8fafc">
+            html += `<td class="text-right" style="font-weight:600;background:#f8fafc">
             ₹ ${(row.MonthlyCTC || 0).toLocaleString()}
         </td></tr>`;
         });
@@ -2170,6 +2689,44 @@
         $("#salaryTable").html(html);
         updateStatsFromPivot(pivot.Rows);
     }
+
+    function onManualAddChange(empId, val) {
+
+        const r = pivotData.Rows.find(x => x.EmployeeId === empId);
+        if (!r) return;
+
+        const newVal = Number(val) || 0;
+        const diff = newVal - (r.ManualAddition || 0);
+
+        // store manual addition
+        r.ManualAddition = newVal;
+
+        // ✅ DO NOT TOUCH GROSS / TotalEarnings
+        // 🔥 Manual Addition affects Net & CTC only
+        r.NetPay += diff;
+        r.MonthlyCTC += diff;
+
+        renderSalaryGrid(pivotData);
+    }
+
+    function onManualDedChange(empId, val) {
+        const r = pivotData.Rows.find(x => x.EmployeeId === empId);
+        if (!r) return;
+
+        const newVal = Number(val) || 0;
+        const diff = newVal - (r.ManualDeduction || 0);
+
+        // store
+        r.ManualDeduction = newVal;
+
+        // 🔥 Deduction affects Net & CTC ONLY
+        r.NetPay -= diff;
+        r.MonthlyCTC -= diff;
+
+        renderSalaryGrid(pivotData);
+    }
+
+
     function toggleLoanWaiver(empId, payConfigId) {
 
         if (!pivotData || !pivotData.Rows) {
@@ -2231,13 +2788,20 @@
         $("#lblEarn").text("₹ " + tEarn.toLocaleString());
         $("#lblDed").text("₹ " + tDed.toLocaleString());
         $("#lblNet").text("₹ " + tNet.toLocaleString());
-    } 
+    }
 
-    
+
     function updateStats() { let tEarn = 0, tDed = 0, tNet = 0; currentData.forEach(d => { tEarn += (d.Basic + d.Allow); tDed += (d.PF + d.Loan); tNet += d.Net; }); $("#lblEarn").text("₹ " + tEarn.toLocaleString()); $("#lblDed").text("₹ " + tDed.toLocaleString()); $("#lblNet").text("₹ " + tNet.toLocaleString()); }
 
     // --- UTILS ---
-    function rejectBatch() { if (confirm("Modify inputs at Attendance?")) { closeModal('detailModal'); $("#attModal").fadeIn(200); renderAttendanceTable(); } }
+    function rejectBatch() {
+        hideModal('detailModal');   // 👈 NO cleanup
+        $("#attModal").fadeIn(200); // 👈 restore previous modal
+    }
+    function rejectattendance() {
+        hideModal('attModal');   // 👈 NO cleanup
+        $("#genModal").fadeIn(200); // 👈 restore previous modal
+    }
     function approveBatch() { if (confirm("Approve batch?")) { closeModal('detailModal'); alert("Batch Approved!"); } }
     function deleteBatchView() { if (confirm("Delete batch?")) { closeModal('detailModal'); $("#row_1002").remove(); alert("Deleted."); } }
     function openLoanModal(name, openBal, emi) { $("#loanEmpLabel").text(name); $("#valOpen").text("₹ " + openBal.toLocaleString()); $("#valEmi").text("₹ " + emi.toLocaleString()); $("#valClose").text("₹ " + (openBal - emi).toLocaleString()); $("#loanModal").fadeIn(200); }
@@ -2245,28 +2809,17 @@
     function closeModal(id) {
 
         const $modal = $("#" + id);
-
         if (!$modal.length) return;
 
-        // Fade out modal
         $modal.fadeOut(200, function () {
 
-            // 🧹 Clear modal-specific dynamic content
             if (id === 'detailModal') {
-
-                // Destroy DataTable safely
                 if (dtInstance) {
                     dtInstance.destroy();
                     dtInstance = null;
                 }
-
                 $("#salaryTable").empty();
                 currentData = [];
-            }
-
-            if (id === 'editSalaryModal') {
-                editingEmpId = null;
-                $("#editSalaryModal").removeData("empData");
             }
 
             if (id === 'attModal') {
@@ -2275,30 +2828,212 @@
             }
 
             if (id === 'genModal') {
-
-                $("#ddlCompany").val("").trigger("change");
-                $("#ddlGroup").val("").trigger("change");
-                $("#genRefNo").val("").trigger("change");
-
-                $(".chk-emp").prop("checked", false);
                 selectedEmployees = [];
+            }
+        });
+    }
 
-                $("#listActive").empty();
-                $("#listInactive").empty();
+    function hideModal(id) {
+        $("#" + id).fadeOut(200);
+    }
 
-                $("#cntActive").text("0");
-                $("#cntInactive").text("0");
+    function submitBatchForApproval() {
 
-                // ✅ CLOSE MODAL
-                $("#genModal").fadeOut(200);
+        if (!pivotData || !pivotData.Rows || pivotData.Rows.length === 0) {
+            toastr.error("Nothing to save");
+            return;
+        }
+
+        const payrollType = parseInt($("#ddlType").val());
+
+        const payload = {
+            RefNo: $("#genRefNo").val(),
+            RefDate: $("#genRefDate").val(),
+            PayGroupId: parseInt($("#ddlGroup").val()),   // ✅ DTO MATCH
+            PayrollType: payrollType,
+            Comments: $("#txtComments").val(),
+            Employees: []
+        };
+
+        if (payrollType === 1) {
+            const [year, month] = $("#txtMonthYear").val().split("-");
+            payload.ProcessMonth = parseInt(month);
+            payload.ProcessYear = parseInt(year);
+        } else {
+            payload.FromDate = $("#txtFromDate").val();
+            payload.ToDate = $("#txtToDate").val();
+        }
+
+        pivotData.Rows.forEach(r => {
+
+            payload.Employees.push({
+
+                // ===== Identity =====
+                EmployeeId: r.EmployeeId,
+                EmployeeCode: r.EmployeeCode || "",
+                PayGroupId: payload.PayGroupId,
+
+                // ===== Attendance =====
+                PaidDays: r.PaidDays,
+                TotalHours: r.TotalHours || null,
+
+                // ===== Earnings =====
+                TotalGross: r.TotalEarnings,        // ✅ MAP
+                TotalAddition: r.TotalEarnings || 0,
+                ManualAddition: r.ManualAddition || 0,
+
+                // ===== Deductions =====
+                TotalDeduction: r.TotalDeductions,
+                ManualDeduction: r.ManualDeduction || 0,
+                LoanDeduction: 0,
+                LoanWaivedYN: false,
+
+                // ===== Net =====
+                NetPay: r.NetPay,
+
+                // ===== UI-only =====
+                MonthlyCTC: r.MonthlyCTC,
+
+                // ===== Salary Components =====
+                Components: r.Cells.map(c => {
+
+                    const col = pivotData.Columns.find(
+                        x => x.PayConfigId === c.PayConfigId
+                    );
+
+                    return {
+                        PayConfigId: c.PayConfigId,
+                        PayConfigName: col?.PayConfigName || "",
+                        PayConfigType: col?.PayType || "",
+                        CalculationSource: col?.LogicType || "",
+                        PayValue: c.Amount,                 // ✅ DTO MATCH
+                        OriginalAmount: c.OriginalAmount,
+                        IsWaived: c.IsWaived === true
+                    };
+                })
+            });
+        });
+
+        $.ajax({
+            url: '/bulkSalaryProcess/SavePayrollBatch',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (res) {
+
+                if (res.success) {
+
+                    toastr.success(res.message);
+
+                    // ✅ 1. Close ALL modals
+                    closeAllModals();
+
+                    // ✅ 2. Reset detail state
+                    pivotData = null;
+                    currentData = [];
+
+                    // ✅ 3. Reload payroll batch grid
+                    loadPayrollBatchGrid();
+
+                } else {
+                    toastr.error(res.message);
+                }
+            },
+            error: function (err) {
+                console.error(err);
+                toastr.error("Failed to save payroll batch");
             }
 
+        });
+    }
+    function closeAllModals() {
+        $(".modal-overlay:visible").fadeOut(200);
+    }
+    function loadPayrollBatchGrid() {
 
+        $.ajax({
+            url: '/bulkSalaryProcess/GetPayrollDashboard', // 👈 controller action
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
 
-            // 🔄 Restore scroll if no modal is open
-            if ($(".modal-overlay:visible").length === 0) {
-                $("body").removeClass("modal-open");
-                $("body").css("overflow", "auto");
+                const tbody = $("#dashboardTable tbody");
+                tbody.empty();
+
+                if (!res || res.length === 0) {
+                    tbody.append(`
+                    <tr>
+                        <td colspan="9" class="text-center" style="color:#94a3b8;">
+                            No payroll batches found
+                        </td>
+                    </tr>
+                `);
+                    return;
+                }
+
+                res.forEach(r => {
+
+                    const statusBadge =
+                        r.Status === 'FINALIZED'
+                            ? `<span style="background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:10px;font-size:10px;border:1px solid #bbf7d0;font-weight:600;">FINALIZED</span>`
+                            : `<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-size:10px;border:1px solid #fde68a;font-weight:600;">DRAFT</span>`;
+
+                    tbody.append(`
+                    <tr id="row_${r.PayrollBatchID}_${r.PayGroupID}">
+                        <td><strong>${r.RefNo}</strong></td>
+                        <td>${r.PeriodText}</td>
+                        <td>${r.PayGroupName}</td>
+                        <td>${r.PayrollTypeText}</td>
+                        <td class="text-center">${r.TotalEmployees}</td>
+                        <td class="text-right">₹ ${Number(r.TotalCost).toLocaleString()}</td>
+                        <td class="text-right" style="font-weight:700;color:#0E7777">
+                            ₹ ${Number(r.NetPayout).toLocaleString()}
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td class="text-right">
+                            <button class="btn-outline"
+                                    onclick="openBatchView(${r.PayrollBatchID}, ${r.PayGroupID})">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `);
+                });
+            },
+            error: function (err) {
+                console.error(err);
+                toastr.error("Failed to load payroll dashboard");
+            }
+        });
+    }
+
+    function openBatchView(payrollBatchId, payGroupId) {
+
+        if (!payrollBatchId) {
+            toastr.error("Invalid batch");
+            return;
+        }
+
+        $.ajax({
+            url: '/bulkSalaryProcess/OpenBatchView',
+            type: 'GET',
+            data: {
+                payrollBatchId: payrollBatchId,
+                payGroupId: payGroupId
+            },
+            success: function (res) {
+
+                if (!res || !res.Rows || !res.Columns) {
+                    toastr.error("Invalid batch data");
+                    return;
+                }
+
+                // 🔥 OPEN IN EDIT MODE
+                openDetailModal(false, res);
+            },
+            error: function (err) {
+                console.error(err);
+                toastr.error("Failed to open payroll batch");
             }
         });
     }
