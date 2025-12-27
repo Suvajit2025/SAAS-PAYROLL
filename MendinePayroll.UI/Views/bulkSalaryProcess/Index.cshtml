@@ -2260,64 +2260,7 @@
         return index;
     }
 
-    let pivotData = null;
-    //function openDetailModal(isViewMode, serverResult) {
-
-    //    // 🔒 Validate server result FIRST
-    //    if (!serverResult || !serverResult.Rows || !serverResult.Columns) {
-    //        console.error("Invalid server result", serverResult);
-    //        return;
-    //    }
-
-    //    // 🔒 Set global state ONCE
-    //    pivotData = serverResult;
-    //    currentData = serverResult;
-
-    //    // 🔹 Set reference number
-    //    const ref = $("#genRefNo").val() || "--";
-    //    $("#lblRef").text(ref);
-
-    //    // 🔹 Open modal
-    //    $("#detailModal").fadeIn(200);
-
-    //    // 🔹 Footer handling
-    //    const footer = $("#detailFooter");
-
-    //    if (isViewMode) {
-    //        footer.html(`
-    //        <button class="btn-reject" onclick="deleteBatchView()">
-    //            <i class="fas fa-times"></i> Reject & Delete
-    //        </button>
-    //        <button class="btn-approve" onclick="approveBatch()">
-    //            <i class="fas fa-check"></i> Approve
-    //        </button>
-    //    `);
-
-    //        // optional: keep selected employees in view mode
-    //        if (!Array.isArray(selectedEmployees)) {
-    //            selectedEmployees = [];
-    //        }
-    //    }
-    //    else {
-    //        footer.html(`
-    //        <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
-    //            * Modifying returns to Attendance screen.
-    //        </div>
-    //        <button class="btn-outline"
-    //                style="border-color:#d97706; color:#d97706;"
-    //                onclick="rejectBatch()">
-    //            <i class="fas fa-undo"></i> Back
-    //        </button>
-    //        <button class="btn-create"
-    //                onclick="submitBatchForApproval()">
-    //            <i class="fas fa-paper-plane"></i> Submit
-    //        </button>
-    //    `);
-    //    }
-
-    //    // 🔹 Render grid from SINGLE SOURCE OF TRUTH
-    //    renderSalaryGrid(pivotData);
-    //}
+    let pivotData = null; 
     function openDetailModal(isViewMode, serverResult) {
 
         // 🔒 Validate server result FIRST
@@ -2334,6 +2277,7 @@
         // ✅ ONE-TIME INITIALIZATION (CRITICAL)
         // Prevents compounding when manual values change
         // ==================================================
+         
         pivotData.Rows.forEach(r => {
 
             // UI-editable fields
@@ -2387,162 +2331,7 @@
 
         // 🔹 Render grid from SINGLE SOURCE OF TRUTH
         renderSalaryGrid(pivotData);
-    }
-    //function renderSalaryGrid(pivot) {
-    //    if (!pivot || !pivot.Rows || pivot.Rows.length === 0) return;
-
-    //    const rows = pivot.Rows;
-    //    const columns = pivot.Columns;
-
-    //    //// 1. Find the last Deduction index to place Net Salary
-    //    //let lastAllowanceIndex = -1;
-    //    //let lastDeductionIndex = -1;
-    //    //let grossIndex = -1;
-    //    //columns.forEach((col, idx) => {
-    //    //    if ((col.PayType || '').toUpperCase() === 'DEDUCTION') {
-    //    //        lastDeductionIndex = idx;
-    //    //    }
-    //    //});
-
-    //    // Index of the LAST allowance / earning column
-    //    // Used to inject "Manual Addition" immediately after all allowance columns
-    //    let lastAllowanceIndex = -1;
-
-    //    // Index of the LAST deduction column
-    //    // Used to inject "Manual Deduction" and "Net Salary" after deductions
-    //    let lastDeductionIndex = -1;
-
-    //    // Index of the Gross salary column
-    //    // Used to ensure Manual Addition appears BEFORE Gross
-    //    let grossIndex = -1;
-
-    //    columns.forEach((col, idx) => {
-
-    //        // Normalize PayType for safe comparison
-    //        const type = (col.PayType || '').toUpperCase();
-
-    //        // Track the last allowance / earning column
-    //        // Covers Allowance + Earnings (Basic, HRA, etc.)
-    //        if (type === 'ALLOWANCE' || type === 'EARNING') {
-    //            lastAllowanceIndex = idx;
-    //        }
-
-    //        // Track the last deduction column
-    //        // Includes PF, ESIC, PT, Loan Recovery, etc.
-    //        if (type === 'DEDUCTION') {
-    //            lastDeductionIndex = idx;
-    //        }
-
-    //        // Identify the Gross column
-    //        // Prefer explicit IsGross flag; fallback to name check
-    //        if (col.IsGross === true || col.PayConfigName === 'GROSS') {
-    //            grossIndex = idx;
-    //        }
-    //    });
-
-
-
-    //    let html = `<thead>
-    //    <tr>
-    //        <th class="sticky-col left">Employee</th>
-    //        <th class="sticky-col-2 text-center">Paid Days</th>`;
-
-    //    // 🔹 Component headers + Net Salary injection
-    //    columns.forEach((c, idx) => {
-    //        const type = (c.PayType || '').toUpperCase();
-    //        const cls =
-    //            type === 'MANUAL' ? 'header-manual' :
-    //                type === 'DEDUCTION' ? 'header-deduction' : '';
-
-    //        html += `<th class="text-right ${cls}">
-    //        ${c.PayConfigName}
-    //    </th>`;
-
-    //        // ✅ Inject Net Salary header AFTER last deduction
-    //        if (idx === lastDeductionIndex) {
-    //            html += `<th class="text-right header-net">Net Salary</th>`;
-    //        }
-    //    });
-
-    //    // ✅ Monthly CTC always LAST
-    //    html += `<th class="text-right header-ctc">Monthly CTC</th></tr></thead><tbody>`;
-
-
-
-
-    //    // 🔹 Build Rows
-    //    rows.forEach(row => {
-    //        html += `<tr>
-    //        <td class="sticky-col left">
-    //            <div style="font-weight:600;color:#0E7777" data-employeeid="${row.EmployeeId}">${row.EmployeeName}</div>
-    //        </td>
-    //        <td class="sticky-col-2 text-center">${row.PaidDays}</td>`;
-
-    //        columns.forEach((col, idx) => {
-    //            const cell = row.Cells.find(x => x.PayConfigId === col.PayConfigId);
-    //            const amount = cell ? cell.Amount : 0;
-    //            const type = (col.PayType || '').toUpperCase();
-    //            if (col.IsOther && col.OtherType === "LOANRECOVERY") {
-
-    //                const hasLoan = cell && cell.OriginalAmount > 0;
-
-    //                // 🔒 No loan → show only 0
-    //                if (!hasLoan) {
-    //                    html += `<td class="text-right cell-deduction" style="font-family:monospace">
-    //                                0
-    //                            </td>`;
-    //                }
-    //                else {
-    //                    html += `
-    //                            <td class="text-right">
-    //                                <div style="
-    //                                    display:flex;
-    //                                    align-items:center;
-    //                                    justify-content:flex-end;
-    //                                    gap:8px;
-    //                                    white-space:nowrap;
-    //                                ">
-    //                                    <span style="font-weight:600;color:#991b1b">
-    //                                        ${amount.toLocaleString()}
-    //                                    </span>
-
-    //                                    ${cell.IsWaivable
-    //                            ? `<label style="font-size:11px; cursor:pointer;">
-    //                                                   <input type="checkbox"
-    //                                                    ${cell.IsWaived ? 'checked' : ''}
-    //                                                          onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
-    //                                                   Skip
-    //                                               </label>`
-    //                            : ``
-    //                        }
-    //                                </div>
-    //                            </td>`;
-    //                }
-    //            }
-
-    //            else {
-    //                const cellClass = type === 'MANUAL' ? 'cell-manual' : (type === 'DEDUCTION' ? 'cell-deduction' : '');
-    //                html += `<td class="text-right ${cellClass}" style="font-family:monospace">
-    //                ${amount.toLocaleString()}
-    //            </td>`;
-    //            }
-
-    //            // Injected Net Salary
-    //            if (idx === lastDeductionIndex) {
-    //                html += `<td class="text-right cell-net">₹ ${row.NetPay.toLocaleString()}</td>`;
-    //            }
-    //        });
-
-    //        // 3. Add CTC Data Cell at the VERY end
-    //        html += `<td class="text-right" style="font-weight:600; background-color:#f8fafc">
-    //        ₹ ${(row.MonthlyCTC || 0).toLocaleString()}
-    //    </td></tr>`;
-    //    });
-
-    //    html += "</tbody>";
-    //    $("#salaryTable").html(html);
-    //    updateStatsFromPivot(pivot.Rows);
-    //}
+    } 
     function renderSalaryGrid(pivot) {
         if (!pivot || !pivot.Rows || pivot.Rows.length === 0) return;
 

@@ -747,6 +747,8 @@ namespace MendinePayroll.UI.Controllers
                     TotalDeductions = emp.TotalDeductions,
                     NetPay = emp.NetPay,
                     MonthlyCTC = emp.MonthlyCTC,
+                    ManualAddition=emp.ManualAddition,
+                    ManualDeduction=emp.ManualDeduction,
 
                     Cells = new List<PivotCellDto>()
                 };
@@ -1108,25 +1110,7 @@ namespace MendinePayroll.UI.Controllers
                 var employees = new List<EmployeeSalaryResponse>();
 
                 foreach (DataRow r in dt.Rows)
-                {
-                    //employees.Add(new EmployeeSalaryResponse
-                    //{
-                    //    EmployeeId = Convert.ToInt32(r["EmployeeID"] ?? 0),
-                    //    EmployeeName = Convert.ToString(r["EmployeeName"]) ?? string.Empty,
-
-                    //    PaidDays = Convert.ToDecimal(r["TotalPaidDays"] ?? 0m),
-
-                    //    TotalEarnings = Convert.ToDecimal(r["TotalGross"] ?? 0m),
-                    //    TotalDeductions = Convert.ToDecimal(r["TotalDeduction"] ?? 0m),
-                    //    NetPay = Convert.ToDecimal(r["TotalTakeHome"] ?? 0m),
-                    //    MonthlyCTC = Convert.ToDecimal(r["MonthlyCTC"] ?? 0m),
-
-                    //    Components = string.IsNullOrWhiteSpace(Convert.ToString(r["ComponentJson"]))
-                    //        ? new List<SalaryComponentResult>()
-                    //        : JsonConvert.DeserializeObject<List<SalaryComponentResult>>(
-                    //              Convert.ToString(r["ComponentJson"])
-                    //          )
-                    //});
+                { 
                     employees.Add(new EmployeeSalaryResponse
                     {
                         EmployeeId = GetInt(r, "EmployeeID"),
@@ -1139,6 +1123,9 @@ namespace MendinePayroll.UI.Controllers
                         NetPay = GetDecimal(r, "TotalTakeHome"),
                         MonthlyCTC = GetDecimal(r, "MonthlyCTC"),
 
+                        ManualAddition = GetDecimal(r, "ManualAddition"),
+                        ManualDeduction = GetDecimal(r, "ManualDeduction"), 
+
                         Components = r["ComponentJson"] == DBNull.Value
                             ? new List<SalaryComponentResult>()
                             : JsonConvert.DeserializeObject<List<SalaryComponentResult>>(
@@ -1146,9 +1133,7 @@ namespace MendinePayroll.UI.Controllers
                               )
                     });
 
-                }
-
-
+                } 
                 // ===============================
                 // 3. Build PayrollProcessRequest (EDIT MODE)
                 // ===============================
@@ -1194,13 +1179,13 @@ namespace MendinePayroll.UI.Controllers
         }
 
         static decimal GetDecimal(DataRow r, string col)
-    => r[col] == DBNull.Value ? 0m : Convert.ToDecimal(r[col]);
+         => r[col] == DBNull.Value ? 0m : Convert.ToDecimal(r[col]);
 
         static int GetInt(DataRow r, string col)
-            => r[col] == DBNull.Value ? 0 : Convert.ToInt32(r[col]);
+         => r[col] == DBNull.Value ? 0 : Convert.ToInt32(r[col]);
 
         static string GetString(DataRow r, string col)
-            => r[col] == DBNull.Value ? "" : Convert.ToString(r[col]);
+         => r[col] == DBNull.Value ? "" : Convert.ToString(r[col]);
 
     }
 }

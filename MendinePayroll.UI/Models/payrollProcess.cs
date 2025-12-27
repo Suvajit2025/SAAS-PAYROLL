@@ -37,7 +37,8 @@ namespace MendinePayroll.UI.Models
         public decimal NetPay { get; set; }
         public decimal EmployerContribution { get; set; }
         public decimal MonthlyCTC { get; set; }
-
+        public decimal ManualAddition { get; set; }
+        public decimal ManualDeduction { get; set; }
         public List<SalaryComponentResult> Components { get; set; }
     }
     public class SalaryComponentResult
@@ -165,7 +166,8 @@ namespace MendinePayroll.UI.Models
         public decimal TotalDeductions { get; set; }
         public decimal NetPay { get; set; }
         public decimal MonthlyCTC { get; set; }
-
+        public decimal ManualAddition { get; set; }
+        public decimal ManualDeduction { get; set; }
         public bool IsNetRow { get; set; }
         public bool IsCTCRow { get; set; }
         public List<PivotCellDto> Cells { get; set; } = new List<PivotCellDto>();
