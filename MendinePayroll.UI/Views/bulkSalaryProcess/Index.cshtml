@@ -1108,6 +1108,7 @@
     .header-manual {
         background: #fef3c7;
     }
+
     .manual-input {
         width: 80px;
         text-align: right;
@@ -1122,6 +1123,1268 @@
             border-color: #0E7777;
             background-color: #f0fdfa;
         }
+
+    /**/
+    /* --- DATA TABLE HEADER STYLES --- */
+    .dt-top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        padding: 10px 15px;
+        border: 1px solid #e2e8f0;
+        border-bottom: none; /* Table header will provide bottom border */
+        border-radius: 6px 6px 0 0;
+        margin-bottom: 0;
+    }
+
+    .dt-filters-left {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .dt-search-right {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Force DataTable Search input styling */
+    .dataTables_filter {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        float: none !important;
+    }
+
+        .dataTables_filter input {
+            height: 34px;
+            padding: 4px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+
+            .dataTables_filter input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 2px var(--focus-ring);
+            }
+
+    /* Hide the internal filter inputs initially */
+    #hidden-filter-source {
+        display: none;
+    }
+</style>
+<style>
+    /* --- CORE STYLES --- */
+    #salary-process-wrapper {
+        font-family: 'Inter', sans-serif;
+        color: #2c3e50;
+        font-size: 13px;
+    }
+
+    :root {
+        --primary: #0E7777;
+        --primary-light: #e0f2f2;
+        --text: #2c3e50;
+        --border: #e0e0e0;
+        --danger: #dc2626;
+        --success: #16a34a;
+        --focus-ring: rgba(14, 119, 119, 0.15);
+    }
+    /*    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg-body);
+        color: var(--primary);
+        transform: scale(0.9);
+        transform-origin: top left;
+        width: 111.11%;
+    } */
+    .custom-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        padding: 12px 20px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        margin-bottom: 15px;
+    }
+
+        .custom-page-header h1 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--primary);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+    /* Buttons */
+    .btn-create, .btn-outline, .btn-reject, .btn-approve, .btn-export, .btn-upload {
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        padding: 6px 14px;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .btn-create {
+        background: var(--primary);
+        color: white;
+        border: none;
+    }
+
+        .btn-create:hover {
+            background: #095555;
+        }
+
+    .btn-outline {
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        color: var(--text);
+    }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+    .btn-reject {
+        background: #fff;
+        border-color: var(--danger);
+        color: var(--danger);
+    }
+
+    .btn-approve {
+        background: var(--success);
+        color: white;
+        border: none;
+    }
+
+    .btn-export {
+        background: white;
+        border: 1px solid #cbd5e1;
+        color: #64748b;
+    }
+
+    .btn-upload {
+        background: #f0f9ff;
+        border: 1px dashed #0284c7;
+        color: #0284c7;
+    }
+
+        .btn-upload:hover {
+            background: #e0f2fe;
+        }
+
+    /* Toggle & Filter */
+    .view-toggle-container {
+        display: flex;
+        background: #f1f5f9;
+        padding: 4px;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+    }
+
+    .view-toggle-btn {
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        border: none;
+        background: transparent;
+        color: #64748b;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        .view-toggle-btn.active {
+            background: #fff;
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-weight: 700;
+        }
+
+    .filter-select {
+        padding: 6px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        font-size: 12px;
+        outline: none;
+        min-width: 160px;
+        background-color: #fff;
+    }
+
+    /* Batch Grid */
+    .batch-card {
+        background: #fff;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        min-height: 200px;
+    }
+
+    .batch-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+        .batch-table th {
+            background: #f8fafc;
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .batch-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+    .comp-col {
+        background-color: #fffbeb;
+        border-left: 1px solid #fef3c7;
+        color: #92400e;
+    }
+
+    /* Modals Common */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.4);
+        z-index: 9999;
+        backdrop-filter: blur(2px);
+    }
+
+    .modal-box {
+        background: #fff;
+        margin: 2vh auto;
+        border-radius: 8px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        animation: slideUp 0.25s ease;
+    }
+
+    @@keyframes slideUp {
+        from {
+            transform: translateY(15px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-lg {
+        width: 900px;
+        max-height: 85vh;
+        margin: 5vh auto;
+    }
+
+    .modal-xl {
+        width: 98%;
+        max-width: 1550px;
+        height: 94vh;
+    }
+
+    .modal-md {
+        width: 600px;
+    }
+
+    .modal-header-custom {
+        padding: 12px 20px;
+        background: #f8fafc;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 4px solid var(--primary);
+        border-radius: 6px 6px 0 0;
+    }
+
+    .modal-title-custom h3 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .modal-title-custom small {
+        display: block;
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 2px;
+    }
+
+    .btn-close-custom {
+        border: none;
+        background: transparent;
+        font-size: 18px;
+        color: #94a3b8;
+        cursor: pointer;
+    }
+
+    .modal-footer-custom {
+        padding: 15px;
+        border-top: 1px solid var(--border);
+        background: #f8fafc;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-radius: 0 0 6px 6px;
+    }
+
+    /* Detail Modal & Grids */
+    .emp-link {
+        color: var(--primary);
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+        .emp-link:hover {
+            text-decoration: underline;
+        }
+
+    .grid-container {
+        flex: 1;
+        overflow: hidden;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+    }
+
+    table.dataTable {
+        margin: 0 !important;
+        width: 100%;
+        border-collapse: collapse !important;
+    }
+
+        table.dataTable thead th {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 10px 8px;
+            border-bottom: 1px solid #cbd5e1;
+            white-space: nowrap;
+        }
+
+        table.dataTable tbody td {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+            height: 32px;
+        }
+
+    .dt-money {
+        text-align: right;
+        font-family: 'Consolas', monospace;
+        font-weight: 500;
+        color: #334155;
+    }
+
+    .dt-net {
+        background-color: #f0fdfa !important;
+        font-weight: 700;
+        color: #0f766e;
+        border-left: 2px solid #ccfbf1;
+    }
+
+    .grid-input {
+        width: 100%;
+        border: 1px solid transparent;
+        background: transparent;
+        text-align: right;
+        font-family: 'Consolas', monospace;
+        font-size: 12px;
+        padding: 2px 4px;
+        height: 26px;
+        border-radius: 3px;
+    }
+
+        .grid-input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 2px var(--focus-ring);
+            outline: none;
+        }
+
+    .is-changed {
+        background-color: #fffbeb !important;
+    }
+
+    /* Loan Widget */
+    .loan-cell-content {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+    }
+
+    .loan-link {
+        color: #d97706;
+        font-weight: 600;
+        cursor: pointer;
+        border-bottom: 1px dashed #d97706;
+        font-size: 11px;
+    }
+
+    .waive-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        background: #f8fafc;
+        padding: 1px 4px;
+        border-radius: 3px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .is-waived .loan-link {
+        text-decoration: line-through;
+        color: #cbd5e1;
+        border-color: transparent;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 2px;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        height: 40px;
+    }
+
+    .stats-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        white-space: nowrap;
+    }
+
+    .stats-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .stat-label {
+        font-size: 10px;
+        font-weight: 400;
+        color: #64748b;
+        text-transform: uppercase;
+    }
+
+    .stat-value {
+        font-size: 14px;
+        font-weight: 700;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .val-earn {
+        color: var(--success);
+    }
+
+    .val-ded {
+        color: var(--danger);
+    }
+
+    .val-net {
+        color: var(--primary);
+    }
+
+    .divider {
+        width: 1px;
+        height: 18px;
+        background: #e5e7eb;
+    }
+
+    /* Gen Modal Styles */
+    .form-control-custom {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        font-size: 13px;
+        box-sizing: border-box;
+    }
+
+    .form-group-custom {
+        margin-bottom: 15px;
+    }
+
+    .form-label-custom {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .selection-container {
+        display: flex;
+        height: 350px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    .selection-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--border);
+    }
+
+    .col-header {
+        padding: 8px 12px;
+        background: #f8fafc;
+        font-weight: 700;
+        font-size: 11px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .emp-list-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0;
+        max-height: 100%;
+    }
+
+    .emp-item {
+        padding: 6px 10px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+    }
+
+    .status-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .badge-active {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-inactive {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* Loan Cards & History */
+    .loan-card-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .loan-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 15px;
+        border-radius: 4px;
+    }
+
+    .loan-title {
+        font-size: 10px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+
+    .loan-val {
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .hist-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+        .hist-table th {
+            background: #334155;
+            color: #fff;
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        .hist-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+    /* --- EDIT SALARY MODAL (Industry Standard) --- */
+    .edit-modal-layout {
+        display: flex;
+        height: 480px;
+    }
+    /* Increased Height for new fields */
+    .edit-sidebar {
+        width: 260px;
+        background: #f8fafc;
+        border-right: 1px solid #e2e8f0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        overflow-y: auto;
+    }
+
+    .edit-content {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .input-group-custom label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .input-field-styled {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #334155;
+    }
+
+        .input-field-styled:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+    .salary-slip-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .slip-box {
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .slip-header {
+        padding: 8px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+        .slip-header.earn {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .slip-header.ded {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+    .slip-table {
+        width: 100%;
+        font-size: 12px;
+        border-collapse: collapse;
+    }
+
+        .slip-table td {
+            padding: 6px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+    .slip-amt {
+        text-align: right;
+        font-family: 'Consolas', monospace;
+        font-weight: 600;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+    }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e1;
+        transition: .4s;
+        border-radius: 20px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+    input:checked + .slider {
+        background-color: var(--primary);
+    }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+    .net-pay-banner {
+        background: var(--primary);
+        color: white;
+        padding: 15px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .net-pay-val {
+        font-size: 20px;
+        font-weight: 700;
+        font-family: 'Consolas', monospace;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    .text-center {
+        text-align: center !important;
+    }
+
+    .text-right {
+        text-align: right !important;
+    }
+
+    .accordion-section {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .accordion-header {
+        padding: 12px 20px;
+        background: #f8fafc;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .accordion-body {
+        padding: 0;
+    }
+
+    .acc-icon {
+        transition: transform 0.2s;
+    }
+
+    .acc-open {
+        transform: rotate(180deg);
+    }
+    /* ===== EXCEL WRAPPER ===== */
+    .excel-wrapper {
+        max-height: 58vh;
+        overflow: auto;
+        background: #fff;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    /* ===== TABLE ===== */
+    .excel-table {
+        border-collapse: collapse;
+        width: max-content;
+        min-width: 100%;
+        font-size: 12px;
+    }
+
+        /* ===== HEADER ===== */
+        .excel-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #f8fafc;
+            color: #0f172a;
+            font-weight: 600;
+            border: 1px solid #e5e7eb;
+            padding: 8px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* ===== FREEZE FIRST 2 COLS ===== */
+        .excel-table th.sticky-col,
+        .excel-table td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 8;
+            background: #ffffff;
+        }
+
+        .excel-table th.sticky-col-2,
+        .excel-table td.sticky-col-2 {
+            position: sticky;
+            left: 80px;
+            z-index: 8;
+            background: #ffffff;
+        }
+
+        /* ===== CELLS ===== */
+        .excel-table td {
+            border: 1px solid #e5e7eb;
+            padding: 6px 8px;
+            text-align: right;
+            white-space: nowrap;
+            background: #ffffff;
+        }
+
+        /* ===== ROW HOVER ===== */
+        .excel-table tbody tr:hover td {
+            background: #f1f5f9;
+        }
+
+        /* ===== TEXT ALIGN ===== */
+        .excel-table td.left {
+            text-align: left;
+        }
+
+    /* ===== INPUT CELL ===== */
+    .excel-input {
+        width: 100%;
+        border: none;
+        background: transparent;
+        text-align: right;
+        font-size: 12px;
+        outline: none;
+    }
+
+        .excel-input:focus {
+            background: #ecfeff;
+            box-shadow: inset 0 0 0 1px #0E7777;
+        }
+
+    /* ===== COLORS ===== */
+    .cell-earn {
+        color: #065f46;
+        font-weight: 600;
+    }
+
+    .cell-ded {
+        color: #991b1b;
+        font-weight: 600;
+    }
+
+    .cell-net {
+        font-weight: 700;
+        background: #f0fdfa;
+    }
+
+    /* ===== LOAN ===== */
+    .loan-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .loan-box label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #b45309;
+            cursor: pointer;
+        }
+
+    /* ===== WAIVED ===== */
+    .is-waived {
+        opacity: 0.5;
+        text-decoration: line-through;
+    }
+    /* --- PREMIUM DETAIL MODAL OVERHAUL --- */
+    #detailModal .modal-xl {
+        background: #f1f5f9; /* Subtle grey background for the container */
+        border-top: 5px solid var(--primary);
+    }
+
+    #detailModal .stats-bar {
+        background: white;
+        padding: 4px 3px;
+        height: auto;
+        border-bottom: 2px solid #e2e8f0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 18px; /* Larger, more readable values */
+        font-family: 'JetBrains Mono', 'Consolas', monospace;
+    }
+
+    /* --- THE EXCEL GRID OVERHAUL --- */
+    .excel-wrapper {
+        /*margin: 15px;*/
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        background: white;
+    }
+
+    .excel-table {
+        border-spacing: 0;
+    }
+
+        .excel-table thead th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 12px 10px;
+            border-bottom: 2px solid #cbd5e1;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        /* Frozen Column Effect */
+        .excel-table .sticky-col,
+        .excel-table .sticky-col-2 {
+            background: #fdfdfd !important;
+            border-right: 2px solid #e2e8f0 !important;
+        }
+
+        .excel-table tbody td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            border-right: 1px solid #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            color: #334155;
+            transition: background 0.2s;
+        }
+
+        .excel-table tbody tr:hover td {
+            background-color: #f0f9ff !important; /* Soft blue highlight */
+        }
+
+    /* Net Pay Column - High Highlight */
+    .cell-net {
+        background: #f0fdfa !important;
+        color: #0d9488 !important;
+        font-weight: 800 !important;
+        border-left: 2px solid #5eead4 !important;
+        font-size: 13px;
+    }
+
+    /* Input Styling inside Excel */
+    .excel-input {
+        border: 1px solid transparent;
+        padding: 4px 8px;
+        border-radius: 4px;
+        width: 80px;
+        transition: all 0.2s;
+    }
+
+        .excel-input:hover {
+            border-color: #cbd5e1;
+            background: white;
+        }
+
+        .excel-input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(14, 119, 119, 0.2);
+        }
+
+    /* Waive Switch (Better looking labels) */
+    .loan-box label {
+        background: #fff7ed;
+        color: #c2410c;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 9px;
+        border: 1px solid #ffedd5;
+        transition: 0.2s;
+    }
+
+        .loan-box label:hover {
+            background: #ffedd5;
+        }
+
+    /* Footer Layout */
+    .modal-footer-custom {
+        padding: 20px;
+        background: white;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    /* Header styling */
+    .header-manual {
+        background-color: #fff7ed !important; /* Light Orange */
+        color: #9a3412 !important; /* Dark Brown/Orange text */
+        border-bottom: 2px solid #fdba74 !important;
+    }
+
+    /* Cell styling */
+    .cell-manual {
+        background-color: #fffbeb !important; /* Very light yellow */
+        color: #b45309 !important; /* Amber text */
+        font-weight: 600;
+    }
+
+    /* Optional: Highlight the text if it's an adjustment */
+    .manual-text {
+        border-bottom: 1px dashed #f59e0b;
+    }
+
+    .header-ctc {
+        background-color: #f1f5f9 !important;
+        color: #64748b !important;
+        border-left: 2px solid #cbd5e1 !important;
+    }
+
+    /* Base table */
+    #salaryTable {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        /* All headers */
+        #salaryTable thead th {
+            position: sticky;
+            top: 0;
+            background: #f8fafc;
+            z-index: 10; /* baseline */
+        }
+
+        #salaryTable thead {
+            position: sticky !important;
+            top: 0;
+            z-index: 5;
+        }
+
+
+    /* Sticky Employee column */
+    .sticky-col {
+        position: sticky;
+        left: 0;
+        z-index: 30; /* highest */
+        background: #ffffff;
+    }
+
+    /* Sticky Paid Days column */
+    .sticky-col-2 {
+        position: sticky;
+        left: 120px; /* adjust to actual width */
+        z-index: 25;
+        background: #ffffff;
+    }
+
+    /* Net Salary header */
+    .header-net {
+        background: #dcfce7;
+        font-weight: 700;
+        z-index: 12;
+    }
+
+    /* Monthly CTC header */
+    .header-ctc {
+        background: #e0f2fe;
+        font-weight: 700;
+        z-index: 12;
+    }
+
+    /* Deduction header */
+    .header-deduction {
+        background: #fee2e2;
+    }
+
+    /* Manual header */
+    .header-manual {
+        background: #fef3c7;
+    }
+
+    .manual-input {
+        width: 80px;
+        text-align: right;
+        padding: 3px 6px;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+
+        .manual-input:focus {
+            outline: none;
+            border-color: #0E7777;
+            background-color: #f0fdfa;
+        }
+
+    /**/
+    /* --- DATA TABLE HEADER STYLES --- */
+    .dt-top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        padding: 10px 15px;
+        border: 1px solid #e2e8f0;
+        border-bottom: none; /* Table header will provide bottom border */
+        border-radius: 6px 6px 0 0;
+        margin-bottom: 0;
+    }
+
+    .dt-filters-left {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .dt-search-right {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Force DataTable Search input styling */
+    .dataTables_filter {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        float: none !important;
+    }
+
+        .dataTables_filter input {
+            height: 34px;
+            padding: 4px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+
+            .dataTables_filter input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 2px var(--focus-ring);
+            }
+
+    /* Hide the internal filter inputs initially */
+    #hidden-filter-source {
+        display: none;
+    }
+
+    /* FULL SCREEN LOCK */
+    .payroll-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: none;
+    }
+
+    /* DARK BACKDROP */
+    .payroll-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.65); /* slate */
+        pointer-events: all;
+    }
+
+    /* CENTER BOX */
+    .payroll-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #ffffff;
+        padding: 28px 38px;
+        border-radius: 14px;
+        text-align: center;
+        box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    }
+
+        /* ICON */
+        .payroll-box i {
+            font-size: 44px;
+            color: #0E7777;
+            margin-bottom: 12px;
+        }
+
+    /* TEXT */
+    .payroll-text {
+        font-size: 14px;
+        font-weight: 600;
+        color: #334155;
+    }
 
 </style>
 
@@ -1140,9 +2403,9 @@
                             <button class="view-toggle-btn active" id="btnViewGroup" onclick="switchMainView('group')"><i class="fas fa-layer-group"></i> Pay Group Wise</button>
                             <button class="view-toggle-btn" id="btnViewEmp" onclick="switchMainView('emp')"><i class="fas fa-users"></i> Employee Wise</button>
                         </div>
-                        <div id="filterContainer" class="hidden">
-                            <select id="ddlFilterGroup" class="filter-select"><option value="">All Pay Groups</option></select>
-                        </div>
+                        @*<div id="filterContainer" class="hidden">
+                                <select id="ddlFilterGroup" class="filter-select"><option value="">All Pay Groups</option></select>
+                            </div>*@
                     </div>
                     <button class="btn-create" onclick="openGenModal()"><i class="fas fa-plus"></i> Run New Payroll</button>
                 </div>
@@ -1171,8 +2434,39 @@
                     </div>
 
                     <div id="view_employee_wise" class="hidden" style="padding:10px;">
+
+                        <div id="hidden-filter-source">
+                            <select id="ddlEmpPayGroup" class="filter-select">
+                                <option value="">All Pay Groups</option>
+                            </select>
+
+                            <select id="ddlEmpMonth" class="filter-select">
+                                <option value="">All Months</option>
+                            </select>
+
+                            <select id="ddlEmpYear" class="filter-select">
+                                <option value="">All Years</option>
+                            </select>
+                        </div>
+
                         <table class="batch-table display" id="empWiseTable" style="width:100%">
-                            <thead><tr><th class="text-center" style="width:30px;"><input type="checkbox" id="chkAllEmpWise"></th><th>Emp Code</th><th>Employee Name</th><th>Pay Group</th><th>Period</th><th class="text-right">Gross Pay</th><th class="text-right">Deduction</th><th class="text-right">Net Payout</th><th>Status</th><th class="text-right">Action</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width:30px;"><input type="checkbox" id="chkAllEmpWise"></th>
+                                    <th>Emp Code</th>
+                                    <th>Employee Name</th>
+                                    <th>Pay Group</th>
+                                    <th>Period</th>
+                                    <th class="text-right">Gross Pay</th>
+                                    <th class="text-right">Deduction</th>
+                                    <th class="text-right">Net Payout</th>
+                                    <th>Status</th>
+                                    <th class="text-right">Action</th>
+                                    <th class="hidden">MonthID</th>
+                                    <th class="hidden">YearID</th>
+                                    <th class="hidden">PayGroupID</th>
+                                </tr>
+                            </thead>
                             <tbody id="empWiseBody"></tbody>
                         </table>
                     </div>
@@ -1443,7 +2737,20 @@
             <div class="modal-footer-custom"><button class="btn-outline" onclick="closeModal('editSalaryModal')">Cancel</button><button class="btn-create" onclick="saveModalSalary()"><i class="fas fa-save"></i> Save Changes</button></div>
         </div>
     </div>
+
+
 </div>
+
+<!-- Payroll Processing Loader -->
+<div id="payrollLoader" class="payroll-loader">
+    <div class="payroll-backdrop"></div>
+    <div class="payroll-box">
+        <i class="fas fa-cogs fa-spin"></i>
+        <div class="payroll-text">Processing Salary…</div>
+    </div>
+</div>
+
+
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -1457,7 +2764,27 @@
         // Load payroll batch dashboard on first load
         loadPayrollBatchGrid();
 
+        initEmployeeWiseFilters();
     });
+    function showPayrollLoader() {
+        $("body").css({
+            overflow: "hidden",
+            pointerEvents: "none"
+        });
+
+        $("#payrollLoader").fadeIn(120);
+        $("#payrollLoader").css("pointer-events", "all");
+    }
+
+    function hidePayrollLoader() {
+        $("#payrollLoader").fadeOut(120, function () {
+            $("body").css({
+                overflow: "",
+                pointerEvents: ""
+            });
+        });
+    }
+
 
     let selectedEmployees = [];
     let attendanceData = {};
@@ -1465,116 +2792,127 @@
     let dtInstance = null;
     let editingEmpId = null;
     let currentData = [];
+    /* =====================================================
+       INIT FILTER DROPDOWNS (DATA ONLY)
+    ===================================================== */
+    function initEmployeeWiseFilters() {
 
-    // --- 1. TOGGLE & EMPLOYEE GRID ---
-    //function switchMainView(view) {
-    //    $('.view-toggle-btn').removeClass('active');
-    //    if (view === 'group') {
-    //        $('#btnViewGroup').addClass('active'); $('#view_group_wise').removeClass('hidden'); $('#view_employee_wise').addClass('hidden'); $('#filterContainer').addClass('hidden');
-    //        if (empDtInstance) { empDtInstance.destroy(); empDtInstance = null; }
-    //    } else {
-    //        $('#btnViewEmp').addClass('active'); $('#view_group_wise').addClass('hidden'); $('#view_employee_wise').removeClass('hidden'); $('#filterContainer').removeClass('hidden');
-    //        loadEmployeeGrid();
-    //    }
-    //}
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        const ddlMonth = $('#ddlEmpMonth')
+            .empty()
+            .append('<option value="">All Months</option>');
+
+        months.forEach((m, i) => {
+            ddlMonth.append(`<option value="${i + 1}">${m}</option>`);
+        });
+
+        const yearNow = new Date().getFullYear();
+        const ddlYear = $('#ddlEmpYear')
+            .empty()
+            .append('<option value="">All Years</option>');
+
+        for (let y = yearNow - 5; y <= yearNow + 1; y++) {
+            ddlYear.append(`<option value="${y}">${y}</option>`);
+        }
+
+        $.get('/bulkSalaryProcess/GetPayGroupList', function (res) {
+            const ddl = $('#ddlEmpPayGroup')
+                .empty()
+                .append('<option value="">All Pay Groups</option>');
+
+            res?.forEach(p => {
+                ddl.append(`<option value="${p.PayGroupId}">${p.PayGroupName}</option>`);
+            });
+        });
+    }
     function switchMainView(view) {
 
         $('.view-toggle-btn').removeClass('active');
 
+        /* ===============================
+           PAY GROUP WISE VIEW
+        =============================== */
         if (view === 'group') {
 
             $('#btnViewGroup').addClass('active');
             $('#view_group_wise').removeClass('hidden');
             $('#view_employee_wise').addClass('hidden');
-            $('#filterContainer').addClass('hidden');
 
-            if (empDtInstance) {
-                empDtInstance.destroy();
+            // ✅ SAFE destroy (DO NOT remove table)
+            if (empDtInstance && $.fn.DataTable.isDataTable('#empWiseTable')) {
+
+                // 🔑 Move filters back to safe container
+                $('#hidden-filter-source')
+                    .append($('#ddlEmpPayGroup'))
+                    .append($('#ddlEmpMonth'))
+                    .append($('#ddlEmpYear'));
+
+                empDtInstance.destroy(); // ❗ NO true
                 empDtInstance = null;
             }
 
-        } else {
+            return;
+        }
+
+        /* ===============================
+           EMPLOYEE WISE VIEW
+        =============================== */
+        if (view === 'emp') {
 
             $('#btnViewEmp').addClass('active');
             $('#view_group_wise').addClass('hidden');
             $('#view_employee_wise').removeClass('hidden');
-            $('#filterContainer').removeClass('hidden');
 
-            loadEmployeeWiseBatchGrid();   // ✅ AJAX LOAD
+            // 🔑 Always rebuild if destroyed
+            if (!empDtInstance) {
+                loadEmployeeWiseBatchGrid();
+            } else {
+                empDtInstance.draw(false);
+            }
         }
     }
 
-    //function loadEmployeeGrid() {
-    //    const tbody = $("#empWiseBody").empty();
-    //    const ddlFilter = $("#ddlFilterGroup").empty();
-    //    ddlFilter.append('<option value="">All Pay Groups</option>');
-    //    [...new Set(employeesDB.map(e => e.group))].forEach(g => ddlFilter.append(`<option value="${g}">${g}</option>`));
-
-    //    employeesDB.forEach(emp => {
-    //        let net = emp.basic > 0 ? emp.basic * 0.88 : emp.rate * 26;
-    //        let row = `<tr><td class="text-center"><input type="checkbox" class="chk-row-emp" value="${emp.id}"></td><td><strong>${emp.id}</strong></td><td>${emp.name}</td><td>${emp.group}</td><td>Oct 2025</td><td class="text-right">₹ ${emp.basic > 0 ? emp.basic.toLocaleString() : emp.rate + '/hr'}</td><td class="text-right" style="font-weight:700; color:var(--primary)" id="net_${emp.id}">₹ ${net.toLocaleString()}</td><td><span style="background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px; font-size:10px; border:1px solid #bbf7d0; font-weight:600;">PROCESSED</span></td><td class="text-right"><button class="btn-outline" onclick="openEditSalaryModal('${emp.id}')"><i class="fas fa-edit"></i> Edit</button></td></tr>`;
-    //        tbody.append(row);
-    //    });
-
-    //    if (empDtInstance) empDtInstance.destroy();
-    //    empDtInstance = $('#empWiseTable').DataTable({ paging: true, pageLength: 5, searching: true, info: true, language: { paginate: { previous: '<i class="fas fa-chevron-left"></i>', next: '<i class="fas fa-chevron-right"></i>' }, search: "_INPUT_", searchPlaceholder: "Search Employee..." }, dom: 'frtip' });
-    //    $('#ddlFilterGroup').off('change').on('change', function () { empDtInstance.column(3).search(this.value).draw(); });
-    //    $('#chkAllEmpWise').on('change', function () { $('.chk-row-emp').prop('checked', this.checked); });
-    //}
+    /* =====================================================
+       LOAD EMPLOYEE WISE GRID
+    ===================================================== */
     function loadEmployeeWiseBatchGrid() {
 
-        // destroy previous instance safely
         if ($.fn.DataTable.isDataTable('#empWiseTable')) {
             $('#empWiseTable').DataTable().destroy();
         }
-
-        $("#empWiseBody").html(`
-        <tr>
-            <td colspan="9" class="text-center">
-                <i class="fas fa-circle-notch fa-spin"></i> Loading...
-            </td>
-        </tr>
-    `);
 
         $.ajax({
             url: '/bulkSalaryProcess/GetPayrollEmployeeWiseDashboard',
             type: 'GET',
             success: function (res) {
 
-                const tbody = $("#empWiseBody").empty();
-
-                if (!res || res.length === 0) {
-                    tbody.html(`<tr><td colspan="9" class="text-center">No data found</td></tr>`);
-                    return;
-                }
+                const tbody = $('#empWiseBody').empty();
 
                 res.forEach(r => {
-
                     tbody.append(`
                     <tr>
-                        <td class="text-center">
-                            <input type="checkbox" class="chk-row-emp" value="${r.EmployeeId}">
-                        </td>
-                        <td><strong>${r.EmployeeCode}</strong></td>
+                        <td><input type="checkbox"></td>
+                        <td>${r.EmployeeCode}</td>
                         <td>${r.EmployeeName}</td>
                         <td>${r.PayGroupName}</td>
                         <td>${r.PeriodText}</td>
-                        <td class="text-right">₹ ${Number(r.GrossPay).toLocaleString()}</td>
-                        <td class="text-right">₹ ${Number(r.Deduction).toLocaleString()}</td>
-                        <td class="text-right" style="font-weight:700;color:var(--primary)">
-                            ₹ ${Number(r.NetPay).toLocaleString()}
-                        </td>
-                        <td>
-                            <span class="status-badge ${r.StatusClass}">
-                                ${r.StatusText}
-                            </span>
-                        </td>
+                        <td>${r.GrossPay}</td>
+                        <td>${r.Deduction}</td>
+                        <td>${r.NetPay}</td>
+                        <td>${r.StatusText}</td>
                         <td class="text-right">
-                            <button class="btn-outline"
-                                    onclick="openEmployeePayrollView(${r.PayrollProcessEmployeeID})">
+                            <button class="btn-outline" onclick="openEmployeePayrollView(${r.PayrollProcessEmployeeID})">
                                 <i class="fa fa-eye"></i>
                             </button>
                         </td>
+                        <!-- FILTER COLUMNS -->
+                        <td>${r.ProcessMonth}</td>
+                        <td>${r.ProcessYear}</td>
+                        <td>${r.PayGroupID}</td>
                     </tr>
                 `);
                 });
@@ -1582,30 +2920,50 @@
                 empDtInstance = $('#empWiseTable').DataTable({
                     pageLength: 10,
                     ordering: false,
-                    searching: true,
                     lengthChange: false,
                     info: true,
-                    language: {
-                        search: "",
-                        searchPlaceholder: "Search employee...",
-                        paginate: {
-                            previous: '<i class="fas fa-chevron-left"></i>',
-                            next: '<i class="fas fa-chevron-right"></i>'
-                        }
+
+                    columnDefs: [
+                        { targets: [10, 11, 12], visible: false }
+                    ],
+
+                    dom: '<"dt-top-row"<"dt-filters-left"><"dt-search-right"f>>rt<"dt-bottom"ip>',
+
+                    initComplete: function () {
+                        moveAndBindFilters();
                     }
                 });
-
-                // Select all checkbox
-                $('#chkAllEmpWise').off('change').on('change', function () {
-                    $('.chk-row-emp').prop('checked', this.checked);
-                });
-            },
-            error: function () {
-                toastr.error("Failed to load employee-wise payroll data");
             }
         });
     }
 
+    function applyEmployeeWiseFilters() {
+
+        const month = $('#ddlEmpMonth').val();
+        const year = $('#ddlEmpYear').val();
+        const group = $('#ddlEmpPayGroup').val();
+
+        empDtInstance
+            .column(10).search(month || '', false, false)
+            .column(11).search(year || '', false, false)
+            .column(12).search(group || '', false, false)
+            .draw();
+    }
+
+    function moveAndBindFilters() {
+
+        $('.dt-filters-left')
+            .empty()
+            .append($('#ddlEmpPayGroup'))
+            .append($('#ddlEmpMonth'))
+            .append($('#ddlEmpYear'));
+
+        $('#ddlEmpPayGroup, #ddlEmpMonth, #ddlEmpYear')
+            .off('change.empfilter')
+            .on('change.empfilter', function () {
+                applyEmployeeWiseFilters();
+            });
+    }
     // --- 2. EDIT SALARY MODAL (Calculations with Manual Adj) ---
     function openEditSalaryModal(empId) {
         editingEmpId = empId;
@@ -2169,7 +3527,6 @@
     }
 
     /*==============Process Final Payroll================*/
-
     function processFinalPayroll() {
 
         const paidColIndex = getPaidDaysColumnIndex();
@@ -2183,9 +3540,7 @@
 
         $("#attTableBody tr").each(function () {
 
-            // ✅ SAFE ID EXTRACTION
             const employeeId = parseInt($(this).data("employeeid"), 10);
-            //const employeeId = parseInt($row.data("employeeid"), 10);
             const employeeName = $(this).data("name");
 
             if (!employeeId || employeeId <= 0) return;
@@ -2227,7 +3582,9 @@
             payload.ToDate = $("#txtToDate").val();
         }
 
-        console.log(payload); // 🔍 Debug
+        console.log(payload);
+
+        showPayrollLoader(); // 🔄 START LOADER
 
         $.ajax({
             url: '/bulkSalaryProcess/CalculateSalary',
@@ -2235,17 +3592,96 @@
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(payload),
             success: function (res) {
-                console.log(res);
                 pivotData = res;
-                openDetailModal(false, res);   // 🔑 pass server response
+                openDetailModal(false, res);
                 toastr.success("Salary calculated successfully");
             },
             error: function (err) {
                 console.error(err);
                 toastr.error("Salary calculation failed");
+            },
+            complete: function () {
+                hidePayrollLoader(); // ✅ ALWAYS STOP LOADER
             }
         });
     }
+
+    //function processFinalPayroll() {
+
+    //    const paidColIndex = getPaidDaysColumnIndex();
+    //    if (paidColIndex === -1) {
+    //        toastr.error("Paid Days column not found");
+    //        return;
+    //    }
+
+    //    const payrollType = $("#ddlType").val();
+    //    let employees = [];
+
+    //    $("#attTableBody tr").each(function () {
+
+    //        // ✅ SAFE ID EXTRACTION
+    //        const employeeId = parseInt($(this).data("employeeid"), 10);
+    //        //const employeeId = parseInt($row.data("employeeid"), 10);
+    //        const employeeName = $(this).data("name");
+
+    //        if (!employeeId || employeeId <= 0) return;
+
+    //        const paidDays = parseInt(
+    //            $(this).find("input.paid-days").val(),
+    //            10
+    //        ) || 0;
+
+    //        employees.push({
+    //            EmployeeId: employeeId,
+    //            EmployeeName: employeeName,
+    //            PaidDays: paidDays
+    //        });
+    //    });
+
+    //    if (employees.length === 0) {
+    //        toastr.warning("No attendance data found");
+    //        return;
+    //    }
+
+    //    let payload = {
+    //        PayrollType: payrollType,
+    //        Employees: employees
+    //    };
+
+    //    if (payrollType === '1') {
+    //        const ym = $("#txtMonthYear").val();
+    //        if (!ym) {
+    //            toastr.error("Please select Month & Year");
+    //            return;
+    //        }
+
+    //        const [year, month] = ym.split("-");
+    //        payload.ProcessMonth = parseInt(month, 10);
+    //        payload.ProcessYear = parseInt(year, 10);
+    //    } else {
+    //        payload.FromDate = $("#txtFromDate").val();
+    //        payload.ToDate = $("#txtToDate").val();
+    //    }
+
+    //    console.log(payload); // 🔍 Debug
+
+    //    $.ajax({
+    //        url: '/bulkSalaryProcess/CalculateSalary',
+    //        type: 'POST',
+    //        contentType: 'application/json; charset=utf-8',
+    //        data: JSON.stringify(payload),
+    //        success: function (res) {
+    //            console.log(res);
+    //            pivotData = res;
+    //            openDetailModal(false, res);   // 🔑 pass server response
+    //            toastr.success("Salary calculated successfully");
+    //        },
+    //        error: function (err) {
+    //            console.error(err);
+    //            toastr.error("Salary calculation failed");
+    //        }
+    //    });
+    //}
 
     function getPaidDaysColumnIndex() {
         let index = -1;
@@ -2260,7 +3696,7 @@
         return index;
     }
 
-    let pivotData = null; 
+    let pivotData = null;
     function openDetailModal(isViewMode, serverResult) {
 
         // 🔒 Validate server result FIRST
@@ -2277,12 +3713,12 @@
         // ✅ ONE-TIME INITIALIZATION (CRITICAL)
         // Prevents compounding when manual values change
         // ==================================================
-         
+
         pivotData.Rows.forEach(r => {
 
             // UI-editable fields
             r.ManualAddition ??= 0;
-            r.ManualDeduction ??= 0; 
+            r.ManualDeduction ??= 0;
         });
 
         // 🔹 Set reference number
@@ -2331,7 +3767,7 @@
 
         // 🔹 Render grid from SINGLE SOURCE OF TRUTH
         renderSalaryGrid(pivotData);
-    } 
+    }
     function renderSalaryGrid(pivot) {
         if (!pivot || !pivot.Rows || pivot.Rows.length === 0) return;
 
@@ -2368,7 +3804,7 @@
 
             html += `<th class="text-right ${cls}">${c.PayConfigName}</th>`;
 
-            // ➕ Manual Addition (after allowance, before gross) 
+            // ➕ Manual Addition (after allowance, before gross)
             if (idx === grossIndex - 1) {
                 html += `<th class="text-right header-manual">Manual Addition</th>`;
             }
@@ -2411,7 +3847,7 @@
                         html += `<td class="text-right cell-deduction" style="font-family:monospace">
                                   0
                               </td>`;
-                    } 
+                    }
                     else {
                         html += `
                                 <td class="text-right">
@@ -2439,7 +3875,7 @@
                                 </td>`;
                     }
                 }
-                 else {
+                else {
                     html += `<td class="text-right ${type === 'DEDUCTION' ? 'cell-deduction' : ''}">
                     ${amount.toLocaleString()}
                 </td>`;
@@ -2591,7 +4027,7 @@
         hideModal('attModal');   // 👈 NO cleanup
         $("#genModal").fadeIn(200); // 👈 restore previous modal
     }
-    function approveBatch() { if (confirm("Approve batch?")) { closeModal('detailModal'); alert("Batch Approved!"); } }
+    
     function deleteBatchView() { if (confirm("Delete batch?")) { closeModal('detailModal'); $("#row_1002").remove(); alert("Deleted."); } }
     function openLoanModal(name, openBal, emi) { $("#loanEmpLabel").text(name); $("#valOpen").text("₹ " + openBal.toLocaleString()); $("#valEmi").text("₹ " + emi.toLocaleString()); $("#valClose").text("₹ " + (openBal - emi).toLocaleString()); $("#loanModal").fadeIn(200); }
     function openHistory(name) { $("#histEmpName").text(name); $("#histBody").html(`<tr><td>Oct 2025</td><td>15,000</td><td>5,000</td><td>1,200</td><td><strong>18,800</strong></td></tr><tr><td>Sep 2025</td><td>15,000</td><td>5,000</td><td>1,200</td><td><strong>18,800</strong></td></tr>`); $("#historyModal").fadeIn(200); }
@@ -2738,6 +4174,7 @@
     function closeAllModals() {
         $(".modal-overlay:visible").fadeOut(200);
     }
+
     function loadPayrollBatchGrid() {
 
         $.ajax({
@@ -2802,7 +4239,7 @@
             toastr.error("Invalid batch");
             return;
         }
-
+        showPayrollLoader();
         $.ajax({
             url: '/bulkSalaryProcess/OpenBatchView',
             type: 'GET',
@@ -2812,19 +4249,32 @@
             },
             success: function (res) {
 
-                if (!res || !res.Rows || !res.Columns) {
+                // 🔑 VALIDATE NEW RESPONSE STRUCTURE
+                if (!res || res.Success !== true || !res.Data || !res.Data.Rows || !res.Data.Columns) {
                     toastr.error("Invalid batch data");
                     return;
                 }
+                
 
                 // 🔥 OPEN IN EDIT MODE
-                openDetailModal(false, res);
+                pivotData = res.Data;
+                openDetailModal(true, res.Data);
+
+                setTimeout(() => {
+                    $("#lblRef").text(res.RefNo || "--");
+                }, 0);
             },
             error: function (err) {
                 console.error(err);
                 toastr.error("Failed to open payroll batch");
+            },
+            complete: function () {
+                hidePayrollLoader(); // GUARANTEED UNLOCK
             }
         });
     }
+    function approveBatch()
+    {
 
+    }
 </script>

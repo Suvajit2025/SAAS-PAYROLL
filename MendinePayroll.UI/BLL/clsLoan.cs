@@ -117,7 +117,6 @@ namespace UI.BLL
 		}
 		private static DataTable SaveTable()
 		{
-
 			DataTable DT = new DataTable("Data");
 			DT.Columns.Add("SRL", typeof(System.Int32));
 			DT.Columns.Add("IDDetail", typeof(System.Int32));
