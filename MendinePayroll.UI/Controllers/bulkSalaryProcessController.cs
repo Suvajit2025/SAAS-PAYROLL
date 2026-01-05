@@ -1,5 +1,6 @@
 ﻿using Common.Utility;
 using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.EMMA;
 using MendinePayroll.UI.Common;
 using MendinePayroll.UI.Models;
 using Newtonsoft.Json;
@@ -869,6 +870,153 @@ namespace MendinePayroll.UI.Controllers
             return 0m;
         }
 
+        [HttpPost]
+        public JsonResult SavePayrollBatch(PayrollBatchSaveDto dto)
+        {
+            try
+            {
+                // =============================
+                // 1. Validate payload
+                // =============================
+                if (dto == null || dto.Employees == null || dto.Employees.Count == 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Invalid payroll payload. No employee data found."
+                    });
+                }
+
+                var EntryUser = Session["UserName"].ToString();
+
+                // =============================
+                // 2. Calculate batch totals
+                // =============================
+                dto.TotalEmployees = dto.Employees.Count;
+                dto.TotalCost = dto.Employees.Sum(e => e.TotalGross);
+                dto.TotalNetPay = dto.Employees.Sum(e => e.NetPay);
+
+                // ===================================================================
+                // 3. Save Batch Header & Get Batch ID
+                // ===================================================================
+                DataTable dtBatch = clsDatabase.fnDataTable(
+                    "SP_Payroll_SaaS_SaveBatchSalary",
+                    dto.RefNo,
+                    dto.RefDate, 
+                    dto.PayrollType,
+                    dto.ProcessMonth,
+                    dto.ProcessYear,
+                    dto.FromDate,
+                    dto.ToDate,
+                    dto.TotalEmployees,
+                    dto.TotalCost,
+                    dto.TotalNetPay,
+                    dto.Comments,
+                    TenantId,
+                    EntryUser
+                );
+
+                // ❌ No response
+                if (dtBatch == null || dtBatch.Rows.Count == 0)
+                {
+                    throw new Exception("No response from payroll batch save procedure.");
+                }
+
+                // ❌ Missing expected column
+                if (!dtBatch.Columns.Contains("PayrollBatchID"))
+                {
+                    throw new Exception("Invalid response from payroll batch save procedure.");
+                }
+
+                DataRow row = dtBatch.Rows[0];
+
+                // ❌ Error returned from SP
+                if (dtBatch.Columns.Contains("StatusCode")
+                    && Convert.ToInt32(row["StatusCode"]) == 0)
+                {
+                    string msg = row["Message"]?.ToString() ?? "Payroll batch save failed.";
+                    throw new Exception(msg);
+                }
+
+                // ✅ Success
+                int payrollBatchId = Convert.ToInt32(row["PayrollBatchID"]);
+
+                string employeesJson = JsonConvert.SerializeObject(dto.Employees);
+                // ===================================================================
+                // 4. Save Employee Header & Get Payroll Process Employee ID
+                // ===================================================================
+                DataTable dtEmpBatch= clsDatabase.fnDataTable("SP_Payroll_SaaS_SaveBatchEmployee",payrollBatchId,employeesJson,TenantId,EntryUser);
+
+                // ❌ No response
+                if (dtEmpBatch == null || dtEmpBatch.Rows.Count == 0)
+                {
+                    throw new Exception("No response from payroll employee batch save procedure.");
+                }
+
+                // ❌ Missing expected column
+                if (!dtEmpBatch.Columns.Contains("StatusCode"))
+                {
+                    throw new Exception("Invalid response from payroll employee batch save procedure.");
+                }
+
+                DataRow empRow = dtEmpBatch.Rows[0];
+
+                // ❌ Error returned from SP
+                if (Convert.ToInt32(empRow["StatusCode"]) == 0)
+                {
+                    string msg = empRow["Message"]?.ToString()
+                                 ?? "Payroll employee save failed.";
+                    throw new Exception(msg);
+                }
+
+                // ===================================================================
+                // 5. Save Employee Salary Component Details
+                // ===================================================================
+
+                DataTable dtEmpDetail = clsDatabase.fnDataTable(
+                    "SP_Payroll_SaaS_SaveBatchEmployeeDetail",
+                    payrollBatchId,
+                    employeesJson
+                );
+
+                if (dtEmpDetail == null || dtEmpDetail.Rows.Count == 0)
+                    throw new Exception("No response from payroll employee detail save procedure.");
+
+                if (!dtEmpDetail.Columns.Contains("PayrollProcessEmployeeID"))
+                    throw new Exception("Invalid response from payroll employee detail save procedure.");
+
+                // =============================
+                // 6. Success response
+                // =============================
+                return Json(new
+                {
+                    success = true,
+                    message = "Payroll batch saved successfully.",
+                    payrollBatchId = payrollBatchId
+                });
+            }
+            catch (SqlException ex)
+            {
+                // 🔴 SQL-related issues
+                return Json(new
+                {
+                    success = false,
+                    message = "Database error while saving payroll batch.",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                // 🔴 Any other runtime error
+                return Json(new
+                {
+                    success = false,
+                    message = "Unexpected error while saving payroll batch.",
+                    error = ex.Message
+                });
+            }
+        }
+
         [HttpGet]
         public JsonResult GetPayrollDashboard()
         {
@@ -897,6 +1045,8 @@ namespace MendinePayroll.UI.Controllers
                 // 🔥 STATUS IS INT → convert properly
                 Status = Convert.ToInt32(r["Status"]),
 
+                ProcessMonth = r["ProcessMonth"].ToString(),
+                ProcessYear = r["ProcessYear"].ToString(),
                 CreatedDate = Convert.ToDateTime(r["CreatedDate"])
             }).ToList();
 
@@ -1057,11 +1207,15 @@ namespace MendinePayroll.UI.Controllers
                 var pivot = BuildPivot(request, employees);
                 // 🔑 ADD REF NO
                 var refNo = Convert.ToString(h["RefNo"]);
+                var processMonth = GetInt(dt.Rows[0], "ProcessMonth");
+                var processYear = GetInt(dt.Rows[0], "ProcessYear");
 
                 return Json(new
                 {
                     Success = true,
                     RefNo = refNo,
+                    ProcessMonth = processMonth,
+                    ProcessYear=processYear,
                     Data = pivot
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -1075,6 +1229,171 @@ namespace MendinePayroll.UI.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpPost]
+        public JsonResult ApproveBatch(PayrollBatchApproveDto dto)
+        {
+            try
+            {
+                string userName = Session["UserName"]?.ToString();
+                if (string.IsNullOrEmpty(userName))
+                    return Json(new { success = false, message = "Session expired" });
+
+                if (dto == null || dto.PayrollBatchId <= 0)
+                    return Json(new { success = false, message = "Invalid batch data" });
+
+                if (dto.Employees == null || dto.Employees.Count == 0)
+                    return Json(new { success = false, message = "No salary data found" });
+
+                if (!dto.ProcessMonth.HasValue || !dto.ProcessYear.HasValue)
+                    return Json(new { success = false, message = "Process Month/Year missing" });
+
+                int year = dto.ProcessYear.Value;
+                int monthNo = dto.ProcessMonth.Value;
+
+                string monthName = new DateTime(year, monthNo, 1)
+                    .ToString("MMMM", CultureInfo.InvariantCulture);
+
+                var loanJsonList = new List<object>();
+
+                /* ===============================
+                   1. GET TENANT LOAN PAYCONFIG
+                =============================== */
+                int? loanPayConfigId = null;
+
+                DataTable dtLoan = clsDatabase.fnDataTable(
+                    "SP_Payroll_SaaS_GetTenantLoanPayConfigId",
+                    TenantId
+                );
+
+                if (dtLoan != null && dtLoan.Rows.Count > 0)
+                    loanPayConfigId = Convert.ToInt32(dtLoan.Rows[0]["PayConfigId"]);
+
+                /* ===============================
+                   2. BUILD LOAN JSON
+                =============================== */
+                if (loanPayConfigId.HasValue)
+                {
+                    foreach (var emp in dto.Employees)
+                    {
+                        var loanComponent = emp.Components
+                            .FirstOrDefault(c => c.PayConfigId == loanPayConfigId.Value);
+
+                        if (loanComponent == null || loanComponent.IsWaived || loanComponent.PayValue <= 0)
+                            continue;
+
+                        decimal expectedEmi = GetEmployeeLoanEMI(
+                            emp.EmployeeId,
+                            monthNo,
+                            year
+                        );
+
+                        if (expectedEmi != loanComponent.PayValue)
+                            throw new Exception($"Loan EMI mismatch for Employee {emp.EmployeeId}");
+
+                        DataTable dtPending = clsDatabase.fnDataTable(
+                            "PRC_Bulk_EmployeeLoan_PendingList",
+                            emp.EmployeeId.ToString(),
+                            monthName,
+                            year,
+                            TenantId
+                        );
+
+                        if (dtPending == null || dtPending.Rows.Count == 0)
+                            continue;
+
+                        DataRow r = dtPending.Rows[0];
+
+                        loanJsonList.Add(new
+                        {
+                            IDLoan = Convert.ToInt32(r["IDLoan"]),
+                            IDEmployee = emp.EmployeeId,
+                            InstallmentMonth = monthNo,
+                            InstallmentYear = year,
+                            BalanceBefore = Convert.ToDecimal(r["BalanceBefore"]),
+                            PrincipalComponent = Convert.ToDecimal(r["PrincipalComponent"]),
+                            InterestComponent = Convert.ToDecimal(r["InterestComponent"]),
+                            AmountPaid = Convert.ToDecimal(r["AmountToBePaid"]),
+                            BalanceAfter = Convert.ToDecimal(r["BalanceAfter"]),
+                            WaiverAmount = Convert.ToDecimal(r["WaiverAmount"]),
+                            WaiverType = r["WaiverType"]?.ToString(),
+                            EmployeeNo = r["EmployeeNo"]?.ToString(),
+                            EmployeeName = r["EmployeeName"]?.ToString()
+                        });
+                    }
+                }
+
+                /* ===============================
+                   3. PROCESS LOAN (ONCE)
+                =============================== */
+                if (loanJsonList.Any())
+                {
+                    string jsonData = JsonConvert.SerializeObject(loanJsonList);
+
+                    DataTable dtLoanProcess = clsDatabase.fnDataTable(
+                        "PRC_Bulk_EmployeeLoan_Process",
+                        jsonData,
+                        monthName,
+                        year,
+                        userName,
+                        TenantId
+                    );
+
+                    if (dtLoanProcess == null || dtLoanProcess.Rows.Count == 0 ||
+                        Convert.ToInt32(dtLoanProcess.Rows[0]["Code"]) != 1)
+                    {
+                        throw new Exception(dtLoanProcess?.Rows[0]["Result"]?.ToString()
+                            ?? "Loan processing failed");
+                    }
+                }
+
+                /* ===============================
+                   4. DELETE + RESAVE SNAPSHOT
+                =============================== */
+                string employeesJson = JsonConvert.SerializeObject(dto.Employees);
+
+                DataTable dtReSave = clsDatabase.fnDataTable(
+                    "SP_Payroll_SaaS_ReSaveBatchSalary",
+                    dto.PayrollBatchId,
+                    employeesJson,
+                    TenantId,
+                    userName
+                );
+
+                if (dtReSave == null || Convert.ToInt32(dtReSave.Rows[0]["StatusCode"]) != 1)
+                    throw new Exception(dtReSave.Rows[0]["Message"].ToString());
+
+                /* ===============================
+                   5. APPROVE & LOCK
+                =============================== */
+                DataTable dtApprove = clsDatabase.fnDataTable(
+                    "SP_Payroll_SaaS_ApproveBatch",
+                    dto.PayrollBatchId,
+                    TenantId,
+                    userName
+                );
+
+                if (dtApprove == null || Convert.ToInt32(dtApprove.Rows[0]["StatusCode"]) != 1)
+                    throw new Exception(dtApprove.Rows[0]["Message"].ToString());
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Payroll batch approved successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+
+
 
         static decimal GetDecimal(DataRow r, string col)
          => r[col] == DBNull.Value ? 0m : Convert.ToDecimal(r[col]);

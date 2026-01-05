@@ -248,6 +248,7 @@
     <Compile Include="Controllers\PayConfigController.cs" />
     <Compile Include="Controllers\PayGroupController.cs" />
     <Compile Include="Controllers\PayGroupEmployeeMappingController.cs" />
+    <Compile Include="Controllers\PayrollSalaryReportController.cs" />
     <Compile Include="Controllers\PayrollTdsController.cs" />
     <Compile Include="Controllers\PayslipController.cs" />
     <Compile Include="Controllers\PStateListController.cs" />
@@ -2368,6 +2369,7 @@
     <Content Include="Views\Loan\BulkEmployeeLoan.cshtml" />
     <Content Include="Views\bulkSalaryProcess\Index.cshtml" />
     <Content Include="Views\PayrollTds\PayrollTdsSettings.cshtml" />
+    <Content Include="Views\PayrollSalaryReport\SalaryReport.cshtml" />
     <None Include="Web References\LoginWebService\logincontrol.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

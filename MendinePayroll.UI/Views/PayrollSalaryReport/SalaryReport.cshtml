@@ -1,0 +1,285 @@
+﻿@{
+    ViewBag.Title = "Salary Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2 style="font-weight:700; margin:0;">Salary Register</h2>
+    </header>
+
+    <section class="panel">
+        <header class="panel-heading" style="display:flex; justify-content:space-between; align-items:center;">
+
+            <div style="display:flex; align-items:center;">
+                <button type="button" class="btn btn-default btn-sm" onclick="window.history.back();" style="margin-right: 15px;">
+                    <i class="fa fa-arrow-left text-muted"></i> Back
+                </button>
+
+                <h2 class="panel-title" style="margin:0; line-height:1;">
+                    <i class="fa fa-money text-primary mr-sm"></i> Employee Salary Processing
+                </h2>
+            </div>
+
+            <div class="btn-group">
+                 
+                <button onclick="downloadBulkPayslips()" class="btn btn-default btn-sm">
+                    <i class="fa fa-file-pdf-o text-danger mr-xs"></i> Bulk Payslips
+                </button>
+
+                <button onclick="processPayment()" class="btn btn-success btn-sm">
+                    <i class="fa fa-check-circle mr-xs"></i> Mark as Paid
+                </button>
+            </div>
+        </header>
+
+        <div class="panel-body">
+
+            <div class="row mb-md">
+                <div class="col-sm-4">
+                    <div class="input-group">
+                        <span class="input-group-addon" style="background:#fff; border-right:none; border-radius:4px 0 0 4px;">
+                            <i class="fa fa-search text-muted"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control" style="border-left:none;" placeholder="Search Name or Emp Code..." onkeyup="applyFilters()">
+                    </div>
+                </div>
+                <div class="col-sm-8 text-right">
+                    <div class="btn-group">
+                        <button class="btn btn-default btn-sm" onclick="toggleFilterPanel()">
+                            <i class="fa fa-filter mr-xs"></i> Filter <span id="filterCount" class="badge">3</span>
+                        </button>
+                        <button class="btn btn-default btn-sm" onclick="exportExcel()">
+                            <i class="fa fa-file-excel-o mr-xs" style="color:#16a34a;"></i> Export
+                        </button>
+                        <button class="btn btn-default btn-sm" onclick="refreshGrid()">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="filterPanel" style="display:block; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:15px; margin-bottom:15px;">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label class="control-label text-xs text-muted text-weight-bold">Month</label>
+                        <select id="fltMonth" class="form-control input-sm" onchange="applyFilters()">
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12" selected>December</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="control-label text-xs text-muted text-weight-bold">Year</label>
+                        <select id="fltYear" class="form-control input-sm" onchange="applyFilters()">
+                            <option value="2025" selected>2025</option>
+                            <option value="2024">2024</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label text-xs text-muted text-weight-bold">Company</label>
+                        <select id="fltCompany" class="form-control input-sm" onchange="applyFilters()">
+                            <option value="all">All Companies</option>
+                            <option value="Mendine Pharma">Mendine Pharma</option>
+                            <option value="Mendine Tech">Mendine Tech</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="control-label text-xs text-muted text-weight-bold">Pay Group</label>
+                        <select id="fltPayGroup" class="form-control input-sm" onchange="applyFilters()">
+                            <option value="all">All Groups</option>
+                            <option value="Senior Staff">Senior Staff</option>
+                            <option value="Junior Staff">Junior Staff</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="control-label text-xs text-muted text-weight-bold">Status</label>
+                        <select id="fltStatus" class="form-control input-sm" onchange="applyFilters()">
+                            <option value="Active" selected>Active Only</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-sm">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-xs btn-default" onclick="clearFilters()"><i class="fa fa-times"></i> Clear All</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-none">
+                    <thead>
+                        <tr>
+                            <th style="width:30px;"><input type="checkbox" id="chkAll"></th>
+                            <th>Emp Info</th>
+                            <th>Company & Group</th>
+                            <th class="text-right">Basic</th>
+                            <th class="text-right">Allowances</th>
+                            <th class="text-right">Gross</th>
+                            <th class="text-right text-danger">Deduction</th>
+                            <th class="text-right text-primary">Net Pay</th>
+                            <th class="text-center">Salary Process</th>
+                            <th class="text-center">Pay Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mt-lg" style="align-items:center;">
+                <div class="col-sm-6">
+                    <div id="paginationInfo" class="text-muted text-xs" style="font-weight:500;">Showing 0 to 0 of 0 entries</div>
+                </div>
+                <div class="col-sm-6 text-right">
+                    <div class="btn-group">
+                        <button class="btn btn-default btn-sm" disabled><i class="fa fa-chevron-left"></i></button>
+                        <button class="btn btn-primary btn-sm">1</button>
+                        <button class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</section>
+
+<div class="modal fade" id="BankModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary" style="padding: 15px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" style="color:white;">&times;</span></button>
+                <h4 class="modal-title" style="color:white; margin:0;"><i class="fa fa-university mr-xs"></i> Bank Details</h4>
+            </div>
+            <div class="modal-body" style="background:#fdfdfd;">
+                <div class="row mb-sm" style="border-bottom:1px solid #eee; padding-bottom:5px;">
+                    <div class="col-xs-5 text-muted text-weight-bold">Employee Name</div>
+                    <div class="col-xs-7 text-primary text-weight-semibold" id="lblModalName">--</div>
+                </div>
+                <div class="row mb-sm" style="border-bottom:1px solid #eee; padding-bottom:5px;">
+                    <div class="col-xs-5 text-muted text-weight-bold">Bank Name</div>
+                    <div class="col-xs-7 text-dark" id="lblModalBank">--</div>
+                </div>
+                <div class="row mb-sm" style="border-bottom:1px solid #eee; padding-bottom:5px;">
+                    <div class="col-xs-5 text-muted text-weight-bold">Branch</div>
+                    <div class="col-xs-7 text-dark" id="lblModalBranch">--</div>
+                </div>
+                <div class="row mb-sm" style="border-bottom:1px solid #eee; padding-bottom:5px;">
+                    <div class="col-xs-5 text-muted text-weight-bold">IFSC Code</div>
+                    <div class="col-xs-7 text-dark" style="font-family:monospace;" id="lblModalIfsc">--</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-5 text-muted text-weight-bold">Account No</div>
+                    <div class="col-xs-7 text-success text-weight-bold" style="font-size:1.1em; font-family:monospace;" id="lblModalAcct">--</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- MOCK DATA FOR UI DEMO ---
+    const mockSalaryData = [
+        { id: 101, empNo: "EMP-001", name: "Rahul Sharma", company: "Mendine Pharma", group: "Senior Staff", basic: 45000, allow: 25000, gross: 70000, ded: 5000, net: 65000,salaryProcess:"Finalize", payStatus: "Paid", empStatus: "Active" },
+        { id: 102, empNo: "EMP-002", name: "Priya Das", company: "Mendine Pharma", group: "Junior Staff", basic: 40000, allow: 20000, gross: 60000, ded: 4000, net: 56000, salaryProcess: "Finalize", payStatus: "Pending", empStatus: "Active" },
+        { id: 103, empNo: "EMP-003", name: "Amit Verma", company: "Mendine Tech", group: "Contractual", basic: 25000, allow: 10000, gross: 35000, ded: 1800, net: 33200, salaryProcess: "Draft", payStatus: "Pending", empStatus: "Active" }
+    ];
+
+    document.addEventListener("DOMContentLoaded", function () {
+        renderGrid(mockSalaryData);
+        document.getElementById('paginationInfo').innerText = "Showing 1 to " + mockSalaryData.length + " of " + mockSalaryData.length + " entries";
+    });
+
+    function toggleFilterPanel() {
+        var x = document.getElementById("filterPanel");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+
+    function renderGrid(data) {
+        var tbody = document.getElementById("gridBody");
+        tbody.innerHTML = "";
+
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="10" class="text-center p-lg text-muted">No records found.</td></tr>';
+            return;
+        }
+
+        data.forEach(function (item) {
+            // Badges styling using Bootstrap classes usually available in Admin templates
+            var statusBadge = item.payStatus === 'Paid'
+                ? '<span class="label label-success">Paid</span>'
+                : '<span class="label label-warning">Pending</span>';
+            var processBadge = item.salaryProcess === 'Finalize'
+                ? '<span class="label label-success">Finalize</span>'
+                : '<span class="label label-warning">Draft</span>';
+            var tr = `
+                <tr>
+                    <td><input type="checkbox" value="${item.id}"></td>
+                    <td>
+                        <div style="font-weight:600; color:#333;">${item.name}</div>
+                        <div class="text-xs text-muted">${item.empNo}</div>
+                    </td>
+                    <td>
+                        <div class="text-sm">${item.company}</div>
+                        <div class="text-xs text-muted">${item.group}</div>
+                    </td>
+                    <td class="text-right">${item.basic.toLocaleString()}</td>
+                    <td class="text-right">${item.allow.toLocaleString()}</td>
+                    <td class="text-right text-weight-bold">${item.gross.toLocaleString()}</td>
+                    <td class="text-right text-danger">${item.ded.toLocaleString()}</td>
+                    <td class="text-right text-primary text-weight-bold">${item.net.toLocaleString()}</td>
+                    <td class="text-center">${processBadge}</td>
+                    <td class="text-center">${statusBadge}</td>
+                    <td class="text-center">
+                        <button class="btn btn-xs btn-default" onclick="openBankModal('${item.id}', '${item.name}')" title="Bank Info"><i class="fa fa-university"></i></button>
+                        <button class="btn btn-xs btn-default" title="Download PDF"><i class="fa fa-file-pdf-o"></i></button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += tr;
+        });
+    }
+
+    function applyFilters() {
+        // Mock filtering logic for UI Demo
+        var search = document.getElementById('searchInput').value.toLowerCase();
+        var company = document.getElementById('fltCompany').value;
+
+        var filtered = mockSalaryData.filter(function (item) {
+            var matchSearch = item.name.toLowerCase().includes(search) || item.empNo.toLowerCase().includes(search);
+            var matchComp = company === 'all' || item.company === company;
+            return matchSearch && matchComp;
+        });
+        renderGrid(filtered);
+    }
+
+    function openBankModal(id, name) {
+        // In real MVC, use AJAX here. Mocking for display:
+        document.getElementById('lblModalName').innerText = name;
+        document.getElementById('lblModalBank').innerText = "HDFC Bank";
+        document.getElementById('lblModalBranch').innerText = "Salt Lake Sector V";
+        document.getElementById('lblModalIfsc').innerText = "HDFC000123";
+        document.getElementById('lblModalAcct').innerText = "501000998877";
+
+        // Using jQuery for Bootstrap Modal (standard in MVC templates)
+        $('#BankModal').modal('show');
+    }
+
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('fltCompany').value = 'all';
+        document.getElementById('fltPayGroup').value = 'all';
+        applyFilters();
+    }
+</script>

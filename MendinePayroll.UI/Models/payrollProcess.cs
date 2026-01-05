@@ -256,20 +256,34 @@ namespace MendinePayroll.UI.Models
 
     public class PayrollBatchEmployeeComponentDto
     {
-        // ===== Pay Structure =====
+        // ===============================
+        // Identity
+        // ===============================
         public int PayConfigId { get; set; }
         public string PayConfigName { get; set; }
+
+        // ===============================
+        // Classification
+        // ===============================
         public string PayConfigType { get; set; }      // EARNING / DEDUCTION / STATUTORY
+        public string CalculationSource { get; set; }  // FIXED / FORMULA / MANUAL / OTHER
 
-        // ===== Calculation =====
-        public string CalculationSource { get; set; } // FIXED / FORMULA / MANUAL / LOAN / TDS
+        // ===============================
+        // Amounts
+        // ===============================
         public decimal PayValue { get; set; }
-
-        // ===== Loan / Adjustment (UI-Only) =====
         public decimal? OriginalAmount { get; set; }
-        public bool IsWaived { get; set; }
+        public bool IsWaived { get; set; } 
     }
 
+
+    public class PayrollBatchApproveDto
+    {
+        public int PayrollBatchId { get; set; } 
+        public int? ProcessMonth { get; set; }
+        public int? ProcessYear { get; set; }
+        public List<PayrollBatchEmployeeDto> Employees { get; set; }
+    }
 
 
 }
