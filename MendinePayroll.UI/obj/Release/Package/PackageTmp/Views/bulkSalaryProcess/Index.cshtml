@@ -3,7 +3,6 @@
     ViewBag.Title = "Salary Process";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
@@ -26,14 +25,7 @@
         --success: #16a34a;
         --focus-ring: rgba(14, 119, 119, 0.15);
     }
-    /*    body {
-        font-family: 'Inter', sans-serif;
-        background: var(--bg-body);
-        color: var(--primary);
-        transform: scale(0.9);
-        transform-origin: top left;
-        width: 111.11%;
-    } */
+   
     .custom-page-header {
         display: flex;
         justify-content: space-between;
@@ -2386,6 +2378,48 @@
         color: #334155;
     }
 
+    /**/
+    .dt-top-row {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .dt-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+    }
+
+    .dt-right {
+        display: flex;
+        align-items: center;
+    }
+
+    .filter-select {
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+        font-size: 12px;
+    }
+
+    .btn-export {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+        .btn-export i {
+            font-size: 18px;
+            color: #16a34a;
+        }
+
+        .btn-export:hover i {
+            color: #15803d;
+        }
+
 </style>
 
 <section role="main" class="content-body">
@@ -2412,6 +2446,15 @@
 
                 <div class="batch-card">
                     <div id="view_group_wise">
+                        <div id="dash-filter-source" style="display:none;"></div> 
+                        <!-- DASHBOARD FILTERS (do NOT reuse employee filters) -->
+                        <select id="ddlDashMonth" class="filter-select">
+                            <option value="">All Months</option>
+                        </select>
+
+                        <select id="ddlDashYear" class="filter-select">
+                            <option value="">All Years</option>
+                        </select>
                         <table class="batch-table" id="dashboardTable">
                             <thead>
                                 <tr>
@@ -2424,6 +2467,8 @@
                                     <th class="text-right">Net Payout</th>
                                     <th>Status</th>
                                     <th class="text-right">Action</th>
+                                    <th class="hidden">Month</th>
+                                    <th class="hidden">Year</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2653,10 +2698,10 @@
                     <div class="stat-item"><span class="stat-label">Total Deductions :</span><span class="stat-value val-ded" id="lblDed">₹ 0</span></div><div class="divider"></div>
                     <div class="stat-item"><span class="stat-label">Total Net Pay :</span><span class="stat-value val-net" id="lblNet">₹ 0</span></div>
                 </div>
-                <div class="stats-right">
+                @*<div class="stats-right">
                     <button class="btn-export" onclick="alert('Downloading Excel...')"><i class="fas fa-file-excel" style="color:#16a34a"></i> Excel</button>
 
-                </div>
+                </div>*@
             </div>
             <div class="grid-container excel-wrapper">
                 <input type="hidden" id="hdnPayrollBatchId" value="0" />
@@ -2795,10 +2840,11 @@
     let empDtInstance = null;
     let dtInstance = null;
     let editingEmpId = null;
-    let currentData = [];
+    let currentData = []; 
     /* =====================================================
        INIT FILTER DROPDOWNS (DATA ONLY)
-    ===================================================== */
+    ===================================================== */ 
+
     function initEmployeeWiseFilters() {
 
         const months = [
@@ -2833,6 +2879,8 @@
             });
         });
     }
+
+
     function switchMainView(view) {
 
         $('.view-toggle-btn').removeClass('active');
@@ -2909,7 +2957,7 @@
                         <td>${r.NetPay}</td>
                         <td>${r.StatusText}</td>
                         <td class="text-right">
-                            <button class="btn-outline" onclick="openEmployeePayrollView(${r.PayrollProcessEmployeeID})">
+                            <button class="btn-outline" onclick="openEditSalaryModal(${r.PayrollProcessEmployeeID})">
                                 <i class="fa fa-eye"></i>
                             </button>
                         </td>
@@ -3531,102 +3579,7 @@
     }
 
     /*==============Process Final Payroll================*/
-    //function processFinalPayroll() {
-
-    //    const paidColIndex = getPaidDaysColumnIndex();
-    //    if (paidColIndex === -1) {
-    //        toastr.error("Paid Days column not found");
-    //        return;
-    //    }
-
-    //    const payrollType = $("#ddlType").val();
-    //    let employees = [];
-
-    //    $("#attTableBody tr").each(function () {
-
-    //        const employeeId = parseInt($(this).data("employeeid"), 10);
-    //        const employeeName = $(this).data("name");
-
-    //        if (!employeeId || employeeId <= 0) return;
-
-    //        const paidDays = parseInt(
-    //            $(this).find("input.paid-days").val(),
-    //            10
-    //        ) || 0;
-
-    //        employees.push({
-    //            EmployeeId: employeeId,
-    //            EmployeeName: employeeName,
-    //            PaidDays: paidDays
-    //        });
-    //    });
-
-    //    if (employees.length === 0) {
-    //        toastr.warning("No attendance data found");
-    //        return;
-    //    }
-
-    //    let payload = {
-    //        PayrollType: payrollType,
-    //        Employees: employees
-    //    };
-
-    //    if (payrollType === '1') {
-    //        const ym = $("#txtMonthYear").val();
-    //        if (!ym) {
-    //            toastr.error("Please select Month & Year");
-    //            return;
-    //        }
-
-    //        const [year, month] = ym.split("-");
-    //        payload.ProcessMonth = parseInt(month, 10);
-    //        payload.ProcessYear = parseInt(year, 10);
-    //    } else {
-    //        payload.FromDate = $("#txtFromDate").val();
-    //        payload.ToDate = $("#txtToDate").val();
-    //    }
-
-    //    console.log(payload);
-
-    //    showPayrollLoader(); // 🔄 START LOADER
-
-    //    $.ajax({
-    //        url: '/bulkSalaryProcess/CalculateSalary',
-    //        type: 'POST',
-    //        contentType: 'application/json; charset=utf-8',
-    //        data: JSON.stringify(payload),
-    //        //success: function (res) {
-    //        //    pivotData = res;
-    //        //    openDetailModal(false, res);
-    //        //    toastr.success("Salary calculated successfully");
-    //        //},
-    //        success: function (res) {
-
-    //            // 🔑 NORMALIZE RESPONSE
-    //            const normalized = {
-    //                Rows: res.Rows || res.rows || res.Data?.Rows || res.data || [],
-    //                Columns: res.Columns || res.columns || res.Data?.Columns || []
-    //            };
-
-    //            if (!normalized.Rows.length || !normalized.Columns.length) {
-    //                console.error("Invalid salary calculation payload", res);
-    //                toastr.error("Salary data invalid");
-    //                return;
-    //            }
-
-    //            pivotData = normalized;
-    //            openDetailModal(false, normalized);
-    //            toastr.success("Salary calculated successfully");
-    //        },
-    //        error: function (err) {
-    //            console.error(err);
-    //            toastr.error("Salary calculation failed");
-    //        },
-    //        complete: function () {
-    //            hidePayrollLoader(); // ✅ ALWAYS STOP LOADER
-    //        }
-    //    });
-    //}
+    
 
     function processFinalPayroll() {
 
@@ -3695,7 +3648,7 @@
             success: function (res) {
                 console.log(res);
                 pivotData = res;
-                openDetailModal(false, res);   // 🔑 pass server response
+                openDetailModal(false, res,1);   // 🔑 pass server response
                 toastr.success("Salary calculated successfully");
             },
             error: function (err) {
@@ -3721,78 +3674,67 @@
         return index;
     }
 
-    let pivotData = null;
-    function openDetailModal(isViewMode, serverResult) {
+    let pivotData = null; 
+    function openDetailModal(isViewMode, serverResult, batchStatus) {
 
-        // 🔒 Validate server result FIRST
         if (!serverResult || !serverResult.Rows || !serverResult.Columns) {
             console.error("Invalid server result", serverResult);
             return;
         }
 
-        // 🔒 Set global state ONCE
         pivotData = serverResult;
         currentData = serverResult;
 
-        // ==================================================
-        // ✅ ONE-TIME INITIALIZATION (CRITICAL)
-        // Prevents compounding when manual values change
-        // ==================================================
-
         pivotData.Rows.forEach(r => {
-
-            // UI-editable fields
             r.ManualAddition ??= 0;
             r.ManualDeduction ??= 0;
         });
 
-        // 🔹 Set reference number
-        const ref = $("#genRefNo").val() || "--";
-        $("#lblRef").text(ref);
+        $("#lblRef").text($("#genRefNo").val() || "--");
 
-        // 🔹 Open modal
         $("#detailModal").fadeIn(200);
 
-        // 🔹 Footer handling
         const footer = $("#detailFooter");
 
-        if (isViewMode) {
+        /* ===============================
+           🔒 FINALIZED → HIDE FOOTER
+        =============================== */
+        if (batchStatus === 2) {
+            footer.hide();
+        }
+        else {
+            footer.show();
 
-            footer.html(`
-            <button class="btn-reject" onclick="deleteBatchView()">
-                <i class="fas fa-times"></i> Reject & Delete
-            </button>
-            <button class="btn-approve" onclick="approveBatch()">
-                <i class="fas fa-check"></i> Approve
-            </button>
-        `);
-
-            // optional: keep selected employees in view mode
-            if (!Array.isArray(selectedEmployees)) {
-                selectedEmployees = [];
+            if (isViewMode) {
+                footer.html(`
+                <button class="btn-reject" onclick="deleteBatchView()">
+                    <i class="fas fa-times"></i> Reject & Delete
+                </button>
+                <button class="btn-approve" onclick="approveBatch()">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+            `);
+            } else {
+                footer.html(`
+                <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
+                    * Modifying returns to Attendance screen.
+                </div>
+                <button class="btn-outline"
+                        style="border-color:#d97706; color:#d97706;"
+                        onclick="rejectBatch()">
+                    <i class="fas fa-undo"></i> Back
+                </button>
+                <button class="btn-create"
+                        onclick="submitBatchForApproval()">
+                    <i class="fas fa-paper-plane"></i> Submit
+                </button>
+            `);
             }
-
-        } else {
-
-            footer.html(`
-            <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
-                * Modifying returns to Attendance screen.
-            </div>
-            <button class="btn-outline"
-                    style="border-color:#d97706; color:#d97706;"
-                    onclick="rejectBatch()">
-                <i class="fas fa-undo"></i> Back
-            </button>
-            <button class="btn-create"
-                    onclick="submitBatchForApproval()">
-                <i class="fas fa-paper-plane"></i> Submit
-            </button>
-        `);
         }
 
-        // 🔹 Render grid from SINGLE SOURCE OF TRUTH
         renderSalaryGrid(pivotData);
     }
+
     function renderSalaryGrid(pivot) {
         if (!pivot || !pivot.Rows || pivot.Rows.length === 0) return;
 
@@ -4085,117 +4027,7 @@
 
     function hideModal(id) {
         $("#" + id).fadeOut(200);
-    }
-
-    //function submitBatchForApproval() {
-
-    //    if (!pivotData || !pivotData.Rows || pivotData.Rows.length === 0) {
-    //        toastr.error("Nothing to save");
-    //        return;
-    //    }
-
-    //    const payrollType = parseInt($("#ddlType").val());
-
-    //    const payload = {
-    //        RefNo: $("#genRefNo").val(),
-    //        RefDate: $("#genRefDate").val(),
-    //        PayGroupId: parseInt($("#ddlGroup").val()),   // ✅ DTO MATCH
-    //        PayrollType: payrollType,
-    //        Comments: $("#txtComments").val(),
-    //        Employees: []
-    //    };
-
-    //    if (payrollType === 1) {
-    //        const [year, month] = $("#txtMonthYear").val().split("-");
-    //        payload.ProcessMonth = parseInt(month);
-    //        payload.ProcessYear = parseInt(year);
-    //    } else {
-    //        payload.FromDate = $("#txtFromDate").val();
-    //        payload.ToDate = $("#txtToDate").val();
-    //    }
-
-    //    pivotData.Rows.forEach(r => {
-
-    //        payload.Employees.push({
-
-    //            // ===== Identity =====
-    //            EmployeeId: r.EmployeeId,
-    //            EmployeeCode: r.EmployeeCode || "",
-    //            PayGroupId: payload.PayGroupId,
-
-    //            // ===== Attendance =====
-    //            PaidDays: r.PaidDays,
-    //            TotalHours: r.TotalHours || null,
-
-    //            // ===== Earnings =====
-    //            TotalGross: r.TotalEarnings,        // ✅ MAP
-    //            TotalAddition: r.TotalEarnings || 0,
-    //            ManualAddition: r.ManualAddition || 0,
-
-    //            // ===== Deductions =====
-    //            TotalDeduction: r.TotalDeductions,
-    //            ManualDeduction: r.ManualDeduction || 0,
-    //            LoanDeduction: 0,
-    //            LoanWaivedYN: false,
-
-    //            // ===== Net =====
-    //            NetPay: r.NetPay,
-
-    //            // ===== UI-only =====
-    //            MonthlyCTC: r.MonthlyCTC,
-
-    //            // ===== Salary Components =====
-    //            Components: r.Cells.map(c => {
-
-    //                const col = pivotData.Columns.find(
-    //                    x => x.PayConfigId === c.PayConfigId
-    //                );
-
-    //                return {
-    //                    PayConfigId: c.PayConfigId,
-    //                    PayConfigName: col?.PayConfigName || "",
-    //                    PayConfigType: col?.PayType || "",
-    //                    CalculationSource: col?.LogicType || "",
-    //                    PayValue: c.Amount,                 // ✅ DTO MATCH
-    //                    OriginalAmount: c.OriginalAmount,
-    //                    IsWaived: c.IsWaived === true
-    //                };
-    //            })
-    //        });
-    //    });
-
-    //    $.ajax({
-    //        url: '/bulkSalaryProcess/SavePayrollBatch',
-    //        type: 'POST',
-    //        contentType: 'application/json',
-    //        data: JSON.stringify(payload),
-    //        success: function (res) {
-
-    //            if (res.success) {
-
-    //                toastr.success(res.message);
-
-    //                // ✅ 1. Close ALL modals
-    //                closeAllModals();
-
-    //                // ✅ 2. Reset detail state
-    //                pivotData = null;
-    //                currentData = [];
-
-    //                // ✅ 3. Reload payroll batch grid
-    //                loadPayrollBatchGrid();
-
-    //            } else {
-    //                toastr.error(res.message);
-    //            }
-    //        },
-    //        error: function (err) {
-    //            console.error(err);
-    //            toastr.error("Failed to save payroll batch");
-    //        }
-
-    //    });
-    //}
+    } 
 
     function submitBatchForApproval() {
 
@@ -4324,67 +4156,274 @@
 
     function closeAllModals() {
         $(".modal-overlay:visible").fadeOut(200);
+    } 
+     
+    let groupDtInstance = null;
+
+    /* ===============================
+       INIT MONTH / YEAR FILTERS
+    ================================ */
+    function initDashboardFilters() {
+
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        const mddl = $('#ddlDashMonth').empty()
+            .append('<option value="">All Months</option>');
+
+        months.forEach((m, i) => {
+            mddl.append(`<option value="${i + 1}">${m}</option>`);
+        });
+
+        const yearNow = new Date().getFullYear();
+        const yddl = $('#ddlDashYear').empty()
+            .append('<option value="">All Years</option>');
+
+        for (let y = yearNow - 5; y <= yearNow + 1; y++) {
+            yddl.append(`<option value="${y}">${y}</option>`);
+        }
     }
 
+    /* ===============================
+       LOAD DASHBOARD GRID
+    ================================ */
+    //function loadPayrollBatchGrid() {
+
+    //    $.ajax({
+    //        url: '/bulkSalaryProcess/GetPayrollDashboard',
+    //        type: 'GET',
+    //        dataType: 'json',
+    //        success: function (res) {
+
+    //            if ($.fn.DataTable.isDataTable('#dashboardTable')) {
+    //                groupDtInstance.destroy();
+    //            }
+    //            $('#dashboardTable tbody').empty();
+
+    //            if (!res || res.length === 0) {
+    //                // Let DataTables handle empty message
+    //                groupDtInstance = $('#dashboardTable').DataTable();
+    //                return;
+    //            }
+
+    //            const tbody = $("#dashboardTable tbody");
+
+    //            res.forEach(r => {
+    //                tbody.append(`
+    //            <tr>
+    //                <td><strong>${r.RefNo}</strong></td>
+    //                <td>${r.PeriodText}</td>
+    //                <td>${r.PayGroupName}</td>
+    //                <td>${r.PayrollTypeText}</td>
+    //                <td class="text-center">${r.TotalEmployees}</td>
+    //                <td class="text-right">₹ ${Number(r.TotalCost).toLocaleString()}</td>
+    //                <td class="text-right" style="font-weight:700;color:#0E7777">
+    //                    ₹ ${Number(r.NetPayout).toLocaleString()}
+    //                </td>
+    //                <td>${r.Status === 2 ? 'FINALIZED' : 'DRAFT'}</td>
+    //                <td class="text-right">
+    //                    <button class="btn-outline"
+    //                        onclick="openBatchView(${r.PayrollBatchID}, ${r.PayGroupID}, ${r.Status})">
+    //                        <i class="fa fa-eye"></i>
+    //                    </button>
+    //                </td>
+    //                <td>${r.ProcessMonth ?? ''}</td>
+    //                <td>${r.ProcessYear ?? ''}</td>
+    //            </tr>
+    //            `);
+    //            });
+
+    //            /* ===== INIT DATATABLE ===== */
+    //            groupDtInstance = $('#dashboardTable').DataTable({
+    //                pageLength: 10,
+    //                ordering: false,
+    //                lengthChange: false,
+    //                searching: true,
+    //                info: true,
+
+    //                columnDefs: [
+    //                    { targets: [9, 10], visible: false }
+    //                ],
+
+    //                dom: '<"dt-top-row"<"dt-left"><"dt-right"f>>rt<"dt-bottom"ip>',
+
+    //                language: {
+    //                    search: "",
+    //                    searchPlaceholder: "Search batch..."
+    //                }
+    //            });
+
+    //            /* ===== MOVE EXCEL + FILTERS ===== */
+    //            const leftBox = $('#dashboardTable_wrapper .dt-left');
+
+    //            leftBox.empty()
+    //                .append(`
+    //                <button id="btnExcelExport" class="btn-export" title="Export Excel">
+    //                    <i class="fas fa-file-excel"></i>
+    //                </button>
+    //            `)
+    //                .append($('#ddlDashMonth').show())
+    //                .append($('#ddlDashYear').show());
+    //        }
+    //    });
+    //}
+    //let groupDtInstance = null;
+
+    /* ===============================
+       LOAD DASHBOARD GRID (SAFE)
+    ================================ */
     function loadPayrollBatchGrid() {
 
         $.ajax({
-            url: '/bulkSalaryProcess/GetPayrollDashboard', // 👈 controller action
+            url: '/bulkSalaryProcess/GetPayrollDashboard',
             type: 'GET',
             dataType: 'json',
             success: function (res) {
 
+                // ✅ BEFORE DESTROY: move filters out of DT wrapper so they won't vanish
+                if (groupDtInstance && $.fn.DataTable.isDataTable('#dashboardTable')) {
+                    $('#dash-filter-source')
+                        .append($('#ddlDashMonth'))
+                        .append($('#ddlDashYear'));
+
+                    groupDtInstance.destroy();   // true = remove DT wrapper
+                    groupDtInstance = null;
+                }
+
                 const tbody = $("#dashboardTable tbody");
                 tbody.empty();
 
-                if (!res || res.length === 0) {
-                    tbody.append(`
-                    <tr>
-                        <td colspan="9" class="text-center" style="color:#94a3b8;">
-                            No payroll batches found
-                        </td>
-                    </tr>
-                `);
-                    return;
+                // Fill rows (or let DataTables show empty message)
+                if (Array.isArray(res) && res.length > 0) {
+                    res.forEach(r => {
+                        tbody.append(`
+                        <tr>
+                            <td><strong>${r.RefNo ?? ''}</strong></td>
+                            <td>${r.PeriodText ?? ''}</td>
+                            <td>${r.PayGroupName ?? ''}</td>
+                            <td>${r.PayrollTypeText ?? ''}</td>
+                            <td class="text-center">${r.TotalEmployees ?? 0}</td>
+                            <td class="text-right">₹ ${Number(r.TotalCost ?? 0).toLocaleString()}</td>
+                            <td class="text-right" style="font-weight:700;color:#0E7777">
+                                ₹ ${Number(r.NetPayout ?? 0).toLocaleString()}
+                            </td>
+                            <td>${r.Status === 2 ? 'FINALIZED' : 'DRAFT'}</td>
+                            <td class="text-right">
+                                <button class="btn-outline"
+                                    onclick="openBatchView(${r.PayrollBatchID}, ${r.PayGroupID}, ${r.Status})">
+                                    <i class="fa fa-eye"></i>
+                                </button>
+                            </td>
+                            <td>${r.ProcessMonth ?? ''}</td>
+                            <td>${r.ProcessYear ?? ''}</td>
+                        </tr>
+                    `);
+                    });
                 }
 
-                res.forEach(r => {
+                // ✅ ALWAYS init DataTable with same DOM/options (even if res is empty)
+                groupDtInstance = $('#dashboardTable').DataTable({
+                    pageLength: 10,
+                    ordering: false,
+                    lengthChange: false,
+                    searching: true,
+                    info: true,
 
-                    const statusBadge =
-                        r.Status === 'FINALIZED'
-                            ? `<span style="background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:10px;font-size:10px;border:1px solid #bbf7d0;font-weight:600;">FINALIZED</span>`
-                            : `<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-size:10px;border:1px solid #fde68a;font-weight:600;">DRAFT</span>`;
+                    columnDefs: [
+                        { targets: [9, 10], visible: false }
+                    ],
 
-                    tbody.append(`
-                    <tr id="row_${r.PayrollBatchID}_${r.PayGroupID}">
-                        <td><strong>${r.RefNo}</strong></td>
-                        <td>${r.PeriodText}</td>
-                        <td>${r.PayGroupName}</td>
-                        <td>${r.PayrollTypeText}</td>
-                        <td class="text-center">${r.TotalEmployees}</td>
-                        <td class="text-right">₹ ${Number(r.TotalCost).toLocaleString()}</td>
-                        <td class="text-right" style="font-weight:700;color:#0E7777">
-                            ₹ ${Number(r.NetPayout).toLocaleString()}
-                        </td>
-                        <td>${statusBadge}</td>
-                        <td class="text-right">
-                            <button class="btn-outline"
-                                    onclick="openBatchView(${r.PayrollBatchID}, ${r.PayGroupID})">
-                                <i class="fa fa-eye"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `);
+                    dom: '<"dt-top-row"<"dt-left"><"dt-right"f>>rt<"dt-bottom"ip>',
+
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search batch...",
+                        emptyTable: "No payroll batches found"
+                    }
                 });
-            },
-            error: function (err) {
-                console.error(err);
-                toastr.error("Failed to load payroll dashboard");
+
+                // ✅ Move Excel + Month/Year filters into dt-left
+                const leftBox = $('#dashboardTable_wrapper .dt-left');
+
+                leftBox.empty()
+                //    .append(`
+                //    <button id="btnExcelExport" class="btn-export" title="Export Excel">
+                //        <i class="fas fa-file-excel"></i>
+                //    </button>
+                //`)
+                    .append($('#ddlDashMonth').show())
+                    .append($('#ddlDashYear').show());
+
+                // Optional: apply current filter values after reload
+                applyDashboardFilters();
             }
         });
     }
 
-    function openBatchView(payrollBatchId, payGroupId) {
+    /* ===============================
+       APPLY MONTH / YEAR FILTER
+    ================================ */
+    function applyDashboardFilters() {
+        if (!groupDtInstance) return;
+
+        const month = $('#ddlDashMonth').val();
+        const year = $('#ddlDashYear').val();
+
+        groupDtInstance
+            .column(9).search(month || '', false, false)
+            .column(10).search(year || '', false, false)
+            .draw();
+    }
+
+    $('#ddlDashMonth, #ddlDashYear')
+        .off('change.dashboard')
+        .on('change.dashboard', applyDashboardFilters);
+
+    
+
+    /* ===============================
+       EXCEL EXPORT (AJAX)
+    ================================ */
+    $(document).off('click', '#btnExcelExport')
+        .on('click', '#btnExcelExport', function () {
+
+            const searchText = groupDtInstance.search();
+
+            showPayrollLoader();
+
+            $.ajax({
+                url: '/bulkSalaryProcess/ExportPayrollBatchExcel',
+                type: 'POST',
+                data: { search: searchText },
+                xhrFields: { responseType: 'blob' },
+                success: function (blob, _, xhr) {
+
+                    const filename =
+                        xhr.getResponseHeader("Content-Disposition")
+                            ?.split("filename=")[1]
+                            ?.replaceAll('"', '') ||
+                        "Payroll_Batch.xlsx";
+
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = filename;
+                    link.click();
+                },
+                complete: hidePayrollLoader
+            });
+        });
+
+    /* ===============================
+       PAGE LOAD
+    ================================ */
+    $(document).ready(function () {
+        initDashboardFilters();
+        loadPayrollBatchGrid();
+    });
+
+    function openBatchView(payrollBatchId, payGroupId, batchStatus) {
 
         if (!payrollBatchId) {
             toastr.error("Invalid batch");
@@ -4418,8 +4457,9 @@
                 
                 // 🔥 OPEN IN EDIT MODE
                 pivotData = res.Data;
-                openDetailModal(true, res.Data);
-
+                //openDetailModal(true, res.Data);
+                console.log(pivotData);
+                openDetailModal(true, res.Data, batchStatus);
                 setTimeout(() => {
                     $("#lblRef").text(res.RefNo || "--");
                     
@@ -4434,6 +4474,7 @@
             }
         });
     }
+
     function approveBatch() {
 
         const payrollBatchId = parseInt($("#hdnPayrollBatchId").val(), 10);
@@ -4543,4 +4584,43 @@
             }
         });
     }
+
+    $("#btnExcelExport").on("click", function () {
+
+        // Optional: current filters / search
+        const searchText = groupDtInstance.search();
+
+        showPayrollLoader();
+
+        $.ajax({
+            url: '/bulkSalaryProcess/ExportPayrollBatchExcel',
+            type: 'POST',
+            data: {
+                search: searchText
+            },
+            xhrFields: {
+                responseType: 'blob'   // 🔑 REQUIRED
+            },
+            success: function (blob, status, xhr) {
+
+                const filename =
+                    xhr.getResponseHeader("Content-Disposition")
+                        ?.split("filename=")[1]
+                        ?.replaceAll('"', '') ||
+                    "Payroll_Batch.xlsx";
+
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+            },
+            error: function () {
+                toastr.error("Excel export failed");
+            },
+            complete: function () {
+                hidePayrollLoader();
+            }
+        });
+    });
+
 </script>

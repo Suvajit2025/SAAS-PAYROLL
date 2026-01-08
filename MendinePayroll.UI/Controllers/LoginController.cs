@@ -49,11 +49,11 @@ namespace MendinePayroll.UI.Controllers
             //Session["UserEmail"] = "suvajit.das@iecsl.co.in";
 
             // Development 
-            Session["UserName"] = "lit@mindtree.co.in";
-            Session["UserId"] = "229";
-            Session["UserEmail"] = "lit@mindtree.co.in";
-            Session["TenantID"] = "9CBC5D8B-589C-4144-8AE9-1937A39FC89D";
-            //Session["TenantID"] = "DB9DE705-8097-41C6-A8F9-8175DD6DF064";
+            Session["UserName"] = "suvajit.das@iecsl.co.in";
+            Session["UserId"] = "100156";
+            Session["UserEmail"] = "suvajit.das@iecsl.co.in";
+            //Session["TenantID"] = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
+            Session["TenantID"] = "653A2B8B-CF3D-4C5A-8361-5869FE5DC3E3";
 
             //Session["CompanyId"] = "55";
             //Session["UserName"] = "subrata.mukherjee@mendine.co.in";

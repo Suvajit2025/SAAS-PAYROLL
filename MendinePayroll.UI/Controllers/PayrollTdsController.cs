@@ -97,6 +97,7 @@ namespace MendinePayroll.UI.Controllers
             return Json(rules, JsonRequestBehavior.AllowGet);
 
         }
+
         [HttpPost]
         public ActionResult SaveDeductionRules(List<DeductionRuleModel> rules)
         {
@@ -126,6 +127,7 @@ namespace MendinePayroll.UI.Controllers
             }
             return View();
         }
+
         [HttpGet]
         public ActionResult GetTdsTaxSlab()
         {

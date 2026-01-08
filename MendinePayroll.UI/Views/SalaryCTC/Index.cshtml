@@ -693,6 +693,65 @@
         column-gap: 21px;
         align-items: center;
     }
+
+/*    //*/
+
+    .saas-filter-bar {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .filter-item {
+        min-width: 180px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .filter-item label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .filter-item select {
+            height: 31px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 2px;
+        }
+
+    .filter-btn {
+        min-width: 120px;
+    }
+
+    /*.btn-saas {
+        height: 34px;
+        background: #0E7777;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        width: 100%;
+    }*/
+    /* Universal compact text for tables */
+    .tbl-text {
+        font-size: 10px;
+        font-weight: 600; /* bold */
+        color: #1f2937;
+        line-height: 1.2;
+    }
+
+    /* Optional secondary (lighter) text */
+    .tbl-text-muted {
+        font-size: 9px;
+        font-weight: 400;
+        color: #6b7280;
+    }
+
 </style>
 
 <section role="main" class="content-body">
@@ -706,28 +765,71 @@
             </button>
         </div>*@
 
-    <div class="saas-card">
-        <div class="row">
-            <div class="col-md-3">
-                <span class="filter-label">Company</span>
-                <select id="ddlCompany" multiple></select>
+    @*<div class="saas-card">
+            <div class="row">
+                <div class="col-md-3">
+                    <span class="filter-label">Company</span>
+                    <select id="ddlCompany" multiple></select>
+                </div>
+                <div class="col-md-3">
+                    <span class="filter-label">Department</span>
+                    <select id="ddlDepartment" multiple></select>
+                </div>
+                <div class="col-md-3">
+                    <span class="filter-label">Employment Type</span>
+                    <select id="ddlCategory" multiple></select>
+                </div>
+                <div class="col-md-3">
+                    <span class="filter-label">Employee Status</span>
+                    <select id="ddlstatus">
+                        <option value="All">All </option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="INACTIVE">InActive</option>
+                    </select>
+
+                </div>
+                <div class="col-md-3">
+                    <span class="filter-label">&nbsp;</span>
+                    <button id="btnFilter" class="btn-saas" style="width:100%; justify-content:center;">
+                        <i class="fas fa-search"></i> Search Records
+                    </button>
+                </div>
             </div>
-            <div class="col-md-3">
-                <span class="filter-label">Department</span>
-                <select id="ddlDepartment" multiple></select>
-            </div>
-            <div class="col-md-3">
-                <span class="filter-label">Employment Type</span>
-                <select id="ddlCategory" multiple></select>
-            </div>
-            <div class="col-md-3">
-                <span class="filter-label">&nbsp;</span>
-                <button id="btnFilter" class="btn-saas" style="width:100%; justify-content:center;">
-                    <i class="fas fa-search"></i> Search Records
-                </button>
-            </div>
-        </div>
+        </div>*@
+<div class="saas-filter-bar">
+    <div class="filter-item">
+        <label>Company</label>
+        <select id="ddlCompany" multiple></select>
     </div>
+
+    <div class="filter-item">
+        <label>Department</label>
+        <select id="ddlDepartment" multiple></select>
+    </div>
+
+    <div class="filter-item">
+        <label>Employment Type</label>
+        <select id="ddlCategory" multiple></select>
+    </div>
+
+    <div class="filter-item">
+        <label>Status</label>
+        <select id="ddlstatus" class="py-0">
+            <option value="ACTIVE" selected>Active</option>
+            <option value="INACTIVE">Inactive</option>
+            <option value="All">All</option>
+        </select>
+    </div>
+    <div class="filter-item">
+        <label>Pay Group</label>
+        <select id="ddlpaygroup" multiple></select>
+    </div>
+    @*<div class="filter-item filter-btn">
+            <button id="btnFilter" class="btn-saas">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>*@
+</div>
 
     <div class="saas-card" style="padding:0; overflow:hidden;">
         <div style="padding:20px;">
@@ -735,9 +837,8 @@
                 <thead>
                     <tr>
                         <th>SL</th>
-                        <th style="width:200px;">Employee Name</th>
-                        <th style="width:100px;">Employee Code</th>
-                        <th>Designation</th>
+                        <th>Employee Info</th>
+                        <th>Designation & Post</th>
                         <th>Department</th>
                         <th>Pay Group</th>
                         <th>Status</th>
@@ -958,12 +1059,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
-    var dt = null;
+    let allEmployees = [];   // 🔐 master copy (never mutate)
+    let dt = null;
 
     $(document).ready(function () {
 
         // 1. Init Multiselects
-        $('#ddlCompany, #ddlDepartment, #ddlCategory').multiselect({
+        $('#ddlCompany, #ddlDepartment, #ddlCategory ,#ddlpaygroup').multiselect({
 
             includeSelectAllOption: true,
             enableFiltering: true,
@@ -983,16 +1085,13 @@
         });
 
         // 2. Load All FIlters
-        loadFilters();
-
-        // 3. Load Table
+        loadFilters(); 
+        // 🔑 force default
+        $('#ddlstatus').val('ACTIVE');    
         loadEmployees();
-
-        // 4. Filter Event
-        $('#btnFilter').on('click', function () {
-            loadEmployees();
-        });
-
+        //$('#btnFilter').on('click', applyFilters);
+        $('#ddlCompany, #ddlDepartment, #ddlCategory, #ddlstatus ,#ddlpaygroup')
+            .on('change', applyFilters);
     });
     // ===================== AJAX LOAD DROPDOWNS =====================
 
@@ -1039,29 +1138,40 @@
 
                 $('#ddlCategory').multiselect('rebuild');
             }
-        });
+        }); 
         // ----------- LOAD PAY GROUP -----------
         $.ajax({
             url: '/SalaryCTC/GetPayGroupList',
             type: 'GET',
             success: function (res) {
+
                 $("#ddlgroup").empty();
-                $("#ddlgroup").append(`<option value="">-- Select --</option>`);
+                $("#ddlpaygroup").empty();
+
+                $("#ddlgroup").append(`<option value="">-- Select --</option>`); 
+
                 res.forEach(x => {
-                    $('#ddlgroup').append(`<option value="${x.PayGroupID}">${x.PayGroupName}</option>`);
+                    $('#ddlgroup').append(
+                        `<option value="${x.PayGroupID}">${x.PayGroupName}</option>`
+                    );
+
+                    $('#ddlpaygroup').append(
+                        `<option value="${x.PayGroupID}">${x.PayGroupName}</option>`
+                    );
                 });
 
-
+                // 🔑 THIS WAS MISSING
+                $('#ddlpaygroup').multiselect('rebuild');
             }
         });
+
     }
+     
 
-
-    // --- DATA TABLE LOAD LOGIC (REAL DB) ---
+    /* ===============================
+       LOAD DATA FROM SERVER (ONCE)
+    ================================ */
     function loadEmployees() {
-
-        if (dt) { dt.destroy(); }
-        $('#emptable tbody').empty();
 
         var companyIds = $('#ddlCompany').val() || [];
         var deptIds = $('#ddlDepartment').val() || [];
@@ -1070,52 +1180,187 @@
         $.ajax({
             url: '/SalaryCTC/GetEmployeeList',
             type: 'GET',
-            traditional: true,   // IMPORTANT for sending arrays
+            traditional: true,
             data: {
                 companyIds: companyIds,
                 deptIds: deptIds,
                 categoryIds: categoryIds
             },
             success: function (data) {
-
-                data.forEach((emp, index) => {
-                    let badgeClass = emp.Status === "Configured" ? "badge-done" : "badge-pending";
-
-                    $('#emptable tbody').append(`
-                                <tr>
-                                    <td>${index + 1}</td>                                           <!-- SL -->
-                                    <td style="font-weight:600; color:#0E7777;">${emp.EmpName}</td> <!-- Employee Name -->
-                                    <td>${emp.EmpCode}</td>                                         <!-- Employee Code -->
-                                    <td>${emp.Designation}</td>                                     <!-- Designation -->
-                                    <td>${emp.Department}</td>                                      <!-- Department -->
-                                    <td>${emp.PayGroupName ?? '-'}</td>                             <!-- Pay Group -->
-                                    <td>
-                                        <span class="badge-saas ${badgeClass}">
-                                            ${emp.Status}
-                                        </span>
-                                    </td>                                                           <!-- Status -->
-                                    <td>
-                                        <button class="btn-link-saas" onclick="openModal('${emp.EmpName}', '${emp.EmpID}','${emp.EmpSalaryConfigID}')">
-                                            <i class="fas fa-cog"></i> Configure
-                                        </button>
-                                    </td>                                                           <!-- Action -->
-                                </tr>
-                            `);
-                });
-
-                dt = $('#emptable').DataTable({
-                    pageLength: 10,
-                    lengthMenu: [10, 25, 50],
-                    ordering: true,
-                    searching: true,
-                    language: { search: "", searchPlaceholder: "Search Employee..." },
-                    dom: '<"row"<"col-sm-6"l><"col-sm-6"f>>tip'
-                });
+                allEmployees = data || [];
+                applyFilters();   // 🔑 client-side filter
             }
         });
     }
 
+    /* ===============================
+       APPLY CLIENT-SIDE FILTERS
+    ================================ */
+    //function applyFilters() {
 
+    //    let companyIds = ($('#ddlCompany').val() || []).map(String);
+    //    let deptIds = ($('#ddlDepartment').val() || []).map(String);
+    //    let categoryIds = ($('#ddlCategory').val() || []).map(String);
+    //    let paygroupIds = ($('#ddlpaygroup').val() || []).map(String);
+    //    let status = $('#ddlstatus').val() || 'ACTIVE';
+
+    //    let filtered = allEmployees.filter(emp => {
+
+    //        // Status (default ACTIVE)
+    //        if (status !== 'All' && String(emp.Empstatus) !== status)
+    //            return false;
+
+    //        // Company
+    //        if (companyIds.length && !companyIds.includes(String(emp.CompanyID)))
+    //            return false;
+
+    //        // Department
+    //        if (deptIds.length && !deptIds.includes(String(emp.DepartmentID)))
+    //            return false;
+
+    //        // Category
+    //        if (categoryIds.length && !categoryIds.includes(String(emp.CategoryID)))
+    //            return false;
+    //        // PayGroup
+    //        if (paygroupIds.length && !paygroupIds.includes(String(emp.PayGroupID)))
+    //            return false;
+    //        return true;
+    //    });
+
+    //    renderTable(filtered);
+    //}
+    function applyFilters() {
+
+        let companyIds = ($('#ddlCompany').val() || []).map(v => String(v));
+        let deptIds = ($('#ddlDepartment').val() || []).map(v => String(v));
+        let categoryIds = ($('#ddlCategory').val() || []).map(v => String(v));
+        let paygroupIds = ($('#ddlpaygroup').val() || []).map(v => String(v));
+        let status = $('#ddlstatus').val() || 'ACTIVE';
+
+        let filtered = allEmployees.filter(emp => {
+
+            const empStatus = String(emp.Empstatus ?? '');
+            const empCompany = String(emp.CompanyID ?? '');
+            const empDept = String(emp.DepartmentID ?? '');
+            const empCategory = String(emp.CategoryID ?? '');
+            const empPayGroup = String(emp.PayGroupID ?? '');
+
+            // Status
+            if (status !== 'All' && empStatus !== status)
+                return false;
+
+            // Company
+            if (companyIds.length && !companyIds.includes(empCompany))
+                return false;
+
+            // Department
+            if (deptIds.length && !deptIds.includes(empDept))
+                return false;
+
+            // Category
+            if (categoryIds.length && !categoryIds.includes(empCategory))
+                return false;
+
+            // Pay Group
+            if (paygroupIds.length && !paygroupIds.includes(empPayGroup))
+                return false;
+
+            return true;
+        });
+
+        renderTable(filtered);
+    }
+
+    /* ===============================
+       RENDER DATATABLE
+    ================================ */
+    function renderTable(data) {
+
+        if (dt) {
+            dt.destroy();
+            dt = null;
+        }
+
+        let tbody = $('#emptable tbody');
+        tbody.empty();
+
+        data.forEach((emp, index) => {
+
+            let badgeClass =
+                emp.Status === "Configured" ? "badge-done" : "badge-pending";
+
+            tbody.append(`
+            <tr>
+                <td>${index + 1}</td>
+                <td>
+                    <div class="tbl-text">${escapeHtml(emp.EmpName)}</div>
+                    <div class="tbl-text-muted">${escapeHtml(emp.EmpCode)}</div>
+                </td>
+
+                <td>
+                    <div class="tbl-text">${escapeHtml(emp.Designation)}</div>
+                    <div class="tbl-text-muted">${escapeHtml(emp.Post)}</div>
+                </td>
+                <td>
+                <div class="tbl-text">${escapeHtml(emp.Department)}</div> 
+                </td>
+                <td>
+                <div class="tbl-text">${escapeHtml(emp.PayGroupName ?? '-')}</div>
+                </td>
+                <td>
+                    <span class="badge-saas ${badgeClass}">
+                        ${escapeHtml(emp.Status)}
+                    </span>
+                </td>
+                <td>
+                    <button class="btn-link-saas"
+                        onclick="openModal('${escapeHtml(emp.EmpName)}','${emp.EmpID}','${emp.EmpSalaryConfigID}')">
+                        <i class="fas fa-cog"></i> Configure
+                    </button>
+                </td>
+            </tr>
+        `);
+        });
+
+        dt = $('#emptable').DataTable({
+            pageLength: 10,
+            searching: true,
+            lengthChange: false,
+
+            ordering: true,   // keep ordering ON globally
+
+            columnDefs: [
+                {
+                    targets: '_all',
+                    orderable: false   // ❌ disable sorting for all columns
+                },
+                {
+                    targets: 0,
+                    orderable: true    // ✅ enable sorting ONLY for SL column
+                }
+            ],
+
+            language: {
+                search: "",
+                searchPlaceholder: "Search employee..."
+            }
+        });
+
+    }
+
+    /* ===============================
+       SAFE HTML ESCAPE
+    ================================ */
+    function escapeHtml(text) {
+        return String(text ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    
     // ==========================================
     //        MODAL CALCULATION LOGIC
     // ==========================================
@@ -1594,34 +1839,92 @@
 
 
     // --- Helper: Evaluate formula dynamically using component names ---
+    //function evaluateFormula(formula, calcs) {
+    //    if (!formula || typeof formula !== "string") return 0;
+
+    //    // Normalize formula text
+    //    let expr = formula.toUpperCase().trim();
+    //    expr = expr.replace(/\s+/g, ' '); // collapse multiple spaces
+
+    //    // Replace component names dynamically
+    //    expr = expr.replace(/\b[A-Z][A-Z0-9\s._-]*\b/g, (tokenRaw) => {
+    //        let token = tokenRaw.trim().replace(/\s+/g, ' ');
+    //        return (calcs[token] !== undefined ? calcs[token] : 0);
+    //    });
+
+    //    // Remove illegal characters
+    //    expr = expr.replace(/[^0-9+\-*/().]/g, "");
+
+    //    expr = expr.replace(/\(\)/g, "(0)");
+
+    //    if (!expr) return 0;
+
+    //    try {
+    //        const val = Function('"use strict";return(' + expr + ')')();
+    //        return (isFinite(val) && !isNaN(val)) ? val : 0;
+    //    }
+    //    catch {
+    //        return 0;
+    //    }
+    //}
+    // --- Helper: Evaluate formula dynamically using component names ---
     function evaluateFormula(formula, calcs) {
         if (!formula || typeof formula !== "string") return 0;
 
-        // Normalize formula text
-        let expr = formula.toUpperCase().trim();
-        expr = expr.replace(/\s+/g, ' '); // collapse multiple spaces
+        console.group("🧮 Evaluate Formula");
+        console.log("Original Formula:", formula);
+        console.log("Calcs Object:", calcs);
 
-        // Replace component names dynamically
-        expr = expr.replace(/\b[A-Z][A-Z0-9\s._-]*\b/g, (tokenRaw) => {
-            let token = tokenRaw.trim().replace(/\s+/g, ' ');
-            return (calcs[token] !== undefined ? calcs[token] : 0);
+        // 1. Normalize
+        let expr = formula.toUpperCase().trim();
+        expr = expr.replace(/\s+/g, ' ');
+        console.log("Normalized:", expr);
+
+        // 2. Replace component names using calcs keys (SAFE WAY)
+        const keys = Object.keys(calcs)
+            .map(k => k.toUpperCase())
+            .sort((a, b) => b.length - a.length); // longest first
+
+        keys.forEach(key => {
+            const value = Number(calcs[key]) || 0;
+
+            // escape regex chars in key
+            const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+            const regex = new RegExp(`\\b${escapedKey}\\b`, 'g');
+
+            if (regex.test(expr)) {
+                console.log(`✔ Replaced "${key}" → ${value}`);
+                expr = expr.replace(regex, value);
+            }
         });
 
-        // Remove illegal characters
+        console.log("After token replace:", expr);
+
+        // 3. Sanitize
         expr = expr.replace(/[^0-9+\-*/().]/g, "");
-
         expr = expr.replace(/\(\)/g, "(0)");
+        console.log("Sanitized expression:", expr);
 
-        if (!expr) return 0;
+        if (!expr) {
+            console.warn("Expression empty");
+            console.groupEnd();
+            return 0;
+        }
 
+        // 4. Evaluate
         try {
             const val = Function('"use strict";return(' + expr + ')')();
-            return (isFinite(val) && !isNaN(val)) ? val : 0;
-        }
-        catch {
+            console.log("Evaluated Result:", val);
+            console.groupEnd();
+            return isFinite(val) ? val : 0;
+        } catch (err) {
+            console.error("❌ Evaluation error:", err);
+            console.groupEnd();
             return 0;
         }
     }
+
 
     function reCalculateAll() {
         if (!curConfig || !curConfig.length) return;

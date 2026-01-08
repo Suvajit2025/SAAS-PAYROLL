@@ -96,7 +96,7 @@
                 <div id="userbox" class="userbox">
                     <div class="profile-info">
                         <span class="name">
-                            <a role="menuitem" id="Logout" href="https://hrms.mendine.co.in/Account/ChoosePortal.aspx"> GO TO MODULE </a> |
+                            <a role="menuitem" id="Logout" href="https://iehrms.iecsl.in/Account/ChoosePortal.aspx"> GO TO MODULE </a> |
                             <span class="" id="useremail">@currentUserName</span>
                             <input type="hidden" id="hdUserEmail" value="@currentUserEmail" />
                             <input type="hidden" id="hdUserID" value="@currentUserId" />
@@ -135,9 +135,7 @@
                                         <li><a href="/SalaryConfig/SalaryStructureConfiguration"><i class="fa fa-caret-right"></i><span>Salary Configuration</span></a></li>
                                         <li><a href="/SalaryConfig/StatutoryRuls"><i class="fa fa-caret-right"></i><span>Statutory Rules</span></a></li>
                                         <li><a href="/payrollTds/PayrollTdsSettings"><i class="fa fa-caret-right"></i><span>Tds Configaration</span></a></li>
-                                        @*<li><a href="/PayrollTds/TaxSlab"><i class="fa fa-caret-right"></i><span>TDS Tax Slab</span></a></li>
-                                        <li><a href="/PayrollTds/TDSSetup"><i class="fa fa-caret-right"></i><span>TDS Configuration</span></a></li>
-                                        <li><a href="/EmployeeList/ESIC_SetUp"><i class="fa fa-caret-right"></i><span>Employee Esic Slab</span></a></li>*@
+                                        
                                     </ul>
                                 </li>
 
@@ -150,15 +148,7 @@
                                         <li><a href="/SalaryCTC/"><i class="fa fa-caret-right"></i><span>Employee CTC</span></a></li>
                                         <li><a href="/Loan/NewLoanEntry"><i class="fa fa-caret-right"></i><span>Employee Loan Creation</span></a></li>
                                         <li><a href="/Loan/BulkEmployeeLoan"><i class="fa fa-caret-right"></i><span>Employee Loan Process</span></a></li>
-                                        <li><a href="/bulkSalaryProcess"><i class="fa fa-caret-right"></i><span>Employee Salary Process</span></a></li>
-                                        @*<li><a href="/EmployeeList/"><i class="fa fa-caret-right"></i><span>Employee List</span></a></li>
-                                            <li><a href="/Loan/"><i class="fa fa-caret-right"></i><span>Loan Creation</span></a></li>
-                                            <li><a href="/Loan/LoanProcess"><i class="fa fa-caret-right"></i><span>Loan Process</span></a></li>
-                                            <li><a href="/Loan/List"><i class="fa fa-caret-right"></i><span>Revised Loan List</span></a></li>
-                                            <li style="display:none"><a href="/Loan/Approval"><i class="fa fa-caret-right"></i><span>Loan Approval</span></a></li>
-                                            <li><a href="/Modification/Salary"><i class="fa fa-caret-right"></i><span>Salary Modification</span></a></li>
-                                            <li><a href="/PayrollTds/ArrearCalculation"><i class="fa fa-caret-right"></i><span>Arrear Calculation</span></a></li>
-                                            <li><a href="/Annexure/Form16"><i class="fa fa-caret-right"></i><span>Form 16 Upload</span></a></li>*@
+                                        <li><a href="/bulkSalaryProcess"><i class="fa fa-caret-right"></i><span>Employee Salary Process</span></a></li> 
                                     </ul>
                                 </li>
 
@@ -168,57 +158,8 @@
                                         <span>Reports</span>
                                     </a>
                                     <ul class="nav nav-children">
-
-                                        @*<li>
-                                            @if (isRestrictedUser)
-                                            {
-                                                <a href="#"><i class="fa fa-caret-right"></i><span>Active Emp Salary Report</span></a>
-                                            }
-                                            else
-                                            {
-                                                <a href="/EmployeeList/ViewSalary/"><i class="fa fa-caret-right"></i><span>Active Emp Salary Report</span></a>
-                                            }
-                                        </li>
-
-                                        <li><a href="/EmployeeList/ViewInActiveSalary"><i class="fa fa-caret-right"></i><span>InActive Emp Salary Report</span></a></li>
-
-                                        <li>
-                                            @if (isRestrictedUser)
-                                            {
-                                                <a href="#"><i class="fa fa-caret-right"></i><span>Emp Statutory Reports</span></a>
-                                            }
-                                            else
-                                            {
-                                                <a href="/EmployeeList/ViewAllEmployeeStatutoryReport"><i class="fa fa-caret-right"></i><span>Emp Statutory Reports</span></a>
-                                            }
-                                        </li>
-
-                                        <li><a href="/Reports/BonusReport.aspx"><i class="fa fa-caret-right"></i><span>Bonus Reports</span></a></li>
-
-                                        <li>
-                                            @if (isRestrictedUser)
-                                            {
-                                                <a href="#"><i class="fa fa-caret-right"></i><span>Emp Salary Register</span></a>
-                                            }
-                                            else
-                                            {
-                                                <a href="/Reports/SalaryRegister.aspx"><i class="fa fa-caret-right"></i><span>Emp Salary Register</span></a>
-                                            }
-                                        </li>
-
-                                        <li><a href="/Reports/LoanRegister.aspx"><i class="fa fa-caret-right"></i><span>Loan Register</span></a></li>
-                                        <li><a href="/Reports/LoanLedger.aspx"><i class="fa fa-caret-right"></i><span>Loan Ledger</span></a></li>
-                                        <li><a href="/Reports/OutStandingLoanInstallment.aspx"><i class="fa fa-caret-right"></i><span>Outstanding Loan Inst.</span></a></li>
-
-                                        <li><a href="/Reports/TDSAnnexure1.aspx"><i class="fa fa-caret-right"></i><span>TDS Annexure 1</span></a></li>
-
-                                        @if (!isRestrictedUser)
-                                        {
-                                            <li><a href="/EmployeeList/PFChallan"><i class="fa fa-caret-right"></i><span>EPF ECR Challan</span></a></li>
-                                            <li><a href="/EmployeeList/ESIChallan"><i class="fa fa-caret-right"></i><span>ESIC Challan</span></a></li>
-                                        }
-
-                                        <li><a href="/Reports/UserAccessLog.aspx"><i class="fa fa-caret-right"></i><span>User Access Log</span></a></li>*@
+                                        <li><a href="/PayrollSalaryReport/SalaryReport"><i class="fa fa-caret-right"></i><span>Employee Salary Process</span></a></li>
+                                         
                                     </ul>
                                 </li>
 

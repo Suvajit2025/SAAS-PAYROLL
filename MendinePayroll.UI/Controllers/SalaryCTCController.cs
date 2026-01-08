@@ -108,15 +108,28 @@ namespace MendinePayroll.UI.Controllers
 
             var list = dt.AsEnumerable().Select(r => new
             {
-                EmpID = r["EmpID"].ToString(),
-                EmpSalaryConfigID = r["EmpSalaryConfigID"].ToString(),
-                EmpName = r["EmpName"].ToString(),
-                EmpCode = r["EmpCode"].ToString(),
-                Designation = r["Designation"].ToString(),
-                Department = r["Department"].ToString(),
-                PayGroupName = r["PayGroupName"].ToString(),
-                Status = r["CTCStatus"].ToString()
+                EmpID = r["EmpID"]?.ToString(),
+                EmpSalaryConfigID = r["EmpSalaryConfigID"]?.ToString(),
+
+                EmpName = r["EmpName"]?.ToString(),
+                EmpCode = r["EmpCode"]?.ToString(),
+
+                Designation = r["Designation"]?.ToString(),
+                Post = r["Postname"]?.ToString(),
+                Department = r["Department"]?.ToString(),
+
+                PayGroupName = r["PayGroupName"]?.ToString(),
+
+                Status = r["CTCStatus"]?.ToString(),   // Configured / Pending
+                Empstatus = r["Status"]?.ToString(),   // ACTIVE / INACTIVE
+
+                /* 🔑 REQUIRED FOR JS FILTERING */
+                CompanyID = r["CompanyID"]?.ToString(),
+                DepartmentID = r["DepartmentID"]?.ToString(),
+                CategoryID = r["CategoryID"]?.ToString(),
+                PayGroupID = r["PayGroupID"]?.ToString()
             }).ToList();
+
 
             return Json(list, JsonRequestBehavior.AllowGet);
         }
