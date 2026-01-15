@@ -16,6 +16,7 @@ using UI.BLL;
 
 namespace MendinePayroll.UI.Controllers
 {
+
     public class ConfigureSalaryComponentController : Controller
     {
         private string TenantID

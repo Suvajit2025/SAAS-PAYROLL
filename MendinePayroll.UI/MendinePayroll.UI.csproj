@@ -234,8 +234,10 @@
     <Compile Include="Common\clsHelper.cs" />
     <Compile Include="Common\CryptorEngine.cs" />
     <Compile Include="Common\PayrollDelegates.cs" />
+    <Compile Include="Common\SessionAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AnnexureController.cs" />
     <Compile Include="Controllers\BonusController.cs" />
+    <Compile Include="Controllers\bulkCTCCalculationController.cs" />
     <Compile Include="Controllers\bulkSalaryProcessController.cs" />
     <Compile Include="Controllers\ConfigureSalaryComponentController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
@@ -2370,6 +2372,9 @@
     <Content Include="Views\bulkSalaryProcess\Index.cshtml" />
     <Content Include="Views\PayrollTds\PayrollTdsSettings.cshtml" />
     <Content Include="Views\PayrollSalaryReport\SalaryReport.cshtml" />
+    <Content Include="Views\SalaryCTC\SalaryRevision.cshtml" />
+    <Content Include="Views\bulkCTCCalculation\Index.cshtml" />
+    <Content Include="Views\PayrollSalaryReport\CTCReport.cshtml" />
     <None Include="Web References\LoginWebService\logincontrol.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

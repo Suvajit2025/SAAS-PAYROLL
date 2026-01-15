@@ -344,5 +344,41 @@ namespace MendinePayroll.Models
         // === PTAX Slabs ===
         public string PTaxSlabsJson { get; set; }  // store JSON string
     }
+    public class BulkEmployeeInputRequest
+    {
+        public List<EmployeeInputItem> Items { get; set; }
+    }
+
+    public class EmployeeInputItem
+    {
+        public long EmployeeId { get; set; }
+        public int PayGroupId { get; set; }
+        public long PayConfigId { get; set; }
+        public decimal Value { get; set; }
+    }
+    //public class SalaryComponent
+    //{
+    //    public long PayConfigId { get; set; }
+    //    public string Name { get; set; }
+    //    public string Type { get; set; }
+
+    //    public bool IsBasic { get; set; }
+    //    public bool IsGross { get; set; }
+    //    public bool IsStatutory { get; set; }
+    //    public string StatutoryType { get; set; }
+
+    //    public string Logic { get; set; }
+    //    public string Formula { get; set; }
+    //    public decimal ManualRate { get; set; }
+    //    public bool IsPercentage { get; set; }
+
+    //    public decimal MaxLimit { get; set; }
+    //    public string Rounding { get; set; }
+    //    public string PTaxSlabs { get; set; }
+
+    //    public decimal MonthlyAmount { get; set; }
+    //}
+    
+
 
 }

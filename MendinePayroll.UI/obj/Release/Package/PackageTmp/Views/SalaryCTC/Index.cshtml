@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Employee CTC Structure";
+    ViewBag.Title = "Employee Salary Structure";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -758,75 +758,37 @@
     <header class="page-header">
         <h2>Employee CTC </h2>
     </header>
-    @*<div class="page-header-row">
-            <h2 class="page-title">Employee CTC Management</h2>
-            <button class="btn-saas" onclick="alert('Open Import Modal')" style="display:none">
-                <i class="fas fa-file-import"></i> Bulk Import
-            </button>
-        </div>*@
-
-    @*<div class="saas-card">
-            <div class="row">
-                <div class="col-md-3">
-                    <span class="filter-label">Company</span>
-                    <select id="ddlCompany" multiple></select>
-                </div>
-                <div class="col-md-3">
-                    <span class="filter-label">Department</span>
-                    <select id="ddlDepartment" multiple></select>
-                </div>
-                <div class="col-md-3">
-                    <span class="filter-label">Employment Type</span>
-                    <select id="ddlCategory" multiple></select>
-                </div>
-                <div class="col-md-3">
-                    <span class="filter-label">Employee Status</span>
-                    <select id="ddlstatus">
-                        <option value="All">All </option>
-                        <option value="ACTIVE">Active</option>
-                        <option value="INACTIVE">InActive</option>
-                    </select>
-
-                </div>
-                <div class="col-md-3">
-                    <span class="filter-label">&nbsp;</span>
-                    <button id="btnFilter" class="btn-saas" style="width:100%; justify-content:center;">
-                        <i class="fas fa-search"></i> Search Records
-                    </button>
-                </div>
-            </div>
-        </div>*@
-    <div class="saas-filter-bar">
-        <div class="filter-item">
-            <label>Company</label>
-            <select id="ddlCompany" multiple></select>
-        </div>
-
-        <div class="filter-item">
-            <label>Department</label>
-            <select id="ddlDepartment" multiple></select>
-        </div>
-
-        <div class="filter-item">
-            <label>Employment Type</label>
-            <select id="ddlCategory" multiple></select>
-        </div>
-
-        <div class="filter-item">
-            <label>Status</label>
-            <select id="ddlstatus" class="py-0">
-                <option value="ACTIVE" selected>Active</option>
-                <option value="INACTIVE">Inactive</option>
-                <option value="All">All</option>
-            </select>
-        </div>
-
-        @*<div class="filter-item filter-btn">
-            <button id="btnFilter" class="btn-saas">
-                <i class="fas fa-search"></i> Search
-            </button>
-        </div>*@
+    
+<div class="saas-filter-bar">
+    <div class="filter-item">
+        <label>Company</label>
+        <select id="ddlCompany" multiple></select>
     </div>
+
+    <div class="filter-item">
+        <label>Department</label>
+        <select id="ddlDepartment" multiple></select>
+    </div>
+
+    <div class="filter-item">
+        <label>Employment Type</label>
+        <select id="ddlCategory" multiple></select>
+    </div>
+
+    <div class="filter-item">
+        <label>Status</label>
+        <select id="ddlstatus" class="py-0">
+            <option value="ACTIVE" selected>Active</option>
+            <option value="INACTIVE">Inactive</option>
+            <option value="All">All</option>
+        </select>
+    </div>
+    <div class="filter-item">
+        <label>Pay Group</label>
+        <select id="ddlpaygroup" multiple></select>
+    </div>
+   
+</div>
 
     <div class="saas-card" style="padding:0; overflow:hidden;">
         <div style="padding:20px;">
@@ -1062,7 +1024,7 @@
     $(document).ready(function () {
 
         // 1. Init Multiselects
-        $('#ddlCompany, #ddlDepartment, #ddlCategory').multiselect({
+        $('#ddlCompany, #ddlDepartment, #ddlCategory ,#ddlpaygroup').multiselect({
 
             includeSelectAllOption: true,
             enableFiltering: true,
@@ -1087,7 +1049,7 @@
         $('#ddlstatus').val('ACTIVE');    
         loadEmployees();
         //$('#btnFilter').on('click', applyFilters);
-        $('#ddlCompany, #ddlDepartment, #ddlCategory, #ddlstatus')
+        $('#ddlCompany, #ddlDepartment, #ddlCategory, #ddlstatus ,#ddlpaygroup')
             .on('change', applyFilters);
     });
     // ===================== AJAX LOAD DROPDOWNS =====================
@@ -1135,21 +1097,40 @@
 
                 $('#ddlCategory').multiselect('rebuild');
             }
-        });
+        }); 
         // ----------- LOAD PAY GROUP -----------
         $.ajax({
             url: '/SalaryCTC/GetPayGroupList',
             type: 'GET',
-            success: function (res) {
-                $("#ddlgroup").empty();
-                $("#ddlgroup").append(`<option value="">-- Select --</option>`);
-                res.forEach(x => {
-                    $('#ddlgroup').append(`<option value="${x.PayGroupID}">${x.PayGroupName}</option>`);
+            success: function (res) { 
+                $("#ddlpaygroup").empty(); 
+
+                res.forEach(x => { 
+                    $('#ddlpaygroup').append(
+                        `<option value="${x.PayGroupID}">${x.PayGroupName}</option>`
+                    );
                 });
 
-
+                // 🔑 THIS WAS MISSING
+                $('#ddlpaygroup').multiselect('rebuild');
             }
         });
+        // ----------- LOAD PAY GROUP category wise-----------
+        $.ajax({
+            url: '/SalaryCTC/GetPayGroupListConfigWise',
+            type: 'GET',
+            success: function (res) {
+                $("#ddlgroup").empty();
+                $("#ddlgroup").append('<option value="">--Select PayGroup--</option>');
+                res.forEach(x => {
+                    $('#ddlgroup').append(
+                        `<option value="${x.PayGroupID}">${x.PayGroupName}</option>`
+                    );
+                });
+                 
+            }
+        });
+
     }
      
 
@@ -1181,29 +1162,73 @@
     /* ===============================
        APPLY CLIENT-SIDE FILTERS
     ================================ */
+    //function applyFilters() {
+
+    //    let companyIds = ($('#ddlCompany').val() || []).map(String);
+    //    let deptIds = ($('#ddlDepartment').val() || []).map(String);
+    //    let categoryIds = ($('#ddlCategory').val() || []).map(String);
+    //    let paygroupIds = ($('#ddlpaygroup').val() || []).map(String);
+    //    let status = $('#ddlstatus').val() || 'ACTIVE';
+
+    //    let filtered = allEmployees.filter(emp => {
+
+    //        // Status (default ACTIVE)
+    //        if (status !== 'All' && String(emp.Empstatus) !== status)
+    //            return false;
+
+    //        // Company
+    //        if (companyIds.length && !companyIds.includes(String(emp.CompanyID)))
+    //            return false;
+
+    //        // Department
+    //        if (deptIds.length && !deptIds.includes(String(emp.DepartmentID)))
+    //            return false;
+
+    //        // Category
+    //        if (categoryIds.length && !categoryIds.includes(String(emp.CategoryID)))
+    //            return false;
+    //        // PayGroup
+    //        if (paygroupIds.length && !paygroupIds.includes(String(emp.PayGroupID)))
+    //            return false;
+    //        return true;
+    //    });
+
+    //    renderTable(filtered);
+    //}
     function applyFilters() {
 
-        let companyIds = ($('#ddlCompany').val() || []).map(String);
-        let deptIds = ($('#ddlDepartment').val() || []).map(String);
-        let categoryIds = ($('#ddlCategory').val() || []).map(String);
+        let companyIds = ($('#ddlCompany').val() || []).map(v => String(v));
+        let deptIds = ($('#ddlDepartment').val() || []).map(v => String(v));
+        let categoryIds = ($('#ddlCategory').val() || []).map(v => String(v));
+        let paygroupIds = ($('#ddlpaygroup').val() || []).map(v => String(v));
         let status = $('#ddlstatus').val() || 'ACTIVE';
 
         let filtered = allEmployees.filter(emp => {
 
-            // Status (default ACTIVE)
-            if (status !== 'All' && String(emp.Empstatus) !== status)
+            const empStatus = String(emp.Empstatus ?? '');
+            const empCompany = String(emp.CompanyID ?? '');
+            const empDept = String(emp.DepartmentID ?? '');
+            const empCategory = String(emp.CategoryID ?? '');
+            const empPayGroup = String(emp.PayGroupID ?? '');
+
+            // Status
+            if (status !== 'All' && empStatus !== status)
                 return false;
 
             // Company
-            if (companyIds.length && !companyIds.includes(String(emp.CompanyID)))
+            if (companyIds.length && !companyIds.includes(empCompany))
                 return false;
 
             // Department
-            if (deptIds.length && !deptIds.includes(String(emp.DepartmentID)))
+            if (deptIds.length && !deptIds.includes(empDept))
                 return false;
 
             // Category
-            if (categoryIds.length && !categoryIds.includes(String(emp.CategoryID)))
+            if (categoryIds.length && !categoryIds.includes(empCategory))
+                return false;
+
+            // Pay Group
+            if (paygroupIds.length && !paygroupIds.includes(empPayGroup))
                 return false;
 
             return true;
@@ -1480,46 +1505,7 @@
             loadEmployees();
         });
     }
-
-
-    //function closeModal() {
-    //    $('#ctcModal').fadeOut(200, function () {
-
-    //        // 1. Clear all input fields
-    //        $('#inputPanel').empty().hide();
-
-    //        // 2. Clear table rows
-    //        $('#tbody_earnings').empty();
-    //        $('#tbody_deductions').empty();
-    //        $('#tbody_contribution').empty();
-
-    //        // 3. Reset hidden fields
-    //        $('#hdnSelectedEmpId').val("");
-    //        $('#hdnEmpSalaryConfigID').val("");
-
-    //        // 4. Reset pay group dropdown
-    //        $('#ddlgroup').val("");
-
-    //        // 5. Clear totals
-    //        $('#lblTotalGross').text("0");
-    //        $('#lblTotalDed').text("0");
-    //        $('#lblTotalContrib').text("0");
-    //        $('#lblNetPay').text("₹ 0");
-    //        $('#lblCTCMonth').text("₹ 0");
-    //        $('#lblCTCYear').text("₹ 0");
-
-    //        // 6. Reset checkboxes
-    //        $('#chkPF').prop('checked', true);
-    //        $('#chkESIC').prop('checked', true);
-    //        $('#chkPTAX').prop('checked', true);
-
-    //        // 7. Clear global config cache (only current modal)
-    //        curConfig = [];
-
-    //        // 8. Reload employee grid
-    //        loadEmployees();
-    //    });
-    //}
+     
 
     // DATABASE CONFIG (Pay Group Rules)
 
@@ -1779,36 +1765,7 @@
     }
 
 
-    // --- Helper: Evaluate formula dynamically using component names ---
-    //function evaluateFormula(formula, calcs) {
-    //    if (!formula || typeof formula !== "string") return 0;
-
-    //    // Normalize formula text
-    //    let expr = formula.toUpperCase().trim();
-    //    expr = expr.replace(/\s+/g, ' '); // collapse multiple spaces
-
-    //    // Replace component names dynamically
-    //    expr = expr.replace(/\b[A-Z][A-Z0-9\s._-]*\b/g, (tokenRaw) => {
-    //        let token = tokenRaw.trim().replace(/\s+/g, ' ');
-    //        return (calcs[token] !== undefined ? calcs[token] : 0);
-    //    });
-
-    //    // Remove illegal characters
-    //    expr = expr.replace(/[^0-9+\-*/().]/g, "");
-
-    //    expr = expr.replace(/\(\)/g, "(0)");
-
-    //    if (!expr) return 0;
-
-    //    try {
-    //        const val = Function('"use strict";return(' + expr + ')')();
-    //        return (isFinite(val) && !isNaN(val)) ? val : 0;
-    //    }
-    //    catch {
-    //        return 0;
-    //    }
-    //}
-    // --- Helper: Evaluate formula dynamically using component names ---
+     
     function evaluateFormula(formula, calcs) {
         if (!formula || typeof formula !== "string") return 0;
 

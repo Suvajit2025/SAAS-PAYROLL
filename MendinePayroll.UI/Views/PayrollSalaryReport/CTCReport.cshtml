@@ -1,0 +1,672 @@
+﻿@{
+    ViewBag.Title = "Salary Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #0E7777;
+        --border: #e2e8f0;
+        --bg: #f8fafc;
+        --text-muted: #64748b;
+    }
+
+    .content-body {
+        background: #f9fafb;
+        padding: 20px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .page-header h2 {
+            margin: 0;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+    .filter-card, .table-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        margin-bottom: 20px;
+    }
+
+        .filter-card label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+    .search-box {
+        position: relative;
+        max-width: 400px;
+    }
+
+        .search-box i {
+            position: absolute;
+            top: 9px;
+            left: 10px;
+            color: #94a3b8;
+        }
+
+        .search-box input {
+            padding-left: 30px;
+            border-radius: 6px;
+        }
+
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    thead th {
+        background: var(--bg);
+        font-size: 11px;
+        text-transform: uppercase;
+        border-bottom: 2px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #fafafa;
+    }
+
+    tbody tr:hover {
+        background: #f0fdfa;
+    }
+
+    td {
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .col-emp {
+        min-width: 220px;
+        border-right: 1px solid #e5e7eb;
+    }
+
+    .tbl-text {
+        font-weight: 600;
+        color: #1e293b;
+        line-height: 1.2;
+    }
+
+    .tbl-text-muted {
+        font-size: 11px;
+        color: #64748b;
+    }
+
+    .td-money {
+        text-align: right;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .pagination-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+    }
+
+    .page-btn {
+        padding: 5px 12px;
+        border: 1px solid var(--border);
+        background: #fff;
+        border-radius: 6px;
+        margin: 0 2px;
+    }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+    .filter-item {
+        min-width: 180px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .filter-item label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .filter-item select {
+            height: 31px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 2px;
+        }
+
+    .filter-btn {
+        min-width: 120px;
+    }
+    /* ===== Compact Pagination ===== */
+    .pagination-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding-top: 10px;
+    }
+
+    .pagination-compact {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .page-btn {
+        min-width: 34px;
+        height: 32px;
+        padding: 0 10px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        font-size: 12px;
+        font-weight: 500;
+        color: #475569;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .page-btn:hover:not(.active):not(:disabled) {
+            background: #f1f5f9;
+        }
+
+        .page-btn.active {
+            background: #0E7777;
+            border-color: #0E7777;
+            color: #fff;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+    .page-ellipsis {
+        padding: 6px 8px;
+        font-size: 12px;
+        color: #94a3b8;
+    }
+    /* ===== Compact Salary Register Table ===== */
+
+    /* Header: small + bold */
+    .table thead th {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 8px 10px;
+        letter-spacing: .03em;
+        white-space: nowrap;
+    }
+
+    /* Body cells: compact */
+    .table tbody td {
+        font-size: 12px;
+        padding: 6px 10px;
+        line-height: 1.2;
+    }
+
+    /* Reduce row height */
+    .table tbody tr {
+        height: 32px;
+    }
+
+    /* Employee column compact */
+    .col-emp {
+        min-width: 200px;
+        padding-right: 12px;
+    }
+
+    /* Employee name */
+    .tbl-text {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.1;
+    }
+
+    /* Employee code */
+    .tbl-text-muted {
+        font-size: 10.5px;
+        color: #64748b;
+        line-height: 1;
+    }
+
+    /* Numeric salary fields */
+    .td-money {
+        font-size: 12px;
+        font-weight: 600;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    /* Important totals emphasis */
+    .table td[data-total="true"] {
+        font-weight: 700;
+        color: #0E7777;
+    }
+
+    /* Hover stays subtle */
+    .table tbody tr:hover {
+        background: #f0fdfa;
+    }
+
+    /* Reduce table border noise */
+    .table td,
+    .table th {
+        border-top: 1px solid #f1f5f9;
+    }
+    /* ===== Fixed-size Multiselect with Scroll ===== */
+    .multiselect-container {
+        max-height: 220px !important;
+        overflow-y: auto !important;
+    }
+
+    .btn-group > .multiselect {
+        height: 32px;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .multiselect-container > li > a {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .multiselect-container label {
+        font-weight: 500;
+    }
+
+</style>
+
+<section class="content-body">
+
+    <!-- HEADER -->
+    <header class="page-header">
+        <h2 style="font-weight:700; margin:0; color:white;">Salary Structure Report</h2>
+
+    </header>
+
+    <!-- FILTERS -->
+    <div class="filter-card">
+        <div class="row mb-sm">
+            <div class="col-md-6">
+                <div class="search-box">
+                    <i class="fa fa-search"></i>
+                    <input id="searchInput" class="form-control input-sm"
+                           placeholder="Search employee, code, department..." />
+                </div>
+            </div>
+            <div class="col-sm-6 text-right">
+                <div class="btn-group">
+                    @*<button class="btn btn-default btn-sm" onclick="toggleFilterPanel()">
+                        <i class="fa fa-filter mr-xs"></i> Filter <span id="filterCount" class="badge">3</span>
+                    </button>*@
+                    <button class="btn btn-default btn-sm"  onclick="exportExcel()">
+                        <i class="fa fa-file-excel-o mr-xs" style="color:#16a34a;"></i> Export
+                    </button>
+                    <button class="btn btn-default btn-sm" onclick="refreshGrid()">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2 filter-item">
+                <label>Company</label>
+                <select id="ddlCompany" class="form-control multi-select" multiple></select>
+            </div>
+            <div class="col-md-2 filter-item">
+                <label>Department</label>
+                <select id="ddlDepartment" class="form-control multi-select" multiple></select>
+            </div>
+            <div class="col-md-2 filter-item">
+                <label>Pay Group</label>
+                <select id="ddlpaygroup" class="form-control multi-select" multiple></select>
+            </div>
+            <div class="col-md-2 filter-item">
+                <label>Employee</label>
+                <select id="ddlEmployee" class="form-control multi-select" multiple></select>
+            </div>
+            <div class="col-md-2 filter-btn">
+                <label>&nbsp;</label>
+                <button id="btnClearFilters" class="btn btn-default btn-block btn-sm">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-none">
+                <thead id="ctcHead"></thead>
+                <tbody id="gridBody">
+                    <tr><td colspan="20" class="text-center">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination-bar">
+            <div id="paginationInfo" class="text-muted small"></div>
+            <div id="paginationControls"></div>
+        </div>
+    </div>
+
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+    let ctcData = [], filteredData = [], ctcColumns = [];
+    let currentPage = 1, pageSize = 10;
+
+    // IDs hidden from UI & Excel
+    const hiddenColumns = [
+        "EmployeeID", "CompanyId", "DepartmentId",
+        "PayGroupID", "EmpNo", "EmpCode","Employee Name"
+    ];
+
+    $(function () {
+        initMultiSelects();
+        loadFilters();
+        loadCTCReport();
+
+        $('#searchInput').on('keyup', applyFilters);
+        $('.multi-select').on('change', applyFilters);
+        $('#btnClearFilters').click(clearFilters);
+    });
+
+    function initMultiSelects() {
+        $('.multi-select').multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            maxHeight: 220,              // 🔑 fixed height
+            buttonWidth: '100%',
+            nonSelectedText: 'All',
+            numberDisplayed: 1,
+            buttonClass: 'btn btn-default btn-sm'
+        });
+    }
+
+
+    function loadFilters() {
+        loadDropdown('/SalaryCTC/GetCompanyList', '#ddlCompany', 'CompanyId', 'CompanyName');
+        loadDropdown('/SalaryCTC/GetDepartmentList', '#ddlDepartment', 'DepartmentID', 'DepartmentName');
+        loadDropdown('/SalaryCTC/GetPayGroupList', '#ddlpaygroup', 'PayGroupID', 'PayGroupName');
+        loadEmployeeByFilters();
+    }
+
+    function loadDropdown(url, ddl, id, text) {
+        $.getJSON(url, res => {
+            const $ddl = $(ddl).empty();
+            res.forEach(x => $ddl.append(`<option value="${x[id]}">${x[text]}</option>`));
+            $ddl.multiselect('rebuild');
+        });
+    }
+    function loadEmployeeByFilters() {
+
+        const companyIds = $('#ddlCompany').val() || [];
+        const deptIds = $('#ddlDepartment').val() || [];
+        const categoryIds = 1;
+
+        $.ajax({
+            url: '/SalaryCTC/GetEmployeeList',
+            type: 'GET',
+            traditional: true,
+            data: {
+                companyIds: companyIds,
+                deptIds: deptIds,
+                categoryIds: categoryIds
+            },
+            success: function (res) {
+
+                const $ddl = $('#ddlEmployee');
+                $ddl.empty();
+
+                // ✅ Show only ACTIVE employees
+                const activeEmployees = res.filter(x => x.Empstatus === 'ACTIVE');
+
+                activeEmployees.forEach(x => {
+                    $ddl.append(`
+                    <option value="${x.EmpID}">
+                        ${x.EmpName} (${x.EmpCode})
+                    </option>
+                `);
+                });
+
+                $ddl.multiselect('rebuild');
+            }
+        });
+    }
+
+
+    function loadCTCReport() {
+        $.getJSON('/PayrollSalaryReport/GetCTCReport', res => {
+            ctcColumns = res.columns.filter(c => !hiddenColumns.includes(c));
+            ctcColumns.unshift('Employee');
+            ctcData = res.rows;
+            filteredData = [...ctcData];
+            buildHeader();
+            paginate();
+        });
+    }
+
+    function buildHeader() {
+        let h = '<tr>';
+        ctcColumns.forEach(c => {
+            h += `<th class="${c === 'Employee' ? 'col-emp' : ''}">${c}</th>`;
+        });
+        h += '</tr>';
+        $('#ctcHead').html(h);
+    }
+
+    function paginate() {
+        const start = (currentPage - 1) * pageSize;
+        renderRows(filteredData.slice(start, start + pageSize));
+        renderPagination(filteredData.length);
+    }
+
+    function renderRows(rows) {
+        const $b = $('#gridBody').empty();
+
+        if (!rows.length) {
+            $b.html(`
+            <tr>
+                <td colspan="${ctcColumns.length}" class="text-center text-muted">
+                    No records found
+                </td>
+            </tr>
+        `);
+            return;
+        }
+
+        rows.forEach(r => {
+            let tr = '<tr>';
+
+            ctcColumns.forEach(c => {
+
+                /* ================= EMPLOYEE COLUMN ================= */
+                if (c === 'Employee') {
+                    tr += `
+                    <td class="col-emp">
+                        <span class="tbl-text">${escapeHtml(r['Employee Name'])}</span>
+                       <span class="tbl-text-muted">(${escapeHtml(r.EmpNo)})</span>
+
+                    </td>`;
+                    return;
+                }
+
+                let v = r[c];
+
+                /* ================= NUMERIC COLUMNS ================= */
+                if (typeof v === 'number') {
+
+                    const isImportant =
+                        c === 'NET PAY' ||
+                        c === 'MONTHLY CTC' ||
+                        c === 'YEARLY CTC';
+
+                    tr += `
+                    <td class="td-money ${isImportant ? 'fw-bold text-primary' : ''}">
+                        ${v.toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })}
+                    </td>`;
+                }
+                /* ================= TEXT COLUMNS ================= */
+                else {
+                    tr += `
+                    <td class="text-truncate">
+                        ${escapeHtml(v)}
+                    </td>`;
+                }
+            });
+
+            tr += '</tr>';
+            $b.append(tr);
+        });
+    }
+
+
+    function applyFilters() {
+        const s = $('#searchInput').val().toLowerCase();
+        const comp = $('#ddlCompany').val() || [];
+        const dept = $('#ddlDepartment').val() || [];
+        const pg = $('#ddlpaygroup').val() || [];
+        const emp = $('#ddlEmployee').val() || [];
+
+        filteredData = ctcData.filter(r =>
+            (!s || `${r['Employee Name']} ${r.EmpCode} ${r.Department}`.toLowerCase().includes(s)) &&
+            (!comp.length || comp.includes(r.CompanyId?.toString())) &&
+            (!dept.length || dept.includes(r.DepartmentId?.toString())) &&
+            (!pg.length || pg.includes(r.PayGroupID?.toString())) &&
+            (!emp.length || emp.includes(r.EmployeeID?.toString()))
+        );
+
+        currentPage = 1;
+        paginate();
+    }
+
+    function renderPagination(totalItems) {
+
+        const totalPages = Math.ceil(totalItems / pageSize);
+        if (totalPages <= 1) {
+            $('#paginationControls').empty();
+            $('#paginationInfo').html(`Showing ${totalItems} entries`);
+            return;
+        }
+
+        const maxVisible = 5; // how many page numbers to show
+        let start = Math.max(1, currentPage - 2);
+        let end = Math.min(totalPages, start + maxVisible - 1);
+
+        if (end - start < maxVisible - 1) {
+            start = Math.max(1, end - maxVisible + 1);
+        }
+
+        let html = `<div class="pagination-compact">`;
+
+        // Prev
+        html += `
+        <button class="page-btn"
+            ${currentPage === 1 ? 'disabled' : ''}
+            onclick="changePage(${currentPage - 1})">
+            ‹
+        </button>`;
+
+        // First page
+        if (start > 1) {
+            html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
+            if (start > 2) html += `<span class="page-ellipsis">…</span>`;
+        }
+
+        // Page window
+        for (let i = start; i <= end; i++) {
+            html += `
+            <button class="page-btn ${i === currentPage ? 'active' : ''}"
+                onclick="changePage(${i})">${i}</button>`;
+        }
+
+        // Last page
+        if (end < totalPages) {
+            if (end < totalPages - 1) html += `<span class="page-ellipsis">…</span>`;
+            html += `<button class="page-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
+        }
+
+        // Next
+        html += `
+        <button class="page-btn"
+            ${currentPage === totalPages ? 'disabled' : ''}
+            onclick="changePage(${currentPage + 1})">
+            ›
+        </button>`;
+
+        html += `</div>`;
+
+        $('#paginationControls').html(html);
+
+        const startIdx = (currentPage - 1) * pageSize + 1;
+        const endIdx = Math.min(currentPage * pageSize, totalItems);
+
+        $('#paginationInfo').html(
+            `Showing <b>${startIdx}</b> to <b>${endIdx}</b> of <b>${totalItems}</b> entries`
+        );
+    }
+
+
+    function changePage(p) { currentPage = p; paginate(); }
+
+    function clearFilters() {
+        $('.multi-select').multiselect('deselectAll', false).multiselect('updateButtonText');
+        $('#searchInput').val('');
+        filteredData = [...ctcData];
+        currentPage = 1;
+        paginate();
+    }
+
+    function exportExcel() {
+        const out = filteredData.map(r => {
+            let o = {};
+            ctcColumns.forEach(c => {
+                if (c === 'Employee')
+                    o.Employee = `${r['Employee Name']} (${r.EmpNo})`;
+                else
+                    o[c] = r[c];
+            });
+            return o;
+        });
+
+        const ws = XLSX.utils.json_to_sheet(out);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Salary Register");
+        XLSX.writeFile(wb, "Salary_Register.xlsx");
+    }
+
+    function escapeHtml(t) {
+        return t ? t.toString().replace(/[&<>"']/g, m =>
+            ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m])) : '';
+    }
+</script>

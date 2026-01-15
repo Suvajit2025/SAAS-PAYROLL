@@ -150,7 +150,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 </section>
@@ -190,6 +189,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="MarkPaidModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document" style="max-width:420px;">
         <div class="modal-content">
@@ -222,9 +222,41 @@
         </div>
     </div>
 </div>
+<!-- Skipped Employees Modal -->
+<div class="modal fade" id="SkippedEmployeeModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header bg-warning" style="padding:15px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="color:white;">&times;</span>
+                </button>
+                <h4 class="modal-title" style="color:white; margin:0;">
+                    <i class="fa fa-exclamation-triangle mr-xs"></i> Skipped Employees
+                </h4>
+            </div>
+
+            <div class="modal-body" style="background:#fdfdfd;">
+                <!-- JS will inject table here -->
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
     $(document).ready(function () {
+        $("#fltStatus").val("");
         loadFilterData();
     });
     let pageNumber = 1;
@@ -321,7 +353,7 @@
 
         const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
-        const defaultMonth = String(prev.getMonth() + 1); 
+        const defaultMonth = String(prev.getMonth() + 1);
         const defaultYear = String(prev.getFullYear());
 
         bindSelect("#fltMonth", monthList, defaultMonth);
@@ -362,17 +394,51 @@
         }
     }
 
-    function openBankModal(id, name) {
-        // In real MVC, use AJAX here. Mocking for display:
-        document.getElementById('lblModalName').innerText = name;
-        document.getElementById('lblModalBank').innerText = "HDFC Bank";
-        document.getElementById('lblModalBranch').innerText = "Salt Lake Sector V";
-        document.getElementById('lblModalIfsc').innerText = "HDFC000123";
-        document.getElementById('lblModalAcct').innerText = "501000998877";
+    function openBankModal(empId, name) {
 
-        // Using jQuery for Bootstrap Modal (standard in MVC templates)
+        // Set name immediately (good UX)
+        $('#lblModalName').text(name);
+
+        // Show loading placeholders
+        $('#lblModalBank').text('Loading...');
+        $('#lblModalBranch').text('Loading...');
+        $('#lblModalIfsc').text('Loading...');
+        $('#lblModalAcct').text('Loading...');
+
         $('#BankModal').modal('show');
+
+        $.ajax({
+            url: '/PayrollSalaryReport/GetEmployeeBank',
+            type: 'GET',
+            dataType: 'json',
+            data: { employeeId: empId },
+            success: function (res) {
+
+                if (!res || !res.success) {
+                    $('#lblModalBank').text('—');
+                    $('#lblModalBranch').text('—');
+                    $('#lblModalIfsc').text('—');
+                    $('#lblModalAcct').text('—');
+                    toastr.warning(res?.message || 'Bank details not found');
+                    return;
+                }
+
+                $('#lblModalBank').text(res.bankName || '—');
+                $('#lblModalBranch').text(res.branch || '—');
+                $('#lblModalIfsc').text(res.ifsc || '—');
+                $('#lblModalAcct').text(res.accountNo || '—');
+            },
+            error: function () {
+                $('#lblModalBank').text('—');
+                $('#lblModalBranch').text('—');
+                $('#lblModalIfsc').text('—');
+                $('#lblModalAcct').text('—');
+                toastr.error('Server error while loading bank details');
+            }
+        });
     }
+
+
 
     function refreshGrid() {
 
@@ -450,7 +516,7 @@
                 : '<span class="label label-warning">Draft</span>';
 
             // Pay status not in your table yet; keeping Pending as default (update when you add payment table)
-            
+
             const payBadge = (Number(r.PaidStatus) === 1)
                 ? '<span class="label label-success">Paid</span>'
                 : '<span class="label label-warning">Pending</span>';
@@ -467,7 +533,7 @@
 
                 <td>
                     <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName || '')}</div>
-                    <div class="text-xs text-muted">${escapeHtml(r.EmployeeCode || '')}</div> 
+                    <div class="text-xs text-muted">${escapeHtml(r.EmployeeCode || '')}</div>
                 </td>
 
                 <td>
@@ -553,6 +619,34 @@
 
         $("#btnConfirmPaid").prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> Processing...');
 
+        //$.ajax({
+        //    url: "/PayrollSalaryReport/MarkPaid",
+        //    type: "POST",
+        //    contentType: "application/json; charset=utf-8",
+        //    dataType: "json",
+        //    data: JSON.stringify({
+        //        month: parseInt($("#fltMonth").val(), 10),
+        //        year: parseInt($("#fltYear").val(), 10),
+        //        paidDate: paidDate,
+        //        payrollProcessEmployeeIds: ids.join(",")      // ✅ send EmployeeIDs
+        //    }),
+        //    success: function (res) {
+        //        if (!res || !res.success) {
+        //            alert(res?.message || "Failed to mark paid.");
+        //            return;
+        //        }
+
+        //        $("#MarkPaidModal").modal("hide");
+        //        $("#chkAll").prop("checked", false);
+        //        refreshGrid();
+        //    },
+        //    error: function () {
+        //        alert("Server error while marking paid.");
+        //    },
+        //    complete: function () {
+        //        $("#btnConfirmPaid").prop("disabled", false).html('<i class="fa fa-check"></i> Paid');
+        //    }
+        //});
         $.ajax({
             url: "/PayrollSalaryReport/MarkPaid",
             type: "POST",
@@ -562,25 +656,100 @@
                 month: parseInt($("#fltMonth").val(), 10),
                 year: parseInt($("#fltYear").val(), 10),
                 paidDate: paidDate,
-                payrollProcessEmployeeIds: ids.join(",")      // ✅ send EmployeeIDs
+                payrollProcessEmployeeIds: ids.join(",")
             }),
             success: function (res) {
+
                 if (!res || !res.success) {
                     alert(res?.message || "Failed to mark paid.");
                     return;
                 }
 
+                // ✅ Success message
+                toastr.success(res.message || "Payment processed");
+
+                // ✅ Optional summary toast
+                toastr.info(
+                    `Updated: ${res.paidUpdated}, Paid: ${res.paidEmployees}/${res.totalEmployees}`
+                );
+
+                // ⚠️ Show skipped employees (if any)
+                if (res.skippedEmployees && res.skippedEmployees.length > 0) {
+                    showSkippedEmployees(res.skippedEmployees);
+                }
+
+                // UI reset
                 $("#MarkPaidModal").modal("hide");
                 $("#chkAll").prop("checked", false);
+
                 refreshGrid();
             },
             error: function () {
                 alert("Server error while marking paid.");
             },
             complete: function () {
-                $("#btnConfirmPaid").prop("disabled", false).html('<i class="fa fa-check"></i> Paid');
+                $("#btnConfirmPaid")
+                    .prop("disabled", false)
+                    .html('<i class="fa fa-check"></i> Paid');
             }
         });
+
     });
+
+    function showSkippedEmployees(list) {
+
+        let html = `
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+        list.forEach(e => {
+            html += `
+            <tr>
+                <td>${e.EmployeeName}</td>
+                <td>${e.SkipReason}</td>
+            </tr>`;
+        });
+
+        html += `</tbody></table>`;
+
+        $("#SkippedEmployeeModal .modal-body").html(html);
+        $("#SkippedEmployeeModal").modal("show");
+    }
+
+    function exportExcel() {
+
+        const month = parseInt($("#fltMonth").val() || "0", 10);
+        const year = parseInt($("#fltYear").val() || "0", 10);
+
+        const companyId = $("#fltCompany").val() ? parseInt($("#fltCompany").val(), 10) : null;
+        const payGroupId = $("#fltPayGroup").val() ? parseInt($("#fltPayGroup").val(), 10) : null;
+        const status = $("#fltStatus").val() ? parseInt($("#fltStatus").val(), 10) : null;
+        const search = ($("#searchInput").val() || "").trim();
+
+        if (!month || !year) {
+            alert("Please select Month and Year");
+            return;
+        }
+
+        // 🔹 Build query string
+        const qs = $.param({
+            month: month,
+            year: year,
+            companyId: companyId,
+            payGroupId: payGroupId,
+            status: status,
+            search: search
+        });
+
+        // 🔹 Trigger download (AJAX is NOT suitable for file streams)
+        window.location.href = `/PayrollSalaryReport/ExportExcel?${qs}`;
+    }
 
 </script>

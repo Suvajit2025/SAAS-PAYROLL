@@ -12,6 +12,7 @@ using MendinePayroll.UI.Models;
 
 namespace MendinePayroll.UI.Controllers
 {
+
     public class PayGroupController : Controller
     {
         ApiCommon ObjAPI = new ApiCommon();

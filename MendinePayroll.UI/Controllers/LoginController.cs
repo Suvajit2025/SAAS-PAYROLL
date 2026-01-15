@@ -52,38 +52,8 @@ namespace MendinePayroll.UI.Controllers
             Session["UserName"] = "suvajit.das@iecsl.co.in";
             Session["UserId"] = "100156";
             Session["UserEmail"] = "suvajit.das@iecsl.co.in";
-            //Session["TenantID"] = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
-            Session["TenantID"] = "653A2B8B-CF3D-4C5A-8361-5869FE5DC3E3";
-
-            //Session["CompanyId"] = "55";
-            //Session["UserName"] = "subrata.mukherjee@mendine.co.in";
-            //Session["UserId"] = "1114";
-            //Session["UserEmail"] = "subrata.mukherjee@mendine.co.in";
-
-            //Session["UserName"] = "arunima.saha@mendine.com";
-            //Session["UserId"] = "1051";
-            //Session["UserEmail"] = "arunima.saha@mendine.com";
-
-            //Session["UserName"] = "ankur.banerjee@mendine.com";
-            //Session["UserId"] = "946";
-            //Session["UserEmail"] = "ankur.banerjee@mendine.com";
-
-            //Session["UserName"] = "saikat.manna@mendine.com";
-            //Session["UserId"] = "1744";
-            //Session["UserEmail"] = "saikat.manna@mendine.com";
-
-            //Session["UserName"] = "atreyee.das@mendine.com";
-            //Session["UserId"] = "3114";
-            //Session["UserEmail"] = "atreyee.das@mendine.com";
-
-            // Development
-            //Session["UserName"] = "rimpa.das@iecsl.co.in";
-            //Session["UserId"] = "2993";
-            //Session["UserEmail"] = "rimpa.das@iecsl.co.in";
-
-            //Session["UserName"] = "md.mendinepharma@gmail.com";
-            //Session["UserId"] = "1260";
-            //Session["UserEmail"] = "md.mendinepharma@gmail.com";
+            Session["TenantID"] = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
+            //Session["TenantID"] = "653A2B8B-CF3D-4C5A-8361-5869FE5DC3E3";
 
             //Production
             //Session["UserName"] = Request.QueryString["UserName"];

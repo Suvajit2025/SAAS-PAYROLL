@@ -13,6 +13,7 @@ using System.Data;
 using Common.Utility;
 namespace MendinePayroll.UI.Controllers
 {
+
     public class PayConfigController : Controller
     {
         ApiCommon ObjAPI = new ApiCommon();

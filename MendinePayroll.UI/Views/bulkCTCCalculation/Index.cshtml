@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Bulk Salary Auto Calculation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*<section role="main" class="content-body">
+        <header class="page-header">
+            <h2>Employee CTC </h2>
+        </header>
+        <div class="container mt-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Auto Calculate Salary (Employee-wise)</h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Employee ID</label>
+                            <input type="number"
+                                   id="txtEmployeeId"
+                                   class="form-control"
+                                   placeholder="Enter Employee ID" />
+                        </div>
+
+                        <div class="col-md-12">
+                            <button class="btn btn-success"
+                                    onclick="processSalary()">
+                                Calculate & Save Salary
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div id="resultBox" class="alert d-none"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        function processSalary() {
+
+            var empId = $('#txtEmployeeId').val();
+
+            if (!empId) {
+                alert('Please enter Employee ID');
+                return;
+            }
+
+            $('#resultBox')
+                .removeClass('d-none alert-success alert-danger')
+                .addClass('alert alert-info')
+                .html('Processing...');
+
+            $.ajax({
+                url: '@Url.Action("AutoCalculateByEmployee", "bulkCTCCalculation")',
+                type: 'POST',
+                data: { employeeId: empId },
+                success: function (res) {
+
+                    if (res.status === 1) {
+                        $('#resultBox')
+                            .removeClass('alert-info')
+                            .addClass('alert-success')
+                            .html(res.message);
+                    } else {
+                        $('#resultBox')
+                            .removeClass('alert-info')
+                            .addClass('alert-danger')
+                            .html(res.message || 'Error occurred');
+                    }
+                },
+                error: function (xhr) {
+                    $('#resultBox')
+                        .removeClass('alert-info')
+                        .addClass('alert-danger')
+                        .html('Server error occurred');
+                }
+            });
+        }
+    </script>*@
+<section role="main" class="content-body">
+    <div class="card mt-4">
+        <div class="card-header bg-dark text-white">
+            Bulk Salary Auto Calculation
+        </div>
+        <div class="card-body">
+            <label class="fw-bold">Employee IDs (comma / line separated)</label>
+            <textarea id="txtEmpIds" rows="10" class="form-control"
+                      placeholder="471,476,480..."></textarea>
+
+            <button class="btn btn-success mt-3" onclick="runBulk()">
+                Run Bulk Calculation
+            </button>
+
+            <div id="resultBox" class="alert mt-3 d-none"></div>
+        </div>
+    </div>
+</section>
+<script>
+function runBulk() {
+    let ids = $('#txtEmpIds').val();
+
+    if (!ids) {
+        alert('Enter Employee IDs');
+        return;
+    }
+
+    $('#resultBox').removeClass('d-none alert-danger alert-success')
+                   .addClass('alert alert-info')
+                   .html('Processing...');
+
+    $.ajax({
+        url: '@Url.Action("AutoCalculateByEmployeeBulk","bulkCTCCalculation")',
+        type: 'POST',
+        data: { employeeIds: ids },
+        success: function (res) {
+            if (res.status === 1) {
+                $('#resultBox')
+                  .removeClass('alert-info')
+                  .addClass('alert-success')
+                  .html(
+                    `Total: ${res.total}<br/>
+                     Success: ${res.success}<br/>
+                     Failed: ${res.failed}`
+                  );
+            } else {
+                $('#resultBox')
+                  .removeClass('alert-info')
+                  .addClass('alert-danger')
+                  .html(res.message);
+            }
+        }
+    });
+}
+</script>

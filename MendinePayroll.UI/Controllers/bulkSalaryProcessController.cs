@@ -17,6 +17,7 @@ using System.Web.Mvc;
 
 namespace MendinePayroll.UI.Controllers
 {
+
     public class bulkSalaryProcessController : Controller
     {
         // GET: bulkSalaryProcess

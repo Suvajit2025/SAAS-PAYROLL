@@ -15,6 +15,7 @@ using UI.Models;
 
 namespace MendinePayroll.UI.Controllers
 {
+
     public class LoanController : Controller
     {
         // GET: Loan

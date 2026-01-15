@@ -1,5 +1,6 @@
 ﻿
 using Common.Utility;
+using DocumentFormat.OpenXml.Bibliography;
 using MendinePayroll.Models;
 using MendinePayroll.UI.Models;
 using Newtonsoft.Json;
@@ -96,7 +97,19 @@ namespace MendinePayroll.UI.Controllers
 
             return Json(list, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetPayGroupListConfigWise()
+        {
 
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_PAYGROUP_CONFIG", tenantID);
+
+            var list = dt.AsEnumerable().Select(r => new
+            {
+                PayGroupID = r["PayGroupID"].ToString(),
+                PayGroupName = r["PayGroupName"].ToString()
+            }).ToList();
+
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
         public JsonResult GetEmployeeList(List<string> companyIds, List<string> deptIds, List<string> categoryIds)
         {
 
@@ -307,6 +320,87 @@ namespace MendinePayroll.UI.Controllers
             }
         }
 
+        public ActionResult SalaryRevision()
+        {
+            clsAccessLogInfo info = new clsAccessLogInfo();
+            info.AccessType = "EMPLOYEE-CTC-REVISIED";
+            clsAccessLog.AccessLog_Save(info);
+            return View();
+        }
+
+        public JsonResult GetEmployeeSalaryList(List<string> companyIds, List<string> deptIds, List<string> categoryIds)
+        {
+
+            string companyFilter = NormalizeMultiSelect(companyIds);
+            string deptFilter = NormalizeMultiSelect(deptIds);
+            string categoryFilter = NormalizeMultiSelect(categoryIds);
+
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEE_SALARY_STRUCTURE", tenantID, companyFilter, deptFilter, categoryFilter);
+
+            var list = dt.AsEnumerable().Select(r => new
+            {
+                EmpID = r["EmpID"]?.ToString(),
+                EmpSalaryConfigID = r["EmpSalaryConfigID"]?.ToString(),
+
+                EmpName = r["EmpName"]?.ToString(),
+                EmpCode = r["EmpCode"]?.ToString(),
+
+                Designation = r["Designation"]?.ToString(),
+                Post = r["Postname"]?.ToString(),
+                Department = r["Department"]?.ToString(),
+
+                PayGroupName = r["PayGroupName"]?.ToString(),
+
+                Gross = r["Gross"]?.ToString(),
+                Deduction = r["Deduction"]?.ToString(),
+                NetPay = r["Net Pay"]?.ToString(),
+
+                Status = r["CTCStatus"]?.ToString(),   // Configured / Pending
+                Empstatus = r["Status"]?.ToString(),   // ACTIVE / INACTIVE
+
+                /* 🔑 REQUIRED FOR JS FILTERING */
+                CompanyID = r["CompanyID"]?.ToString(),
+                DepartmentID = r["DepartmentID"]?.ToString(),
+                CategoryID = r["CategoryID"]?.ToString(),
+                PayGroupID = r["PayGroupID"]?.ToString()
+            }).ToList();
+
+
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult UpdateEmployeeSalaryStructure(EmpSalaryConfigModel model)
+        {
+            try
+            {
+
+                string UserName = Session["UserName"].ToString();
+
+                string JsonPayload = Newtonsoft.Json.JsonConvert.SerializeObject(model);
+
+                DataTable dt = clsDatabase.fnDataTable("PRC_Update_EmployeeSalaryConfig", tenantID, JsonPayload, UserName);
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    int status = Convert.ToInt32(dt.Rows[0][0]);        // 1 or 0
+                    string message = dt.Rows[0][1].ToString();          // success message
+                    long configId = Convert.ToInt64(dt.Rows[0][2]);     // EmpSalaryConfigID
+
+                    return Json(new
+                    {
+                        Success = status == 1,
+                        Message = message,
+                        EmpSalaryConfigID = configId
+                    });
+                }
+
+                return Json(new { Success = false, Message = "No response from server." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message });
+            }
+        }
     }
 }
 
