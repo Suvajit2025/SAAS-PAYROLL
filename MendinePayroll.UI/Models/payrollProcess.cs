@@ -11,7 +11,8 @@ namespace MendinePayroll.UI.Models
     public class PayrollProcessRequest
     {
         public string PayrollType { get; set; }   // "1" Monthly, "2" Contractual
-
+        public string refNo { get; set; } = string.Empty;
+        public string Comments { get; set; }= string.Empty;
         public int? ProcessMonth { get; set; }
         public int? ProcessYear { get; set; }
 
@@ -126,7 +127,7 @@ namespace MendinePayroll.UI.Models
         public int? ProcessYear { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
-
+        public long? PreviewBatchID { get; set; }
         public List<PivotColumnDto> Columns { get; set; } = new List<PivotColumnDto>();
         public List<PivotRowDto> Rows { get; set; } = new List<PivotRowDto>();
     }
@@ -284,6 +285,25 @@ namespace MendinePayroll.UI.Models
         public int? ProcessYear { get; set; }
         public List<PayrollBatchEmployeeDto> Employees { get; set; }
     }
+
+    public class SubmitPreviewEditsRequest
+    {
+        public long PreviewBatchId { get; set; }
+        public List<PreviewEditRowDto> Edits { get; set; }
+    }
+
+
+    public class PreviewEditRowDto
+    {
+        public int EmployeeId { get; set; }
+        public int PayConfigId { get; set; }        // 0 for manual-only row
+        public decimal OriginalAmount { get; set; }
+        public decimal WaivedAmount { get; set; }
+        public bool IsWaived { get; set; }
+        public decimal ManualAddition { get; set; }
+        public decimal ManualDeduction { get; set; }
+    }
+
 
 
 }

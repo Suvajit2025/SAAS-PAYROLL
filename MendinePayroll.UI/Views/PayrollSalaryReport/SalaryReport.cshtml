@@ -121,15 +121,15 @@
                     <thead>
                         <tr>
                             <th style="width:30px;"><input type="checkbox" id="chkAll"></th>
-                            <th>Emp Info</th>
-                            <th>Company & Group</th>
+                            <th style="width:80px;">Emp Info</th>
+                            <th style="width:150px;">Company & Group</th>
                             <th class="text-right">Basic</th>
                             <th class="text-right">Allowances</th>
                             <th class="text-right">Gross</th>
                             <th class="text-right text-danger">Deduction</th>
                             <th class="text-right text-primary">Net Pay</th>
-                            <th class="text-center">Salary Process</th>
-                            <th class="text-center">Pay Status</th>
+                            <th class="text-center" style="width:40px;">Salary Process</th>
+                            <th class="text-center" style="width:40px;">Pay Status</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -531,12 +531,12 @@
             <tr>
                 <td style="width:30px;"><input type="checkbox" class="row-check" value="${r.PayrollProcessEmployeeID}" data-empid="${Number(r.EmployeeID || 0)}"></td>
 
-                <td>
+                <td style="width:80px;">
                     <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName || '')}</div>
                     <div class="text-xs text-muted">${escapeHtml(r.EmployeeCode || '')}</div>
                 </td>
 
-                <td>
+                <td style="width:200px;">
                     <div class="text-sm">${escapeHtml(r.CompanyName || '')}</div>
                     <div class="text-xs text-muted">${escapeHtml(r.PayGroupName || '')}</div>
                 </td>
@@ -547,8 +547,8 @@
                 <td class="text-right text-danger">${ded.toLocaleString('en-IN')}</td>
                 <td class="text-right text-primary text-weight-bold">${net.toLocaleString('en-IN')}</td>
 
-                <td class="text-center">${processBadge}</td>
-                <td class="text-center">${payBadge}</td>
+                <td class="text-center" style="width:40px;">${processBadge}</td>
+                <td class="text-center" style="width:40px;">${payBadge}</td>
 
                 <td class="text-center">
                     <button class="btn btn-xs btn-default" onclick="openBankModal(${r.EmployeeID || 0}, '${escapeHtml(r.EmployeeName || '')}')" title="Bank Info">

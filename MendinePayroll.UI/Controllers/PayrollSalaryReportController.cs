@@ -78,12 +78,9 @@ namespace MendinePayroll.UI.Controllers
         {
 
             if (pageNumber < 1) pageNumber = 1;
-            if (pageSize < 1) pageSize = 50;
+            if (pageSize < 1) pageSize = 10;
 
-            DataSet ds = clsDatabase.fnDataSet(
-                "SP_Payroll_SalaryRegister_Grid",
-                TenantId, month, year, companyId, payGroupId, search, status, pageNumber, pageSize
-            );
+            DataSet ds = clsDatabase.fnDataSet( "SP_Payroll_SalaryRegister_Grid",TenantId, month, year, companyId, payGroupId, search, status, pageNumber, pageSize);
 
             int totalRows = ds.Tables[0].Rows.Count > 0 ? Convert.ToInt32(ds.Tables[0].Rows[0]["TotalRows"]) : 0;
 
