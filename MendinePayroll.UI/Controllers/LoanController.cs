@@ -542,7 +542,7 @@ namespace MendinePayroll.UI.Controllers
                     model.Month,
                     model.Year,
                     model.UserName,
-                    TenantId
+                    TenantId, "External", "Processed via Extrenal Bulk Process"
                 );
 
                 // 3. Parse DB Response

@@ -1,9 +1,13 @@
 ﻿using Common.Utility;
 using MendinePayroll.UI.Models;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Cmp;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -287,6 +291,144 @@ namespace MendinePayroll.UI.Controllers
                 rows
             }, JsonRequestBehavior.AllowGet);
         }
+        [HttpPost]
+        public JsonResult BulkApprove(int month, int year, string payrollProcessEmployeeIds)
+        {
+            try
+            {
+                string userName = Session["UserName"]?.ToString();
+                if (string.IsNullOrEmpty(userName))
+                    return Json(new { success = false, message = "Session expired" });
 
+                if (string.IsNullOrEmpty(payrollProcessEmployeeIds))
+                    return Json(new { success = false, message = "No employees selected" });
+
+                /* =========================================================
+                   1. GROUP SELECTED EMPLOYEES BY BATCH (Month/Year)
+                ========================================================= */
+                DataTable dtBatchGroups = clsDatabase.fnDataTable("SP_Payroll_SaaS_GetSelectedGroupsForApproval",
+                                             month, year, payrollProcessEmployeeIds, TenantId);
+
+                if (dtBatchGroups == null || dtBatchGroups.Rows.Count == 0)
+                    return Json(new { success = false, message = "No valid draft records found for approval" });
+
+                int totalBatchesProcessed = 0;
+
+                foreach (DataRow batchRow in dtBatchGroups.Rows)
+                {
+                    // 🔑 Context for THIS specific batch group
+                    int currentMonth = Convert.ToInt32(batchRow["ProcessMonth"]);
+                    int currentYear = Convert.ToInt32(batchRow["ProcessYear"]);
+                    string empIdsInThisBatch = batchRow["EmployeeIdList"].ToString();
+                    string currentMonthName = new DateTime(currentYear, currentMonth, 1).ToString("MMMM", CultureInfo.InvariantCulture);
+
+                    /* =========================================================
+                       2. BUILD LOAN JSON (Only for this Batch group)
+                    ========================================================= */
+                    DataTable dtLoans = clsDatabase.fnDataTable("SP_Payroll_SaaS_GetSelectedLoanComponents_FromPreview",
+                                                 empIdsInThisBatch, TenantId);
+
+                    var loanJsonList = new List<object>();
+
+                    foreach (DataRow r in dtLoans.Rows)
+                    {
+                        string ReferenceIds = r["ReferenceIds"]?.ToString();
+                        if (!string.IsNullOrEmpty(ReferenceIds) && ReferenceIds != "0")
+                        {
+                            DataTable dtPending = clsDatabase.fnDataTable("PRC_Bulk_EmployeeLoan_SpecificPending", ReferenceIds, currentMonthName,currentYear,TenantId);
+                            foreach (DataRow pRow in dtPending.Rows)
+                            {
+                                bool alreadyProcessed = Convert.ToBoolean(pRow["AlreadyProcessedExternally"]);
+                                if (alreadyProcessed) continue;
+
+                                bool isWaived = Convert.ToBoolean(r["LoanWaivedYN"]);
+                                decimal previewPayValue = Convert.ToDecimal(r["PayValue"]);
+
+                                loanJsonList.Add(new
+                                {
+                                    
+                                    IDLoan = Convert.ToInt32(pRow["IDLoan"]),
+                                    IDEmployee = Convert.ToInt32(r["EmployeeID"]),
+                                    InstallmentMonth = currentMonth,
+                                    InstallmentYear = currentYear,
+                                    BalanceBefore = Convert.ToDecimal(pRow["BalanceBefore"]),
+                                    PrincipalComponent = Convert.ToDecimal(pRow["PrincipalComponent"]),
+                                    InterestComponent = Convert.ToDecimal(pRow["InterestComponent"]),
+                                    AmountPaid = Convert.ToDecimal(pRow["AmountToBePaid"]),
+                                    BalanceAfter = Convert.ToDecimal(pRow["BalanceAfter"]),
+                                    WaiverAmount = Convert.ToDecimal(pRow["WaiverAmount"]),
+                                    WaiverType = pRow["WaiverType"]?.ToString(),
+                                    EmployeeNo = pRow["EmployeeNo"]?.ToString(),
+                                    EmployeeName = pRow["EmployeeName"]?.ToString()
+                                });
+                            }
+                        }
+                    }
+
+                    /* =========================================================
+                        3. PROCESS LOANS & FINALIZE FOR THIS BATCH GROUP
+                       ========================================================= */
+
+                    // A. Update Loan Ledger first
+                    if (loanJsonList.Any())
+                    {
+                        string jsonData = JsonConvert.SerializeObject(loanJsonList);
+                        // 🔑 Use the loop-specific currentMonthName and currentYear
+                        clsDatabase.fnDBOperation("PRC_Bulk_EmployeeLoan_Process", jsonData, currentMonthName, currentYear, userName, TenantId,"Salary", "Processed via Salary Process");
+                    }
+
+                    // B. Move employees from this specific batch group to Main Tables (Status 1 -> 2)
+                    DataTable dtFinalize = clsDatabase.fnDataTable(
+                        "SP_Payroll_SaaS_FinalizeSelected_FromPreview",
+                        empIdsInThisBatch,
+                        currentMonth,
+                        currentYear,
+                        TenantId,
+                        userName
+                    );
+
+                    if (dtFinalize == null || Convert.ToInt32(dtFinalize.Rows[0]["StatusCode"]) != 1)
+                    {
+                        throw new Exception($"Finalization failed for batch {currentMonthName}: " + (dtFinalize?.Rows[0]["Message"]?.ToString() ?? "Unknown error"));
+                    }
+
+                    totalBatchesProcessed++;
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    message = $"Successfully finalized employees across {totalBatchesProcessed} payroll periods."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        
+        [HttpPost]
+        public JsonResult BulkReject(RejectRequest model)
+        {
+            try
+            {
+                // 1. Basic Validation
+                if (model == null || string.IsNullOrEmpty(model.payrollProcessEmployeeIds))
+                {
+                    return Json(new { success = false, message = "No employees selected for rejection." });
+                }
+
+                string userName = Session["UserName"]?.ToString();
+
+                DataTable dt = clsDatabase.fnDataTable("SP_Payroll_BulkReject",model.payrollProcessEmployeeIds,model.reason, model.month, model.year, userName, TenantId);
+
+                return Json(new { success = false, message = "Unable to process rejection." });
+            }
+            catch (Exception ex)
+            {
+                // Log Error here
+                return Json(new { success = false, message = "Server Error: " + ex.Message });
+            }
+        } 
     }
 }

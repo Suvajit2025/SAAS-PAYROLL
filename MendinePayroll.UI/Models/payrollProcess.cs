@@ -49,7 +49,7 @@ namespace MendinePayroll.UI.Models
         ========================= */
         public int PayConfigId { get; set; }
         public string PayConfigName { get; set; }
-
+        public string ReferenceIds { get; set; } = string.Empty;// 🔑 Store the LoanId here
         /* =========================
            Classification
         ========================= */
@@ -154,6 +154,7 @@ namespace MendinePayroll.UI.Models
 
         public bool IsBasicComponent { get; set; } // Used for PF base
         public bool IsGrossComponent { get; set; } // Used for ESIC / PTAX base
+        public string ReferenceIds { get; set; } = string.Empty;
 
     }
 
@@ -178,7 +179,7 @@ namespace MendinePayroll.UI.Models
     {
         public int PayConfigId { get; set; }
         public decimal Amount { get; set; }
-
+        public string ReferenceIds { get; set; } = string.Empty;
         // for UI behavior
         public decimal BaseAmount { get; set; }
         public bool IsEditable { get; set; }
@@ -302,8 +303,47 @@ namespace MendinePayroll.UI.Models
         public bool IsWaived { get; set; }
         public decimal ManualAddition { get; set; }
         public decimal ManualDeduction { get; set; }
+        public string ReferenceIds { get; set; } = string.Empty;
     }
 
+    //Single Employee Salalry 
+    public class EditSalaryRequest
+    {
+        public long PreviewBatchID { get; set; }
+        public long PayrollProcessEmployeeID { get; set; }
+        public int EmployeeID { get; set; }
 
+        // 🔑 controls backend behavior
+        public bool IsDaysChanged { get; set; }
 
+        // sent ONLY when days changed
+        public decimal? PaidDays { get; set; }
+        public int Status { get; set; }
+
+    }
+
+    public class FullUpdateDto
+    {
+        public long PreviewBatchId { get; set; }
+        public long EmployeeId { get; set; }
+        public decimal PaidDays { get; set; }
+        public decimal ManualAddition { get; set; }
+        public decimal ManualDeduction { get; set; }
+        public List<ComponentUpdateDto> Components { get; set; }
+    }
+
+    public class ComponentUpdateDto
+    {
+        public int PayConfigId { get; set; }
+        public decimal Amount { get; set; }
+        public bool IsWaived { get; set; }
+        public string ReferenceIds { get; set; }
+    }
+    public class RejectRequest
+    {
+        public string payrollProcessEmployeeIds { get; set; }
+        public string reason { get; set; }
+        public int month { get; set; }
+        public int year { get; set; }
+    }
 }

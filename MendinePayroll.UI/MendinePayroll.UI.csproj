@@ -246,6 +246,7 @@
     <Compile Include="Controllers\EmployeeSalaryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoanController.cs" />
+    <Compile Include="Controllers\LoanReportController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PayConfigController.cs" />
     <Compile Include="Controllers\PayGroupController.cs" />
@@ -2375,6 +2376,7 @@
     <Content Include="Views\SalaryCTC\SalaryRevision.cshtml" />
     <Content Include="Views\bulkCTCCalculation\Index.cshtml" />
     <Content Include="Views\PayrollSalaryReport\CTCReport.cshtml" />
+    <Content Include="Views\LoanReport\LoanLedgerReport.cshtml" />
     <None Include="Web References\LoginWebService\logincontrol.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

@@ -25,7 +25,7 @@
         --success: #16a34a;
         --focus-ring: rgba(14, 119, 119, 0.15);
     }
-   
+
     .custom-page-header {
         display: flex;
         justify-content: space-between;
@@ -2419,7 +2419,13 @@
         .btn-export:hover i {
             color: #15803d;
         }
+    .row-rejected {
+        background-color: #fff5f5 !important; /* Very light red */
+    }
 
+        .row-rejected:hover {
+            background-color: #fed7d7 !important; /* Slightly darker red on hover */
+        }
 </style>
 
 <section role="main" class="content-body">
@@ -2497,9 +2503,7 @@
                         <table class="batch-table display" id="empWiseTable" style="width:100%">
                             <thead>
                                 <tr>
-                                    <th class="text-center" style="width:30px;"><input type="checkbox" id="chkAllEmpWise"></th>
-                                    <th>Emp Code</th>
-                                    <th>Employee Name</th>
+                                    <th>Employee Details</th>
                                     <th>Pay Group</th>
                                     <th>Period</th>
                                     <th class="text-right">Gross Pay</th>
@@ -2530,7 +2534,7 @@
             <div style="padding: 20px; overflow-y:auto; max-height: 75vh;">
                 <div class="row" style="display:flex; gap:15px; margin-bottom:10px;">
                     <!-- COMPANY -->
-                        @*<div style="flex:1">
+                    @*<div style="flex:1">
                             <label class="form-label-custom">Company</label>
                             <select id="ddlCompany" class="form-control-custom" onchange="handleCompanyChange()">
                             </select>
@@ -2553,20 +2557,20 @@
                 <div class="row" style="display:flex; gap:15px; margin-bottom:10px;">
                     <!-- SALARY PERIOD -->
                     @*<div style="flex:1" id="pnlDateContainer">
-                        <div id="pnlMonthly">
-                            <label class="form-label-custom">Salary Process Month & Year</label>
-                            <input type="month" id="txtMonthYear" class="form-control-custom" onchange="handlemonthChange()">
-                        </div>
-
-                        <div id="pnlRange" class="hidden">
-                            <label class="form-label-custom">Work Period</label>
-                            <div style="display:flex; gap:10px;">
-                                <input type="date" id="txtFromDate" class="form-control-custom">
-                                <span>TO</span>
-                                <input type="date" id="txtToDate" class="form-control-custom">
+                            <div id="pnlMonthly">
+                                <label class="form-label-custom">Salary Process Month & Year</label>
+                                <input type="month" id="txtMonthYear" class="form-control-custom" onchange="handlemonthChange()">
                             </div>
-                        </div>
-                    </div>*@
+
+                            <div id="pnlRange" class="hidden">
+                                <label class="form-label-custom">Work Period</label>
+                                <div style="display:flex; gap:10px;">
+                                    <input type="date" id="txtFromDate" class="form-control-custom">
+                                    <span>TO</span>
+                                    <input type="date" id="txtToDate" class="form-control-custom">
+                                </div>
+                            </div>
+                        </div>*@
                     <div style="flex:1" id="pnlDateContainer">
 
                         <!-- MONTHLY -->
@@ -2616,7 +2620,7 @@
                     <div style="flex:1">
                         <label class="form-label-custom">Comments</label>
                         @*<input type="text" id="txtComments" class="form-control-custom"
-                         placeholder="E.g. Oct-2025 Monthly Payroll">*@
+                            placeholder="E.g. Oct-2025 Monthly Payroll">*@
                         <textarea id="txtComments"
                                   class="form-control-custom"
                                   rows="3"
@@ -2625,8 +2629,8 @@
                 </div>
 
                 @*<div class="form-group-custom">
-                    
-                </div>*@
+
+                    </div>*@
 
                 <div class="selection-container">
                     <div class="selection-col"><div class="col-header"><span>Active Employees</span> <span class="badge-active status-badge" id="cntActive">0</span></div><div style="padding:5px 10px; background:#f0fdfa; font-size:10px; color:#166534;"><i class="fas fa-info-circle"></i> Uncheck to <strong>HOLD</strong> Salary</div><div id="listActive" class="emp-list-scroll"></div></div>
@@ -2731,16 +2735,41 @@
                 <div class="modal-title-custom"><div style="display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-hand-holding-dollar" style="color: #0E7777; font-size: 1.2em;"></i><h3>Processing Batch #<span id="lblRef">--</span></h3></div><small>Review Financials</small></div>
                 <div style="display:flex; gap:10px; align-items:center;"><div id="recalcSpinner" style="display:none; color:#d97706; font-size:11px; font-weight:600; background:#fffbeb; padding:4px 10px; border-radius:12px; border:1px solid #fde68a;"><i class="fas fa-circle-notch fa-spin"></i> Recalculating...</div><button class="btn-close-custom" onclick="closeModal('detailModal')">&times;</button></div>
             </div>
-            <div class="stats-bar">
-                <div class="stats-left">
-                    <div class="stat-item"><span class="stat-label">Total Earnings :</span><span class="stat-value val-earn" id="lblEarn">₹ 0</span></div><div class="divider"></div>
-                    <div class="stat-item"><span class="stat-label">Total Deductions :</span><span class="stat-value val-ded" id="lblDed">₹ 0</span></div><div class="divider"></div>
-                    <div class="stat-item"><span class="stat-label">Total Net Pay :</span><span class="stat-value val-net" id="lblNet">₹ 0</span></div>
-                </div>
-                @*<div class="stats-right">
-                    <button class="btn-export" onclick="alert('Downloading Excel...')"><i class="fas fa-file-excel" style="color:#16a34a"></i> Excel</button>
+            <!--<div class="stats-bar">
+        <div class="stats-left">
+            <div class="stat-item"><span class="stat-label">Total Earnings :</span><span class="stat-value val-earn" id="lblEarn">₹ 0</span></div><div class="divider"></div>
+            <div class="stat-item"><span class="stat-label">Total Deductions :</span><span class="stat-value val-ded" id="lblDed">₹ 0</span></div><div class="divider"></div>
+            <div class="stat-item"><span class="stat-label">Total Net Pay :</span><span class="stat-value val-net" id="lblNet">₹ 0</span></div>
+        </div>-->
+            @*<div class="stats-right">
+            <button class="btn-export" onclick="alert('Downloading Excel...')"><i class="fas fa-file-excel" style="color:#16a34a"></i> Excel</button>
 
-                </div>*@
+        </div>*@
+            <!--</div>-->
+            <div class="stats-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #fff; border-bottom: 2px solid #e2e8f0;">
+                <div class="stats-left" style="display: flex; align-items: center; gap: 15px;">
+                    <div style="position: relative;">
+                        <i class="fas fa-search" style="position: absolute; left: 10px; top: 10px; color: #94a3b8;"></i>
+                        <input type="text" id="txtEmpSearch"
+                               placeholder="Search Employee..."
+                               style="padding: 6px 10px 6px 30px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; width: 250px;"
+                               onkeyup="filterSalaryTable(this.value)">
+                    </div>
+                    <div class="divider"></div>
+                    <div class="stat-item"><span class="stat-label">Earnings:</span> <span class="stat-value val-earn" id="lblEarn">₹ 0</span></div>
+                    <div class="stat-item"><span class="stat-label">Deductions:</span> <span class="stat-value val-ded" id="lblDed">₹ 0</span></div>
+                    <div class="stat-item"><span class="stat-label">Net Pay:</span> <span class="stat-value val-net" id="lblNet">₹ 0</span></div>
+                </div>
+
+                <div class="stats-right">
+                    <div style="display: flex; align-items: center; gap: 10px; background: #fff7ed; padding: 5px 12px; border: 1px solid #ffedd5; border-radius: 20px;">
+                        <span style="font-size: 11px; font-weight: 700; color: #9a3412; text-transform: uppercase;">Skip All Loans</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkGlobalLoanSkip" onchange="toggleAllLoans(this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="grid-container excel-wrapper">
                 <input type="hidden" id="hdnPayrollBatchId" value="0" />
@@ -2764,68 +2793,178 @@
     </div>
 
     <div id="loanModal" class="modal-overlay">
-        <div class="modal-box modal-md">
-            <div class="modal-header-custom" style="border-top-color:#d97706;"><div class="modal-title-custom"><h3 style="color:#b45309">Loan Ledger</h3><small id="loanEmpLabel">--</small></div><button class="btn-close-custom" onclick="closeModal('loanModal')">&times;</button></div>
-            <div style="padding:20px;"><div class="loan-card-grid"><div class="loan-box"><div class="loan-title">Current Opening</div><div class="loan-val text-primary" id="valOpen">₹ 0</div></div><div class="loan-box"><div class="loan-title">Current EMI</div><div class="loan-val text-danger" id="valEmi">₹ 0</div></div><div class="loan-box"><div class="loan-title">Current Close</div><div class="loan-val text-success" id="valClose">₹ 0</div></div></div></div>
+        <div class="modal-box modal-md" style="width: 700px; max-width: 90vw;">
+            <div class="modal-header-custom" style="border-top-color:#d97706;">
+                <div class="modal-title-custom">
+                    <h3 style="color:#b45309"><i class="fas fa-history"></i> Loan Recovery Ledger</h3>
+                    <small id="loanEmpLabel">--</small>
+                </div>
+                <button class="btn-close-custom" onclick="closeModal('loanModal')">&times;</button>
+            </div>
+
+            <div style="padding:20px;">
+                <div class="loan-card-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+                    <div class="loan-box" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 8px; text-align: center;">
+                        <div class="loan-title" style="font-size: 10px; font-weight: 700; color: #1e40af; text-transform: uppercase; margin-bottom: 4px;">Opening Balance</div>
+                        <div class="loan-val" id="valOpen" style="font-size: 17px; font-weight: 800; color: #1e40af; white-space: nowrap;">₹ 0</div>
+                    </div>
+                    <div class="loan-box" style="background: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 8px; text-align: center;">
+                        <div class="loan-title" style="font-size: 10px; font-weight: 700; color: #991b1b; text-transform: uppercase; margin-bottom: 4px;">Current EMI</div>
+                        <div class="loan-val" id="valEmi" style="font-size: 17px; font-weight: 800; color: #991b1b; white-space: nowrap;">₹ 0</div>
+                    </div>
+                    <div class="loan-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; text-align: center;">
+                        <div class="loan-title" style="font-size: 10px; font-weight: 700; color: #166534; text-transform: uppercase; margin-bottom: 4px;">Closing Balance</div>
+                        <div class="loan-val" id="valClose" style="font-size: 17px; font-weight: 800; color: #166534; white-space: nowrap;">₹ 0</div>
+                    </div>
+                </div>
+
+                <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white;">
+                    <div style="background: #f8fafc; padding: 10px 15px; border-bottom: 1px solid #e2e8f0; font-size: 11px; font-weight: 700; color: #475569; display: flex; justify-content: space-between;">
+                        <span>RECENT RECOVERY HISTORY</span>
+                        <span style="color: #94a3b8; font-weight: 400;">(Showing last 3 installments)</span>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #ffffff; border-bottom: 2px solid #f1f5f9;">
+                                <th style="padding: 10px; text-align: center; width: 50px;">EMI #</th>
+                                <th style="padding: 10px; text-align: left;">Period</th>
+                                <th style="padding: 10px; text-align: right;">Opening</th>
+                                <th style="padding: 10px; text-align: right;">Principal</th>
+                                <th style="padding: 10px; text-align: right;">Closing</th>
+                                <th style="padding: 10px; text-align: center;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loanHistoryBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer-custom" style="background: #f8fafc; padding: 12px 20px; border-top: 1px solid #e2e8f0; text-align: right;">
+                <button class="btn-outline" onclick="closeModal('loanModal')" style="padding: 6px 20px;">Close</button>
+            </div>
         </div>
     </div>
 
+
     <div id="editSalaryModal" class="modal-overlay">
-        <div class="modal-box modal-lg" style="width: 950px;">
-            <div class="modal-header-custom"><div class="modal-title-custom"><h3><i class="fas fa-edit"></i> Edit Salary & Attendance</h3><small id="editModalEmpName">--</small></div><button class="btn-close-custom" onclick="closeModal('editSalaryModal')">&times;</button></div>
+        <div class="modal-box" style="width: 1050px; transform: scale(0.9); transform-origin: top center;">
+            <div class="modal-header-custom">
+                <div class="modal-title-custom">
+                    <h3><i class="fas fa-edit"></i> Edit Salary & Attendance</h3>
+                    <small id="editModalEmpName">--</small>
+                </div>
+                <button class="btn-close-custom" onclick="closeModal('editSalaryModal')">&times;</button>
+            </div>
+
             <div class="edit-modal-layout">
-                <div class="edit-sidebar">
-                    <div class="input-group-custom"><label>Paid Days (Out of 30)</label><input type="number" id="txtEditDays" class="input-field-styled" value="30" max="30" oninput="recalculateModal()"></div>
-                    <div class="input-group-custom"><label>Base Salary (Gross)</label><input type="number" id="txtEditBasic" class="input-field-styled" value="0" readonly style="background:#f1f5f9; color:#64748b;"><div style="font-size:10px; color:#94a3b8; margin-top:3px;">* Derived from Master</div></div>
+                <div class="edit-sidebar" style="width: 300px; padding: 20px; background: #f8fafc; border-right: 1px solid #e2e8f0;">
+                    <span class="section-label" style="font-size: 11px; font-weight: 800; color: #052450; text-transform: uppercase;  display: block;">Attendance & Adjustment</span>
 
-                    <div style="border-top:1px solid #e2e8f0; margin:10px 0;"></div>
-
-                    <div class="input-group-custom" style="margin-bottom:15px;">
-                        <label style="color:#166534;"><i class="fas fa-plus-circle"></i> Manual Addition (One-time)</label>
-                        <input type="number" id="txtManualAdd" class="input-field-styled" value="0" placeholder="e.g. Bonus" style="border-color:#bbf7d0;" oninput="recalculateModal()">
-                    </div>
                     <div class="input-group-custom">
-                        <label style="color:#991b1b;"><i class="fas fa-minus-circle"></i> Manual Deduction (One-time)</label>
-                        <input type="number" id="txtManualDed" class="input-field-styled" value="0" placeholder="e.g. Fine" style="border-color:#fecaca;" oninput="recalculateModal()">
+                        <label>Original Paid Days</label>
+                        <input type="number" id="txtEditDays" class="input-field-styled" step="0.5" readonly style="background: #f1f5f9;">
                     </div>
 
-                    <div style="border-top:1px solid #e2e8f0; margin:10px 0;"></div>
                     <div class="input-group-custom">
-                        <div style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">Outstanding Loan</label><span style="font-size:11px; font-weight:700; color:#dc2626;" id="lblModalLoanTotal">₹ 0</span></div>
-                        <div style="background:#fff; border:1px solid #e2e8f0; padding:10px; border-radius:4px; margin-top:5px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;"><span style="font-size:12px;">EMI to Deduct:</span><strong id="lblModalEMI">₹ 2000</strong></div>
-                            <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:11px; color:#64748b; font-weight:600;">WAIVE OFF?</span><label class="toggle-switch"><input type="checkbox" id="chkWaiveLoan" onchange="recalculateModal()"><span class="slider"></span></label></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <label style="color:#2563eb; margin-bottom:0;">Adjustment Days</label>
+
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span id="toggleLabel" style="font-size: 10px; font-weight: 800; color: #166534;">ADD</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="chkAdjType" onchange="updateToggleLabel(); applyDayAdjustment();">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
                         </div>
+                        <input type="number" id="txtDayAdjustment" class="input-field-styled" placeholder="0.0" step="0.5" min="0" oninput="applyDayAdjustment()">
+                    </div>
+
+                    <div class="input-group-custom">
+                        <label style="font-weight: bold;">Final Paid Days</label>
+                        <input type="number" id="txtFinalDays" class="input-field-styled" step="0.5" readonly style="background: #f0f9ff; border: 1px solid #0369a1; color: #0369a1; font-weight: 800;">
+                    </div>
+
+                    <div class="input-group-custom">
+                        <label style="color:#166534;">Manual Addition</label>
+                        <input type="number" id="txtManualAdd" class="input-field-styled" placeholder="0.00" oninput="recalcNetUI()">
+                    </div>
+
+                    <div class="input-group-custom">
+                        <label style="color:#991b1b;">Manual Deduction</label>
+                        <input type="number" id="txtManualDed" class="input-field-styled" placeholder="0.00" oninput="recalcNetUI()">
+                    </div>
+
+                    <div style="border-top:1px solid #e2e8f0; margin:20px 0;"></div>
+
+                    <span class="section-label" style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 15px; display: block;">Loan Management</span>
+                    <div class="loan-box" style="background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                            <span style="font-size:12px; font-weight:700;" id="lblModalEMI">EMI: ₹ 0.00</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="chkWaiveLoan" onchange="recalcNetUI()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <small style="font-size:10px; color:#64748b;">Waive off recovery for this month</small>
                     </div>
                 </div>
-                <div class="edit-content">
-                    <div class="net-pay-banner"><span>NET PAYABLE</span><span class="net-pay-val" id="lblModalNetPay">₹ 0</span></div>
-                    <div class="salary-slip-grid">
+
+                <div class="edit-content" style="flex: 1; padding: 25px; background: #fff;">
+                     
+                    <div class="summary-banner" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+
+                        <div class="stat-card net" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 15px; border-radius: 8px; text-align: center;">
+                            <small style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;">Total Take Home</small>
+                            <big id="lblModalNetPay" style="font-size: 22px; font-weight: 800;">₹ 0.00</big>
+                        </div>
+
+                        <div class="stat-card ctc" style="background: #f5f3ff; border: 1px solid #ddd6fe; color: #5b21b6; padding: 15px; border-radius: 8px; text-align: center;">
+                            <small style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;">Monthly CTC</small>
+                            <big id="lblModalCTC" style="font-size: 22px; font-weight: 800;">₹ 0.00</big>
+                        </div>
+
+                        <div id="adjustmentCard" class="stat-card adj" style="background: #fffbeb; border: 1px solid #fef3c7; color: #92400e; padding: 15px; border-radius: 8px; text-align: center; display: none;">
+                            <small id="lblAdjTypeTag" style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;">Adjustment (+/-)</small>
+                            <big id="lblAdjAmount" style="font-size: 22px; font-weight: 800;">₹ 0.00</big>
+                        </div>
+                    </div>
+                    <div class="grid-tables" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
                         <div class="slip-box">
-                            <div class="slip-header earn">Earnings</div>
-                            <table class="slip-table" id="tableEarnings">
-                                <tr><td>Basic Salary</td><td class="slip-amt" id="slipBasic">0</td></tr>
-                                <tr><td>HRA</td><td class="slip-amt" id="slipHRA">0</td></tr>
-                                <tr><td>Special Allow.</td><td class="slip-amt" id="slipSpl">0</td></tr>
-                                <tr style="background:#f8fafc; font-weight:700;"><td>Total Earnings</td><td class="slip-amt" id="slipTotalEarn">0</td></tr>
+                            <div class="slip-header earn" style="background: #f0fdf4; color: #166534; padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase;">Earnings Breakdown</div>
+                            <table class="slip-table">
+                                <tbody id="tableEarningsBody"></tbody>
+                                <tfoot><tr style="background:#f8fafc; font-weight:700;"><td>TOTAL GROSS</td><td class="slip-amt" id="slipTotalEarn">0.00</td></tr></tfoot>
                             </table>
                         </div>
-                        <div class="slip-box">
-                            <div class="slip-header ded">Deductions</div>
-                            <table class="slip-table" id="tableDeductions">
-                                <tr><td>Provident Fund</td><td class="slip-amt" id="slipPF">0</td></tr>
-                                <tr><td>Loan Recovery</td><td class="slip-amt" id="slipLoan">0</td></tr>
-                                <tr><td>Prof. Tax</td><td class="slip-amt">200</td></tr>
-                                <tr style="background:#f8fafc; font-weight:700;"><td>Total Deductions</td><td class="slip-amt" id="slipTotalDed">0</td></tr>
-                            </table>
+
+                        <div>
+                            <div class="slip-box" style="margin-bottom: 20px;">
+                                <div class="slip-header ded" style="background: #fef2f2; color: #991b1b; padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase;">Deductions</div>
+                                <table class="slip-table">
+                                    <tbody id="tableDeductionsBody"></tbody>
+                                    <tfoot><tr style="background:#f8fafc; font-weight:700;"><td>TOTAL DEDUCTION</td><td class="slip-amt" id="slipTotalDed">0.00</td></tr></tfoot>
+                                </table>
+                            </div>
+
+                            <div class="slip-box">
+                                <div class="slip-header contrib" style="background: #f8fafc; color: #475569; padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase;">Employer Contributions (CC)</div>
+                                <table class="slip-table">
+                                    <tbody id="tableContribBody"></tbody>
+                                    <tfoot><tr style="background:#f8fafc; font-weight:700;"><td>TOTAL CONTRIBUTION</td><td class="slip-amt" id="slipTotalContrib">0.00</td></tr></tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer-custom"><button class="btn-outline" onclick="closeModal('editSalaryModal')">Cancel</button><button class="btn-create" onclick="saveModalSalary()"><i class="fas fa-save"></i> Save Changes</button></div>
+            <div class="modal-footer-custom">
+                <button class="btn-outline" onclick="closeModal('editSalaryModal')">Cancel</button>
+                <button class="btn-create" onclick="saveModalSalary()"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
         </div>
     </div>
-
 
 </div>
 
@@ -2847,7 +2986,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
-    
+
     $(document).ready(function () {
 
         // Load payroll batch dashboard on first load
@@ -2971,8 +3110,64 @@
     /* =====================================================
        LOAD EMPLOYEE WISE GRID
        ===================================================== */
-    function loadEmployeeWiseBatchGrid() {
+    //function loadEmployeeWiseBatchGrid() {
 
+    //    if ($.fn.DataTable.isDataTable('#empWiseTable')) {
+    //        $('#empWiseTable').DataTable().destroy();
+    //    }
+
+    //    $.ajax({
+    //        url: '/bulkSalaryProcess/GetPayrollEmployeeWiseDashboard',
+    //        type: 'GET',
+    //        success: function (res) {
+
+    //            const tbody = $('#empWiseBody').empty();
+
+    //            res.forEach(r => {
+    //                tbody.append(`
+    //                <tr>
+    //                    <td><input type="checkbox"></td>
+    //                    <td>${r.EmployeeCode}</td>
+    //                    <td>${r.EmployeeName}</td>
+    //                    <td>${r.PayGroupName}</td>
+    //                    <td>${r.PeriodText}</td>
+    //                    <td>${r.GrossPay}</td>
+    //                    <td>${r.Deduction}</td>
+    //                    <td>${r.NetPay}</td>
+    //                    <td>${r.StatusText}</td>
+    //                    <td class="text-right">
+    //                        <button class="btn-outline" onclick="openEditSalaryModal(${r.PreviewBatchID},${r.PayrollProcessEmployeeID},${r.EmployeeId},'${r.StatusText}')">
+    //                            <i class="fa fa-eye"></i>
+    //                        </button>
+    //                    </td>
+    //                    <!-- FILTER COLUMNS -->
+    //                    <td>${r.ProcessMonth}</td>
+    //                    <td>${r.ProcessYear}</td>
+    //                    <td>${r.PayGroupID}</td>
+    //                </tr>
+    //            `);
+    //            });
+
+    //            empDtInstance = $('#empWiseTable').DataTable({
+    //                pageLength: 10,
+    //                ordering: false,
+    //                lengthChange: false,
+    //                info: true,
+
+    //                columnDefs: [
+    //                    { targets: [10, 11, 12], visible: false }
+    //                ],
+
+    //                dom: '<"dt-top-row"<"dt-filters-left"><"dt-search-right"f>>rt<"dt-bottom"ip>',
+
+    //                initComplete: function () {
+    //                    moveAndBindFilters();
+    //                }
+    //            });
+    //        }
+    //    });
+    //}
+    function loadEmployeeWiseBatchGrid() {
         if ($.fn.DataTable.isDataTable('#empWiseTable')) {
             $('#empWiseTable').DataTable().destroy();
         }
@@ -2981,67 +3176,122 @@
             url: '/bulkSalaryProcess/GetPayrollEmployeeWiseDashboard',
             type: 'GET',
             success: function (res) {
-
                 const tbody = $('#empWiseBody').empty();
 
                 res.forEach(r => {
-                    tbody.append(`
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td>${r.EmployeeCode}</td>
-                        <td>${r.EmployeeName}</td>
-                        <td>${r.PayGroupName}</td>
-                        <td>${r.PeriodText}</td>
-                        <td>${r.GrossPay}</td>
-                        <td>${r.Deduction}</td>
-                        <td>${r.NetPay}</td>
-                        <td>${r.StatusText}</td>
-                        <td class="text-right">
-                            <button class="btn-outline" onclick="openEditSalaryModal(${r.PayrollProcessEmployeeID},${r.EmployeeId})">
-                                <i class="fa fa-eye"></i>
-                            </button>
-                        </td>
-                        <!-- FILTER COLUMNS -->
-                        <td>${r.ProcessMonth}</td>
-                        <td>${r.ProcessYear}</td>
-                        <td>${r.PayGroupID}</td>
-                    </tr>
-                `);
-                });
+                    // 1. Logic for Status Badges
+                    let statusBadge = '';
+                    let rowClass = '';
 
+                    if (r.Status === 2) {
+                        statusBadge = '<span class="label label-success">Approved</span>';
+                    } else if (r.Status === 3) {
+                        // 🚩 REJECTED TAG (pulsing for visibility)
+                        statusBadge = '<span class="label label-danger animated pulse infinite" title="Rejected - Needs Correction"><i class="fa fa-warning"></i> Rejected</span>';
+                        rowClass = 'row-rejected';
+                    } else {
+                        statusBadge = '<span class="label label-warning">Draft</span>';
+                    }
+
+                    // 2. Logic for Action Button (Eye for Approved, Pencil for Draft/Rejected)
+                    const actionIcon = (r.Status === 2) ? 'fa-eye' : 'fa-pencil';
+                    const actionBtnClass = (r.Status === 3) ? 'btn-danger' : 'btn-default';
+
+                    // 3. Append Row (Ensuring 11 columns to match <thead>)
+                    tbody.append(`
+                        <tr class="${rowClass}">
+                            <td style="width:250px;">
+                                <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName)}</div>
+                                <div class="text-xs text-muted">
+                                    ${escapeHtml(r.EmployeeCode)} <span class="text-primary">(${escapeHtml(r.EmployeeNo)})</span>
+                                </div>
+                            </td>
+                            <td>${escapeHtml(r.PayGroupName)}</td>
+                            <td>${escapeHtml(r.PeriodText)}</td>
+                            <td class="text-right">${Number(r.GrossPay).toLocaleString('en-IN')}</td>
+                            <td class="text-right text-danger">${Number(r.Deduction).toLocaleString('en-IN')}</td>
+                            <td class="text-right text-primary" style="font-weight:bold;">${Number(r.NetPay).toLocaleString('en-IN')}</td>
+                            <td class="text-center">${statusBadge}</td>
+                            <td class="text-right">
+                                <button class="btn btn-xs ${actionBtnClass} btn-outline" 
+                                        onclick="openEditSalaryModal(${r.PreviewBatchID}, ${r.PayrollProcessEmployeeID}, ${r.EmployeeId}, ${r.Status})" 
+                                        title="${r.Status === 2 ? 'View Details' : 'Edit Salary'}">
+                                    <i class="fa ${actionIcon}"></i>
+                                </button>
+                            </td>
+                            <td class="hidden">${r.ProcessMonth}</td>
+                            <td class="hidden">${r.ProcessYear}</td>
+                            <td class="hidden">${r.PayGroupID}</td>
+                        </tr>
+                    `);
+                });
                 empDtInstance = $('#empWiseTable').DataTable({
                     pageLength: 10,
-                    ordering: false,
+                    ordering: true,
                     lengthChange: false,
                     info: true,
-
                     columnDefs: [
-                        { targets: [10, 11, 12], visible: false }
+                        // Index 8, 9, 10 are the 9th, 10th, and 11th columns
+                        { targets: [8, 9, 10], visible: false, searchable: true },
+                        { targets: [7], orderable: false } // Action column no-sort
                     ],
-
                     dom: '<"dt-top-row"<"dt-filters-left"><"dt-search-right"f>>rt<"dt-bottom"ip>',
-
                     initComplete: function () {
                         moveAndBindFilters();
                     }
                 });
+                //empDtInstance = $('#empWiseTable').DataTable({
+                //    pageLength: 10,
+                //    ordering: true, // Enabled ordering for better UX
+                //    lengthChange: false,
+                //    info: true,
+                //    columnDefs: [
+                //        { targets: [0, 8, 9], orderable: false }, // Disable order on Checkbox, Status, Action
+                //        { targets: [10, 11, 12], visible: false }
+                //    ],
+                //    dom: '<"dt-top-row"<"dt-filters-left"><"dt-search-right"f>>rt<"dt-bottom"ip>',
+                //    initComplete: function () {
+                //        moveAndBindFilters();
+                //    }
+                //});
             }
         });
     }
+    //function applyEmployeeWiseFilters() {
 
+    //    const month = $('#ddlEmpMonth').val();
+    //    const year = $('#ddlEmpYear').val();
+    //    const group = $('#ddlEmpPayGroup').val();
+
+    //    empDtInstance
+    //        .column(10).search(month || '', false, false)
+    //        .column(11).search(year || '', false, false)
+    //        .column(12).search(group || '', false, false)
+    //        .draw();
+    //}
     function applyEmployeeWiseFilters() {
+        if (!empDtInstance) return;
 
         const month = $('#ddlEmpMonth').val();
         const year = $('#ddlEmpYear').val();
         const group = $('#ddlEmpPayGroup').val();
 
+        // Index 8: MonthID, Index 9: YearID, Index 10: PayGroupID
+        // Using Regex ^value$ for exact match (prevents '1' matching '11')
         empDtInstance
-            .column(10).search(month || '', false, false)
-            .column(11).search(year || '', false, false)
-            .column(12).search(group || '', false, false)
+            .column(8).search(month ? '^' + month + '$' : '', true, false)
+            .column(9).search(year ? '^' + year + '$' : '', true, false)
+            .column(10).search(group ? '^' + group + '$' : '', true, false)
             .draw();
     }
-
+    function escapeHtml(text) {
+        return String(text ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
     function moveAndBindFilters() {
 
         $('.dt-filters-left')
@@ -3056,125 +3306,12 @@
                 applyEmployeeWiseFilters();
             });
     }
-    // --- 2. EDIT SALARY MODAL (Calculations with Manual Adj) ---
-    //function openEditSalaryModal(empId) {
-    //    editingEmpId = empId;
-    //    const emp = employeesDB.find(e => e.id == empId);
-    //    $("#editModalEmpName").text(`${emp.name} (${emp.id})`);
-    //    $("#txtEditBasic").val(emp.basic);
-    //    $("#txtEditDays").val(30);
-    //    $("#txtManualAdd").val(0); // Reset
-    //    $("#txtManualDed").val(0); // Reset
 
-    //    const loanTotal = emp.loan || 0;
-    //    const emi = loanTotal > 0 ? (loanTotal > 2000 ? 2000 : loanTotal) : 0;
-    //    $("#lblModalLoanTotal").text("₹ " + loanTotal.toLocaleString()); $("#lblModalEMI").text("₹ " + emi.toLocaleString()); $("#chkWaiveLoan").prop('checked', false);
-
-    //    $("#editSalaryModal").data("empData", { basic: emp.basic, emi: emi });
-    //    $("#editSalaryModal").fadeIn(200);
-    //    recalculateModal();
-    //}
-    function openEditSalaryModal(payrollProcessEmployeeID, employeeId) {
-
-    showPayrollLoader();
-
-    $.ajax({
-        url: '/bulkSalaryProcess/GetEmployeeSalaryForEdit',
-        type: 'GET',
-        data: {
-            payrollProcessEmployeeID: payrollProcessEmployeeID,
-            employeeId: employeeId
-        },
-        success: function (res) {
-
-            $('#editModalEmpName').text(
-                res.EmployeeName + ' (' + res.EmployeeCode + ')'
-            );
-
-            $('#txtEditDays').val(res.PaidDays);
-            $('#txtEditBasic').val(res.BaseGross);
-
-            $('#txtManualAdd').val(res.ManualAddition);
-            $('#txtManualDed').val(res.ManualDeduction);
-
-            $('#lblModalLoanTotal').text('₹ ' + res.OutstandingLoan);
-            $('#lblModalEMI').text('₹ ' + res.LoanEMI);
-            $('#chkWaiveLoan').prop('checked', res.IsLoanWaived);
-
-            $('#slipBasic').text(res.Basic);
-            $('#slipHRA').text(res.HRA);
-            $('#slipSpl').text(res.SpecialAllowance);
-            $('#slipTotalEarn').text(res.TotalEarnings);
-
-            $('#slipPF').text(res.PF);
-            $('#slipLoan').text(res.LoanDeduction);
-            $('#slipTotalDed').text(res.TotalDeductions);
-
-            $('#lblModalNetPay').text('₹ ' + res.NetPay);
-
-            // store IDs for save
-            $('#editSalaryModal')
-                .data('pid', payrollProcessEmployeeID)
-                .data('empid', employeeId);
-
-            //openModal('editSalaryModal');
-            $("#editSalaryModal").fadeIn(200);
-        },
-        complete: hidePayrollLoader
-    });
-}
-
-
-    function recalculateModal() {
-        const data = $("#editSalaryModal").data("empData");
-        const paidDays = parseFloat($("#txtEditDays").val()) || 0;
-        const waiveLoan = $("#chkWaiveLoan").is(":checked");
-        const manAdd = parseFloat($("#txtManualAdd").val()) || 0; // Get Manual Addition
-        const manDed = parseFloat($("#txtManualDed").val()) || 0; // Get Manual Deduction
-
-        const actualGross = Math.round((data.basic > 0 ? data.basic : 15000) / 30 * paidDays);
-        const basic = Math.round(actualGross * 0.5);
-        const hra = Math.round(actualGross * 0.4);
-        const spl = actualGross - basic - hra;
-        const pf = Math.round(basic * 0.12);
-        const ptax = 200;
-        const loanDed = waiveLoan ? 0 : data.emi;
-
-        const totalEarn = basic + hra + spl + manAdd; // Add to Earnings
-        const totalDed = pf + ptax + loanDed + manDed; // Add to Deductions
-        const netPay = totalEarn - totalDed;
-
-        // Update UI
-        $("#tableEarnings").html(`
-            <tr><td>Basic Salary</td><td class="slip-amt">${basic.toLocaleString()}</td></tr>
-            <tr><td>HRA</td><td class="slip-amt">${hra.toLocaleString()}</td></tr>
-            <tr><td>Special Allow.</td><td class="slip-amt">${spl.toLocaleString()}</td></tr>
-            ${manAdd > 0 ? `<tr style="background:#f0fdf4; color:#166534;"><td>Manual Addition</td><td class="slip-amt">+${manAdd.toLocaleString()}</td></tr>` : ''}
-            <tr style="background:#f8fafc; font-weight:700;"><td>Total Earnings</td><td class="slip-amt">${totalEarn.toLocaleString()}</td></tr>
-        `);
-
-        $("#tableDeductions").html(`
-            <tr><td>Provident Fund</td><td class="slip-amt">${pf.toLocaleString()}</td></tr>
-            <tr><td>Loan Recovery</td><td class="slip-amt">${loanDed.toLocaleString()}</td></tr>
-            <tr><td>Prof. Tax</td><td class="slip-amt">200</td></tr>
-            ${manDed > 0 ? `<tr style="background:#fef2f2; color:#991b1b;"><td>Manual Deduction</td><td class="slip-amt">-${manDed.toLocaleString()}</td></tr>` : ''}
-            <tr style="background:#f8fafc; font-weight:700;"><td>Total Deductions</td><td class="slip-amt">${totalDed.toLocaleString()}</td></tr>
-        `);
-
-        $("#lblModalNetPay").text("₹ " + netPay.toLocaleString());
-    }
-
-    function saveModalSalary() {
-        const netText = $("#lblModalNetPay").text();
-        $(`#net_${editingEmpId}`).text(netText).css('color', '#d97706');
-        alert("Salary Adjusted Successfully!");
-        closeModal('editSalaryModal');
-    }
 
     /*================Attendance And File Upload Accodian=====================*/
     function openAttendanceModal() {
 
-         
+
         const payrollType = $("#ddlType").val();
         const payGroupId = $("#ddlGroup").val();
         const refNo = $("#genRefNo").val();
@@ -3395,13 +3532,7 @@
         document.getElementById('txtFromDate').valueAsDate = fromDate;
         document.getElementById('txtToDate').valueAsDate = toDate;
     }
-    //function setCurrentMonthYear() {
-    //    const now = new Date();
-    //    const month = String(now.getMonth() + 1).padStart(2, '0');
-    //    const year = now.getFullYear();
-
-    //    document.getElementById('txtMonthYear').value = `${year}-${month}`;
-    //}
+    
     function setCurrentMonthYear() {
         const now = new Date();          // Jan 2026
         now.setMonth(now.getMonth() - 1); // Dec 2025
@@ -3427,19 +3558,7 @@
         });
         //handleCompanyChange();
     }
-    //function handleCompanyChange() {
-
-    //    // Ref No depends on Company
-    //    tryGenerateRefNo();
-    //    tryGenerateComments();
-    //    // Employee list depends on Company
-    //    loadEmployeeList();
-    //}
-    //function handlemonthChange() {
-    //    // Ref No depends on Company
-    //    tryGenerateRefNo();
-    //    tryGenerateComments();
-    //}
+    
     function handleMonthYearBlur() {
         const val = document.getElementById('txtMonthYear').value;
 
@@ -3447,6 +3566,7 @@
         if (!val || val.length !== 7) return;
 
         // Only now generate
+        loadEmployeeList();
         tryGenerateRefNo();
         tryGenerateComments();
     }
@@ -3463,7 +3583,7 @@
             alert('From Date cannot be greater than To Date');
             return;
         }
-
+        loadEmployeeList();
         tryGenerateRefNo();
         tryGenerateComments();
     }
@@ -3509,7 +3629,7 @@
     }
     function tryGenerateComments() {
 
-        
+
         const groupId = $("#ddlGroup").val();
         const groupName = $("#ddlGroup option:selected").text();
         const type = $("#ddlType").val();
@@ -3722,11 +3842,13 @@
 
             if (!employeeId || employeeId <= 0) return;
 
-            const paidDays = parseInt(
-                $(this).find("input.paid-days").val(),
-                10
+            //const paidDays = parseInt(
+            //    $(this).find("input.paid-days").val(),
+            //    10
+            //) || 0;
+            const paidDays = parseFloat(
+                $(this).find("input.paid-days").val()
             ) || 0;
-
             employees.push({
                 EmployeeId: employeeId,
                 EmployeeName: employeeName,
@@ -3781,6 +3903,12 @@
                 $("#hdnPreviewBatchId").val(res.PreviewBatchID);
 
                 pivotData = res;
+                const month = Number(res.ProcessMonth || 0);
+                const year = Number(res.ProcessYear || 0);
+
+                $("#hdnprocessMonth").val(month);
+                $("#hdnprocessYear").val(year);
+
                 openDetailModal(false, res, 1);   // 🔑 pass server response
                 toastr.success("Salary calculated successfully");
             },
@@ -3807,47 +3935,48 @@
         return index;
     }
 
-    //let pivotData = null;
-    //let originalPreviewSnapshot = null;
-    //function setOriginalPreviewSnapshot(serverResult) {
-    //    originalPreviewSnapshot = JSON.parse(JSON.stringify(serverResult || {}));
-    //}
+    let pivotData = null;
+    let originalPreviewSnapshot = null;
 
-    //// ✅ Helper used by submitBatchForApproval()
-    //function getOriginalRow(empId) {
-    //    if (!originalPreviewSnapshot || !originalPreviewSnapshot.Rows) return null;
-    //    return originalPreviewSnapshot.Rows.find(r => Number(r.EmployeeId) === Number(empId)) || null;
-    //}
+    function setOriginalPreviewSnapshot(serverResult) {
+        originalPreviewSnapshot = JSON.parse(JSON.stringify(serverResult || {}));
+    }
+
+    function getOriginalRow(empId) {
+        if (!originalPreviewSnapshot || !originalPreviewSnapshot.Rows) return null;
+        return originalPreviewSnapshot.Rows.find(
+            r => Number(r.EmployeeId) === Number(empId)
+        ) || null;
+    }
+
     //function openDetailModal(isViewMode, serverResult, batchStatus) {
 
     //    if (!serverResult || !serverResult.Rows || !serverResult.Columns) {
     //        console.error("Invalid server result", serverResult);
     //        return;
     //    }
-
+    //    window.currentBatchStatus = Number(batchStatus || 0);
+    //    // 🔑 Editable data
     //    pivotData = serverResult;
-    //    currentData = serverResult;
-    //    // 🔑 DEEP CLONE original snapshot (IMMUTABLE)
-    //    originalPreviewSnapshot = JSON.parse(JSON.stringify(serverResult));
 
+    //    // 🔒 Immutable baseline
+    //    setOriginalPreviewSnapshot(serverResult);
+
+    //    // Normalize defaults
     //    pivotData.Rows.forEach(r => {
     //        r.ManualAddition ??= 0;
     //        r.ManualDeduction ??= 0;
     //    });
 
     //    $("#lblRef").text($("#genRefNo").val() || "--");
-
     //    $("#detailModal").fadeIn(200);
-
+    //    $("#txtEmpSearch").val("");
+    //    $("#chkGlobalLoanSkip").prop("checked", false);
     //    const footer = $("#detailFooter");
 
-    //    /* ===============================
-    //       🔒 FINALIZED → HIDE FOOTER
-    //    =============================== */
     //    if (batchStatus === 2) {
     //        footer.hide();
-    //    }
-    //    else {
+    //    } else {
     //        footer.show();
 
     //        if (isViewMode) {
@@ -3879,31 +4008,14 @@
 
     //    renderSalaryGrid(pivotData);
     //}
-    let pivotData = null;
-    let originalPreviewSnapshot = null;
-
-    function setOriginalPreviewSnapshot(serverResult) {
-        originalPreviewSnapshot = JSON.parse(JSON.stringify(serverResult || {}));
-    }
-
-    function getOriginalRow(empId) {
-        if (!originalPreviewSnapshot || !originalPreviewSnapshot.Rows) return null;
-        return originalPreviewSnapshot.Rows.find(
-            r => Number(r.EmployeeId) === Number(empId)
-        ) || null;
-    }
-
     function openDetailModal(isViewMode, serverResult, batchStatus) {
-
         if (!serverResult || !serverResult.Rows || !serverResult.Columns) {
             console.error("Invalid server result", serverResult);
             return;
         }
-        window.currentBatchStatus = Number(batchStatus || 0);
-        // 🔑 Editable data
-        pivotData = serverResult;
 
-        // 🔒 Immutable baseline
+        window.currentBatchStatus = Number(batchStatus || 0);
+        pivotData = serverResult;
         setOriginalPreviewSnapshot(serverResult);
 
         // Normalize defaults
@@ -3912,38 +4024,50 @@
             r.ManualDeduction ??= 0;
         });
 
-        $("#lblRef").text($("#genRefNo").val() || "--");
+        $("#lblRef").text(serverResult.RefNo || $("#genRefNo").val() || "--");
         $("#detailModal").fadeIn(200);
+        $("#txtEmpSearch").val("");
+        $("#chkGlobalLoanSkip").prop("checked", false);
 
         const footer = $("#detailFooter");
 
-        if (batchStatus === 2) {
+        // 🔑 LOGIC: If status is 2 (Finalized), it's already approved. Hide all actions.
+        if (window.currentBatchStatus === 2) {
             footer.hide();
         } else {
             footer.show();
 
             if (isViewMode) {
+                // 🔑 KITCHEN VIEW MODE: 
+                // We only allow "Discarding" the draft if they want to start over.
+                // NO APPROVE BUTTON HERE.
                 footer.html(`
+                <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
+                    <i class="fa fa-info-circle"></i> View mode: Approve this batch from the <b>Salary Register</b> page.
+                </div>
                 <button class="btn-reject" onclick="deleteBatchView()">
-                    <i class="fas fa-times"></i> Reject & Delete
+                    <i class="fas fa-trash-alt"></i> Discard Draft
                 </button>
-                <button class="btn-approve" onclick="approveBatch()">
-                    <i class="fas fa-check"></i> Approve
+                <button class="btn-outline" onclick="closeModal('detailModal')">
+                    Close
                 </button>
             `);
             } else {
+                // 🔑 KITCHEN PROCESSING MODE (Fresh Run):
+                // The "Submit" button just saves it as a "Draft (Status 1)" 
+                // so it appears in the Salary Register.
                 footer.html(`
                 <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
-                    * Modifying returns to Attendance screen.
+                    * Submitting will send this batch to the Salary Register for Approval.
                 </div>
                 <button class="btn-outline"
                         style="border-color:#d97706; color:#d97706;"
                         onclick="rejectBatch()">
-                    <i class="fas fa-undo"></i> Back
+                    <i class="fas fa-undo"></i> Back to Attendance
                 </button>
                 <button class="btn-create"
                         onclick="submitBatchForApproval()">
-                    <i class="fas fa-paper-plane"></i> Submit
+                    <i class="fas fa-paper-plane"></i> Submit Draft
                 </button>
             `);
             }
@@ -3951,13 +4075,13 @@
 
         renderSalaryGrid(pivotData);
     }
-
     function renderSalaryGrid(pivot) {
         if (!pivot || !pivot.Rows || pivot.Rows.length === 0) return;
-
+        const procMonth = $("#hdnprocessMonth").val();
+        const procYear = $("#hdnprocessYear").val();
         const rows = pivot.Rows;
         const columns = pivot.Columns;
-
+        console.log(pivot);
         // 🔹 Find indexes
         let lastAllowanceIndex = -1;
         let lastDeductionIndex = -1;
@@ -4022,42 +4146,82 @@
                 const amount = cell ? cell.Amount : 0;
                 const type = (col.PayType || '').toUpperCase();
 
-                // ===== Loan logic untouched =====
+                //// ===== Loan logic untouched =====
+                //if (col.IsOther && col.OtherType === "LOANRECOVERY") {
+
+                //    const hasLoan = cell && cell.OriginalAmount > 0;
+
+                //    if (!hasLoan) {
+                //        html += `<td class="text-right cell-deduction" style="font-family:monospace">
+                //                  0
+                //              </td>`;
+                //    }
+                //    else {
+                //        html += `
+                //                <td class="text-right">
+                //                    <div style="
+                //                        display:flex;
+                //                        align-items:center;
+                //                        justify-content:flex-end;
+                //                        gap:8px;
+                //                        white-space:nowrap;
+                //                    ">
+                //                        <span style="font-weight:600;color:#991b1b">
+                //                            ${amount.toLocaleString()}
+                //                        </span>
+
+                //                        ${cell.IsWaivable && Number(window.currentBatchStatus) === 1
+
+                //                ? `<label style="font-size:11px; cursor:pointer;">
+                //                                    <input type="checkbox"
+                //                                           ${cell.IsWaived ? 'checked' : ''}
+                //                                           onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
+                //                                    Skip
+                //                               </label>`
+                //                : ``
+                //            }
+                //                    </div>
+                //                </td>`;
+                //    }
+                //}
+                // ===== Loan logic updated with Ledger link =====
                 if (col.IsOther && col.OtherType === "LOANRECOVERY") {
 
                     const hasLoan = cell && cell.OriginalAmount > 0;
 
                     if (!hasLoan) {
-                        html += `<td class="text-right cell-deduction" style="font-family:monospace">
-                                  0
-                              </td>`;
+                        html += `<td class="text-right cell-deduction" style="font-family:monospace; color:#94a3b8;">0</td>`;
                     }
                     else {
+                        const loanRefIds = cell.ReferenceIds || '0';
                         html += `
-                                <td class="text-right">
-                                    <div style="
-                                        display:flex;
-                                        align-items:center;
-                                        justify-content:flex-end;
-                                        gap:8px;
-                                        white-space:nowrap;
-                                    ">
-                                        <span style="font-weight:600;color:#991b1b">
-                                            ${amount.toLocaleString()}
-                                        </span>
+                <td class="text-right">
+                    <div style="
+                        display:flex;
+                        align-items:center;
+                        justify-content:flex-end;
+                        gap:12px;
+                        white-space:nowrap;
+                    ">
+                        <span class="loan-link" 
+                              style="font-weight:700; color:#d97706; cursor:pointer; border-bottom:1px dashed #d97706;"
+                              data-ref-ids="${loanRefIds}"
+                               onclick="openLoanLedger(${row.EmployeeId}, '${row.EmployeeName.replace(/'/g, "\\'")}', ${cell.OriginalAmount}, ${col.PayConfigId}, ${procMonth}, ${procYear}, '${loanRefIds}')"> 
+                            ${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        </span>
 
-                                        ${cell.IsWaivable && Number(window.currentBatchStatus) === 1
-
-                                              ? `<label style="font-size:11px; cursor:pointer;">
-                                                    <input type="checkbox"
-                                                           ${cell.IsWaived ? 'checked' : ''}
-                                                           onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
-                                                    Skip
-                                               </label>`
-                                                                        : ``
-                                        }
-                                    </div>
-                                </td>`;
+                        ${cell.IsWaivable && Number(window.currentBatchStatus) === 1
+                                ? `<label style="font-size:10px; cursor:pointer; display:flex; align-items:center; gap:3px; background:#fff7ed; padding:2px 5px; border-radius:4px; border:1px solid #ffedd5;">
+                                    <input type="checkbox"
+                                    data-ref-ids="${loanRefIds}"
+                                           ${cell.IsWaived ? 'checked' : ''}
+                                           onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
+                                    <span style="color:#9a3412; font-weight:700;">SKIP</span>
+                               </label>`
+                                : ``
+                            }
+                    </div>
+                </td>`;
                     }
                 }
                 else {
@@ -4101,7 +4265,7 @@
         $("#salaryTable").html(html);
         updateStatsFromPivot(pivot.Rows);
     }
-     
+
     function onManualAddChange(empId, val) {
 
         const r = pivotData.Rows.find(x => x.EmployeeId === empId);
@@ -4142,8 +4306,7 @@
         renderSalaryGrid(pivotData);
     }
 
-
-    function toggleLoanWaiver(empId, payConfigId) {
+    function toggleLoanWaiver(empId, payConfigId, element) { // 🔑 Added 'element'
 
         if (!pivotData || !pivotData.Rows) {
             console.error("pivotData not initialized");
@@ -4151,25 +4314,30 @@
         }
         if (Number(window.currentBatchStatus) !== 1) return;
 
-
         const row = pivotData.Rows.find(r => r.EmployeeId === empId);
         if (!row) return;
 
         const cell = row.Cells.find(c => c.PayConfigId === payConfigId);
         if (!cell) return;
 
+        // 🔑 GRAB THE IDs FROM THE HTML ATTRIBUTE
+        // We use $(element) because we passed 'this' from the HTML
+        const loanIds = $(element).attr('data-ref-ids') || "";
+
         if (cell.OriginalAmount == null) {
             cell.OriginalAmount = cell.Amount;
         }
 
+        // Toggle logic
         cell.IsWaived = !cell.IsWaived;
         cell.Amount = cell.IsWaived ? 0 : cell.OriginalAmount;
+
+        // 🔑 SAVE THE IDs INTO THE CELL OBJECT
+        cell.ReferenceIds = loanIds;
 
         recalcRowNet(row);
         renderSalaryGrid(pivotData);
     }
-
-
     function recalcRowNet(row) {
 
         let totalDeductions = 0;
@@ -4190,7 +4358,73 @@
         row.NetPay = row.TotalEarnings - totalDeductions;
     }
 
+    function filterSalaryTable(query) {
+        const term = query.toLowerCase();
+        $("#salaryTable tbody tr").each(function () {
+            // Search in the Employee Name column (first column)
+            const empName = $(this).find('td.sticky-col').text().toLowerCase();
+            if (empName.includes(term)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+    function toggleAllLoans(shouldSkipAll) {
+        if (!pivotData || !pivotData.Rows) return;
 
+        // 1. Identify the Loan Recovery column
+        const loanCol = pivotData.Columns.find(c => c.IsOther && c.OtherType === "LOANRECOVERY");
+        if (!loanCol) {
+            toastr.info("No loan recovery components found.");
+            return;
+        }
+
+        const loanConfigId = loanCol.PayConfigId;
+
+        // 2. Update data in memory
+        pivotData.Rows.forEach(row => {
+            const cell = row.Cells.find(c => c.PayConfigId === loanConfigId);
+
+            if (cell && cell.IsWaivable) {
+                // Backup original amount if first time skipping
+                if (cell.OriginalAmount == null) {
+                    cell.OriginalAmount = cell.Amount;
+                }
+
+                cell.IsWaived = shouldSkipAll;
+                cell.Amount = shouldSkipAll ? 0 : cell.OriginalAmount;
+
+                // Recalculate row totals (Gross - Ded = Net)
+                recalcRowNet(row);
+            }
+        });
+
+        // 3. Re-render the grid and update the stats bar
+        renderSalaryGrid(pivotData);
+
+        // 4. Re-apply search filter if user was searching
+        filterSalaryTable($("#txtEmpSearch").val());
+
+        toastr.success(shouldSkipAll ? "All loans skipped." : "All loans restored.");
+    }
+    function toggleWaiveLoan(element) {
+        const isChecked = $(element).is(':checked');
+        const loanEmi = window.currentLoanEMI || 0;
+
+        // 1. Update the Deduction table row visually
+        const loanRow = $(".loan-row"); // Ensure your bindComponents adds this class
+        if (isChecked) {
+            loanRow.find(".slip-amt").text("0.00");
+            loanRow.find("td:first-child").append(' <span class="badge badge-secondary waive-tag">SKIPPED</span>');
+        } else {
+            loanRow.find(".slip-amt").text(loanEmi.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+            $(".waive-tag").remove();
+        }
+
+        // 2. Refresh the Net UI calculations
+        recalcNetUI();
+    }
     function updateStatsFromPivot(rows) {
 
         let tEarn = 0, tDed = 0, tNet = 0;
@@ -4207,7 +4441,6 @@
         $("#lblDed").text("₹ " + tDed.toLocaleString());
         $("#lblNet").text("₹ " + tNet.toLocaleString());
     }
-
 
     function updateStats() { let tEarn = 0, tDed = 0, tNet = 0; currentData.forEach(d => { tEarn += (d.Basic + d.Allow); tDed += (d.PF + d.Loan); tNet += d.Net; }); $("#lblEarn").text("₹ " + tEarn.toLocaleString()); $("#lblDed").text("₹ " + tDed.toLocaleString()); $("#lblNet").text("₹ " + tNet.toLocaleString()); }
 
@@ -4248,6 +4481,16 @@
             if (id === 'genModal') {
                 selectedEmployees = [];
             }
+            // 🔑 Add this for your Edit Salary Modal
+            if (id === 'editSalaryModal') {
+                $("#tableEarningsBody").empty();
+                $("#tableDeductionsBody").empty();
+                $("#tableContribBody").empty();
+                $("#lockedNotice").remove();
+                // Reset Sidebar to default enabled for next use
+                $(".edit-sidebar input").prop("disabled", false);
+                $(".btn-create").show();
+            }
         });
     }
 
@@ -4255,268 +4498,7 @@
         $("#" + id).fadeOut(200);
     }
 
-    //function submitBatchForApproval() {
 
-    //    if (!pivotData || !pivotData.Rows || pivotData.Rows.length === 0) {
-    //        toastr.error("Nothing to save");
-    //        return;
-    //    }
-
-    //    const payrollType = parseInt($("#ddlType").val(), 10);
-
-    //    const payload = {
-    //        RefNo: $("#genRefNo").val(),
-    //        RefDate: $("#genRefDate").val(),
-    //        PayGroupId: parseInt($("#ddlGroup").val(), 10),
-    //        PayrollType: payrollType,
-    //        Comments: $("#txtComments").val(),
-    //        Employees: []
-    //    };
-
-    //    // ===============================
-    //    // Payroll Period
-    //    // ===============================
-    //    if (payrollType === 1) {
-    //        const [year, month] = $("#txtMonthYear").val().split("-");
-    //        payload.ProcessMonth = parseInt(month, 10);
-    //        payload.ProcessYear = parseInt(year, 10);
-    //    } else {
-    //        payload.FromDate = $("#txtFromDate").val();
-    //        payload.ToDate = $("#txtToDate").val();
-    //    }
-
-    //    // ===============================
-    //    // Employees Snapshot (DRAFT SAVE)
-    //    // ===============================
-    //    pivotData.Rows.forEach(r => {
-
-    //        payload.Employees.push({
-
-    //            // ----- Identity -----
-    //            EmployeeId: r.EmployeeId,
-    //            EmployeeCode: r.EmployeeCode || "",
-    //            PayGroupId: payload.PayGroupId,
-
-    //            // ----- Attendance -----
-    //            PaidDays: r.PaidDays,
-    //            TotalHours: r.TotalHours || null,
-
-    //            // ----- Earnings -----
-    //            TotalGross: r.TotalEarnings,
-    //            TotalAddition: r.TotalEarnings || 0,
-    //            ManualAddition: r.ManualAddition || 0,
-
-    //            // ----- Deductions -----
-    //            TotalDeduction: r.TotalDeductions,
-    //            ManualDeduction: r.ManualDeduction || 0,
-    //            LoanDeduction: 0,          // ❌ NO EFFECT IN DRAFT
-    //            LoanWaivedYN: false,
-
-    //            // ----- Net -----
-    //            NetPay: r.NetPay,
-
-    //            // ----- UI-only -----
-    //            MonthlyCTC: r.MonthlyCTC,
-
-    //            // ===============================
-    //            // Salary Components (FULL METADATA)
-    //            // ===============================
-    //            Components: r.Cells.map(c => {
-
-    //                const col = pivotData.Columns.find(
-    //                    x => x.PayConfigId === c.PayConfigId
-    //                );
-
-    //                return {
-    //                    // Identity
-    //                    PayConfigId: c.PayConfigId,
-    //                    PayConfigName: col?.PayConfigName || "",
-    //                    PayConfigType: col?.PayType || "",
-
-    //                    // Calculation
-    //                    CalculationSource: col?.LogicType || "",
-    //                    PayValue: c.Amount,
-    //                    OriginalAmount: c.OriginalAmount,
-    //                    IsWaived: c.IsWaived === true
-    //                };
-    //            })
-    //        });
-    //    });
-
-    //    showPayrollLoader();
-
-    //    $.ajax({
-    //        url: '/bulkSalaryProcess/SavePayrollBatch',
-    //        type: 'POST',
-    //        contentType: 'application/json',
-    //        data: JSON.stringify(payload),
-    //        success: function (res) {
-
-    //            if (res && res.success === true) {
-
-    //                toastr.success(res.message);
-
-    //                // ✅ Close modals
-    //                closeAllModals();
-
-    //                // ✅ Reset state
-    //                pivotData = null;
-    //                currentData = [];
-
-    //                // ✅ Reload grid
-    //                loadPayrollBatchGrid();
-
-    //            } else {
-    //                toastr.error(res?.message || "Save failed");
-    //            }
-    //        },
-    //        error: function (err) {
-    //            console.error(err);
-    //            toastr.error("Failed to save payroll batch");
-    //        },
-    //        complete: function () {
-    //            hidePayrollLoader();
-    //        }
-    //    });
-    //}
-
-    //function submitBatchForApproval() {
-
-    //    const previewBatchId = Number($("#hdnPreviewBatchId").val());
-    //    if (!previewBatchId) {
-    //        toastr.error("Preview batch not found");
-    //        return;
-    //    }
-
-    //    if (!pivotData?.Rows?.length) {
-    //        toastr.error("No salary data found");
-    //        return;
-    //    }
-
-    //    const editRows = [];
-
-    //    pivotData.Rows.forEach(r => {
-
-    //        const original = getOriginalRow(r.EmployeeId);
-    //        if (!original) return;
-
-    //        const manualAdd = Number(r.ManualAddition || 0);
-    //        const manualDed = Number(r.ManualDeduction || 0);
-
-    //        const originalAdd = Number(original.ManualAddition || 0);
-    //        const originalDed = Number(original.ManualDeduction || 0);
-
-    //        const manualChanged =
-    //            manualAdd !== originalAdd ||
-    //            manualDed !== originalDed;
-
-    //        const waivedCells = (r.Cells || []).filter(c => c.IsWaived === true);
-
-    //        // 🔹 Case 1: Waived components
-    //        waivedCells.forEach(c => {
-
-    //            const originalAmt =
-    //                Number(c.OriginalAmount ?? c.Amount ?? 0);
-
-    //            editRows.push({
-    //                EmployeeId: r.EmployeeId,
-    //                PayConfigId: c.PayConfigId,
-    //                OriginalAmount: originalAmt,
-    //                WaivedAmount: originalAmt,
-    //                IsWaived: true,
-    //                ManualAddition: manualAdd,
-    //                ManualDeduction: manualDed
-    //            });
-    //        });
-
-    //        // 🔹 Case 2: Only manual change, no waive
-    //        if (waivedCells.length === 0 && manualChanged) {
-    //            editRows.push({
-    //                EmployeeId: r.EmployeeId,
-    //                PayConfigId: 0,           // marker row
-    //                OriginalAmount: 0,
-    //                WaivedAmount: 0,
-    //                IsWaived: false,
-    //                ManualAddition: manualAdd,
-    //                ManualDeduction: manualDed
-    //            });
-    //        }
-    //    });
-
-    //    if (editRows.length === 0) {
-    //        toastr.info("No changes detected");
-    //        toastr.success("Salary changes saved successfully");
-
-    //        // 🔒 RESET CLIENT STATE
-    //        pivotData = null;
-    //        originalPreviewSnapshot = null;
-    //        currentData = [];
-
-    //        // 🔒 CLOSE ALL MODALS
-    //        closeAllModals();
-
-    //        // 🔄 RELOAD DASHBOARD GRID
-    //        loadPayrollBatchGrid();
-    //    }
-
-    //    showPayrollLoader();
-
-    //    //$.ajax({
-    //    //    url: '/bulkSalaryProcess/SubmitPreviewEdits',
-    //    //    type: 'POST',
-    //    //    contentType: 'application/json',
-    //    //    data: JSON.stringify({
-    //    //        PreviewBatchId: previewBatchId,
-    //    //        Edits: editRows
-    //    //    }),
-    //    //    success: function (res) {
-    //    //        if (res?.success === true) {
-    //    //            toastr.success("Preview changes saved");
-    //    //        } else {
-    //    //            toastr.error(res?.message || "Save failed");
-    //    //        }
-    //    //    },
-    //    //    error: function () {
-    //    //        toastr.error("Server error");
-    //    //    },
-    //    //    complete: hidePayrollLoader
-    //    //});
-    //    $.ajax({
-    //        url: '/bulkSalaryProcess/SubmitPreviewEdits',
-    //        type: 'POST',
-    //        contentType: 'application/json',
-    //        data: JSON.stringify({
-    //            PreviewBatchId: previewBatchId,
-    //            Edits: editRows
-    //        }),
-    //        success: function (res) {
-
-    //            if (res?.success === true) {
-
-    //                toastr.success("Salary changes saved successfully");
-
-    //                // 🔒 RESET CLIENT STATE
-    //                pivotData = null;
-    //                originalPreviewSnapshot = null;
-    //                currentData = [];
-
-    //                // 🔒 CLOSE ALL MODALS
-    //                closeAllModals();
-
-    //                // 🔄 RELOAD DASHBOARD GRID
-    //                loadPayrollBatchGrid();
-    //            }
-    //            else {
-    //                toastr.error(res?.message || "Failed to save salary changes");
-    //            }
-    //        },
-    //        error: function () {
-    //            toastr.error("Server error while saving salary changes");
-    //        },
-    //        complete: hidePayrollLoader
-    //    });
-
-    //}
 
     function submitBatchForApproval() {
 
@@ -4533,40 +4515,90 @@
 
         const editRows = [];
 
-        pivotData.Rows.forEach(r => {
+        //pivotData.Rows.forEach(r => {
 
+        //    const original = getOriginalRow(r.EmployeeId);
+        //    if (!original) return;
+
+        //    const manualAdd = Number(r.ManualAddition || 0);
+        //    const manualDed = Number(r.ManualDeduction || 0);
+
+        //    const originalAdd = Number(original.ManualAddition || 0);
+        //    const originalDed = Number(original.ManualDeduction || 0);
+
+        //    const manualChanged =
+        //        manualAdd !== originalAdd ||
+        //        manualDed !== originalDed;
+
+        //    const waivedCells = (r.Cells || []).filter(c => c.IsWaived === true);
+
+        //    // Case 1: waived components
+        //    waivedCells.forEach(c => {
+        //        const originalAmt = Number(c.OriginalAmount ?? c.Amount ?? 0);
+
+        //        editRows.push({
+        //            EmployeeId: r.EmployeeId,
+        //            PayConfigId: c.PayConfigId,
+        //            OriginalAmount: originalAmt,
+        //            WaivedAmount: originalAmt,
+        //            IsWaived: true,
+        //            ManualAddition: manualAdd,
+        //            ManualDeduction: manualDed
+        //        });
+        //    });
+
+        //    // Case 2: manual change only
+        //    if (waivedCells.length === 0 && manualChanged) {
+        //        editRows.push({
+        //            EmployeeId: r.EmployeeId,
+        //            PayConfigId: 0,
+        //            OriginalAmount: 0,
+        //            WaivedAmount: 0,
+        //            IsWaived: false,
+        //            ManualAddition: manualAdd,
+        //            ManualDeduction: manualDed
+        //        });
+        //    }
+        //});
+        pivotData.Rows.forEach(r => {
             const original = getOriginalRow(r.EmployeeId);
             if (!original) return;
 
+            // 1. Capture Manual Values
             const manualAdd = Number(r.ManualAddition || 0);
             const manualDed = Number(r.ManualDeduction || 0);
 
+            // 2. Capture Original Values for Comparison
             const originalAdd = Number(original.ManualAddition || 0);
             const originalDed = Number(original.ManualDeduction || 0);
+            const manualChanged = manualAdd !== originalAdd || manualDed !== originalDed;
 
-            const manualChanged =
-                manualAdd !== originalAdd ||
-                manualDed !== originalDed;
+            // 3. Filter for Loans that actually have an amount to waive
+            const waivedCells = (r.Cells || []).filter(c =>
+                c.IsWaived === true &&
+                Number(c.OriginalAmount ?? c.Amount ?? 0) > 0 // 🔍 Only real loans
+            );
 
-            const waivedCells = (r.Cells || []).filter(c => c.IsWaived === true);
+            // --- CLEAN DATA PUSH ---
+            if (waivedCells.length > 0) {
+                // Only push if there's a valid loan being waived
+                waivedCells.forEach(c => {
+                    const originalAmt = Number(c.OriginalAmount ?? c.Amount ?? 0);
 
-            // Case 1: waived components
-            waivedCells.forEach(c => {
-                const originalAmt = Number(c.OriginalAmount ?? c.Amount ?? 0);
-
-                editRows.push({
-                    EmployeeId: r.EmployeeId,
-                    PayConfigId: c.PayConfigId,
-                    OriginalAmount: originalAmt,
-                    WaivedAmount: originalAmt,
-                    IsWaived: true,
-                    ManualAddition: manualAdd,
-                    ManualDeduction: manualDed
+                    editRows.push({
+                        EmployeeId: r.EmployeeId,
+                        PayConfigId: c.PayConfigId,
+                        OriginalAmount: originalAmt,
+                        WaivedAmount: originalAmt,
+                        IsWaived: true,
+                        ManualAddition: manualAdd,
+                        ManualDeduction: manualDed,
+                        ReferenceIds: c.ReferenceIds ? String(c.ReferenceIds) : ""
+                    });
                 });
-            });
-
-            // Case 2: manual change only
-            if (waivedCells.length === 0 && manualChanged) {
+            }
+            else if (manualChanged) {
+                // Push if no loan exists but manual numbers changed
                 editRows.push({
                     EmployeeId: r.EmployeeId,
                     PayConfigId: 0,
@@ -4574,11 +4606,11 @@
                     WaivedAmount: 0,
                     IsWaived: false,
                     ManualAddition: manualAdd,
-                    ManualDeduction: manualDed
+                    ManualDeduction: manualDed,
+                    ReferenceIds: ""
                 });
             }
         });
-
         showPayrollLoader();
 
         $.ajax({
@@ -4651,8 +4683,9 @@
         }
     }
 
+
     /* ===============================
-       LOAD DASHBOARD GRID
+       LOAD DASHBOARD GRID (SAFE)
     ================================ */
     //function loadPayrollBatchGrid() {
 
@@ -4662,45 +4695,48 @@
     //        dataType: 'json',
     //        success: function (res) {
 
-    //            if ($.fn.DataTable.isDataTable('#dashboardTable')) {
-    //                groupDtInstance.destroy();
-    //            }
-    //            $('#dashboardTable tbody').empty();
+    //            // ✅ BEFORE DESTROY: move filters out of DT wrapper so they won't vanish
+    //            if (groupDtInstance && $.fn.DataTable.isDataTable('#dashboardTable')) {
+    //                $('#dash-filter-source')
+    //                    .append($('#ddlDashMonth'))
+    //                    .append($('#ddlDashYear'));
 
-    //            if (!res || res.length === 0) {
-    //                // Let DataTables handle empty message
-    //                groupDtInstance = $('#dashboardTable').DataTable();
-    //                return;
+    //                groupDtInstance.destroy();   // true = remove DT wrapper
+    //                groupDtInstance = null;
     //            }
 
     //            const tbody = $("#dashboardTable tbody");
+    //            tbody.empty();
 
-    //            res.forEach(r => {
-    //                tbody.append(`
-    //            <tr>
-    //                <td><strong>${r.RefNo}</strong></td>
-    //                <td>${r.PeriodText}</td>
-    //                <td>${r.PayGroupName}</td>
-    //                <td>${r.PayrollTypeText}</td>
-    //                <td class="text-center">${r.TotalEmployees}</td>
-    //                <td class="text-right">₹ ${Number(r.TotalCost).toLocaleString()}</td>
-    //                <td class="text-right" style="font-weight:700;color:#0E7777">
-    //                    ₹ ${Number(r.NetPayout).toLocaleString()}
-    //                </td>
-    //                <td>${r.Status === 2 ? 'FINALIZED' : 'DRAFT'}</td>
-    //                <td class="text-right">
-    //                    <button class="btn-outline"
-    //                        onclick="openBatchView(${r.PayrollBatchID}, ${r.PayGroupID}, ${r.Status})">
-    //                        <i class="fa fa-eye"></i>
-    //                    </button>
-    //                </td>
-    //                <td>${r.ProcessMonth ?? ''}</td>
-    //                <td>${r.ProcessYear ?? ''}</td>
-    //            </tr>
-    //            `);
-    //            });
+    //            // Fill rows (or let DataTables show empty message)
+    //            if (Array.isArray(res) && res.length > 0) {
+    //                res.forEach(r => {
+    //                    tbody.append(`
+    //                    <tr>
+    //                        <td><strong>${r.RefNo ?? ''}</strong></td>
+    //                        <td>${r.PeriodText ?? ''}</td>
+    //                        <td>${r.PayGroupName ?? ''}</td>
+    //                        <td>${r.PayrollTypeText ?? ''}</td>
+    //                        <td class="text-center">${r.TotalEmployees ?? 0}</td>
+    //                        <td class="text-right">₹ ${Number(r.TotalCost ?? 0).toLocaleString()}</td>
+    //                        <td class="text-right" style="font-weight:700;color:#0E7777">
+    //                            ₹ ${Number(r.NetPayout ?? 0).toLocaleString()}
+    //                        </td>
+    //                        <td>${r.Status === 2 ? 'FINALIZED' : 'DRAFT'}</td>
+    //                        <td class="text-right">
+    //                            <button class="btn-outline"
+    //                                onclick="openBatchView(${r.PayrollBatchID}, ${r.PayGroupID}, ${r.Status})">
+    //                                <i class="fa fa-eye"></i>
+    //                            </button>
+    //                        </td>
+    //                        <td>${r.ProcessMonth ?? ''}</td>
+    //                        <td>${r.ProcessYear ?? ''}</td>
+    //                    </tr>
+    //                `);
+    //                });
+    //            }
 
-    //            /* ===== INIT DATATABLE ===== */
+    //            // ✅ ALWAYS init DataTable with same DOM/options (even if res is empty)
     //            groupDtInstance = $('#dashboardTable').DataTable({
     //                pageLength: 10,
     //                ordering: false,
@@ -4716,92 +4752,101 @@
 
     //                language: {
     //                    search: "",
-    //                    searchPlaceholder: "Search batch..."
+    //                    searchPlaceholder: "Search batch...",
+    //                    emptyTable: "No payroll batches found"
     //                }
     //            });
 
-    //            /* ===== MOVE EXCEL + FILTERS ===== */
+    //            // ✅ Move Excel + Month/Year filters into dt-left
     //            const leftBox = $('#dashboardTable_wrapper .dt-left');
 
     //            leftBox.empty()
-    //                .append(`
-    //                <button id="btnExcelExport" class="btn-export" title="Export Excel">
-    //                    <i class="fas fa-file-excel"></i>
-    //                </button>
-    //            `)
+    //                //    .append(`
+    //                //    <button id="btnExcelExport" class="btn-export" title="Export Excel">
+    //                //        <i class="fas fa-file-excel"></i>
+    //                //    </button>
+    //                //`)
     //                .append($('#ddlDashMonth').show())
     //                .append($('#ddlDashYear').show());
+
+    //            // Optional: apply current filter values after reload
+    //            applyDashboardFilters();
     //        }
     //    });
     //}
-    //let groupDtInstance = null;
-
-    /* ===============================
-       LOAD DASHBOARD GRID (SAFE)
-    ================================ */
     function loadPayrollBatchGrid() {
-
         $.ajax({
             url: '/bulkSalaryProcess/GetPayrollDashboard',
             type: 'GET',
             dataType: 'json',
             success: function (res) {
 
-                // ✅ BEFORE DESTROY: move filters out of DT wrapper so they won't vanish
+                // ✅ BEFORE DESTROY: move filters out of DT wrapper
                 if (groupDtInstance && $.fn.DataTable.isDataTable('#dashboardTable')) {
                     $('#dash-filter-source')
                         .append($('#ddlDashMonth'))
                         .append($('#ddlDashYear'));
 
-                    groupDtInstance.destroy();   // true = remove DT wrapper
+                    groupDtInstance.destroy();
                     groupDtInstance = null;
                 }
 
                 const tbody = $("#dashboardTable tbody");
                 tbody.empty();
 
-                // Fill rows (or let DataTables show empty message)
                 if (Array.isArray(res) && res.length > 0) {
                     res.forEach(r => {
+                        // 1. Logic for Status Badges
+                        let statusBadge = '';
+                        if (r.Status === 2) {
+                            statusBadge = '<span class="label label-success">FINALIZED</span>';
+                        } else if (r.Status === 3) {
+                            statusBadge = '<span class="label label-danger animated pulse infinite"><i class="fa fa-warning"></i> REJECTED</span>';
+                        } else {
+                            statusBadge = '<span class="label label-warning">DRAFT</span>';
+                        }
+
+                        // 2. Action Logic (Eye for Finalized, Pencil for Draft/Rejected)
+                        const actionIcon = (r.Status === 2) ? 'fa-eye' : 'fa-pencil';
+                        const btnClass = (r.Status === 3) ? 'btn-danger' : 'btn-default';
+
                         tbody.append(`
-                        <tr>
-                            <td><strong>${r.RefNo ?? ''}</strong></td>
-                            <td>${r.PeriodText ?? ''}</td>
-                            <td>${r.PayGroupName ?? ''}</td>
-                            <td>${r.PayrollTypeText ?? ''}</td>
-                            <td class="text-center">${r.TotalEmployees ?? 0}</td>
-                            <td class="text-right">₹ ${Number(r.TotalCost ?? 0).toLocaleString()}</td>
-                            <td class="text-right" style="font-weight:700;color:#0E7777">
-                                ₹ ${Number(r.NetPayout ?? 0).toLocaleString()}
-                            </td>
-                            <td>${r.Status === 2 ? 'FINALIZED' : 'DRAFT'}</td>
-                            <td class="text-right">
-                                <button class="btn-outline"
-                                    onclick="openBatchView(${r.PayrollBatchID}, ${r.PayGroupID}, ${r.Status})">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                            </td>
-                            <td>${r.ProcessMonth ?? ''}</td>
-                            <td>${r.ProcessYear ?? ''}</td>
-                        </tr>
-                    `);
+                    <tr class="${r.Status === 3 ? 'row-rejected' : ''}">
+                        <td><strong>${r.RefNo ?? ''}</strong></td>
+                        <td>${r.PeriodText ?? ''}</td>
+                        <td>${r.PayGroupName ?? ''}</td>
+                        <td>${r.PayrollTypeText ?? ''}</td>
+                        <td class="text-center">${r.TotalEmployees ?? 0}</td>
+                        <td class="text-right">₹ ${Number(r.TotalCost ?? 0).toLocaleString('en-IN')}</td>
+                        <td class="text-right" style="font-weight:700;color:#0E7777">
+                            ₹ ${Number(r.NetPayout ?? 0).toLocaleString('en-IN')}
+                        </td>
+                        <td class="text-center">${statusBadge}</td>
+                        <td class="text-right">
+                            <button class="btn btn-xs ${btnClass} btn-outline"
+                                onclick="openBatchView(${r.PayrollBatchID}, ${r.PayGroupID}, ${r.Status})">
+                                <i class="fa ${actionIcon}"></i>
+                            </button>
+                        </td>
+                        <td>${r.ProcessMonth ?? ''}</td>
+                        <td>${r.ProcessYear ?? ''}</td>
+                    </tr>
+                `);
                     });
                 }
 
-                // ✅ ALWAYS init DataTable with same DOM/options (even if res is empty)
+                // ✅ Re-init DataTable
                 groupDtInstance = $('#dashboardTable').DataTable({
                     pageLength: 10,
-                    ordering: false,
+                    ordering: true, // Allow sorting by RefNo or Cost
                     lengthChange: false,
                     searching: true,
                     info: true,
-
                     columnDefs: [
-                        { targets: [9, 10], visible: false }
+                        { targets: [9, 10], visible: false },
+                        { targets: [7, 8], orderable: false } // Status and Action no-sort
                     ],
-
                     dom: '<"dt-top-row"<"dt-left"><"dt-right"f>>rt<"dt-bottom"ip>',
-
                     language: {
                         search: "",
                         searchPlaceholder: "Search batch...",
@@ -4809,24 +4854,16 @@
                     }
                 });
 
-                // ✅ Move Excel + Month/Year filters into dt-left
+                // ✅ Restore Filters to Layout
                 const leftBox = $('#dashboardTable_wrapper .dt-left');
-
                 leftBox.empty()
-                    //    .append(`
-                    //    <button id="btnExcelExport" class="btn-export" title="Export Excel">
-                    //        <i class="fas fa-file-excel"></i>
-                    //    </button>
-                    //`)
                     .append($('#ddlDashMonth').show())
                     .append($('#ddlDashYear').show());
 
-                // Optional: apply current filter values after reload
                 applyDashboardFilters();
             }
         });
     }
-
     /* ===============================
        APPLY MONTH / YEAR FILTER
     ================================ */
@@ -4894,7 +4931,7 @@
             toastr.error("Invalid batch");
             return;
         }
-        
+
         // 🔑 STORE BATCH ID FOR APPROVE / REJECT
         $("#hdnPayrollBatchId").val(payrollBatchId);
         $("#hdnpayGroupId").val(payGroupId);
@@ -4926,7 +4963,7 @@
                 pivotData = res.Data;
                 //openDetailModal(true, res.Data);
                 console.log(pivotData);
-                 
+
                 openDetailModal(true, res.Data, batchStatus);
                 setTimeout(() => {
                     $("#lblRef").text(res.RefNo || "--");
@@ -4943,115 +4980,6 @@
         });
     }
 
-    //function approveBatch() {
-
-    //    const payrollBatchId = parseInt($("#hdnPayrollBatchId").val(), 10);
-    //    const payGroupId = parseInt($("#hdnpayGroupId").val(), 10);
-    //    const processMonth = parseInt($("#hdnprocessMonth").val(), 10);
-    //    const processYear = parseInt($("#hdnprocessYear").val(), 10);
-
-    //    if (!payrollBatchId || payrollBatchId <= 0) {
-    //        toastr.error("Payroll batch id missing");
-    //        return;
-    //    }
-
-    //    if (!pivotData || !pivotData.Rows || pivotData.Rows.length === 0) {
-    //        toastr.error("No salary data found");
-    //        return;
-    //    }
-    //    console.log(pivotData.Rows);
-    //    if (!confirm("This will approve & lock the batch. Continue?")) {
-    //        return;
-    //    }
-
-    //    const payload = {
-    //        PayrollBatchId: payrollBatchId,
-    //        ProcessMonth: processMonth,
-    //        ProcessYear: processYear,
-    //        Employees: []
-    //    };
-
-    //    pivotData.Rows.forEach(r => {
-
-    //        payload.Employees.push({
-
-    //            // ----- Identity -----
-    //            EmployeeId: r.EmployeeId,
-    //            EmployeeCode: r.EmployeeCode || "",
-    //            PayGroupId: payGroupId,
-
-    //            // ----- Attendance -----
-    //            PaidDays: r.PaidDays,
-    //            TotalHours: r.TotalHours || null,
-
-    //            // ----- Earnings -----
-    //            TotalGross: r.TotalEarnings,
-    //            TotalAddition: r.TotalEarnings || 0,
-    //            ManualAddition: r.ManualAddition || 0,
-
-    //            // ----- Deductions -----
-    //            TotalDeduction: r.TotalDeductions,
-    //            ManualDeduction: r.ManualDeduction || 0,
-    //            LoanDeduction: 0,          // ❌ NO EFFECT IN DRAFT
-    //            LoanWaivedYN: false,
-
-    //            // ----- Net -----
-    //            NetPay: r.NetPay,
-
-    //            // ----- UI-only -----
-    //            MonthlyCTC: r.MonthlyCTC,
-
-    //            // ===============================
-    //            // Salary Components (FULL METADATA)
-    //            // ===============================
-    //            Components: r.Cells.map(c => {
-
-    //                const col = pivotData.Columns.find(
-    //                    x => x.PayConfigId === c.PayConfigId
-    //                );
-
-    //                return {
-    //                    // Identity
-    //                    PayConfigId: c.PayConfigId,
-    //                    PayConfigName: col?.PayConfigName || "",
-    //                    PayConfigType: col?.PayType || "",
-
-    //                    // Calculation
-    //                    CalculationSource: col?.LogicType || "",
-    //                    PayValue: c.Amount,
-    //                    OriginalAmount: c.OriginalAmount,
-    //                    IsWaived: c.IsWaived === true
-    //                };
-    //            })
-    //        });
-    //    });
-    //    //console.log(payload);
-    //    showPayrollLoader();
-
-    //    $.ajax({
-    //        url: '/bulkSalaryProcess/ApproveBatch',
-    //        type: 'POST',
-    //        contentType: 'application/json',
-    //        data: JSON.stringify(payload),
-    //        success: function (res) {
-
-    //            if (res && res.success === true) {
-    //                toastr.success("Payroll batch approved successfully");
-    //                closeAllModals();
-    //                loadPayrollBatchGrid();
-    //            } else {
-    //                toastr.error(res?.message || "Approval failed");
-    //            }
-    //        },
-    //        error: function (err) {
-    //            console.error(err);
-    //            toastr.error("Server error during approval");
-    //        },
-    //        complete: function () {
-    //            hidePayrollLoader();
-    //        }
-    //    });
-    //}
     function approveBatch() {
 
         const previewBatchId = parseInt($("#hdnPreviewBatchId").val(), 10);
@@ -5121,4 +5049,752 @@
         });
     });
 
+    // --- 2. EDIT SALARY MODAL (Calculations with Manual Adj) ---
+    // Add these to your global variables
+    let originalTakeHome = 0;
+    let currentLoanEMI = 0;
+    // Add this to your top-level global variables
+    let lockOriginalPaidDays = 0;
+    //function openEditSalaryModal(previewBatchId, payrollProcessEmployeeId, employeeId,) {
+    //    clearEditSalaryModal();
+    //    window.editSalaryCtx = {
+    //        previewBatchId,
+    //        payrollProcessEmployeeId,
+    //        employeeId
+    //    };
+
+    //    $.ajax({
+    //        url: "/bulkSalaryProcess/GetEmployeeSalaryForEdit",
+    //        type: "POST",
+    //        contentType: "application/json",
+    //        data: JSON.stringify({
+    //            PreviewBatchID: previewBatchId,
+    //            PayrollProcessEmployeeID: payrollProcessEmployeeId,
+    //            EmployeeID: employeeId,
+    //            IsDaysChanged: false
+    //        }),
+    //        success: function (res) {
+
+    //            if (!res.Success) {
+    //                alert(res.Message);
+    //                return;
+    //            }
+    //            lockOriginalPaidDays = parseFloat(res.Header.PaidDays) || 0;
+    //            //originalTakeHome = parseFloat(res.Header.TotalTakeHome) || 0;
+    //            //window.currentLoanEMI = parseFloat(res.Header.LoanEMIValue) || 0;
+    //            // 🔑 IMPORTANT: Baseline for "Extra Pay" comparison
+    //            window.originalTakeHome = parseFloat(res.Header.TotalTakeHome) || 0;
+
+    //            // 2. Setup Loan Metadata
+    //            const loanComp = res.Details.find(d => d.OtherType === "LOANRECOVERY");
+    //            if (loanComp) {
+    //                // EMI from master table (via your new C# logic)
+    //                window.currentLoanEMI = parseFloat(loanComp.OriginalAmount) || 0;
+
+    //                // Set checkbox based on if it's ALREADY 0 in the preview
+    //                const isInitiallyWaived = (parseFloat(loanComp.Amount) === 0 && window.currentLoanEMI > 0);
+    //                $("#chkWaiveLoan").prop('checked', isInitiallyWaived);
+    //            }
+    //            bindHeader(res.Header);
+    //            bindComponents(res.Details);
+
+    //            window.baseNetPay = res.Header.TotalTakeHome;
+    //            window.loanAmount = getLoanAmount(res.Details);
+
+    //            $("#editSalaryModal").show();
+    //        }
+    //    });
+    //}
+    // 🔑 Added 'status' parameter from the grid click
+    //function openEditSalaryModal(previewBatchId, payrollProcessEmployeeId, employeeId, status) {
+    //    clearEditSalaryModal();
+
+    //    // 1. Store context including status
+    //    window.editSalaryCtx = {
+    //        previewBatchId,
+    //        payrollProcessEmployeeId,
+    //        employeeId,
+    //        status: parseInt(status)
+    //    };
+
+    //    $.ajax({
+    //        url: "/bulkSalaryProcess/GetEmployeeSalaryForEdit",
+    //        type: "POST",
+    //        contentType: "application/json",
+    //        data: JSON.stringify({
+    //            PreviewBatchID: previewBatchId,
+    //            PayrollProcessEmployeeID: payrollProcessEmployeeId,
+    //            EmployeeID: employeeId,
+    //            IsDaysChanged: false,
+    //            Status:status
+    //        }),
+    //        success: function (res) {
+    //            if (!res.Success) {
+    //                toastr.error(res.Message);
+    //                return;
+    //            }
+
+    //            // 2. Setup Baselines
+    //            lockOriginalPaidDays = parseFloat(res.Header.PaidDays) || 0;
+    //            window.originalTakeHome = parseFloat(res.Header.TotalTakeHome) || 0;
+
+    //            // 3. Setup Loan Metadata
+    //            const loanComp = res.Details.find(d => d.OtherType === "LOANRECOVERY");
+    //            if (loanComp) {
+    //                window.currentLoanEMI = parseFloat(loanComp.OriginalAmount) || 0;
+    //                // Use the LoanWaivedYN flag from the header we built in C#
+    //                $("#chkWaiveLoan").prop('checked', res.Header.LoanWaivedYN);
+    //            }
+
+    //            // 4. Bind UI
+    //            bindHeader(res.Header);
+    //            bindComponents(res.Details);
+
+    //            window.baseNetPay = res.Header.TotalTakeHome;
+    //            window.loanAmount = getLoanAmount(res.Details);
+
+    //            // 🔑 5. READ-ONLY LOGIC FOR APPROVED SALARY (Status 2)
+    //            if (window.editSalaryCtx.status === 2) {
+    //                $("#btnSaveModalSalary").hide(); // Hide the Save button
+    //                $("#editSalaryModal input").prop("disabled", true); // Disable attendance input
+    //                $("#chkWaiveLoan").prop("disabled", true); // Disable loan toggle
+
+    //                // Show a "Locked" message
+    //                if ($("#lockedNotice").length === 0) {
+    //                    $(".modal-footer").prepend('<span id="lockedNotice" class="text-danger pull-left" style="margin-top:7px;"><i class="fa fa-lock"></i> Approved Salary (Read-Only)</span>');
+    //                }
+    //            } else {
+    //                // Restore for Draft (1) or Rejected (3)
+    //                $("#btnSaveModalSalary").show();
+    //                $("#editSalaryModal input").prop("disabled", false);
+    //                $("#chkWaiveLoan").prop("disabled", false);
+    //                $("#lockedNotice").remove();
+
+    //                // 🚩 If Rejected, show the reason or a warning badge
+    //                if (window.editSalaryCtx.status === 3) {
+    //                    toastr.warning("This salary was previously Rejected. Please verify and save again.");
+    //                }
+    //            }
+
+    //            $("#editSalaryModal").modal("show"); // Use .modal("show") if using Bootstrap
+    //        }
+    //    });
+    //}
+    function openEditSalaryModal(previewBatchId, payrollProcessEmployeeId, employeeId, status) {
+        // 1. CLEAR & RESET UI IMMEDIATELY
+        clearEditSalaryModal();
+        $("#lockedNotice").remove();
+
+        // Ensure the Save button is visible by default (will hide for Status 2)
+        $(".btn-create").show();
+
+        // Reset inputs to enabled
+        $("#editSalaryModal input").prop("disabled", false);
+        $("#chkWaiveLoan").prop("disabled", false);
+
+        window.editSalaryCtx = {
+            previewBatchId,
+            payrollProcessEmployeeId,
+            employeeId,
+            status: parseInt(status)
+        };
+
+        $.ajax({
+            url: "/bulkSalaryProcess/GetEmployeeSalaryForEdit",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                PreviewBatchID: previewBatchId,
+                PayrollProcessEmployeeID: payrollProcessEmployeeId,
+                EmployeeID: employeeId,
+                IsDaysChanged: false,
+                Status: parseInt(status)
+            }),
+            success: function (res) {
+                if (!res.Success) {
+                    toastr.error(res.Message);
+                    return;
+                }
+                lockOriginalPaidDays = parseFloat(res.Header.PaidDays) || 0;
+                //originalTakeHome = parseFloat(res.Header.TotalTakeHome) || 0;
+                //window.currentLoanEMI = parseFloat(res.Header.LoanEMIValue) || 0;
+                // 🔑 IMPORTANT: Baseline for "Extra Pay" comparison
+                window.originalTakeHome = parseFloat(res.Header.TotalTakeHome) || 0;
+
+                // 2. Setup Loan Metadata
+                const loanComp = res.Details.find(d => d.OtherType === "LOANRECOVERY");
+                if (loanComp) {
+                    // EMI from master table (via your new C# logic)
+                    window.currentLoanEMI = parseFloat(loanComp.OriginalAmount) || 0;
+
+                    // Set checkbox based on if it's ALREADY 0 in the preview
+                    const isInitiallyWaived = (parseFloat(loanComp.Amount) === 0 && window.currentLoanEMI > 0);
+                    $("#chkWaiveLoan").prop('checked', isInitiallyWaived);
+                }
+                bindHeader(res.Header);
+                bindComponents(res.Details);
+
+                window.baseNetPay = res.Header.TotalTakeHome;
+                window.loanAmount = getLoanAmount(res.Details);
+                // 🔑 4. READ-ONLY LOGIC FOR STATUS 2 (APPROVED)
+                if (window.editSalaryCtx.status === 2) {
+                    $(".btn-create").hide(); // Hide "Save Changes" button
+
+                    // Disable all inputs in the sidebar
+                    $(".edit-sidebar input").prop("disabled", true);
+                    $("#chkWaiveLoan").prop("disabled", true);
+
+                    // Add lock icon notice to footer
+                    if ($("#lockedNotice").length === 0) {
+                        $(".modal-footer-custom").prepend('<span id="lockedNotice" style="color: #991b1b; font-size: 12px; font-weight: 700; margin-right: auto; padding-left: 10px;"><i class="fas fa-lock"></i> APPROVED - VIEW ONLY</span>');
+                    }
+                } else if (window.editSalaryCtx.status === 3) {
+                    toastr.warning("This salary was previously Rejected.");
+                }
+
+                // 5. OPEN MODAL (Set display to flex for overlay)
+                $("#editSalaryModal").css("display", "flex").addClass("active");
+                  
+            },
+            error: function () {
+                toastr.error("Failed to load details.");
+            }
+        });
+    }
+
+    //// 6. Fix for closeModal to ensure it clears completely
+    //function closeModal(modalId) {
+    //    $("#" + modalId).css("display", "none").removeClass("active");
+    //    $("#lockedNotice").remove();
+    //}
+    function clearEditSalaryModal() {
+        // Reset Header Info
+        $("#editModalEmpName").text("Loading...");
+        $("#txtEditDays, #txtDayAdjustment, #txtFinalDays").val("");
+
+        // Reset Manual Fields
+        $("#txtManualAdd, #txtManualDed, #txtManualCompValue").val("");
+        $("#ddlManualComponent").val("").trigger('change');
+
+        // Force toggle to 'Checked' (Deduct)
+        const chk = document.getElementById('chkAdjType');
+        if (chk) {
+            chk.checked = true;
+
+            // This ensures the text "DEDUCT" and Red color appear immediately
+            updateToggleLabel();
+        }
+
+        // Reset the adjustment input value so it doesn't calculate on a blank modal
+        $("#txtDayAdjustment").val("");
+        $("#txtFinalDays").val("");
+
+        // Clear Tables with a placeholder
+        const loadingRow = "<tr><td colspan='2' style='text-align:center;'>Loading...</td></tr>";
+        $("#tableEarningsBody").html(loadingRow);
+        $("#tableDeductionsBody").html(loadingRow);
+        $("#tableContribBody").html(loadingRow);
+
+        // Reset Summary Banners
+        $("#lblModalNetPay, #lblModalCTC").text("₹ 0.00");
+        $("#slipTotalEarn, #slipTotalDed, #slipTotalContrib").text("0.00");
+    }
+
+    function onPaidDaysChange(newDays) {
+        // 1. Show a small loader or spinner so the user knows calculation is happening
+        $("#recalcSpinner").show();
+
+        $.ajax({
+            url: "/bulkSalaryProcess/GetEmployeeSalaryForEdit",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                PreviewBatchID: window.editSalaryCtx.previewBatchId,
+                PayrollProcessEmployeeID: window.editSalaryCtx.payrollProcessEmployeeId,
+                EmployeeID: window.editSalaryCtx.employeeId,
+                IsDaysChanged: true,
+                PaidDays: parseFloat(newDays)
+            }),
+            success: function (res) {
+                if (!res.Success) {
+                    toastr.error(res.Message);
+                    return;
+                }
+
+                // 🔑 THE MANUAL RESET: 
+                // Because the server returned a calculated amount (Manual Paid),
+                // we must uncheck the waiver toggle visually.
+                $("#chkWaiveLoan").prop('checked',res.Header.LoanWaivedYN);
+
+                // 2. Re-bind the Header and Component tables
+                bindHeader(res.Header);
+                bindComponents(res.Details);
+
+                // 3. Update global context with new server-calculated values
+                window.baseNetPay = res.Header.TotalTakeHome;
+
+                // 4. Trigger the UI calculation to update banners and Extra Pay card
+                recalcNetUI();
+            },
+            error: function () {
+                toastr.error("Failed to recalculate salary.");
+            },
+            complete: function () {
+                $("#recalcSpinner").hide();
+            }
+        });
+    }
+    function getLoanAmount(details) {
+        let loan = details.find(x => x.OtherType === "LOANRECOVERY");
+        return loan ? parseFloat(loan.Amount) : 0;
+    }
+
+    // Global to hold current view's calculated totals
+    let currentHeader = {};
+    let currentDetails = [];
+
+    function bindHeader(h) { 
+        // Combine Name and EmpNo (e.g., "John Doe (EMP001)")
+        const displayName = h.EmployeeName
+            ? `${h.EmployeeName} (${h.Empno || 'N/A'})`
+            : "Modify Salary";
+
+        $("#editModalEmpName").text(displayName);
+        $("#txtEditDays").val(h.PaidDays);
+        $("#txtManualAdd").val(h.ManualAddition || 0);
+        $("#txtManualDed").val(h.ManualDeduction || 0); 
+        // 🔑 Save the limit from the server! 
+        // This handles 28, 29, 30, or 31 correctly based on the DB month.
+        window.currentMonthMaxDays = h.TotalMonthDays;
+        // Convert boolean/number to checkbox state
+        $("#chkWaiveLoan").prop("checked", h.LoanWaivedYN === true || h.LoanWaivedYN === 1);
+    }
+
+    function bindComponents(details) {
+        let earnHtml = "";
+        let dedHtml = "";
+        let contribHtml = "";
+
+        let totalGross = 0;
+        let totalDed = 0;
+        let totalContrib = 0;
+
+        // 🔑 Global variables for Loan logic
+        let loanEmiToDisplay = 0;
+        let isCurrentlyWaived = false;
+
+        details.forEach(c => {
+            let val = Number(c.Amount || 0);
+            let origVal = Number(c.OriginalAmount || 0); // 👈 From our C# logic
+            let type = (c.PayType || "").trim();
+            let name = (c.PayConfigName || "").trim();
+            let otherType = (c.OtherType || "").trim();
+
+            if (name === "GROSS AMOUNT") return;
+
+            // Determine if this specific row is a Loan
+            const isLoan = otherType === "LOANRECOVERY";
+            // 🔑 Added 'loan-row' class here
+            let rowClass = isLoan ? "loan-row" : "";
+
+            let row = `<tr class="${rowClass}" data-config-id="${c.PayConfigId}">
+                    <td>${name}</td>
+                    <td class="slip-amt">${val.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                   </tr>`;
+
+            if (type === "Allowances") {
+                earnHtml += row;
+                totalGross += val;
+            }
+            else if (type === "Deduction") {
+                dedHtml += row;
+                totalDed += val;
+                // 🔑 1. Detect Loan Recovery using OtherType
+                if (isLoan) {
+                    // Determine if it was already waived (Amount is 0 but Master EMI exists)
+                    isCurrentlyWaived = (val === 0 && origVal > 0);
+
+                    // Set the EMI to display in the sidebar (Always show the Master EMI value)
+                    loanEmiToDisplay = (origVal > 0) ? origVal : val;
+
+                    // 🛡️ SECURITY CHECK: Check if Reference IDs exist (Not null, empty, or "0")
+                    const hasRefIds = c.ReferenceIds && c.ReferenceIds !== "" && c.ReferenceIds !== "0";
+
+                    // Store the ID globally for saving
+                    window.currentModalLoanRefIds = hasRefIds ? c.ReferenceIds : "";
+
+                    const $toggle = $("#chkWaiveLoan");
+                    const $loanBox = $toggle.closest('.loan-box');
+
+                    if (!hasRefIds) {
+                        // 🚫 DISABLE TOGGLE: No specific loan found in database
+                        $toggle.prop('checked', false).prop('disabled', true);
+                        $loanBox.css({ "opacity": "0.5", "cursor": "not-allowed" })
+                            .attr("title", "No active loan record linked to this component");
+
+                        $("#lblModalEMI").text("EMI: ₹ 0.00");
+                        $("#lblLoanStatus").text("NO LOAN").css("color", "#94a3b8");
+                    } else {
+                        // ✅ ENABLE TOGGLE: Valid loan reference found
+                        $toggle.prop('disabled', false);
+                        $toggle.prop('checked', isCurrentlyWaived);
+                        $loanBox.css({ "opacity": "1", "cursor": "default" }).removeAttr("title");
+
+                        $("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                    }
+                }
+                //// 🔑 1. Detect Loan Recovery using OtherType
+                //if (isLoan) {
+                //    // If val is 0, it means it's currently waived in preview
+                //    isCurrentlyWaived = (val === 0 && origVal > 0);
+
+                //    // We store the OriginalAmount so the UI knows the EMI even if current val is 0
+                //    loanEmiToDisplay = isCurrentlyWaived ? origVal : val;
+
+                //    // Store the ID for the save button later
+                //    window.currentModalLoanRefIds = c.ReferenceIds;
+                //}
+            }
+            else if (type === "CC") {
+                contribHtml += row;
+                totalContrib += val;
+            }
+        });
+
+        // Inject into the Table Bodies
+        $("#tableEarningsBody").html(earnHtml || "<tr><td colspan='2'>No Allowances</td></tr>");
+        $("#tableDeductionsBody").html(dedHtml || "<tr><td colspan='2'>No Deductions</td></tr>");
+        $("#tableContribBody").html(contribHtml || "<tr><td colspan='2'>No Contributions</td></tr>");
+
+        // Update the Bold Totals in Table Footers
+        $("#slipTotalEarn").text(totalGross.toFixed(2));
+        $("#slipTotalDed").text(totalDed.toFixed(2));
+        $("#slipTotalContrib").text(totalContrib.toFixed(2));
+
+        // 🔑 2. Update the Sidebar/Toggle UI for Loan
+        window.currentLoanEMI = loanEmiToDisplay;
+
+        // Update the EMI display (Always show the real EMI)
+        $("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+
+        // Set the Checkbox state based on whether it was already waived
+        // Assuming you have a checkbox with ID 'chkLoanSkip'
+        $("#chkLoanSkip").prop('checked', isCurrentlyWaived);
+
+        if (isCurrentlyWaived) {
+            $("#lblLoanStatus").text("SKIPPED").removeClass("text-success").addClass("text-danger");
+        } else {
+            $("#lblLoanStatus").text("DEDUCTING").removeClass("text-danger").addClass("text-success");
+        }
+
+        // Trigger the Net Take Home and CTC banner calculations
+        recalcNetUI();
+    }
+    function recalcNetUI() {
+        // 1. Get Base Totals from the component table footers
+        let gross = parseFloat($("#slipTotalEarn").text()) || 0;
+        let ded = parseFloat($("#slipTotalDed").text()) || 0;
+        let contrib = parseFloat($("#slipTotalContrib").text()) || 0;
+
+        // 2. Get Input States from Sidebar
+        let mAdd = parseFloat($("#txtManualAdd").val()) || 0;
+        let mDed = parseFloat($("#txtManualDed").val()) || 0;
+        let isWaived = $("#chkWaiveLoan").is(":checked");
+
+        // 3. Handle Loan Row UI & Deduction Logic
+        const loanRow = $(".loan-row");
+        const masterEMI = window.currentLoanEMI || 0;
+
+        // Check what the Loan row CURRENTLY shows in the UI
+        let uiLoanAmt = parseFloat(loanRow.find(".slip-amt").text().replace(/,/g, '')) || 0;
+        let activeDeduction = ded;
+
+        if (isWaived) {
+            // Visual: Strike-through and "SKIPPED" badge
+            loanRow.css({ "text-decoration": "line-through", "opacity": "0.5", "color": "#991b1b" });
+            if (loanRow.find(".waive-tag").length === 0) {
+                loanRow.find("td:first-child").append(' <span class="badge badge-danger waive-tag" style="font-size:9px;">SKIPPED</span>');
+            }
+
+            // 🔑 UI CORRECTION: Set the row value to 0.00
+            loanRow.find(".slip-amt").text("0.00");
+
+            // Math: If the total 'ded' was including the EMI, subtract it
+            if (uiLoanAmt > 0) {
+                activeDeduction = ded - uiLoanAmt;
+            }
+        } else {
+            // Visual: Reset row
+            loanRow.css({ "text-decoration": "none", "opacity": "1", "color": "inherit" });
+            $(".waive-tag").remove();
+
+            // 🔑 UI CORRECTION: Restore the Master EMI value to the table cell
+            loanRow.find(".slip-amt").text(masterEMI.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+
+            // Math: If the total 'ded' was showing 0 for loan, add the EMI back
+            if (uiLoanAmt === 0) {
+                activeDeduction = ded + masterEMI;
+            }
+        }
+
+        // 4. 🔑 UI CORRECTION: Update the "TOTAL DEDUCTION" footer in the table
+        // This ensures the Deduction box total matches the rows above it
+        $("#slipTotalDed").text(activeDeduction.toFixed(2));
+
+        // 5. Calculate Final Banners
+        let finalGross = gross + mAdd;
+        let finalDeduction = activeDeduction + mDed;
+        let finalTakeHome = finalGross - finalDeduction;
+        let finalCTC = finalGross + contrib;
+
+        // 6. Update Dynamic Manual Rows
+        $(".manual-adj-row").remove();
+        if (mAdd > 0) {
+            $("#tableEarningsBody").append(`<tr class="manual-adj-row" style="background:#f0fdf4; color:#166534; font-weight:600;"><td>Manual Addition</td><td class="slip-amt">+${mAdd.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td></tr>`);
+        }
+        if (mDed > 0) {
+            $("#tableDeductionsBody").append(`<tr class="manual-adj-row" style="background:#fef2f2; color:#991b1b; font-weight:600;"><td>Manual Deduction</td><td class="slip-amt">-${mDed.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td></tr>`);
+        }
+
+        // 7. Update Primary Banners
+        $("#lblModalNetPay").text("₹ " + finalTakeHome.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+        $("#lblModalCTC").text("₹ " + finalCTC.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+
+        // 8. Extra Pay Card Logic
+        let diff = finalTakeHome - window.originalTakeHome;
+        let absDiff = Math.abs(diff);
+        const card = $("#adjustmentCard");
+
+        if (absDiff > 0.1) {
+            card.show();
+            $(".summary-banner").css("grid-template-columns", "1fr 1fr 1fr");
+            $("#lblAdjAmount").text("₹ " + absDiff.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+            $("#lblAdjTypeTag").text(diff > 0 ? "Extra Pay" : "Deduction Adjustment");
+        } else {
+            card.hide();
+            $(".summary-banner").css("grid-template-columns", "1fr 1fr");
+        }
+    }
+    
+    /**
+    * Visual correction: Changes "ADD" (Green) to "DEDUCT" (Red)
+    */
+    function updateToggleLabel() {
+        const chk = document.getElementById('chkAdjType');
+        const label = document.getElementById('toggleLabel');
+
+        if (chk.checked) {
+            label.innerText = "DEDUCT";
+            label.style.color = "#991b1b"; // Red for deduction
+        } else {
+            label.innerText = "ADD";
+            label.style.color = "#166534"; // Green for addition
+        }
+    }
+
+    function applyDayAdjustment() {
+        // 1. Always use the LOCKED variable as the starting point
+        const baseDays = lockOriginalPaidDays;
+
+        // 2. Get the adjustment value (handle empty/erased as 0)
+        const rawVal = document.getElementById('txtDayAdjustment').value;
+        const adjValue = rawVal === "" ? 0 : Math.abs(parseFloat(rawVal));
+
+        // 3. Determine direction (Toggle Checked = DEDUCT)
+        const isDeduct = document.getElementById('chkAdjType').checked;
+        const maxLimit = window.currentMonthMaxDays || 31;
+
+        // 4. Calculate Final Days based on the LOCKED base
+        let finalDays = isDeduct ? (baseDays - adjValue) : (baseDays + adjValue);
+
+        // 5. Boundary Validations
+        if (finalDays < 0) {
+            finalDays = 0;
+        }
+
+        if (!isDeduct && finalDays > maxLimit) {
+            alert(`Cannot exceed ${maxLimit} days for this month.`);
+            finalDays = maxLimit;
+            // Adjust the user's input to represent the max possible addition
+            document.getElementById('txtDayAdjustment').value = (maxLimit - baseDays);
+        }
+
+        // 6. Update UI
+        document.getElementById('txtFinalDays').value = finalDays;
+
+        // 7. Trigger Recalculation
+        // If user erases the box (adjValue is 0), finalDays will equal baseDays (Original).
+        onPaidDaysChange(finalDays);
+    }
+    function updateAdjustmentCard(adjDays, isDeduct) {
+        const card = $("#adjustmentCard");
+
+        if (adjDays <= 0) {
+            card.hide();
+            // Reset grid back to 2 columns if hidden (optional)
+            $(".summary-banner").css("grid-template-columns", "1fr 1fr");
+            return;
+        }
+
+        // Show card and set grid to 3 columns
+        card.show();
+        $(".summary-banner").css("grid-template-columns", "1fr 1fr 1fr");
+
+        // Calculation (Basic Pro-rata)
+        const totalEarn = parseFloat($("#slipTotalEarn").text()) || 0;
+        const monthDays = window.currentMonthMaxDays || 30;
+        const perDayRate = totalEarn / (window.editSalaryCtx.lastPaidDays || monthDays);
+        const impactAmount = perDayRate * adjDays;
+
+        // UI Updates
+        $("#lblAdjAmount").text("₹ " + impactAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+        $("#lblAdjTypeTag").text(isDeduct ? "Deduction Impact" : "Addition Impact");
+
+        // Store data for saving
+        window.lastAdjustmentData = {
+            Days: adjDays,
+            Amount: impactAmount.toFixed(2),
+            Type: isDeduct ? "DEDUCT" : "ADD"
+        };
+    }
+
+    /**
+    * Triggers when clicking a loan amount in the Excel Grid
+    */
+    function openLoanLedger(empId, empName, currentEmi, payConfigId, procMonth, procYear, referenceIds) {
+        $("#loanEmpLabel").text(empName);
+
+        // Reset table and show loading state
+        $("#loanHistoryBody").html('<tr><td colspan="6" class="text-center" style="padding:20px;">Loading Ledger...</td></tr>');
+
+        $.ajax({
+            url: '/bulkSalaryProcess/GetEmployeeLoanLedger',
+            type: 'GET',
+            data: {
+                employeeId: empId,
+                payConfigId: payConfigId,
+                Currentemi: currentEmi,
+                ProcessMonth: procMonth,
+                ProcessYear: procYear,
+                ReferenceIds: referenceIds
+            },
+            success: function (res) {
+                if (res.Success) {
+                    // 1. Update the 3 Top Summary Cards
+                    $("#valOpen").text("₹ " + res.OpeningBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                    $("#valEmi").text("₹ " + res.CurrentEMI.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                    $("#valClose").text("₹ " + res.ClosingBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+
+                    // 2. Render the Filtered Schedule (Last 3 Months)
+                    let html = "";
+                    if (res.Schedule && res.Schedule.length > 0) {
+                        res.Schedule.forEach(s => {
+                            const rowStyle = s.IsCurrent
+                                ? "background: #fffbeb; border-left: 4px solid #f59e0b;"
+                                : "color: #64748b;";
+
+                            const statusClass = (s.Status === 'Paid' || s.Status === 'Processed') ? 'badge-active' :
+                                (s.Status === 'Skipped' ? 'badge-inactive' : '');
+
+                            html += `
+                        <tr style="${rowStyle} border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding:10px; text-align:center; font-weight:bold;">${s.EmiNo}</td>
+                            <td style="padding:10px;">
+                                ${s.Period}
+                                ${s.IsCurrent ? '<span style="font-size:8px; background:#f59e0b; color:#fff; padding:1px 3px; border-radius:2px; margin-left:4px; vertical-align:middle;">CURR</span>' : ''}
+                            </td>
+                            <td style="padding:10px; text-align:right; font-family:monospace;">₹${s.Opening.toLocaleString('en-IN')}</td>
+                            <td style="padding:10px; text-align:right; font-family:monospace; color:#16a34a; font-weight:600;">₹${s.Principal.toLocaleString('en-IN')}</td>
+                            <td style="padding:10px; text-align:right; font-family:monospace;">₹${s.Closing.toLocaleString('en-IN')}</td>
+                            <td style="padding:10px; text-align:center;">
+                                <span class="status-badge ${statusClass}" style="font-size:10px; padding:2px 6px;">${s.Status}</span>
+                            </td>
+                        </tr>`;
+                        });
+                    } else {
+                        html = '<tr><td colspan="6" class="text-center" style="padding:20px; color:#94a3b8;">No recent records found.</td></tr>';
+                    }
+                    $("#loanHistoryBody").html(html);
+                } else {
+                    toastr.error(res.Message || "Failed to load loan ledger.");
+                    closeModal('loanModal');
+                }
+            },
+            error: function () {
+                toastr.error("Server error while fetching loan data.");
+                closeModal('loanModal');
+            }
+        });
+
+        $("#loanModal").fadeIn(200);
+    }
+
+    function saveModalSalary() {
+        const empId = window.editSalaryCtx.employeeId;
+        const batchId = window.editSalaryCtx.previewBatchId;
+
+        // 1. Get Header Values (Manual Adjustments & Final Days)
+        const manualAdd = parseFloat($("#txtManualAdd").val()) || 0;
+        const manualDed = parseFloat($("#txtManualDed").val()) || 0;
+        const finalPaidDays = parseFloat($("#txtFinalDays").val()) || lockOriginalPaidDays;
+        const isLoanWaived = $("#chkWaiveLoan").is(":checked");
+
+        const componentEdits = [];
+
+        // 2. Scrape ALL rows from all three breakdown tables
+        // This captures pro-rata changes from Paid Days automatically
+        $("#tableEarningsBody tr, #tableDeductionsBody tr, #tableContribBody tr").each(function () {
+            const $row = $(this);
+            const configId = $row.data("config-id");
+
+            if (configId) {
+                const isLoanRow = $row.hasClass("loan-row");
+                // Clean string of ₹ and commas before parsing
+                const amount = parseFloat($row.find(".slip-amt").text().replace(/[₹,]/g, '')) || 0;
+
+                componentEdits.push({
+                    PayConfigId: parseInt(configId),
+                    Amount: amount,
+                    // Only the specific loan row carries waiver/refId status
+                    IsWaived: isLoanRow ? isLoanWaived : false,
+                    ReferenceIds: isLoanRow ? (window.currentModalLoanRefIds || "") : ""
+                });
+            }
+        });
+
+        // 3. Construct the Full DTO for the Controller
+        const payload = {
+            PreviewBatchId: batchId,
+            EmployeeId: empId,
+            PaidDays: finalPaidDays,
+            ManualAddition: manualAdd,
+            ManualDeduction: manualDed,
+            Components: componentEdits
+        };
+
+        showPayrollLoader();
+
+        $.ajax({
+            url: '/bulkSalaryProcess/SubmitFullPreviewUpdate',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (res) {
+                if (res.success) {
+                    toastr.success("Salary details updated successfully");
+                    closeModal('editSalaryModal');
+
+                    // Refresh the specific row in your main grid or reload the grid
+                    loadPayrollBatchGrid();
+                    loadEmployeeWiseBatchGrid();
+                } else {
+                    toastr.error(res.message || "Failed to update salary");
+                }
+            },
+            error: function () {
+                toastr.error("Server connection error");
+            },
+            complete: hidePayrollLoader
+        });
+    }
 </script>
