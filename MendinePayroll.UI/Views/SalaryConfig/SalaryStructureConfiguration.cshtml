@@ -546,6 +546,20 @@
             color: #fff !important;
             border-color: #0E7777 !important;
         }
+
+    /* Highlight enabled formula field for Excel Logic */
+    .tbl-select[value="EXCEL_UPLOAD"] ~ td .inp-formula:not(:disabled) {
+        border: 1px solid #0E7777;
+        background-color: #f0ffff;
+    }
+
+    /* Optional: placeholder style */
+    .inp-formula::placeholder {
+        color: #aab2bd;
+        font-style: italic;
+        font-size: 11px;
+    }
+
 </style>
 
 <section role="main" class="content-body">
@@ -913,8 +927,8 @@
                         <select class="tbl-select logic-select" onchange="handleLogicChange(this)" disabled>
                             <option value="FIXED">Fixed</option>
                             <option value="FORMULA">Formula</option>
-                            <option value="MONTHLY_UPLOAD">Excel Upload</option>
-                            <option value="ATTENDANCE_UNIT">Attendance Unit</option>
+                            <option value="EXCEL_UPLOAD">Excel Upload</option>
+                            //<option value="ATTENDANCE_UNIT">Attendance Unit</option>
                         </select>
                     `;
             }
@@ -933,7 +947,7 @@
                             <option value="FIXED">Fixed</option>
                             <option value="FORMULA">Formula</option>
                             <option value="EXCEL_UPLOAD">Excel Upload</option>
-                            <option value="ATTENDANCE_UNIT">Attendance Unit</option>
+                            //<option value="ATTENDANCE_UNIT">Attendance Unit</option>
                         </select>
                     `;
             }
@@ -1056,8 +1070,62 @@
     // ============================================================
     // LOGIC CHANGE
     // ============================================================
-    window.handleLogicChange = function (elem) {
+    //window.handleLogicChange = function (elem) {
 
+    //    let row = elem.closest("tr");
+    //    let logic = elem.value;
+
+    //    let formula = row.querySelector(".inp-formula");
+    //    let source = row.querySelector(".inp-source");
+    //    let percent = row.querySelector(".chk-percent");
+    //    let rate = row.querySelector(".inp-rate");
+
+    //    formula.disabled = true;
+    //    source.disabled = true;
+    //    percent.disabled = true;
+    //    rate.disabled = true;
+
+    //    formula.style.display = "block";
+    //    source.style.display = "none";
+
+    //    // 1️⃣ FIXED
+    //    if (logic === "FIXED") {
+    //        rate.disabled = true; // Fixed means no formula - ManualRate enabled later only for pure fixed
+    //        rate.disabled = false;
+    //        return;
+    //    }
+
+    //    // 2️⃣ FORMULA
+    //    if (logic === "FORMULA") {
+    //        formula.disabled = false;
+    //        percent.disabled = false;
+    //        rate.disabled = false;
+    //        return;
+    //    }
+
+    //    // 3️⃣ MONTHLY UPLOAD
+    //    if (logic === "EXCEL_UPLOAD") {
+    //        formula.value = "";
+    //        formula.disabled = true;
+
+    //        percent.checked = false;
+    //        percent.disabled = true;
+
+    //        rate.value = "";
+    //        rate.disabled = true;
+    //        return;
+    //    }
+
+    //    // 4️⃣ ATTENDANCE UNIT
+    //    if (logic === "ATTENDANCE_UNIT") {
+    //        formula.style.display = "none";
+    //        source.style.display = "block";
+    //        source.disabled = false;
+    //        rate.value = "";
+    //        return;
+    //    }
+    //};
+    window.handleLogicChange = function (elem) {
         let row = elem.closest("tr");
         let logic = elem.value;
 
@@ -1066,22 +1134,21 @@
         let percent = row.querySelector(".chk-percent");
         let rate = row.querySelector(".inp-rate");
 
+        // Default: Reset states
         formula.disabled = true;
         source.disabled = true;
         percent.disabled = true;
         rate.disabled = true;
-
         formula.style.display = "block";
         source.style.display = "none";
 
-        // 1️⃣ FIXED
+        // 1️⃣ FIXED Logic
         if (logic === "FIXED") {
-            rate.disabled = true; // Fixed means no formula - ManualRate enabled later only for pure fixed
             rate.disabled = false;
             return;
         }
 
-        // 2️⃣ FORMULA
+        // 2️⃣ FORMULA Logic
         if (logic === "FORMULA") {
             formula.disabled = false;
             percent.disabled = false;
@@ -1089,29 +1156,26 @@
             return;
         }
 
-        // 3️⃣ MONTHLY UPLOAD
-        if (logic === "MONTHLY_UPLOAD") {
-            formula.value = "";
-            formula.disabled = true;
+        // 3️⃣ EXCEL_UPLOAD Logic (CHANGED: Now enables Formula/Rate for calculations)
+        if (logic === "EXCEL_UPLOAD") {
+            // Enable formula so you can write logic like: [EXCEL_VALUE] * 1.10
+            formula.disabled = false;
+            formula.placeholder = "Enter calculation logic for uploaded data";
 
-            percent.checked = false;
-            percent.disabled = true;
-
-            rate.value = "";
-            rate.disabled = true;
+            // Enable rate/percent if needed for the calculation
+            percent.disabled = false;
+            rate.disabled = false;
             return;
         }
 
-        // 4️⃣ ATTENDANCE UNIT
+        // 4️⃣ ATTENDANCE UNIT Logic
         if (logic === "ATTENDANCE_UNIT") {
             formula.style.display = "none";
             source.style.display = "block";
             source.disabled = false;
-            rate.value = "";
             return;
         }
     };
-
     // ============================================================
     // SAVE
     // ============================================================

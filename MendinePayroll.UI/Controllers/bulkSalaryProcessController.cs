@@ -1,9 +1,11 @@
 ﻿using Common.Utility;
 using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Spreadsheet;
 using MendinePayroll.UI.Common;
 using MendinePayroll.UI.Models;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace MendinePayroll.UI.Controllers
 {
@@ -1216,7 +1219,7 @@ namespace MendinePayroll.UI.Controllers
                 NetPayout = Convert.ToDecimal(r["NetPayout"]),
 
                 // 🔥 STATUS IS INT → convert properly
-                Status = Convert.ToInt32(r["Status"]),
+                Status = Convert.ToInt32(r["Status"]), 
 
                 ProcessMonth = r["ProcessMonth"].ToString(),
                 ProcessYear = r["ProcessYear"].ToString(),
@@ -1256,7 +1259,7 @@ namespace MendinePayroll.UI.Controllers
 
                     StatusText = r["StatusText"]?.ToString(),
                     StatusClass = r["StatusClass"]?.ToString(),
-
+                    RejectionReason = r["RejectionReason"].ToString(),
                     // 🔑 IMPORTANT: Capture numeric status (1=Draft, 2=Approved, 3=Rejected)
                     Status = r.Table.Columns.Contains("StatusCode") ? Convert.ToInt32(r["StatusCode"]) : 1
                 }).ToList();
@@ -1364,7 +1367,7 @@ namespace MendinePayroll.UI.Controllers
 
                         ManualAddition = GetDecimal(r, "ManualAddition"),
                         ManualDeduction = GetDecimal(r, "ManualDeduction"),
-
+                        
                         Components = r["ComponentJson"] == DBNull.Value
                             ? new List<SalaryComponentResult>()
                             : JsonConvert.DeserializeObject<List<SalaryComponentResult>>(
@@ -1411,6 +1414,7 @@ namespace MendinePayroll.UI.Controllers
                     RefNo = GetString(h, "RefNo"),
                     ProcessMonth = GetInt(h, "ProcessMonth"),
                     ProcessYear = GetInt(h, "ProcessYear"),
+                    ApprovedCount = GetInt(h, "ApprovedCount"),
                     BatchStatus = batchStatus,   // 🔑 IMPORTANT
                     Data = pivot
                 }, JsonRequestBehavior.AllowGet);
@@ -2078,11 +2082,7 @@ namespace MendinePayroll.UI.Controllers
                 1) LOAD PREVIEW CONTEXT (ALWAYS)
             ========================================================== */
             DataTable dtCtx = clsDatabase.fnDataTable(
-                "SP_Payroll_GetEmployeePreviewContext",
-                TenantId,
-                req.PreviewBatchID,
-                req.PayrollProcessEmployeeID,
-                req.EmployeeID,
+                "SP_Payroll_GetEmployeePreviewContext", TenantId, req.PreviewBatchID, req.PayrollProcessEmployeeID,  req.EmployeeID,
                 req.Status
             );
 
@@ -2111,6 +2111,19 @@ namespace MendinePayroll.UI.Controllers
             decimal manualDed = ctx["ManualDeduction"] == DBNull.Value ? 0 : Convert.ToDecimal(ctx["ManualDeduction"]);
             long previewEmployeeId = Convert.ToInt64(ctx["PreviewEmployeeID"]);
             bool loanWaived = ctx["LoanWaivedYN"] != DBNull.Value && Convert.ToBoolean(ctx["LoanWaivedYN"]);
+            /* ==========================================================
+                    1.1) CHECK FOR EXTERNAL LOANS
+                ========================================================== */
+            bool isLoanExternal = false;
+            DataTable dtExternalCheck = clsDatabase.fnDataTable("PRC_CheckLoanPaidForMonth", req.EmployeeID, processMonth, processYear, TenantId);
+            if (dtExternalCheck.Rows.Count > 0)
+            {
+                // If AmountPaid > 0, it means an external payment exists for this month
+                if (Convert.ToDecimal(dtExternalCheck.Rows[0]["AmountPaid"]) > 0)
+                {
+                    isLoanExternal = true;
+                }
+            }
             /* ==========================================================
                 2) FIRST LOAD → RETURN STORED PREVIEW DATA
             ========================================================== */
@@ -2148,7 +2161,7 @@ namespace MendinePayroll.UI.Controllers
                     };
                 }).ToList();
 
-                return Json(new { Success = true, Mode = "PREVIEW_LOAD", Header = new { EmployeeName = employeename, Empno = empno, EmpCode = empcode, PaidDays = paidDays, TotalMonthDays = totalDays, ManualAddition = manualAdd, ManualDeduction = manualDed, LoanWaivedYN = loanWaived, TotalGross = ctx["TotalGross"], TotalDeduction = ctx["TotalDeduction"], TotalTakeHome = ctx["TotalTakeHome"] }, Details = finalDetails }, JsonRequestBehavior.AllowGet);
+                return Json(new { Success = true, Mode = "PREVIEW_LOAD", Header = new { EmployeeName = employeename, Empno = empno, EmpCode = empcode, PaidDays = paidDays, TotalMonthDays = totalDays, ManualAddition = manualAdd, ManualDeduction = manualDed, LoanWaivedYN = loanWaived, TotalGross = ctx["TotalGross"], TotalDeduction = ctx["TotalDeduction"], TotalTakeHome = ctx["TotalTakeHome"], IsLoanExternal = isLoanExternal }, Details = finalDetails }, JsonRequestBehavior.AllowGet);
             }
 
             /* ==========================================================
@@ -2230,7 +2243,8 @@ namespace MendinePayroll.UI.Controllers
                     TotalGross = salary.TotalEarnings,
                     TotalDeduction = totalDeductionOverride,
                     TotalTakeHome = totalNetOverride,
-                    LoanWaivedYN = currentWaiverState // 💰 Preserve the checkbox state
+                    LoanWaivedYN = currentWaiverState, // 💰 Preserve the checkbox state
+                    IsLoanExternal = isLoanExternal
                 },
                 Details = patchedDetails
             }, JsonRequestBehavior.AllowGet);
@@ -2342,5 +2356,143 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        public JsonResult DeletePreviewBatch(long previewBatchId)
+        {
+            try
+            {
+                // One single call to the SP
+                clsDatabase.fnDBOperation("SP_Payroll_SaaS_DeleteBatchDraft", previewBatchId, TenantId);
+
+                return Json(new { success = true, message = "Draft batch deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                // This will capture the "Cannot delete... already finalized" message from SQL
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        public void DownloadVariableTemplate(int payGroupId, int ConfigureSalaryComponentId, int month, int year)
+        {
+            // Convert month number to Month Name (e.g., 1 -> January)
+            string monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
+            // 1. Fetch Template Data using the new SP
+            DataSet ds = clsDatabase.fnDataSet("SP_Payroll_GetTemplateData", TenantId, payGroupId, ConfigureSalaryComponentId);
+
+            if (ds == null || ds.Tables.Count < 2 || ds.Tables[1].Rows.Count == 0)
+            {
+                // Handle error: No employees or component not found
+                return;
+            }
+
+            string componentName = ds.Tables[0].Rows[0]["PayConfigName"].ToString();
+            DataTable dtEmployees = ds.Tables[1];
+            // Set the license context to NonCommercial (REQUIRED for free usage)
+            OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                var ws = package.Workbook.Worksheets.Add("UploadSheet");
+
+                // --- Define Headers ---
+                ws.Cells[1, 1].Value = "EmployeeID";    // Hidden Column
+                ws.Cells[1, 2].Value = "Employee Code";
+                ws.Cells[1, 3].Value = "Employee Name";
+                ws.Cells[1, 4].Value = "Month";
+                ws.Cells[1, 5].Value = "Year";
+                ws.Cells[1, 6].Value = "Value (" + componentName + ")"; // Your {VAL}
+
+                // --- Styling (Applied to all 6 columns) ---
+                using (var range = ws.Cells[1, 1, 1, 6])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(14, 119, 119));
+                    range.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                }
+
+                // --- Fill Data ---
+                int currentRow = 2;
+                foreach (DataRow dr in dtEmployees.Rows)
+                {
+                    ws.Cells[currentRow, 1].Value = dr["EmployeeID"];
+                    ws.Cells[currentRow, 2].Value = dr["EmployeeCode"];
+                    ws.Cells[currentRow, 3].Value = dr["EmployeeName"];
+                    ws.Cells[currentRow, 4].Value = monthName; // Passing Month Name
+                    ws.Cells[currentRow, 5].Value = year;      // Passing Year
+                    ws.Cells[currentRow, 6].Value = 0;         // Default Input Value
+                    currentRow++;
+                }
+
+                // --- Formatting ---
+                ws.Column(1).Hidden = true; // Protect EmployeeID for easier backend mapping
+                ws.Column(2).AutoFit();
+                ws.Column(3).AutoFit();
+                ws.Column(4).AutoFit();
+                ws.Column(5).AutoFit();
+                ws.Column(6).Width = 25;
+
+                // --- Response ---
+                string fileName = $"{componentName.Replace(" ", "_")}_Template_{monthName}_{year}.xlsx";
+                Response.Clear();
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
+                Response.BinaryWrite(package.GetAsByteArray());
+                Response.End();
+            }
+        }
+        [HttpPost]
+        public JsonResult UploadVariableComponentValues(HttpPostedFileBase file, int configId, int month, int year)
+        {
+            if (file == null || file.ContentLength == 0)
+                return Json(new { success = false, message = "Please select a valid Excel file." });
+
+            try
+            {
+                OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+
+                var uploadList = new List<object>(); // List to hold JSON data
+
+                using (var package = new ExcelPackage(file.InputStream))
+                {
+                    var ws = package.Workbook.Worksheets[0];
+                    int rowCount = ws.Dimension.Rows;
+
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var empIdStr = ws.Cells[row, 1].Value?.ToString();
+                        var valStr = ws.Cells[row, 6].Value?.ToString();
+
+                        if (!string.IsNullOrEmpty(empIdStr) && decimal.TryParse(valStr, out decimal inputVal))
+                        {
+                            uploadList.Add(new
+                            {
+                                EmployeeID = int.Parse(empIdStr),
+                                InputValue = inputVal
+                            });
+                        }
+                    }
+                }
+
+                if (uploadList.Count > 0)
+                {
+                    // Convert list to JSON string
+                    string JsonData = Newtonsoft.Json.JsonConvert.SerializeObject(uploadList);
+                    string User = Session["UserName"]?.ToString() ?? "System";
+                    // Send to Stored Procedure in ONE call
+                    clsDatabase.fnDBOperation("SP_Payroll_SaveVariableComponentInput_Bulk", JsonData, configId,month,year,TenantId,User);
+
+                    return Json(new { success = true, message = $"Successfully updated {uploadList.Count} records." });
+                }
+
+                return Json(new { success = false, message = "No valid data found in Excel." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error: " + ex.Message });
+            }
+        }
+         
     }
 }

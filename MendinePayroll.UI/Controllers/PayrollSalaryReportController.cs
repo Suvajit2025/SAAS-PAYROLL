@@ -1,4 +1,6 @@
-﻿using Common.Utility;
+﻿using ClosedXML.Excel;
+using Common.Utility;
+using DocumentFormat.OpenXml.EMMA;
 using MendinePayroll.UI.Models;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Cmp;
@@ -114,8 +116,7 @@ namespace MendinePayroll.UI.Controllers
         {
             try
             {
-                 
-                var userName = Session["UserName"]?.ToString() ?? "";
+                var userName = Session["UserName"]?.ToString() ?? "System";
 
                 if (string.IsNullOrWhiteSpace(payrollProcessEmployeeIds))
                     return Json(new { success = false, message = "No employees selected." });
@@ -123,48 +124,74 @@ namespace MendinePayroll.UI.Controllers
                 if (!DateTime.TryParse(paidDate, out DateTime paidDt))
                     return Json(new { success = false, message = "Invalid paid date." });
 
-                DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_MarkPaid",TenantId,month,year,paidDt.Date,userName,payrollProcessEmployeeIds );
+                /* =========================================================
+                   1. VALIDATE STATUSES 
+                   Only "Finalized" (Status 2) records can be marked as Paid.
+                ========================================================= */
+                DataTable dtValidation = clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation", payrollProcessEmployeeIds);
+
+                // Identify who is NOT Finalized (Draft or Rejected) to show as skipped
+                var validationSkipped = dtValidation.AsEnumerable()
+                    .Where(r => Convert.ToInt32(r["Status"]) != 2)
+                    .Select(r => new {
+                        EmployeeName = r["EmployeeName"].ToString(),
+                        SkipReason = Convert.ToInt32(r["Status"]) == 1 ? "Still in Draft" :
+                                     Convert.ToInt32(r["Status"]) == 3 ? "Record is Rejected" : "Invalid Status"
+                    }).ToList();
+
+                // Filter only valid Finalized IDs to pass to the Mark Paid SP
+                string finalizedIds = string.Join(",", dtValidation.AsEnumerable()
+                    .Where(r => Convert.ToInt32(r["Status"]) == 2)
+                    .Select(r => r["RequestedID"].ToString()));
+
+                if (string.IsNullOrEmpty(finalizedIds))
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No finalized records found to mark as paid.",
+                        skippedEmployees = validationSkipped
+                    });
+                }
+
+                /* =========================================================
+                   2. EXECUTE MARK PAID PROCESS
+                ========================================================= */
+                DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_MarkPaid",
+                                                    TenantId, month, year, paidDt.Date, userName, finalizedIds);
 
                 if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
                     return Json(new { success = false, message = "No response from payment process." });
 
-                // =============================
                 // Result Set 1 : Summary
-                // =============================
                 DataRow summary = ds.Tables[0].Rows[0];
-
                 int paidUpdated = Convert.ToInt32(summary["PaidUpdated"]);
                 int totalEmployees = Convert.ToInt32(summary["TotalEmployees"]);
                 int paidEmployees = Convert.ToInt32(summary["PaidEmployees"]);
                 string message = summary["Message"]?.ToString();
 
-                // =============================
-                // Result Set 2 : Skipped Employees
-                // =============================
-                var skippedEmployees = new List<object>();
-
+                // Result Set 2 : Detailed Skipped Employees (from SQL logic)
+                var sqlSkipped = new List<object>();
                 if (ds.Tables.Count > 1)
                 {
-                    skippedEmployees = ds.Tables[1].AsEnumerable()
+                    sqlSkipped = ds.Tables[1].AsEnumerable()
                         .Select(r => new
                         {
-                            EmployeeID = r["EmployeeID"].ToString(),
                             EmployeeName = r["EmployeeName"].ToString(),
                             SkipReason = r["SkipReason"].ToString()
-                        })
-                        .ToList<object>();
+                        }).ToList<object>();
                 }
 
-                // =============================
-                // FINAL RESPONSE
-                // =============================
+                // Combine Validation Skips and SQL Skips
+                var allSkipped = validationSkipped.Cast<object>().Concat(sqlSkipped).ToList();
+
                 return Json(new
                 {
                     success = true,
                     paidUpdated,
                     totalEmployees,
                     paidEmployees,
-                    skippedEmployees,
+                    skippedEmployees = allSkipped,
                     message
                 });
             }
@@ -222,38 +249,118 @@ namespace MendinePayroll.UI.Controllers
             return new string('*', accountNo.Length - 4) + accountNo.Substring(accountNo.Length - 4);
         }
 
+        
         [HttpGet]
-        public ActionResult ExportExcel(int month,int year,int? companyId,int? payGroupId,int? status,string search)
+        public ActionResult ExportExcel(int month, int year, string payrollProcessEmployeeIds)
         {
-            DataTable dt = clsDatabase.fnDataTable("SP_Payroll_SalaryRegister_Export",TenantId,month,year,companyId,payGroupId,status,search);
-
-            if (dt == null || dt.Rows.Count == 0)
-                return Content("No data available for export.");
+            DataTable dt = clsDatabase.fnDataTable("SP_Payroll_SalaryReport_Export", TenantId, month, year, payrollProcessEmployeeIds);
+            if (dt == null || dt.Rows.Count == 0) return Content("No data found.");
 
             using (var wb = new ClosedXML.Excel.XLWorkbook())
             {
-                var ws = wb.Worksheets.Add("Salary Register");
-                ws.Cell(1, 1).InsertTable(dt);
+                var ws = wb.Worksheets.Add("Salary Sheet");
 
-                ws.Columns().AdjustToContents();
-                ws.Row(1).Style.Font.Bold = true;
+                // Dynamic Setup
+                DataView dv = dt.DefaultView;
+                dv.Sort = "Department ASC";
+                DataTable sortedDt = dv.ToTable();
+                int totalCols = sortedDt.Columns.Count;
+
+                // 1. Title
+                var title = ws.Range(1, 1, 1, totalCols).Merge();
+                title.Value = $"Salary Sheet Report for the Month of - {new DateTime(year, month, 1):MMMM yyyy}";
+                title.Style.Font.Bold = true;
+                title.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                int headerRow = 4;
+                int currentRow = 5;
+
+                // 2. Headers
+                for (int i = 0; i < totalCols; i++)
+                {
+                    var cell = ws.Cell(headerRow, i + 1);
+                    string colName = sortedDt.Columns[i].ColumnName;
+                    cell.Value = colName;
+                    cell.Style.Font.Bold = true;
+                    cell.Style.Fill.BackgroundColor = XLColor.LightGray;
+                    cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    cell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+                    // Specific Column Colors
+                    if (colName.Contains("ACTUAL_GROSS")) cell.Style.Fill.BackgroundColor = XLColor.LightBlue;
+                    if (colName.Contains("PAIDDAYS")) cell.Style.Fill.BackgroundColor = XLColor.LightSalmon;
+                    if (colName.Contains("EARNED_GROSS")) cell.Style.Fill.BackgroundColor = XLColor.LightGreen;
+                }
+
+                // 3. Data Loop with Grouping
+                string currentDept = "";
+                int deptStartRow = currentRow;
+
+                for (int i = 0; i < sortedDt.Rows.Count; i++)
+                {
+                    string rowDept = sortedDt.Rows[i]["Department"].ToString();
+
+                    if (i > 0 && rowDept != currentDept)
+                    {
+                        AddSummary(ws, ref currentRow, deptStartRow, currentDept + " TOTAL", sortedDt.Columns, XLColor.GoldenYellow, totalCols);
+                        deptStartRow = currentRow;
+                    }
+
+                    for (int j = 0; j < totalCols; j++)
+                    {
+                        var cell = ws.Cell(currentRow, j + 1);
+                        string cellVal = sortedDt.Rows[i][j]?.ToString() ?? "";
+                        cell.Value = cellVal;
+                        cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                        cell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+                        // Status Logic
+                        if (sortedDt.Columns[j].ColumnName.ToUpper() == "STATUS")
+                        {
+                            if (cellVal == "Draft") cell.Style.Fill.BackgroundColor = XLColor.BananaMania;
+                            else if (cellVal == "Finalized") cell.Style.Fill.BackgroundColor = XLColor.LightGreen;
+                            else if (cellVal == "Rejected") cell.Style.Fill.BackgroundColor = XLColor.Coquelicot;
+                        }
+                    }
+                    currentDept = rowDept;
+                    currentRow++;
+                }
+
+                // 4. Totals (Yellow for Group, Green for Grand)
+                if (sortedDt.Rows.Count > 0)
+                    AddSummary(ws, ref currentRow, deptStartRow, currentDept + " TOTAL", sortedDt.Columns, XLColor.GoldenYellow, totalCols);
+
+                AddSummary(ws, ref currentRow, 5, "GRAND TOTAL", sortedDt.Columns, XLColor.GreenRyb, totalCols);
+
+                ws.Columns(1, totalCols).AdjustToContents();
 
                 using (var stream = new MemoryStream())
                 {
                     wb.SaveAs(stream);
-                    stream.Position = 0;
-
-                    string fileName = $"SalaryRegister_{month}_{year}.xlsx";
-
-                    return File(
-                        stream.ToArray(),
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        fileName
-                    );
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SalaryReport.xlsx");
                 }
             }
         }
 
+        private void AddSummary(IXLWorksheet ws, ref int row, int startRow, string label, DataColumnCollection cols, XLColor color, int maxCol)
+        {
+            ws.Cell(row, 1).Value = label;
+            ws.Range(row, 1, row, maxCol).Style.Font.Bold = true;
+            ws.Range(row, 1, row, maxCol).Style.Fill.BackgroundColor = color;
+            ws.Range(row, 1, row, maxCol).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+            for (int c = 1; c <= maxCol; c++)
+            {
+                string name = cols[c - 1].ColumnName.ToUpper();
+                if (name.Contains("ACTUAL") || name.Contains("EARNED") || name.Contains("GROSS") || name.Contains("PAY") || name.Contains("DEDUCTION"))
+                {
+                    ws.Cell(row, c).FormulaA1 = $"=SUM({ws.Cell(startRow, c).Address}:{ws.Cell(row - 1, c).Address})";
+                }
+                ws.Cell(row, c).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            }
+            row++;
+        }
+        
         public ActionResult CTCReport()
         {
             if (Session["UserName"] == null)
@@ -302,12 +409,46 @@ namespace MendinePayroll.UI.Controllers
 
                 if (string.IsNullOrEmpty(payrollProcessEmployeeIds))
                     return Json(new { success = false, message = "No employees selected" });
-
                 /* =========================================================
-                   1. GROUP SELECTED EMPLOYEES BY BATCH (Month/Year)
+                       1. IDENTIFY SKIPPED VS VALID (ONLY STATUS 1 ALLOWED)
+                    ========================================================= */
+                DataTable dtValidation = clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation",
+                                                         payrollProcessEmployeeIds);
+
+                if (dtValidation == null || dtValidation.Rows.Count == 0)
+                    return Json(new { success = false, message = "No records found for the selected IDs." });
+
+                // Identify Skipped vs. Valid
+                var skippedEmployees = dtValidation.AsEnumerable()
+                    .Where(r => Convert.ToInt32(r["Status"]) != 1) // Filter anyone NOT in Draft
+                    .Select(r => new {
+                        Name = r["EmployeeName"].ToString(),
+                        Code = r["empcode"].ToString(),
+                        // 🔑 THIS IS HOW YOU GET THE REASON:
+                        Reason = Convert.ToInt32(r["Status"]) == 2 ? "Already Finalized" :
+                                 Convert.ToInt32(r["Status"]) == 3 ? "Rejected (Fix first)" :
+                                 Convert.ToInt32(r["Status"]) == 0 ? "Record Missing" : "Invalid Status"
+                    }).ToList();
+
+                // Filter only the Draft IDs for the next processing steps
+                string validDraftIds = string.Join(",", dtValidation.AsEnumerable()
+                    .Where(r => Convert.ToInt32(r["Status"]) == 1)
+                    .Select(r => r["RequestedID"].ToString()));
+
+                if (string.IsNullOrEmpty(validDraftIds))
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No valid draft records selected for approval.",
+                        skipped = skippedEmployees
+                    });
+                }
+                /* =========================================================
+                   1.1 GROUP SELECTED EMPLOYEES BY BATCH (Month/Year)
                 ========================================================= */
                 DataTable dtBatchGroups = clsDatabase.fnDataTable("SP_Payroll_SaaS_GetSelectedGroupsForApproval",
-                                             month, year, payrollProcessEmployeeIds, TenantId);
+                                             month, year, validDraftIds, TenantId);
 
                 if (dtBatchGroups == null || dtBatchGroups.Rows.Count == 0)
                     return Json(new { success = false, message = "No valid draft records found for approval" });
@@ -398,7 +539,8 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new
                 {
                     success = true,
-                    message = $"Successfully finalized employees across {totalBatchesProcessed} payroll periods."
+                    message = $"Successfully finalized valid employees across {totalBatchesProcessed} payroll periods.",
+                    skipped = skippedEmployees // 🔑 THIS IS THE KEY: Send the list to the UI
                 });
             }
             catch (Exception ex)
@@ -406,29 +548,100 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-        
+
+         
         [HttpPost]
         public JsonResult BulkReject(RejectRequest model)
         {
             try
             {
-                // 1. Basic Validation
                 if (model == null || string.IsNullOrEmpty(model.payrollProcessEmployeeIds))
                 {
                     return Json(new { success = false, message = "No employees selected for rejection." });
                 }
 
+                /* =========================================================
+                   1. VALIDATE STATUSES (Using our same SP)
+                ========================================================= */
+                DataTable dtValidation = clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation",
+                                                                 model.payrollProcessEmployeeIds);
+
+                // Identify who to SKIP
+                var skippedEmployees = dtValidation.AsEnumerable()
+                    .Where(r => Convert.ToInt32(r["Status"]) != 1) // Anything not a Draft
+                    .Select(r => new {
+                        Name = r["EmployeeName"].ToString(),
+                        Code = r["empcode"].ToString(),
+                        Reason = Convert.ToInt32(r["Status"]) == 2 ? "Already Finalized" :
+                                 Convert.ToInt32(r["Status"]) == 3 ? "Already Rejected" : "Record Missing"
+                    }).ToList();
+
+                // Identify valid IDs to REJECT (Only Status 1)
+                string validIdsToReject = string.Join(",", dtValidation.AsEnumerable()
+                    .Where(r => Convert.ToInt32(r["Status"]) == 1)
+                    .Select(r => r["RequestedID"].ToString()));
+
+                if (string.IsNullOrEmpty(validIdsToReject))
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No valid draft records found to reject.",
+                        skipped = skippedEmployees
+                    });
+                }
+
+                /* =========================================================
+                   2. CALL REJECT SP FOR VALID IDS ONLY
+                ========================================================= */
                 string userName = Session["UserName"]?.ToString();
+                DataTable dt = clsDatabase.fnDataTable("SP_Payroll_BulkReject", validIdsToReject, model.reason, model.month, model.year, userName,TenantId);
 
-                DataTable dt = clsDatabase.fnDataTable("SP_Payroll_BulkReject",model.payrollProcessEmployeeIds,model.reason, model.month, model.year, userName, TenantId);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    int statusCode = Convert.ToInt32(dt.Rows[0]["StatusCode"]);
+                    string resultMessage = dt.Rows[0]["Message"].ToString();
 
-                return Json(new { success = false, message = "Unable to process rejection." });
+                    return Json(new
+                    {
+                        success = (statusCode == 1),
+                        message = resultMessage,
+                        skipped = skippedEmployees // 🔑 Send to Modal
+                    });
+                }
+
+                return Json(new { success = false, message = "Database did not return a response." });
             }
             catch (Exception ex)
             {
-                // Log Error here
                 return Json(new { success = false, message = "Server Error: " + ex.Message });
             }
-        } 
+        }
+
+        [HttpGet]
+        public JsonResult GetAllSelectedIds(int month, int year, int? companyId, int? payGroupId, string search, int? status)
+        {
+            try
+            {
+                // 1. We call the same Grid SP but pass 1 for pageNumber and 999999 for pageSize 
+                // to retrieve every single ID matching the filters at once.
+                DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_Grid",
+                                                    TenantId, month, year, companyId, payGroupId, search, status, 1, 999999);
+
+                if (ds == null || ds.Tables.Count < 2)
+                    return Json(new { success = false, message = "No data found" }, JsonRequestBehavior.AllowGet);
+
+                // 2. We only need the PayrollProcessEmployeeID column for selection memory
+                var idList = ds.Tables[1].AsEnumerable()
+                               .Select(r => r["PayrollProcessEmployeeID"].ToString())
+                               .ToList();
+
+                return Json(new { success = true, ids = idList }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

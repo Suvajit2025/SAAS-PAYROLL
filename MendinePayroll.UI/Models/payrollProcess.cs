@@ -39,7 +39,7 @@ namespace MendinePayroll.UI.Models
         public decimal EmployerContribution { get; set; }
         public decimal MonthlyCTC { get; set; }
         public decimal ManualAddition { get; set; }
-        public decimal ManualDeduction { get; set; }
+        public decimal ManualDeduction { get; set; } 
         public List<SalaryComponentResult> Components { get; set; }
     }
     public class SalaryComponentResult

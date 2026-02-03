@@ -3167,93 +3167,229 @@
     //        }
     //    });
     //}
+    //function loadEmployeeWiseBatchGrid() {
+    //    if ($.fn.DataTable.isDataTable('#empWiseTable')) {
+    //        $('#empWiseTable').DataTable().destroy();
+    //    }
+
+    //    $.ajax({
+    //        url: '/bulkSalaryProcess/GetPayrollEmployeeWiseDashboard',
+    //        type: 'GET',
+    //        success: function (res) {
+    //            const tbody = $('#empWiseBody').empty();
+
+    //            res.forEach(r => {
+    //                // 1. Logic for Status Badges
+    //                let statusBadge = '';
+    //                let rowClass = '';
+
+    //                if (r.Status === 2) {
+    //                    statusBadge = '<span class="label label-success">Approved</span>';
+    //                } else if (r.Status === 3) {
+    //                    // Show Rejection Reason as a small text below the badge or in a tooltip
+    //                    const reasonHtml = r.RejectionReason ? `<br/><small class="text-danger"><b>Reason:</b> ${escapeHtml(r.RejectionReason)}</small>` : '';
+
+    //                    statusBadge = `<span class="label label-danger animated pulse infinite" title="${escapeHtml(r.RejectionReason || 'Rejected')}">
+    //                                <i class="fa fa-warning"></i> Rejected
+    //                               </span>${reasonHtml}`;
+    //                    rowClass = 'row-rejected';
+    //                } else {
+    //                    statusBadge = '<span class="label label-warning">Draft</span>';
+    //                }
+
+    //                // 2. Logic for Action Button (Eye for Approved, Pencil for Draft/Rejected)
+    //                const actionIcon = (r.Status === 2) ? 'fa-eye' : 'fa-pencil';
+    //                const actionBtnClass = (r.Status === 3) ? 'btn-danger' : 'btn-default';
+
+    //                // 3. Append Row (Ensuring 11 columns to match <thead>)
+    //                tbody.append(`
+    //                    <tr class="${rowClass}">
+    //                        <td style="width:250px;">
+    //                            <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName)}</div>
+    //                            <div class="text-xs text-muted">
+    //                                ${escapeHtml(r.EmployeeCode)} <span class="text-primary">(${escapeHtml(r.EmployeeNo)})</span>
+    //                            </div>
+    //                        </td>
+    //                        <td>${escapeHtml(r.PayGroupName)}</td>
+    //                        <td>${escapeHtml(r.PeriodText)}</td>
+    //                        <td class="text-right">${Number(r.GrossPay).toLocaleString('en-IN')}</td>
+    //                        <td class="text-right text-danger">${Number(r.Deduction).toLocaleString('en-IN')}</td>
+    //                        <td class="text-right text-primary" style="font-weight:bold;">${Number(r.NetPay).toLocaleString('en-IN')}</td>
+    //                        <td class="text-center">${statusBadge}</td>
+    //                        <td class="text-right">
+    //                            <button class="btn btn-xs ${actionBtnClass} btn-outline"
+    //                                    onclick="openEditSalaryModal(${r.PreviewBatchID}, ${r.PayrollProcessEmployeeID}, ${r.EmployeeId}, ${r.Status})"
+    //                                    title="${r.Status === 2 ? 'View Details' : 'Edit Salary'}">
+    //                                <i class="fa ${actionIcon}"></i>
+    //                            </button>
+    //                        </td>
+    //                        <td class="hidden">${r.ProcessMonth}</td>
+    //                        <td class="hidden">${r.ProcessYear}</td>
+    //                        <td class="hidden">${r.PayGroupID}</td>
+    //                    </tr>
+    //                `);
+    //            });
+    //            empDtInstance = $('#empWiseTable').DataTable({
+    //                pageLength: 10,
+    //                ordering: true,
+    //                lengthChange: false,
+    //                info: true,
+    //                columnDefs: [
+    //                    // Index 8, 9, 10 are the 9th, 10th, and 11th columns
+    //                    { targets: [8, 9, 10], visible: false, searchable: true },
+    //                    { targets: [7], orderable: false } // Action column no-sort
+    //                ],
+    //                dom: '<"dt-top-row"<"dt-filters-left"><"dt-search-right"f>>rt<"dt-bottom"ip>',
+    //                initComplete: function () {
+    //                    moveAndBindFilters();
+    //                }
+    //            });
+    //            //empDtInstance = $('#empWiseTable').DataTable({
+    //            //    pageLength: 10,
+    //            //    ordering: true, // Enabled ordering for better UX
+    //            //    lengthChange: false,
+    //            //    info: true,
+    //            //    columnDefs: [
+    //            //        { targets: [0, 8, 9], orderable: false }, // Disable order on Checkbox, Status, Action
+    //            //        { targets: [10, 11, 12], visible: false }
+    //            //    ],
+    //            //    dom: '<"dt-top-row"<"dt-filters-left"><"dt-search-right"f>>rt<"dt-bottom"ip>',
+    //            //    initComplete: function () {
+    //            //        moveAndBindFilters();
+    //            //    }
+    //            //});
+    //        }
+    //    });
+    //}
     function loadEmployeeWiseBatchGrid() {
+        // 1. Safety check for the table element
+        if (!$('#empWiseTable').length) return;
+
+        // 2. Destroy existing instance safely to prevent "Cannot re-initialize" errors
         if ($.fn.DataTable.isDataTable('#empWiseTable')) {
-            $('#empWiseTable').DataTable().destroy();
+            $('#empWiseTable').DataTable().clear().destroy();
         }
+
+        // 3. Show loader before starting the request
+        showPayrollLoader();
 
         $.ajax({
             url: '/bulkSalaryProcess/GetPayrollEmployeeWiseDashboard',
             type: 'GET',
+            cache: false,
             success: function (res) {
-                const tbody = $('#empWiseBody').empty();
+                try {
+                    const tbody = $('#empWiseBody').empty();
 
-                res.forEach(r => {
-                    // 1. Logic for Status Badges
-                    let statusBadge = '';
-                    let rowClass = '';
-
-                    if (r.Status === 2) {
-                        statusBadge = '<span class="label label-success">Approved</span>';
-                    } else if (r.Status === 3) {
-                        // 🚩 REJECTED TAG (pulsing for visibility)
-                        statusBadge = '<span class="label label-danger animated pulse infinite" title="Rejected - Needs Correction"><i class="fa fa-warning"></i> Rejected</span>';
-                        rowClass = 'row-rejected';
+                    if (!res || res.length === 0) {
+                        tbody.append('<tr><td colspan="12" class="text-center">No employee records found.</td></tr>');
                     } else {
-                        statusBadge = '<span class="label label-warning">Draft</span>';
+                        res.forEach(r => {
+                            let statusBadge = '';
+                            let rowClass = '';
+                            let rowTooltip = '';
+
+                            // Define Tooltip and Status Logic
+                            if (r.Status === 3) {
+                                rowClass = 'row-rejected';
+
+                                statusBadge =
+                                    '<span class="label label-danger animated pulse" ' +
+                                    'title="' + ((r.RejectionReason && r.RejectionReason.trim() !== "")
+                                        ? r.RejectionReason
+                                        : 'Needs correction and resubmission') + '">' +
+                                    '<i class="fa fa-undo"></i> Rejected' +
+                                    '</span>';
+
+                                // Tooltip text (for row-level tooltip if needed elsewhere)
+                                rowTooltip = (r.RejectionReason && r.RejectionReason.trim() !== "")
+                                    ? "REASON: " + r.RejectionReason
+                                    : "Sent back – needs correction";
+
+                            }
+                            else if (r.Status === 2) {
+                                statusBadge =
+                                    '<span class="label label-success">' +
+                                    '<i class="fa fa-check-circle"></i> Approved' +
+                                    '</span>';
+                            }
+                            else {
+                                statusBadge =
+                                    '<span class="label label-warning">' +
+                                    '<i class="fa fa-pencil"></i> Draft' +
+                                    '</span>';
+                            }
+
+
+                            const actionIcon = (r.Status === 2) ? 'fa-eye' : 'fa-pencil';
+                            const actionBtnClass = (r.Status === 3) ? 'btn-danger' : 'btn-default';
+
+                            // Create the Tooltip attribute - Using data-original-title to avoid browser conflicts
+                            const tooltipAttr = rowTooltip ? `data-toggle="tooltip" data-original-title="${escapeHtml(rowTooltip)}"` : '';
+
+                            tbody.append(`
+                            <tr class="${rowClass}" ${tooltipAttr} style="${r.Status === 3 ? 'cursor:help;' : ''}">
+                                <td style="width:250px;">
+                                    <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName)}</div>
+                                    <div class="text-xs text-muted">
+                                        ${escapeHtml(r.EmployeeCode)} <span class="text-primary">(${escapeHtml(r.EmployeeNo)})</span>
+                                    </div>
+                                </td>
+                                <td>${escapeHtml(r.PayGroupName)}</td>
+                                <td>${escapeHtml(r.PeriodText)}</td>
+                                <td class="text-right">${Number(r.GrossPay || 0).toLocaleString('en-IN')}</td>
+                                <td class="text-right text-danger">${Number(r.Deduction || 0).toLocaleString('en-IN')}</td>
+                                <td class="text-right text-primary" style="font-weight:bold;">${Number(r.NetPay || 0).toLocaleString('en-IN')}</td>
+                                <td class="text-center">${statusBadge}</td>
+                                <td class="text-right">
+                                    <button class="btn btn-xs ${actionBtnClass} btn-outline" 
+                                            onclick="openEditSalaryModal(${r.PreviewBatchID}, ${r.PayrollProcessEmployeeID}, ${r.EmployeeId}, ${r.Status})" 
+                                            title="${r.Status === 2 ? 'View Details' : 'Edit Salary'}">
+                                        <i class="fa ${actionIcon}"></i>
+                                    </button>
+                                </td>
+                                <td class="hidden">${r.ProcessMonth}</td>
+                                <td class="hidden">${r.ProcessYear}</td>
+                                <td class="hidden">${r.PayGroupID}</td>
+                                <td class="hidden">${r.Status}</td>
+                            </tr>
+                        `);
+                        });
                     }
 
-                    // 2. Logic for Action Button (Eye for Approved, Pencil for Draft/Rejected)
-                    const actionIcon = (r.Status === 2) ? 'fa-eye' : 'fa-pencil';
-                    const actionBtnClass = (r.Status === 3) ? 'btn-danger' : 'btn-default';
+                    // 4. Initialize DataTable
+                    empDtInstance = $('#empWiseTable').DataTable({
+                        pageLength: 10,
+                        ordering: true,
+                        order: [[11, 'desc']],
+                        lengthChange: false,
+                        info: true,
+                        columnDefs: [
+                            // 🔑 CHANGE: Ensure these are explicitly marked as searchable
+                            { targets: [8, 9, 10, 11], visible: false, searchable: true },
+                            { targets: [7], orderable: false }
+                        ],
+                        dom: '<"dt-top-row"<"dt-filters-left"><"dt-search-right"f>>rt<"dt-bottom"ip>',
+                        initComplete: function () {
+                            if (typeof moveAndBindFilters === 'function') {
+                                moveAndBindFilters();
+                            }
+                            // Initialize Bootstrap tooltips
+                            $('#empWiseTable [data-toggle="tooltip"]').tooltip({ container: 'body', html: true });
+                        }
+                    });
 
-                    // 3. Append Row (Ensuring 11 columns to match <thead>)
-                    tbody.append(`
-                        <tr class="${rowClass}">
-                            <td style="width:250px;">
-                                <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName)}</div>
-                                <div class="text-xs text-muted">
-                                    ${escapeHtml(r.EmployeeCode)} <span class="text-primary">(${escapeHtml(r.EmployeeNo)})</span>
-                                </div>
-                            </td>
-                            <td>${escapeHtml(r.PayGroupName)}</td>
-                            <td>${escapeHtml(r.PeriodText)}</td>
-                            <td class="text-right">${Number(r.GrossPay).toLocaleString('en-IN')}</td>
-                            <td class="text-right text-danger">${Number(r.Deduction).toLocaleString('en-IN')}</td>
-                            <td class="text-right text-primary" style="font-weight:bold;">${Number(r.NetPay).toLocaleString('en-IN')}</td>
-                            <td class="text-center">${statusBadge}</td>
-                            <td class="text-right">
-                                <button class="btn btn-xs ${actionBtnClass} btn-outline" 
-                                        onclick="openEditSalaryModal(${r.PreviewBatchID}, ${r.PayrollProcessEmployeeID}, ${r.EmployeeId}, ${r.Status})" 
-                                        title="${r.Status === 2 ? 'View Details' : 'Edit Salary'}">
-                                    <i class="fa ${actionIcon}"></i>
-                                </button>
-                            </td>
-                            <td class="hidden">${r.ProcessMonth}</td>
-                            <td class="hidden">${r.ProcessYear}</td>
-                            <td class="hidden">${r.PayGroupID}</td>
-                        </tr>
-                    `);
-                });
-                empDtInstance = $('#empWiseTable').DataTable({
-                    pageLength: 10,
-                    ordering: true,
-                    lengthChange: false,
-                    info: true,
-                    columnDefs: [
-                        // Index 8, 9, 10 are the 9th, 10th, and 11th columns
-                        { targets: [8, 9, 10], visible: false, searchable: true },
-                        { targets: [7], orderable: false } // Action column no-sort
-                    ],
-                    dom: '<"dt-top-row"<"dt-filters-left"><"dt-search-right"f>>rt<"dt-bottom"ip>',
-                    initComplete: function () {
-                        moveAndBindFilters();
-                    }
-                });
-                //empDtInstance = $('#empWiseTable').DataTable({
-                //    pageLength: 10,
-                //    ordering: true, // Enabled ordering for better UX
-                //    lengthChange: false,
-                //    info: true,
-                //    columnDefs: [
-                //        { targets: [0, 8, 9], orderable: false }, // Disable order on Checkbox, Status, Action
-                //        { targets: [10, 11, 12], visible: false }
-                //    ],
-                //    dom: '<"dt-top-row"<"dt-filters-left"><"dt-search-right"f>>rt<"dt-bottom"ip>',
-                //    initComplete: function () {
-                //        moveAndBindFilters();
-                //    }
-                //});
+                } catch (err) {
+                    console.error("Grid Rendering Error:", err);
+                }
+            },
+            error: function (xhr) {
+                console.error("AJAX Error:", xhr);
+                toastr.error("Failed to load employee dashboard");
+            },
+            complete: function () {
+                // 🚀 CRITICAL FIX: Always hide loader here
+                hidePayrollLoader();
             }
         });
     }
@@ -3269,6 +3405,21 @@
     //        .column(12).search(group || '', false, false)
     //        .draw();
     //}
+    //function applyEmployeeWiseFilters() {
+    //    if (!empDtInstance) return;
+
+    //    const month = $('#ddlEmpMonth').val();
+    //    const year = $('#ddlEmpYear').val();
+    //    const group = $('#ddlEmpPayGroup').val();
+
+    //    // Index 8: MonthID, Index 9: YearID, Index 10: PayGroupID
+    //    // Using Regex ^value$ for exact match (prevents '1' matching '11')
+    //    empDtInstance
+    //        .column(8).search(month ? '^' + month + '$' : '', true, false)
+    //        .column(9).search(year ? '^' + year + '$' : '', true, false)
+    //        .column(10).search(group ? '^' + group + '$' : '', true, false)
+    //        .draw();
+    //}
     function applyEmployeeWiseFilters() {
         if (!empDtInstance) return;
 
@@ -3276,8 +3427,8 @@
         const year = $('#ddlEmpYear').val();
         const group = $('#ddlEmpPayGroup').val();
 
-        // Index 8: MonthID, Index 9: YearID, Index 10: PayGroupID
-        // Using Regex ^value$ for exact match (prevents '1' matching '11')
+        // Index 8: Month, Index 9: Year, Index 10: PayGroup
+        // We use ^value$ to tell DataTables "Only show rows that match this EXACTLY"
         empDtInstance
             .column(8).search(month ? '^' + month + '$' : '', true, false)
             .column(9).search(year ? '^' + year + '$' : '', true, false)
@@ -3487,6 +3638,69 @@
     }
     function calcPaid(id) { const p = parseFloat($(`#prs_${id}`).val()) || 0; const l = parseFloat($(`#lve_${id}`).val()) || 0; const h = parseFloat($(`#hol_${id}`).val()) || 0; $(`#paid_${id}`).val(p + l + h); }
 
+    /*======Download Excel Formet========*/
+    function downloadComponentFormat(ConfigureSalaryComponentID) {
+        const payGroupId = $("#ddlGroup").val();
+        const monthYearVal = $("#txtMonthYear").val(); // Format: "2026-02"
+
+        if (!payGroupId || payGroupId === "0") {
+            toastr.error("Please select a Pay Group first.");
+            return;
+        }
+
+        if (!monthYearVal) {
+            toastr.error("Please select Month & Year first.");
+            return;
+        }
+
+        // Split "2026-02" -> [2026, 02]
+        const parts = monthYearVal.split("-");
+        const year = parseInt(parts[0]);
+        const month = parseInt(parts[1]);
+
+        // Direct download link
+        window.location.href = `/bulkSalaryProcess/DownloadVariableTemplate?payGroupId=${payGroupId}&ConfigureSalaryComponentId=${ConfigureSalaryComponentID}&month=${month}&year=${year}`;
+    }
+    /*====== Upload Excel Logic ========*/
+    function uploadComponentFile(ConfigureSalaryComponentId, input) {
+        if (!input.files || input.files.length === 0) return;
+
+        const file = input.files[0];
+        const monthYearVal = $("#txtMonthYear").val();
+        const parts = monthYearVal.split("-");
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("configId", ConfigureSalaryComponentId);
+        formData.append("month", parseInt(parts[1]));
+        formData.append("year", parseInt(parts[0]));
+
+        showPayrollLoader();
+
+        $.ajax({
+            url: '/bulkSalaryProcess/UploadVariableComponentValues',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                if (res.success) {
+                    toastr.success(res.message);
+                    // Refresh the attendance grid to show updated numbers if necessary
+                    loadAttendanceEmployees($("#ddlGroup").val(), $("#ddlType").val());
+                } else {
+                    toastr.error(res.message);
+                }
+            },
+            error: function () {
+                toastr.error("Server error during file upload.");
+            },
+            complete: function () {
+                hidePayrollLoader();
+                $(input).val(''); // Clear file input for next use
+            }
+        });
+    }
     /* ================Open General Modal================== */
     function openGenModal() {
         // 🔹 CLEAR EMPLOYEE SELECTION STATE
@@ -4008,6 +4222,73 @@
 
     //    renderSalaryGrid(pivotData);
     //}
+    //function openDetailModal(isViewMode, serverResult, batchStatus) {
+    //    if (!serverResult || !serverResult.Rows || !serverResult.Columns) {
+    //        console.error("Invalid server result", serverResult);
+    //        return;
+    //    }
+
+    //    window.currentBatchStatus = Number(batchStatus || 0);
+    //    pivotData = serverResult;
+    //    setOriginalPreviewSnapshot(serverResult);
+
+    //    // Normalize defaults
+    //    pivotData.Rows.forEach(r => {
+    //        r.ManualAddition ??= 0;
+    //        r.ManualDeduction ??= 0;
+    //    });
+
+    //    $("#lblRef").text(serverResult.RefNo || $("#genRefNo").val() || "--");
+    //    $("#detailModal").fadeIn(200);
+    //    $("#txtEmpSearch").val("");
+    //    $("#chkGlobalLoanSkip").prop("checked", false);
+    //    window.ApprovedCount = serverResult.ApprovedCount;
+    //    const footer = $("#detailFooter");
+
+    //    // 🔑 LOGIC: If status is 2 (Finalized), it's already approved. Hide all actions.
+    //    if (window.currentBatchStatus === 2) {
+    //        footer.hide();
+    //    } else {
+    //        footer.show();
+
+    //        if (isViewMode) {
+    //            // 🔑 KITCHEN VIEW MODE:
+    //            // We only allow "Discarding" the draft if they want to start over.
+    //            // NO APPROVE BUTTON HERE.
+    //            footer.html(`
+    //            <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
+    //                <i class="fa fa-info-circle"></i> View mode: Approve this batch from the <b>Salary Register</b> page.
+    //            </div>
+    //            <button class="btn-reject" onclick="deleteBatchView()">
+    //                <i class="fas fa-trash-alt"></i> Discard Draft
+    //            </button>
+    //            <button class="btn-outline" onclick="closeModal('detailModal')">
+    //                Close
+    //            </button>
+    //        `);
+    //        } else {
+    //            // 🔑 KITCHEN PROCESSING MODE (Fresh Run):
+    //            // The "Submit" button just saves it as a "Draft (Status 1)"
+    //            // so it appears in the Salary Register.
+    //            footer.html(`
+    //            <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
+    //                * Submitting will send this batch to the Salary Register for Approval.
+    //            </div>
+    //            <button class="btn-outline"
+    //                    style="border-color:#d97706; color:#d97706;"
+    //                    onclick="rejectBatch()">
+    //                <i class="fas fa-undo"></i> Back to Attendance
+    //            </button>
+    //            <button class="btn-create"
+    //                    onclick="submitBatchForApproval()">
+    //                <i class="fas fa-paper-plane"></i> Submit Draft
+    //            </button>
+    //        `);
+    //        }
+    //    }
+
+    //    renderSalaryGrid(pivotData);
+    //}
     function openDetailModal(isViewMode, serverResult, batchStatus) {
         if (!serverResult || !serverResult.Rows || !serverResult.Columns) {
             console.error("Invalid server result", serverResult);
@@ -4029,6 +4310,8 @@
         $("#txtEmpSearch").val("");
         $("#chkGlobalLoanSkip").prop("checked", false);
 
+        const approvedCount = Number(window.currentApprovedCount || 0);
+
         const footer = $("#detailFooter");
 
         // 🔑 LOGIC: If status is 2 (Finalized), it's already approved. Hide all actions.
@@ -4038,24 +4321,35 @@
             footer.show();
 
             if (isViewMode) {
-                // 🔑 KITCHEN VIEW MODE: 
-                // We only allow "Discarding" the draft if they want to start over.
-                // NO APPROVE BUTTON HERE.
+                // 🛡️ CHECK: If any employees are already approved, disable the Discard button
+                let discardBtnHtml = '';
+
+                if (approvedCount > 0) {
+                    // Batch is "On Processing"
+                    discardBtnHtml = `
+                    <button class="btn-reject" style="background-color: #94a3b8; cursor: not-allowed; border-color: #94a3b8;" 
+                            onclick="toastr.warning('Cannot discard batch: ${approvedCount} employees are already finalized.')">
+                        <i class="fas fa-lock"></i> Batch In-Process
+                    </button>`;
+                } else {
+                    // Fresh Draft
+                    discardBtnHtml = `
+                    <button class="btn-reject" onclick="deleteBatchView()">
+                        <i class="fas fa-trash-alt"></i> Discard Draft
+                    </button>`;
+                }
+
                 footer.html(`
                 <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
-                    <i class="fa fa-info-circle"></i> View mode: Approve this batch from the <b>Salary Register</b> page.
+                    <i class="fa fa-info-circle"></i> ${approvedCount} of ${serverResult.Rows.length} employees approved.
                 </div>
-                <button class="btn-reject" onclick="deleteBatchView()">
-                    <i class="fas fa-trash-alt"></i> Discard Draft
-                </button>
+                ${discardBtnHtml}
                 <button class="btn-outline" onclick="closeModal('detailModal')">
                     Close
                 </button>
             `);
             } else {
-                // 🔑 KITCHEN PROCESSING MODE (Fresh Run):
-                // The "Submit" button just saves it as a "Draft (Status 1)" 
-                // so it appears in the Salary Register.
+                // 🔑 KITCHEN PROCESSING MODE (Fresh Run)
                 footer.html(`
                 <div style="flex:1; text-align:left; font-size:11px; color:#64748b;">
                     * Submitting will send this batch to the Salary Register for Approval.
@@ -4454,7 +4748,50 @@
         $("#genModal").fadeIn(200); // 👈 restore previous modal
     }
 
-    function deleteBatchView() { if (confirm("Delete batch?")) { closeModal('detailModal'); $("#row_1002").remove(); alert("Deleted."); } }
+    function deleteBatchView() {
+        const previewBatchId = Number($("#hdnPreviewBatchId").val());
+
+        if (!previewBatchId || previewBatchId <= 0) {
+            toastr.error("Valid Preview Batch ID not found.");
+            return;
+        }
+
+        // 🛡️ STEP 1: Double Confirmation (Safety first!)
+        const confirmMessage = "ARE YOU SURE? This will permanently delete this entire draft batch, all employee attendance records, and manual adjustments for this group. This cannot be undone.";
+
+        if (confirm(confirmMessage)) {
+            showPayrollLoader(); // Lock screen during deletion
+
+            $.ajax({
+                url: '/bulkSalaryProcess/DeletePreviewBatch',
+                type: 'POST',
+                data: { previewBatchId: previewBatchId },
+                success: function (res) {
+                    if (res.success) {
+                        toastr.success(res.message || "Batch deleted successfully.");
+
+                        // 1. Close the detail modal
+                        closeModal('detailModal');
+
+                        // 2. Refresh the main dashboard grid to show it's gone
+                        if (typeof loadPayrollBatchGrid === 'function') {
+                            loadPayrollBatchGrid();
+                        }
+                    } else {
+                        // This handles the "Safety Lock" - if some employees were already approved
+                        toastr.error(res.message || "Deletion failed.");
+                    }
+                },
+                error: function (xhr) {
+                    console.error("Delete Error:", xhr);
+                    toastr.error("A server error occurred while trying to delete the batch.");
+                },
+                complete: function () {
+                    hidePayrollLoader();
+                }
+            });
+        }
+    }
     function openLoanModal(name, openBal, emi) { $("#loanEmpLabel").text(name); $("#valOpen").text("₹ " + openBal.toLocaleString()); $("#valEmi").text("₹ " + emi.toLocaleString()); $("#valClose").text("₹ " + (openBal - emi).toLocaleString()); $("#loanModal").fadeIn(200); }
     function openHistory(name) { $("#histEmpName").text(name); $("#histBody").html(`<tr><td>Oct 2025</td><td>15,000</td><td>5,000</td><td>1,200</td><td><strong>18,800</strong></td></tr><tr><td>Sep 2025</td><td>15,000</td><td>5,000</td><td>1,200</td><td><strong>18,800</strong></td></tr>`); $("#historyModal").fadeIn(200); }
     function closeModal(id) {
@@ -4798,13 +5135,23 @@
                     res.forEach(r => {
                         // 1. Logic for Status Badges
                         let statusBadge = '';
+
                         if (r.Status === 2) {
-                            statusBadge = '<span class="label label-success">FINALIZED</span>';
-                        } else if (r.Status === 3) {
-                            statusBadge = '<span class="label label-danger animated pulse infinite"><i class="fa fa-warning"></i> REJECTED</span>';
-                        } else {
-                            statusBadge = '<span class="label label-warning">DRAFT</span>';
+                            statusBadge = '<span class="label label-success">' +
+                                '<i class="fa fa-check-circle"></i> Finalized' +
+                                '</span>';
                         }
+                        else if (r.Status === 3) {
+                            statusBadge = '<span class="label label-danger animated pulse">' +
+                                '<i class="fa fa-undo"></i>  Rejected' +
+                                '</span>';
+                        }
+                        else {
+                            statusBadge = '<span class="label label-warning">' +
+                                '<i class="fa fa-pencil"></i> Draft' +
+                                '</span>';
+                        }
+
 
                         // 2. Action Logic (Eye for Finalized, Pencil for Draft/Rejected)
                         const actionIcon = (r.Status === 2) ? 'fa-eye' : 'fa-pencil';
@@ -4958,11 +5305,11 @@
                 $("#hdnprocessMonth").val(month);
                 $("#hdnprocessYear").val(year);
 
-
+                const approvedCount = Number(res.ApprovedCount || 0);
                 // 🔥 OPEN IN EDIT MODE
                 pivotData = res.Data;
                 //openDetailModal(true, res.Data);
-                console.log(pivotData);
+                window.currentApprovedCount = approvedCount;
 
                 openDetailModal(true, res.Data, batchStatus);
                 setTimeout(() => {
@@ -5220,9 +5567,10 @@
                 //window.currentLoanEMI = parseFloat(res.Header.LoanEMIValue) || 0;
                 // 🔑 IMPORTANT: Baseline for "Extra Pay" comparison
                 window.originalTakeHome = parseFloat(res.Header.TotalTakeHome) || 0;
-
+                window.isLoanExternal = res.Header.IsLoanExternal;
                 // 2. Setup Loan Metadata
                 const loanComp = res.Details.find(d => d.OtherType === "LOANRECOVERY");
+
                 if (loanComp) {
                     // EMI from master table (via your new C# logic)
                     window.currentLoanEMI = parseFloat(loanComp.OriginalAmount) || 0;
@@ -5358,7 +5706,7 @@
         const displayName = h.EmployeeName
             ? `${h.EmployeeName} (${h.Empno || 'N/A'})`
             : "Modify Salary";
-
+        console.log(h);
         $("#editModalEmpName").text(displayName);
         $("#txtEditDays").val(h.PaidDays);
         $("#txtManualAdd").val(h.ManualAddition || 0);
@@ -5368,6 +5716,31 @@
         window.currentMonthMaxDays = h.TotalMonthDays;
         // Convert boolean/number to checkbox state
         $("#chkWaiveLoan").prop("checked", h.LoanWaivedYN === true || h.LoanWaivedYN === 1);
+        /* ======================================================
+       🔑 DISABLE LOGIC
+          ====================================================== */
+
+        // Condition A: Batch is Finalized (Status 2) -> Lock EVERYTHING
+        if (window.editSalaryCtx.status === 2) {
+            $("#txtEditDays, #txtManualAdd, #txtManualDeduction, #chkWaiveLoan").prop("disabled", true);
+            $("#chkWaiveLoan").parent().attr("title", "Batch is finalized and locked.");
+        }
+        // Condition B: Loan is External -> Lock ONLY the Loan Checkbox
+        else if (h.IsLoanExternal === true || h.IsLoanExternal === 1) {
+            
+            $("#chkWaiveLoan").prop("disabled", true);
+            $("#chkWaiveLoan").closest('label').css("color", "#94a3b8"); // Gray out the text
+            $("#chkWaiveLoan").parent().attr("title", "Loan payment managed externally.");
+
+            // Keep other fields enabled since batch is not status 2
+            $("#txtEditDays, #txtManualAdd, #txtManualDeduction").prop("disabled", false);
+        }
+        // Condition C: Normal Draft -> Everything enabled
+        else {
+            $("#txtEditDays, #txtManualAdd, #txtManualDeduction, #chkWaiveLoan").prop("disabled", false);
+            $("#chkWaiveLoan").closest('label').css("color", "");
+            $("#chkWaiveLoan").parent().removeAttr("title");
+        }
     }
 
     function bindComponents(details) {
@@ -5436,11 +5809,26 @@
                         $("#lblLoanStatus").text("NO LOAN").css("color", "#94a3b8");
                     } else {
                         // ✅ ENABLE TOGGLE: Valid loan reference found
-                        $toggle.prop('disabled', false);
-                        $toggle.prop('checked', isCurrentlyWaived);
-                        $loanBox.css({ "opacity": "1", "cursor": "default" }).removeAttr("title");
+                        //$toggle.prop('disabled', false);
+                        //$toggle.prop('checked', isCurrentlyWaived);
+                        //$loanBox.css({ "opacity": "1", "cursor": "default" }).removeAttr("title");
 
-                        $("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                        //$("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                        // ✅ VALID LOAN REFERENCE FOUND
+                        // 🔑 ADD THIS CHECK HERE:
+                        if (window.isLoanExternal || window.editSalaryCtx.status === 2) {
+                            $toggle.prop('disabled', true); // Stay disabled if external or finalized
+                            $loanBox.css({ "opacity": "0.7", "cursor": "not-allowed" });
+                            if (window.isLoanExternal) {
+                                $loanBox.attr("title", "Loan payment managed externally.");
+                            }
+                        } else {
+                            $toggle.prop('disabled', false); // Only enable if not external
+                            $loanBox.css({ "opacity": "1", "cursor": "default" }).removeAttr("title");
+                        }
+
+                        $toggle.prop('checked', isCurrentlyWaived);
+                        $("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 })); 
                     }
                 }
                 //// 🔑 1. Detect Loan Recovery using OtherType
@@ -5729,11 +6117,80 @@
         $("#loanModal").fadeIn(200);
     }
 
+    //function saveModalSalary() {
+    //    const empId = window.editSalaryCtx.employeeId;
+    //    const batchId = window.editSalaryCtx.previewBatchId;
+
+    //    // 1. Get Header Values (Manual Adjustments & Final Days)
+    //    const manualAdd = parseFloat($("#txtManualAdd").val()) || 0;
+    //    const manualDed = parseFloat($("#txtManualDed").val()) || 0;
+    //    const finalPaidDays = parseFloat($("#txtFinalDays").val()) || lockOriginalPaidDays;
+    //    const isLoanWaived = $("#chkWaiveLoan").is(":checked");
+
+    //    const componentEdits = [];
+
+    //    // 2. Scrape ALL rows from all three breakdown tables
+    //    // This captures pro-rata changes from Paid Days automatically
+    //    $("#tableEarningsBody tr, #tableDeductionsBody tr, #tableContribBody tr").each(function () {
+    //        const $row = $(this);
+    //        const configId = $row.data("config-id");
+
+    //        if (configId) {
+    //            const isLoanRow = $row.hasClass("loan-row");
+    //            // Clean string of ₹ and commas before parsing
+    //            const amount = parseFloat($row.find(".slip-amt").text().replace(/[₹,]/g, '')) || 0;
+
+    //            componentEdits.push({
+    //                PayConfigId: parseInt(configId),
+    //                Amount: amount,
+    //                // Only the specific loan row carries waiver/refId status
+    //                IsWaived: isLoanRow ? isLoanWaived : false,
+    //                ReferenceIds: isLoanRow ? (window.currentModalLoanRefIds || "") : ""
+    //            });
+    //        }
+    //    });
+
+    //    // 3. Construct the Full DTO for the Controller
+    //    const payload = {
+    //        PreviewBatchId: batchId,
+    //        EmployeeId: empId,
+    //        PaidDays: finalPaidDays,
+    //        ManualAddition: manualAdd,
+    //        ManualDeduction: manualDed,
+    //        Components: componentEdits
+    //    };
+
+    //    showPayrollLoader();
+
+    //    $.ajax({
+    //        url: '/bulkSalaryProcess/SubmitFullPreviewUpdate',
+    //        type: 'POST',
+    //        contentType: 'application/json',
+    //        data: JSON.stringify(payload),
+    //        success: function (res) {
+    //            if (res.success) {
+    //                toastr.success("Salary details updated successfully");
+    //                closeModal('editSalaryModal');
+
+    //                // Refresh the specific row in your main grid or reload the grid
+    //                loadPayrollBatchGrid();
+    //                loadEmployeeWiseBatchGrid();
+    //            } else {
+    //                toastr.error(res.message || "Failed to update salary");
+    //            }
+    //        },
+    //        error: function () {
+    //            toastr.error("Server connection error");
+    //        },
+    //        complete: function () {
+    //            hidePayrollLoader(); // ✅ ALWAYS STOP LOADER
+    //        }
+    //    });
+    //}
     function saveModalSalary() {
         const empId = window.editSalaryCtx.employeeId;
         const batchId = window.editSalaryCtx.previewBatchId;
 
-        // 1. Get Header Values (Manual Adjustments & Final Days)
         const manualAdd = parseFloat($("#txtManualAdd").val()) || 0;
         const manualDed = parseFloat($("#txtManualDed").val()) || 0;
         const finalPaidDays = parseFloat($("#txtFinalDays").val()) || lockOriginalPaidDays;
@@ -5741,28 +6198,23 @@
 
         const componentEdits = [];
 
-        // 2. Scrape ALL rows from all three breakdown tables
-        // This captures pro-rata changes from Paid Days automatically
         $("#tableEarningsBody tr, #tableDeductionsBody tr, #tableContribBody tr").each(function () {
             const $row = $(this);
             const configId = $row.data("config-id");
 
             if (configId) {
                 const isLoanRow = $row.hasClass("loan-row");
-                // Clean string of ₹ and commas before parsing
                 const amount = parseFloat($row.find(".slip-amt").text().replace(/[₹,]/g, '')) || 0;
 
                 componentEdits.push({
                     PayConfigId: parseInt(configId),
                     Amount: amount,
-                    // Only the specific loan row carries waiver/refId status
                     IsWaived: isLoanRow ? isLoanWaived : false,
                     ReferenceIds: isLoanRow ? (window.currentModalLoanRefIds || "") : ""
                 });
             }
         });
 
-        // 3. Construct the Full DTO for the Controller
         const payload = {
             PreviewBatchId: batchId,
             EmployeeId: empId,
@@ -5780,21 +6232,36 @@
             contentType: 'application/json',
             data: JSON.stringify(payload),
             success: function (res) {
-                if (res.success) {
-                    toastr.success("Salary details updated successfully");
-                    closeModal('editSalaryModal');
+                // 🛡️ Wrapping in try-catch ensures any UI error doesn't freeze the loader
+                try {
+                    if (res.success) {
+                        toastr.success("Salary details updated successfully");
 
-                    // Refresh the specific row in your main grid or reload the grid
-                    loadPayrollBatchGrid();
-                    loadEmployeeWiseBatchGrid();
-                } else {
-                    toastr.error(res.message || "Failed to update salary");
+                        // 1. Close modal first
+                        closeModal('editSalaryModal');
+
+                        // 2. Refresh Grids
+                        // Tip: If loadPayrollBatchGrid also calls an AJAX, 
+                        //// ensure they don't both try to show/hide the same loader.
+                        //if (typeof loadPayrollBatchGrid === "function") loadPayrollBatchGrid();
+                        if (typeof loadEmployeeWiseBatchGrid === "function") loadEmployeeWiseBatchGrid();
+                    } else {
+                        toastr.error(res.message || "Failed to update salary");
+                    }
+                } catch (err) {
+                    console.error("UI Update Error:", err);
                 }
             },
-            error: function () {
-                toastr.error("Server connection error");
+            error: function (xhr) {
+                toastr.error("Server connection error: " + xhr.statusText);
             },
-            complete: hidePayrollLoader
+            complete: function () {
+                // 🚀 FORCE HIDE
+                // Sometimes a small delay is needed if the grid is also trying to show a loader
+                setTimeout(function () {
+                    hidePayrollLoader();
+                }, 300);
+            }
         });
     }
 </script>

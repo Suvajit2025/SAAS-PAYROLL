@@ -315,7 +315,7 @@
 </div>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<script>
+@*<script>
     let pageNumber = 1;
     let pageSize = 50;
     let selectedPayrollEmployeeIds = []; // Global memory for checkbox selection
@@ -355,12 +355,19 @@
         });
     }
 
+    //function applyFilters() {
+    //    pageNumber = 1;
+    //    resetGlobalSelection(); // Selection should clear when filters change
+    //    refreshGrid();
+    //}
     function applyFilters() {
         pageNumber = 1;
-        resetGlobalSelection(); // Selection should clear when filters change
+        // 🔑 Reset selection memory ONLY when filters change
+        if (typeof resetGlobalSelection === "function") {
+            resetGlobalSelection();
+        }
         refreshGrid();
     }
-
     function changePageSize() {
         pageSize = parseInt($("#ddlPageSize").val());
         pageNumber = 1;
@@ -370,12 +377,65 @@
     function changePage(p) {
         pageNumber = p;
         refreshGrid();
-    }
+    } 
+    //function refreshGrid() {
+    //    const month = parseInt($("#fltMonth").val() || "0", 10);
+    //    const year = parseInt($("#fltYear").val() || "0", 10);
+    //    pageSize = parseInt($("#ddlPageSize").val() || "50");
 
+    //    // 🔑 1. Reset "Select All" checkbox and selection memory on every refresh
+    //    $("#chkAll").prop("checked", false);
+    //    if (typeof resetGlobalSelection === "function") {
+    //        resetGlobalSelection(); // This clears your internal ID array/memory
+    //    }
+
+    //    if (!month || !year) {
+    //        $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-muted">Select Month and Year.</td></tr>');
+    //        return;
+    //    }
+
+    //    $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-muted"><i class="fa fa-spinner fa-spin"></i> Loading...</td></tr>');
+
+    //    $.ajax({
+    //        url: "/PayrollSalaryReport/GetGrid",
+    //        type: "GET",
+    //        data: {
+    //            month: month, year: year,
+    //            companyId: $("#fltCompany").val() || null,
+    //            payGroupId: $("#fltPayGroup").val() || null,
+    //            search: ($("#searchInput").val() || "").trim(),
+    //            status: $("#fltStatus").val() || null,
+    //            pageNumber: pageNumber, pageSize: pageSize
+    //        },
+    //        success: function (res) {
+    //            if (!res || !res.success || !res.rows.length) {
+    //                $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-muted">No records found.</td></tr>');
+    //                $("#paginationInfo").text("");
+    //                $("#paginationControls").empty();
+    //                return;
+    //            }
+
+    //            renderSalaryRegisterGrid(res.rows);
+
+    //            const total = Number(res.totalRows || 0);
+    //            const from = ((pageNumber - 1) * pageSize + 1);
+    //            const to = Math.min(pageNumber * pageSize, total);
+    //            $("#paginationInfo").html(`Showing <b>${from}</b> to <b>${to}</b> of <b>${total}</b> entries`);
+    //            renderPaginationButtons(total);
+    //        }
+    //    });
+    //}
     function refreshGrid() {
         const month = parseInt($("#fltMonth").val() || "0", 10);
         const year = parseInt($("#fltYear").val() || "0", 10);
         pageSize = parseInt($("#ddlPageSize").val() || "50");
+
+        // ❌ REMOVED: resetGlobalSelection(); 
+        // We don't want to clear memory when moving between pages.
+
+        // 🔑 Just uncheck the visual "Select All" box for the new page.
+        // The renderSalaryRegisterGrid function will handle checking individual rows from memory.
+        $("#chkAll").prop("checked", false);
 
         if (!month || !year) {
             $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-muted">Select Month and Year.</td></tr>');
@@ -413,7 +473,6 @@
             }
         });
     }
-
     function renderSalaryRegisterGrid(rows) {
         const $tbody = $("#gridBody").empty();
 
@@ -421,34 +480,79 @@
             const id = String(r.PayrollProcessEmployeeID);
             const isChecked = selectedPayrollEmployeeIds.includes(id) ? "checked" : "";
 
+            // 🔑 1. Dynamic Status Badge (Draft, Finalize, or Rejected)
+            let statusBadge = '';
+            if (r.Status == 2) {
+                statusBadge = '<span class="label label-success">' +
+                    '<i class="fa fa-check-circle"></i> Finalized' +
+                    '</span>';
+            } else if (r.Status == 3) {
+                statusBadge = '<span class="label label-danger animated pulse">' +
+                    '<i class="fa fa-undo"></i>  Rejected' +
+                    '</span>';
+            } else {
+                statusBadge = '<span class="label label-warning">' +
+                    '<i class="fa fa-pencil"></i> Draft' +
+                    '</span>';
+            }
+            
+            // 🔑 2. Payslip Button Logic (Disable if Status is 1 or 3)
+            // Only Finalized (Status 2) employees get a payslip.
+            const isPayslipDisabled = (r.Status == 1 || r.Status == 3) ? "disabled" : "";
+            const payslipBtnClass = (r.Status == 1 || r.Status == 3) ? "btn-default opacity-50" : "btn-primary";
+            const payslipTitle = (r.Status == 1 || r.Status == 3) ? "Payslip unavailable for Draft/Rejected" : "Download Payslip";
+
             const tr = `
-            <tr>
-                <td><input type="checkbox" class="row-check" value="${id}" ${isChecked}></td>
-                <td>
-                    <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName)}</div>
-                    <div class="text-xs text-muted">${escapeHtml(r.EmployeeCode)}</div>
-                </td>
-                <td>
-                    <div class="text-sm">${escapeHtml(r.CompanyName)}</div>
-                    <div class="text-xs text-muted">${escapeHtml(r.PayGroupName)}</div>
-                </td>
-                <td class="text-right">${Number(r.BasicAmount).toLocaleString('en-IN')}</td>
-                <td class="text-right">${Number(r.AllowancesAmount).toLocaleString('en-IN')}</td>
-                <td class="text-right text-weight-bold">${Number(r.TotalGross).toLocaleString('en-IN')}</td>
-                <td class="text-right text-danger">${Number(r.TotalDeduction).toLocaleString('en-IN')}</td>
-                <td class="text-right text-primary text-weight-bold">${Number(r.TotalTakeHome).toLocaleString('en-IN')}</td>
-                <td class="text-center">${r.Status == 2 ? '<span class="label label-success">Finalize</span>' : '<span class="label label-warning">Draft</span>'}</td>
-                <td class="text-center">${r.PaidStatus == 1 ? '<span class="label label-success">Paid</span>' : '<span class="label label-warning">Pending</span>'}</td>
-                <td class="text-center">
-                    <button class="btn btn-xs btn-default" onclick="openBankModal(${r.EmployeeID}, '${escapeHtml(r.EmployeeName)}')"><i class="fa fa-university"></i></button>
-                    <button class="btn btn-xs btn-default" onclick="downloadPayslip(${id})"><i class="fa fa-file-pdf-o"></i></button>
-                </td>
-            </tr>`;
+        <tr class="${r.Status == 3 ? 'bg-danger-light' : ''}">
+            <td><input type="checkbox" class="row-check" value="${id}" ${isChecked}></td>
+            <td>
+                <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName)}</div>
+                <div class="text-xs text-muted">${escapeHtml(r.EmployeeCode)}</div>
+            </td>
+            <td>
+                <div class="text-sm">${escapeHtml(r.CompanyName)}</div>
+                <div class="text-xs text-muted">${escapeHtml(r.PayGroupName)}</div>
+            </td>
+            <td class="text-right">${Number(r.BasicAmount || 0).toLocaleString('en-IN')}</td>
+            <td class="text-right">${Number(r.AllowancesAmount || 0).toLocaleString('en-IN')}</td>
+            <td class="text-right text-weight-bold">${Number(r.TotalGross || 0).toLocaleString('en-IN')}</td>
+            <td class="text-right text-danger">${Number(r.TotalDeduction || 0).toLocaleString('en-IN')}</td>
+            <td class="text-right text-primary text-weight-bold" style="background:#f9f9f9">
+                ${Number(r.TotalTakeHome || 0).toLocaleString('en-IN')}
+            </td>
+            <td class="text-center">${statusBadge}</td>
+            <td class="text-center">
+                ${r.PaidStatus == 1
+                                ? '<span class="label label-success">' +
+                                '<i class="fa fa-check-circle"></i> Paid' +
+                                '</span>'
+                                : '<span class="label label-warning">' +
+                                '<i class="fa fa-hourglass-half"></i> Pending' +
+                                '</span>'
+                }
+            </td>
+
+            <td class="text-center">
+                <div style="display: flex; justify-content: center; gap: 5px;">
+                    <button class="btn btn-xs btn-default"
+                            onclick="openBankModal(${r.EmployeeID}, '${escapeHtml(r.EmployeeName)}')" 
+                            title="Bank Info">
+                        <i class="fa fa-university"></i>
+                    </button>
+        
+                    <button class="btn btn-xs ${payslipBtnClass}" 
+                            onclick="downloadPayslip(${id})" 
+                            ${isPayslipDisabled} 
+                            title="${payslipTitle}"
+                            style="margin-left: 4px;"> <i class="fa fa-file-pdf-o"></i>
+                    </button>
+                </div>
+           </td>
+        </tr>`;
             $tbody.append(tr);
         });
         syncHeaderCheckbox();
     }
-
     function renderPaginationButtons(totalItems) {
         const totalPages = Math.ceil(totalItems / pageSize);
         const $container = $('#paginationControls').empty();
@@ -470,8 +574,32 @@
     }
 
     /* SELECTION LOGIC */
+    //$(document).on("change", "#chkAll", function () {
+    //    const isChecked = $(this).is(":checked");
+    //    $(".row-check").each(function () {
+    //        const id = $(this).val();
+    //        $(this).prop("checked", isChecked);
+    //        if (isChecked) {
+    //            if (!selectedPayrollEmployeeIds.includes(id)) selectedPayrollEmployeeIds.push(id);
+    //        } else {
+    //            selectedPayrollEmployeeIds = selectedPayrollEmployeeIds.filter(item => item !== id);
+    //        }
+    //    });
+    //});
+    // 1. Modified Header Checkbox Handler
     $(document).on("change", "#chkAll", function () {
         const isChecked = $(this).is(":checked");
+        const totalInGrid = parseInt($("#paginationInfo b").last().text()) || 0; // Get the total count from the "Showing X of TOTAL" text
+
+        if (isChecked && totalInGrid > pageSize) {
+            // If there are more records than the current page, ask the user
+            if (confirm("Select all " + totalInGrid + " employees across all pages?")) {
+                selectAllEmployeesFromServer();
+                return;
+            }
+        }
+
+        // Default behavior: Select only rows on the current page
         $(".row-check").each(function () {
             const id = $(this).val();
             $(this).prop("checked", isChecked);
@@ -483,6 +611,41 @@
         });
     });
 
+    // 2. Function to fetch ALL IDs from the server matching current filters
+    function selectAllEmployeesFromServer() {
+        const month = $("#fltMonth").val();
+        const year = $("#fltYear").val();
+        const companyId = $("#fltCompany").val() || null;
+        const payGroupId = $("#fltPayGroup").val() || null;
+        const status = $("#fltStatus").val() || null;
+        const search = ($("#searchInput").val() || "").trim();
+
+        showPayrollLoader(); // Show loader as this might take a second
+
+        $.ajax({
+            url: "/PayrollSalaryReport/GetAllSelectedIds", // You need to create this simple action
+            type: "GET",
+            data: {
+                month: month, year: year, companyId: companyId,
+                payGroupId: payGroupId, search: search, status: status
+            },
+            success: function (res) {
+                if (res.success && res.ids) {
+                    // Fill the global memory with ALL IDs
+                    selectedPayrollEmployeeIds = res.ids.map(String);
+
+                    // Update UI for current page
+                    $(".row-check").prop("checked", true);
+                    $("#chkAll").prop("checked", true);
+
+                    toastr.success("All " + selectedPayrollEmployeeIds.length + " employees selected.");
+                }
+            },
+            complete: function () {
+                hidePayrollLoader();
+            }
+        });
+    }
     $(document).on("change", ".row-check", function () {
         const id = $(this).val();
         if ($(this).is(":checked")) {
@@ -513,6 +676,7 @@
         if (!confirm(`Approve ${ids.length} employees?`)) return;
 
         showPayrollLoader();
+         
         $.ajax({
             url: "/PayrollSalaryReport/BulkApprove",
             type: "POST",
@@ -523,13 +687,50 @@
                 payrollProcessEmployeeIds: ids.join(",")
             }),
             success: function (res) {
+                // 1. Handle skipped employees first (Warning Modal)
+                if (res.skipped && res.skipped.length > 0) {
+                    let skippedHtml = `
+                <p class="text-muted mb-md">The following employees were not processed:</p>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-condensed mb-none">
+                        <thead>
+                            <tr style="background:#f8f9fa;">
+                                <th style="width:100px;">Code</th>
+                                <th>Name</th>
+                                <th>Status/Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                    res.skipped.forEach(emp => {
+                        skippedHtml += `
+                    <tr>
+                        <td>${emp.Code}</td>
+                        <td>${emp.Name}</td>
+                        <td><span class="label label-danger" style="display:block; text-align:center;">${emp.Reason}</span></td>
+                    </tr>`;
+                    });
+
+                    skippedHtml += `</tbody></table></div>`;
+
+                    // Inject into your modal body and show it
+                    $("#SkippedEmployeeModal .modal-body").html(skippedHtml);
+                    $("#SkippedEmployeeModal").modal('show');
+                }
+
+                // 2. Handle overall process success/failure
                 if (res.success) {
-                    toastr.success("Success");
-                    resetGlobalSelection(); // Clear selection memory
+                    toastr.success(res.message || "Success");
                     refreshGrid();
-                } else { toastr.error(res.message); }
+                    // resetGlobalSelection(); // Highly recommended to clear checkboxes
+                } else if (!res.success && (!res.skipped || res.skipped.length === 0)) {
+                    // Only show error if no skipped modal was shown to avoid double alerts
+                    toastr.error(res.message);
+                }
             },
-            complete: function () { hidePayrollLoader(); }
+            complete: function () {
+                hidePayrollLoader();
+            }
         });
     }
 
@@ -719,27 +920,65 @@
         }
 
         showPayrollLoader();
-
+         
         $.ajax({
             url: "/PayrollSalaryReport/BulkReject",
             type: "POST",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                payrollProcessEmployeeIds: ids.join(","), // Comma separated list
+                payrollProcessEmployeeIds: ids.join(","),
                 reason: reason,
                 month: parseInt($("#fltMonth").val(), 10),
                 year: parseInt($("#fltYear").val(), 10)
             }),
             success: function (res) {
+                // 1. Handle Skipped Employees (Finalized or Already Rejected)
+                if (res.skipped && res.skipped.length > 0) {
+                    let skippedHtml = `
+                <p class="text-muted mb-md">The following records were not processed:</p>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-condensed mb-none">
+                        <thead>
+                            <tr style="background:#f8f9fa;">
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                    res.skipped.forEach(emp => {
+                        skippedHtml += `
+                    <tr>
+                        <td>${emp.Code}</td>
+                        <td>${emp.Name}</td>
+                        <td><span class="label label-warning" style="display:block; text-align:center;">${emp.Reason}</span></td>
+                    </tr>`;
+                    });
+
+                    skippedHtml += `</tbody></table></div>`;
+
+                    // Inject into your existing modal and show it
+                    $("#SkippedEmployeeModal .modal-body").html(skippedHtml);
+                    $("#SkippedEmployeeModal").modal('show');
+                }
+
+                // 2. Handle Success
                 if (res.success) {
-                    toastr.info("Salaries rejected. Records are now back in 'Draft' status for modification.");
+                    toastr.info(res.message || "Salaries rejected. Records are now unlocked for modification.");
 
-                    // 🔑 4. CRITICAL: Reset the selection memory so IDs don't stay selected
-                    resetGlobalSelection();
+                    // Clear selection so old IDs don't haunt the next action
+                    if (typeof resetGlobalSelection === "function") {
+                        resetGlobalSelection();
+                    }
 
-                    // 5. Refresh the grid to show them as "Draft" again
                     refreshGrid();
-                } else {
+
+                    // Close the "Reason Input" modal if you have one
+                    $("#modalRejectReason").modal('hide');
+                }
+                // 3. Handle Error (only if no skipped items were shown, to prevent double alerts)
+                else if (!res.success && (!res.skipped || res.skipped.length === 0)) {
                     toastr.error(res.message || "Rejection failed.");
                 }
             },
@@ -751,146 +990,29 @@
             }
         });
     }
-</script>
-@*<script>
-    $(document).ready(function () {
-        $("#fltStatus").val("");
-        loadFilterData();
-    });
-    let pageNumber = 1;
-    let pageSize = 50;
-    /* Apply -> reset to page 1 and reload grid */
-    function applyFilters() {
-        pageNumber = 1;
-        refreshGrid(); // your existing ajax grid load
-    }
+    function exportExcel() {
+        const ids = getSelectedEmployeeIds();
+        if (!ids.length) { toastr.warning("Please select employees."); return; }
+         
+        const month = parseInt($("#fltMonth").val() || "0", 10);
+        const year = parseInt($("#fltYear").val() || "0", 10);
+ 
 
-    /* Clear all filters -> reset dropdowns + search and reload */
-    function clearFilters() {
-
-        // reset month/year to current
-        const now = new Date();
-
-        const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-
-        const defaultMonth = String(prev.getMonth() + 1);
-        const defaultYear = String(prev.getFullYear());
-
-        $("#fltMonth").val(defaultMonth);
-        $("#fltYear").val(defaultYear);
-
-        // reset company/paygroup/status
-        $("#fltCompany").val("");   // All Companies
-        $("#fltPayGroup").val("");  // All Groups
-        $("#fltStatus").val("");    // All
-
-        // reset search
-        $("#searchInput").val("");
-
-        // reload
-        applyFilters();
-    }
-    function loadFilterData() {
-
-        // 1) Bind Month/Year (static in JS)
-        bindMonthYear();
-
-        // 2) Bind Company + PayGroup (from DB)
-        $.ajax({
-            url: "/PayrollSalaryReport/GetFilterData",
-            type: "GET",
-            dataType: "json",
-            success: function (res) {
-                if (!res || !res.success) return;
-
-                // Company
-                const companies = [{ Value: "", Text: "All Companies" }].concat(res.companies || []);
-                bindSelect("#fltCompany", companies, "");
-
-                // PayGroup
-                const payGroups = [{ Value: "", Text: "All Groups" }].concat(res.payGroups || []);
-                bindSelect("#fltPayGroup", payGroups, "");
-
-                // 3) First load grid
-                refreshGrid();
-            },
-            error: function () {
-                // still allow grid with static month/year
-                refreshGrid();
-            }
-        });
-    }
-
-    function bindMonthYear() {
-        // MONTHS
-        const monthList = [
-            { Value: "1", Text: "January" },
-            { Value: "2", Text: "February" },
-            { Value: "3", Text: "March" },
-            { Value: "4", Text: "April" },
-            { Value: "5", Text: "May" },
-            { Value: "6", Text: "June" },
-            { Value: "7", Text: "July" },
-            { Value: "8", Text: "August" },
-            { Value: "9", Text: "September" },
-            { Value: "10", Text: "October" },
-            { Value: "11", Text: "November" },
-            { Value: "12", Text: "December" }
-        ];
-
-        // YEARS (example: current year back 5 years; adjust as needed)
-        const currentYear = new Date().getFullYear();
-        const yearList = [];
-        for (let y = currentYear; y >= currentYear - 5; y--) {
-            yearList.push({ Value: String(y), Text: String(y) });
+        if (!month || !year) {
+            alert("Please select Month and Year");
+            return;
         }
 
-        // Default selection (example: current month/year)
-        const now = new Date();
-
-        const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-
-        const defaultMonth = String(prev.getMonth() + 1);
-        const defaultYear = String(prev.getFullYear());
-
-        bindSelect("#fltMonth", monthList, defaultMonth);
-        bindSelect("#fltYear", yearList, defaultYear);
-    }
-
-    function bindSelect(selector, list, selectedValue) {
-        const $ddl = $(selector);
-        $ddl.empty();
-
-        $.each(list, function (i, x) {
-            $ddl.append(`<option value="${x.Value}">${x.Text}</option>`);
+        // 🔹 Build query string
+        const qs = $.param({
+            month: month,
+            year: year, 
+            payrollProcessEmployeeIds: ids.join(",")
         });
 
-        if (selectedValue !== undefined && selectedValue !== null) {
-            $ddl.val(selectedValue);
-        }
+        // 🔹 Trigger download (AJAX is NOT suitable for file streams)
+        window.location.href = `/PayrollSalaryReport/ExportExcel?${qs}`;
     }
-
-    /* Attach events via jQuery (recommended instead of inline onchange) */
-    $(document).on("change", "#fltMonth,#fltYear,#fltCompany,#fltPayGroup,#fltStatus", function () {
-        applyFilters();
-    });
-
-    $(document).on("click", "#btnApplyFilters", function () {
-        applyFilters();
-    });
-
-    $(document).on("click", "#btnClearFilters", function () {
-        clearFilters();
-    });
-    function toggleFilterPanel() {
-        var x = document.getElementById("filterPanel");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
-    }
-
     function openBankModal(empId, name) {
 
         // Set name immediately (good UX)
@@ -934,26 +1056,35 @@
             }
         });
     }
-    /* 1. Global Page Change Function */
-    function changePageSize() {
-        pageSize = parseInt($("#ddlPageSize").val());
-        pageNumber = 1; // 🔑 Always reset to first page when changing row count
+</script>*@
+<script>
+    let pageNumber = 1;
+    let pageSize = 50;
+    let selectedPayrollEmployeeIds = []; // 🔑 GLOBAL MEMORY
+
+    $(document).ready(function () {
+        $("#fltStatus").val("");
+        pageSize = parseInt($("#ddlPageSize").val() || "50");
+        loadFilterData();
+    });
+
+    $(document).on("change", "#fltMonth,#fltYear,#fltCompany,#fltPayGroup,#fltStatus", function () {
+        applyFilters();
+    });
+
+    function applyFilters() {
+        pageNumber = 1;
+        // 🔑 Clear memory ONLY when filters change
+        resetGlobalSelection();
         refreshGrid();
     }
-    function changePage(p) {
-        pageNumber = p;
-        refreshGrid();
-    }
-    /* 2. Update refreshGrid Success Callback */
+
     function refreshGrid() {
         const month = parseInt($("#fltMonth").val() || "0", 10);
         const year = parseInt($("#fltYear").val() || "0", 10);
-        // Read dynamic page size from UI
-        pageSize = parseInt($("#ddlPageSize").val() || "50");
-        const companyId = $("#fltCompany").val() ? parseInt($("#fltCompany").val(), 10) : null;
-        const payGroupId = $("#fltPayGroup").val() ? parseInt($("#fltPayGroup").val(), 10) : null;
-        const status = $("#fltStatus").val() ? parseInt($("#fltStatus").val(), 10) : null;
-        const search = ($("#searchInput").val() || "").trim();
+
+        // ❌ FIXED: DO NOT call resetGlobalSelection here, otherwise next page clears Page 1 selection
+        $("#chkAll").prop("checked", false);
 
         if (!month || !year) {
             $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-muted">Select Month and Year.</td></tr>');
@@ -965,341 +1096,459 @@
         $.ajax({
             url: "/PayrollSalaryReport/GetGrid",
             type: "GET",
-            dataType: "json",
             data: {
-                month: month, year: year, companyId: companyId,
-                payGroupId: payGroupId, search: search, status: status,
+                month: month, year: year,
+                companyId: $("#fltCompany").val() || null,
+                payGroupId: $("#fltPayGroup").val() || null,
+                search: ($("#searchInput").val() || "").trim(),
+                status: $("#fltStatus").val() || null,
                 pageNumber: pageNumber, pageSize: pageSize
             },
             success: function (res) {
-                if (!res || !res.success) {
+                if (!res || !res.success || !res.rows.length) {
                     $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-muted">No records found.</td></tr>');
                     $("#paginationInfo").text("");
                     $("#paginationControls").empty();
                     return;
                 }
 
-                const rows = Array.isArray(res.rows) ? res.rows : [];
-                renderSalaryRegisterGrid(rows);
+                renderSalaryRegisterGrid(res.rows);
 
-                // --- 🔑 PAGINATION LOGIC START ---
                 const total = Number(res.totalRows || 0);
-                const from = total === 0 ? 0 : ((pageNumber - 1) * pageSize + 1);
+                const from = ((pageNumber - 1) * pageSize + 1);
                 const to = Math.min(pageNumber * pageSize, total);
-
                 $("#paginationInfo").html(`Showing <b>${from}</b> to <b>${to}</b> of <b>${total}</b> entries`);
-
                 renderPaginationButtons(total);
-                // --- PAGINATION LOGIC END ---
             }
         });
     }
 
-    /* 3. New Function to Render the compact pagination buttons */
-    function renderPaginationButtons(totalItems) {
-        const totalPages = Math.ceil(totalItems / pageSize);
-        const $container = $('#paginationControls').empty();
-
-        if (totalPages <= 1) return;
-
-        let html = `<div class="pagination-compact">`;
-
-        // Previous Button
-        html += `<button class="page-btn" ${pageNumber === 1 ? 'disabled' : ''} onclick="changePage(${pageNumber - 1})">‹</button>`;
-
-        // Logic to show limited page numbers (windowing)
-        const maxVisible = 5;
-        let startPage = Math.max(1, pageNumber - 2);
-        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-
-        if (endPage - startPage < maxVisible - 1) {
-            startPage = Math.max(1, endPage - maxVisible + 1);
-        }
-
-        if (startPage > 1) {
-            html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
-            if (startPage > 2) html += `<span class="page-ellipsis">…</span>`;
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            html += `<button class="page-btn ${i === pageNumber ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-        }
-
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) html += `<span class="page-ellipsis">…</span>`;
-            html += `<button class="page-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
-        }
-
-        // Next Button
-        html += `<button class="page-btn" ${pageNumber === totalPages ? 'disabled' : ''} onclick="changePage(${pageNumber + 1})">›</button>`;
-        html += `</div>`;
-
-        $container.html(html);
-    }
-
-
-    //function refreshGrid() {
-
-    //    const month = parseInt($("#fltMonth").val() || "0", 10);
-    //    const year = parseInt($("#fltYear").val() || "0", 10);
-
-    //    // empty value => NULL on server
-    //    const companyId = $("#fltCompany").val() ? parseInt($("#fltCompany").val(), 10) : null;
-    //    const payGroupId = $("#fltPayGroup").val() ? parseInt($("#fltPayGroup").val(), 10) : null;
-
-    //    // payroll process status (Draft=1, Finalized=2) OR null
-    //    const status = $("#fltStatus").val() ? parseInt($("#fltStatus").val(), 10) : null;
-
-    //    const search = ($("#searchInput").val() || "").trim();
-
-    //    if (!month || !year) {
-    //        $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-muted">Select Month and Year.</td></tr>');
-    //        $("#paginationInfo").text("Showing 0 to 0 of 0 entries");
-    //        return;
-    //    }
-
-    //    // optional loading row
-    //    $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-muted"><i class="fa fa-spinner fa-spin"></i> Loading...</td></tr>');
-
-    //    $.ajax({
-    //        url: "/PayrollSalaryReport/GetGrid",   // controller action from previous message
-    //        type: "GET",
-    //        dataType: "json",
-    //        data: {
-    //            month: month,
-    //            year: year,
-    //            companyId: companyId,
-    //            payGroupId: payGroupId,
-    //            search: search,
-    //            status: status,
-    //            pageNumber: pageNumber,
-    //            pageSize: pageSize
-    //        },
-    //        success: function (res) {
-    //            if (!res || !res.success) {
-    //                $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-muted">No records found.</td></tr>');
-    //                $("#paginationInfo").text("Showing 0 to 0 of 0 entries");
-    //                return;
-    //            }
-
-    //            const rows = Array.isArray(res.rows) ? res.rows : [];
-    //            renderSalaryRegisterGrid(rows);
-
-    //            const total = Number(res.totalRows || 0);
-    //            const from = total === 0 ? 0 : ((pageNumber - 1) * pageSize + 1);
-    //            const to = Math.min(pageNumber * pageSize, total);
-    //            $("#paginationInfo").text(`Showing ${from} to ${to} of ${total} entries`);
-    //        },
-    //        error: function () {
-    //            $("#gridBody").html('<tr><td colspan="11" class="text-center p-lg text-danger">Server error while loading data.</td></tr>');
-    //            $("#paginationInfo").text("Showing 0 to 0 of 0 entries");
-    //        }
-    //    });
-    //}
-    /* Renders server rows into your table layout */
-    //function renderSalaryRegisterGrid(rows) {
-
-    //    const $tbody = $("#gridBody");
-    //    $tbody.empty();
-
-    //    if (!rows.length) {
-    //        $tbody.html('<tr><td colspan="11" class="text-center p-lg text-muted">No records found.</td></tr>');
-    //        return;
-    //    }
-
-    //    rows.forEach(function (r) {
-
-    //        const processBadge = (Number(r.Status) === 2)
-    //            ? '<span class="label label-success">Finalize</span>'
-    //            : '<span class="label label-warning">Draft</span>';
-
-    //        // Pay status not in your table yet; keeping Pending as default (update when you add payment table)
-
-    //        const payBadge = (Number(r.PaidStatus) === 1)
-    //            ? '<span class="label label-success">Paid</span>'
-    //            : '<span class="label label-warning">Pending</span>';
-    //        const basic = Number(r.BasicAmount || 0);
-    //        const gross = Number(r.TotalGross || 0);
-    //        const add = Number(r.TotalAddition || 0);
-    //        const ded = Number(r.TotalDeduction || 0);
-    //        const net = Number(r.TotalTakeHome || 0);
-    //        const allowances = Number(r.AllowancesAmount || 0);
-
-    //        const tr = `
-    //        <tr>
-    //            <td style="width:30px;"><input type="checkbox" class="row-check" value="${r.PayrollProcessEmployeeID}" data-empid="${Number(r.EmployeeID || 0)}"></td>
-
-    //            <td style="width:80px;">
-    //                <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName || '')}</div>
-    //                <div class="text-xs text-muted">${escapeHtml(r.EmployeeCode || '')}</div>
-    //            </td>
-
-    //            <td style="width:200px;">
-    //                <div class="text-sm">${escapeHtml(r.CompanyName || '')}</div>
-    //                <div class="text-xs text-muted">${escapeHtml(r.PayGroupName || '')}</div>
-    //            </td>
-
-    //            <td class="text-right">${basic.toLocaleString('en-IN')}</td>
-    //            <td class="text-right">${allowances.toLocaleString('en-IN')}</td>
-    //            <td class="text-right text-weight-bold">${gross.toLocaleString('en-IN')}</td>
-    //            <td class="text-right text-danger">${ded.toLocaleString('en-IN')}</td>
-    //            <td class="text-right text-primary text-weight-bold">${net.toLocaleString('en-IN')}</td>
-
-    //            <td class="text-center" style="width:40px;">${processBadge}</td>
-    //            <td class="text-center" style="width:40px;">${payBadge}</td>
-
-    //            <td class="text-center">
-    //                <button class="btn btn-xs btn-default" onclick="openBankModal(${r.EmployeeID || 0}, '${escapeHtml(r.EmployeeName || '')}')" title="Bank Info">
-    //                    <i class="fa fa-university"></i>
-    //                </button>
-    //                <button class="btn btn-xs btn-default" onclick="downloadPayslip(${r.PayrollProcessEmployeeID})" title="Download PDF">
-    //                    <i class="fa fa-file-pdf-o"></i>
-    //                </button>
-    //            </td>
-    //        </tr>
-    //    `;
-    //        $tbody.append(tr);
-    //    });
-    //}
-
-    /* Updated to support cross-page selection persistence */
     function renderSalaryRegisterGrid(rows) {
-        const $tbody = $("#gridBody");
-        $tbody.empty();
-
-        if (!rows.length) {
-            $tbody.html('<tr><td colspan="11" class="text-center p-lg text-muted">No records found.</td></tr>');
-            return;
-        }
-
+        const $tbody = $("#gridBody").empty();
         rows.forEach(function (r) {
             const id = String(r.PayrollProcessEmployeeID);
-
-            // 🔑 1. Check Memory: Is this ID already selected from a previous page?
+            // 🔑 Restore checkbox state from memory
             const isChecked = selectedPayrollEmployeeIds.includes(id) ? "checked" : "";
 
-            const processBadge = (Number(r.Status) === 2)
-                ? '<span class="label label-success">Finalize</span>'
-                : '<span class="label label-warning">Draft</span>';
-
-            const payBadge = (Number(r.PaidStatus) === 1)
-                ? '<span class="label label-success">Paid</span>'
-                : '<span class="label label-warning">Pending</span>';
+            let statusBadge = r.Status == 2 ? '<span class="label label-success">Finalized</span>' :
+                (r.Status == 3 ? '<span class="label label-danger">Rejected</span>' : '<span class="label label-warning">Draft</span>');
 
             const tr = `
-        <tr>
-            <td style="width:30px;">
-                <input type="checkbox" class="row-check" value="${id}" data-empid="${Number(r.EmployeeID || 0)}" ${isChecked}>
-            </td>
-            <td style="width:80px;">
-                <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName || '')}</div>
-                <div class="text-xs text-muted">${escapeHtml(r.EmployeeCode || '')}</div>
-            </td>
-            <td style="width:200px;">
-                <div class="text-sm">${escapeHtml(r.CompanyName || '')}</div>
-                <div class="text-xs text-muted">${escapeHtml(r.PayGroupName || '')}</div>
-            </td>
-            <td class="text-right">${Number(r.BasicAmount || 0).toLocaleString('en-IN')}</td>
-            <td class="text-right">${Number(r.AllowancesAmount || 0).toLocaleString('en-IN')}</td>
-            <td class="text-right text-weight-bold">${Number(r.TotalGross || 0).toLocaleString('en-IN')}</td>
-            <td class="text-right text-danger">${Number(r.TotalDeduction || 0).toLocaleString('en-IN')}</td>
-            <td class="text-right text-primary text-weight-bold">${Number(r.TotalTakeHome || 0).toLocaleString('en-IN')}</td>
-            <td class="text-center" style="width:40px;">${processBadge}</td>
-            <td class="text-center" style="width:40px;">${payBadge}</td>
-            <td class="text-center">
-                <button class="btn btn-xs btn-default" onclick="openBankModal(${r.EmployeeID || 0}, '${escapeHtml(r.EmployeeName || '')}')">
-                    <i class="fa fa-university"></i>
-                </button>
-                <button class="btn btn-xs btn-default" onclick="downloadPayslip(${r.PayrollProcessEmployeeID})">
-                    <i class="fa fa-file-pdf-o"></i>
-                </button>
-            </td>
-        </tr>`;
+            <tr>
+                <td><input type="checkbox" class="row-check" value="${id}" ${isChecked}></td>
+                <td><b>${escapeHtml(r.EmployeeName)}</b><br/><small>${escapeHtml(r.EmployeeCode)}</small></td>
+                <td>${escapeHtml(r.CompanyName)}</td>
+                <td class="text-right">${Number(r.BasicAmount || 0).toLocaleString('en-IN')}</td>
+                <td class="text-right">${Number(r.AllowancesAmount || 0).toLocaleString('en-IN')}</td>
+                <td class="text-right"><b>${Number(r.TotalGross || 0).toLocaleString('en-IN')}</b></td>
+                <td class="text-right text-danger">${Number(r.TotalDeduction || 0).toLocaleString('en-IN')}</td>
+                <td class="text-right text-primary"><b>${Number(r.TotalTakeHome || 0).toLocaleString('en-IN')}</b></td>
+                <td class="text-center">${statusBadge}</td>
+                <td class="text-center">${r.PaidStatus == 1 ? 'Paid' : 'Pending'}</td>
+                <td class="text-center">
+                    <button class="btn btn-xs btn-default" onclick="openBankModal(${r.EmployeeID}, '${escapeHtml(r.EmployeeName)}')"><i class="fa fa-university"></i></button>
+                    <button class="btn btn-xs btn-primary" onclick="downloadPayslip(${id})" ${r.Status == 2 ? '' : 'disabled'}><i class="fa fa-file-pdf-o"></i></button>
+                </td>
+            </tr>`;
             $tbody.append(tr);
         });
-
-        // 🔑 2. Sync Header Checkbox: If all items on THIS page are checked, check the header
         syncHeaderCheckbox();
     }
-
-    function getSelectedEmployeeIds() {
-        // We now return the global memory array
-        return selectedPayrollEmployeeIds;
-    }
-
-    function resetGlobalSelection() {
-        selectedPayrollEmployeeIds = [];
-        $("#chkAll").prop("checked", false);
-    }
-    function escapeHtml(text) {
-        return String(text ?? "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
-
-    //// Select All
-    //$(document).on("change", "#chkAll", function () {
-    //    const isChecked = $(this).is(":checked");
-    //    $(".row-check").prop("checked", isChecked);
-    //});
-
-    //// Keep header checkbox in sync
-    //$(document).on("change", ".row-check", function () {
-    //    const total = $(".row-check").length;
-    //    const selected = $(".row-check:checked").length;
-    //    $("#chkAll").prop("checked", total > 0 && total === selected);
-    //});
-
-    let selectedPayrollEmployeeIds = []; // Global storage for cross-page selection
-
-    // 🛡️ Handler for Header Checkbox
+    /* --- 🔑 CLEAN SELECTION LOGIC --- */
     $(document).on("change", "#chkAll", function () {
         const isChecked = $(this).is(":checked");
 
-        $(".row-check").each(function () {
-            const id = $(this).val();
-            $(this).prop("checked", isChecked);
+        if (isChecked) {
+            // 1. Visual Feedback: Check all visible rows immediately for better UX
+            $(".row-check").prop("checked", true);
 
-            if (isChecked) {
-                if (!selectedPayrollEmployeeIds.includes(id)) selectedPayrollEmployeeIds.push(id);
-            } else {
-                selectedPayrollEmployeeIds = selectedPayrollEmployeeIds.filter(item => item !== id);
-            }
-        });
+            // 2. Fetch all IDs from server for global selection (across all pages)
+            selectAllEmployeesFromServer();
+        } else {
+            // 1. Immediately clear the entire memory array
+            selectedPayrollEmployeeIds = [];
+
+            // 2. Uncheck all visible boxes
+            $(".row-check").prop("checked", false);
+
+            toastr.info("All selections cleared.");
+        }
     });
 
-    // 🛡️ Handler for Row Checkbox
+    /* --- 🛡️ Individual Row Handler --- */
     $(document).on("change", ".row-check", function () {
         const id = $(this).val();
         const isChecked = $(this).is(":checked");
 
         if (isChecked) {
-            if (!selectedPayrollEmployeeIds.includes(id)) selectedPayrollEmployeeIds.push(id);
+            if (!selectedPayrollEmployeeIds.includes(id)) {
+                selectedPayrollEmployeeIds.push(id);
+            }
         } else {
+            // Remove specific ID from memory
             selectedPayrollEmployeeIds = selectedPayrollEmployeeIds.filter(item => item !== id);
         }
+
+        // Sync the master checkbox (uncheck master if one row is unchecked)
         syncHeaderCheckbox();
     });
 
-    function syncHeaderCheckbox() {
-        const totalOnPage = $(".row-check").length;
-        const selectedOnPage = $(".row-check:checked").length;
-        $("#chkAll").prop("checked", totalOnPage > 0 && totalOnPage === selectedOnPage);
+    /* --- 📡 Server Fetch for IDs (Bug-Safe version) --- */
+    function selectAllEmployeesFromServer() {
+        showPayrollLoader();
+
+        $.ajax({
+            url: "/PayrollSalaryReport/GetAllSelectedIds",
+            type: "GET",
+            data: {
+                month: $("#fltMonth").val(),
+                year: $("#fltYear").val(),
+                companyId: $("#fltCompany").val() || null,
+                payGroupId: $("#fltPayGroup").val() || null,
+                status: $("#fltStatus").val() || null,
+                search: ($("#searchInput").val() || "").trim()
+            },
+            success: function (res) {
+                // 🛡️ CRITICAL CHECK: Only apply results if the user hasn't 
+                // unchecked the "Select All" box while the request was loading.
+                if ($("#chkAll").is(":checked")) {
+                    if (res.success && res.ids) {
+                        selectedPayrollEmployeeIds = res.ids.map(String);
+                        toastr.success(`All ${selectedPayrollEmployeeIds.length} employees selected.`);
+                    }
+                }
+            },
+            complete: function () {
+                hidePayrollLoader();
+            }
+        });
     }
-    // Your button already calls processPayment()
+
+    /* --- 🛡️ Re-Sync Header State --- */
+    function syncHeaderCheckbox() {
+        const rowsOnPage = $(".row-check");
+        if (rowsOnPage.length === 0) return;
+
+        let allOnPageSelected = true;
+        rowsOnPage.each(function () {
+            if (!selectedPayrollEmployeeIds.includes($(this).val())) {
+                allOnPageSelected = false;
+                return false; // break loop
+            }
+        });
+
+        $("#chkAll").prop("checked", allOnPageSelected);
+    }
+    function resetGlobalSelection() {
+        selectedPayrollEmployeeIds = [];
+        $("#chkAll").prop("checked", false);
+    }
+
+    function getSelectedEmployeeIds() { return selectedPayrollEmployeeIds; }
+
+    function rejectSelectedSalaries() {
+        // 1. Get IDs from our global "Memory" array
+        const ids = getSelectedEmployeeIds();
+
+        if (!ids.length) {
+            toastr.warning("Please select at least one employee to reject.");
+            return;
+        }
+
+        // 2. Ask for a Reason (Important for Audit Trail)
+        const reason = prompt("Enter reason for rejection (this will unlock the records for editing):");
+
+        if (reason === null) return; // User clicked cancel
+        if (reason.trim() === "") {
+            toastr.error("Rejection reason is required.");
+            return;
+        }
+
+        // 3. Confirmation
+        if (!confirm(`Are you sure you want to REJECT and UNLOCK ${ids.length} employees? This will reverse any loan deductions linked to this payroll.`)) {
+            return;
+        }
+
+        showPayrollLoader();
+
+        $.ajax({
+            url: "/PayrollSalaryReport/BulkReject",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                payrollProcessEmployeeIds: ids.join(","),
+                reason: reason,
+                month: parseInt($("#fltMonth").val(), 10),
+                year: parseInt($("#fltYear").val(), 10)
+            }),
+            success: function (res) {
+                // 1. Handle Skipped Employees (Finalized or Already Rejected)
+                if (res.skipped && res.skipped.length > 0) {
+                    let skippedHtml = `
+              <p class="text-muted mb-md">The following records were not processed:</p>
+              <div class="table-responsive">
+                  <table class="table table-bordered table-striped table-condensed mb-none">
+                      <thead>
+                          <tr style="background:#f8f9fa;">
+                              <th>Code</th>
+                              <th>Name</th>
+                              <th>Reason</th>
+                          </tr>
+                      </thead>
+                      <tbody>`;
+
+                    res.skipped.forEach(emp => {
+                        skippedHtml += `
+                  <tr>
+                      <td>${emp.Code}</td>
+                      <td>${emp.Name}</td>
+                      <td><span class="label label-warning" style="display:block; text-align:center;">${emp.Reason}</span></td>
+                  </tr>`;
+                    });
+
+                    skippedHtml += `</tbody></table></div>`;
+
+                    // Inject into your existing modal and show it
+                    $("#SkippedEmployeeModal .modal-body").html(skippedHtml);
+                    $("#SkippedEmployeeModal").modal('show');
+                }
+
+                // 2. Handle Success
+                if (res.success) {
+                    toastr.info(res.message || "Salaries rejected. Records are now unlocked for modification.");
+
+                    // Clear selection so old IDs don't haunt the next action
+                    if (typeof resetGlobalSelection === "function") {
+                        resetGlobalSelection();
+                    }
+
+                    refreshGrid();
+
+                    // Close the "Reason Input" modal if you have one
+                    $("#modalRejectReason").modal('hide');
+                }
+                // 3. Handle Error (only if no skipped items were shown, to prevent double alerts)
+                else if (!res.success && (!res.skipped || res.skipped.length === 0)) {
+                    toastr.error(res.message || "Rejection failed.");
+                }
+            },
+            error: function () {
+                toastr.error("Server error during rejection process.");
+            },
+            complete: function () {
+                hidePayrollLoader();
+            }
+        });
+    }
+    function exportExcel() {
+        const ids = getSelectedEmployeeIds();
+        if (!ids.length) { toastr.warning("Please select employees."); return; }
+
+        const month = parseInt($("#fltMonth").val() || "0", 10);
+        const year = parseInt($("#fltYear").val() || "0", 10);
+
+
+        if (!month || !year) {
+            toastr.warning("Please select Month and Year");
+            return;
+        }
+
+        // 🔹 Build query string
+        const qs = $.param({
+            month: month,
+            year: year,
+            payrollProcessEmployeeIds: ids.join(",")
+        });
+
+        // 🔹 Trigger download (AJAX is NOT suitable for file streams)
+        window.location.href = `/PayrollSalaryReport/ExportExcel?${qs}`;
+    }
+    function openBankModal(empId, name) {
+
+        // Set name immediately (good UX)
+        $('#lblModalName').text(name);
+
+        // Show loading placeholders
+        $('#lblModalBank').text('Loading...');
+        $('#lblModalBranch').text('Loading...');
+        $('#lblModalIfsc').text('Loading...');
+        $('#lblModalAcct').text('Loading...');
+
+        $('#BankModal').modal('show');
+
+        $.ajax({
+            url: '/PayrollSalaryReport/GetEmployeeBank',
+            type: 'GET',
+            dataType: 'json',
+            data: { employeeId: empId },
+            success: function (res) {
+
+                if (!res || !res.success) {
+                    $('#lblModalBank').text('—');
+                    $('#lblModalBranch').text('—');
+                    $('#lblModalIfsc').text('—');
+                    $('#lblModalAcct').text('—');
+                    toastr.warning(res?.message || 'Bank details not found');
+                    return;
+                }
+
+                $('#lblModalBank').text(res.bankName || '—');
+                $('#lblModalBranch').text(res.branch || '—');
+                $('#lblModalIfsc').text(res.ifsc || '—');
+                $('#lblModalAcct').text(res.accountNo || '—');
+            },
+            error: function () {
+                $('#lblModalBank').text('—');
+                $('#lblModalBranch').text('—');
+                $('#lblModalIfsc').text('—');
+                $('#lblModalAcct').text('—');
+                toastr.error('Server error while loading bank details');
+            }
+        });
+    }
+
+    // UPDATED APPROVE LOGIC TO USE GLOBAL IDS
+    function approveSelectedSalaries() {
+        const ids = getSelectedEmployeeIds();
+        if (!ids.length) { toastr.warning("Please select employees."); return; }
+        if (!confirm(`Approve ${ids.length} employees?`)) return;
+
+        showPayrollLoader();
+
+        $.ajax({
+            url: "/PayrollSalaryReport/BulkApprove",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                month: parseInt($("#fltMonth").val()),
+                year: parseInt($("#fltYear").val()),
+                payrollProcessEmployeeIds: ids.join(",")
+            }),
+            success: function (res) {
+                // 1. Handle skipped employees first (Warning Modal)
+                if (res.skipped && res.skipped.length > 0) {
+                    let skippedHtml = `
+            <p class="text-muted mb-md">The following employees were not processed:</p>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-condensed mb-none">
+                    <thead>
+                        <tr style="background:#f8f9fa;">
+                            <th style="width:100px;">Code</th>
+                            <th>Name</th>
+                            <th>Status/Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                    res.skipped.forEach(emp => {
+                        skippedHtml += `
+                <tr>
+                    <td>${emp.Code}</td>
+                    <td>${emp.Name}</td>
+                    <td><span class="label label-danger" style="display:block; text-align:center;">${emp.Reason}</span></td>
+                </tr>`;
+                    });
+
+                    skippedHtml += `</tbody></table></div>`;
+
+                    // Inject into your modal body and show it
+                    $("#SkippedEmployeeModal .modal-body").html(skippedHtml);
+                    $("#SkippedEmployeeModal").modal('show');
+                }
+
+                // 2. Handle overall process success/failure
+                if (res.success) {
+                    toastr.success(res.message || "Success");
+                    refreshGrid();
+                    // resetGlobalSelection(); // Highly recommended to clear checkboxes
+                } else if (!res.success && (!res.skipped || res.skipped.length === 0)) {
+                    // Only show error if no skipped modal was shown to avoid double alerts
+                    toastr.error(res.message);
+                }
+            },
+            complete: function () {
+                hidePayrollLoader();
+            }
+        });
+    }
+    function loadFilterData() {
+        bindMonthYear(); // Sync call
+        $.ajax({
+            url: "/PayrollSalaryReport/GetFilterData",
+            type: "GET",
+            success: function (res) {
+                if (res && res.success) {
+                    const companies = [{ Value: "", Text: "All Companies" }].concat(res.companies || []);
+                    bindSelect("#fltCompany", companies, "");
+                    const payGroups = [{ Value: "", Text: "All Groups" }].concat(res.payGroups || []);
+                    bindSelect("#fltPayGroup", payGroups, "");
+                }
+                refreshGrid(); // Trigger first hit here
+            },
+            error: function () { refreshGrid(); }
+        });
+    }
+    function bindMonthYear() {
+        const monthList = [{ Value: "1", Text: "January" }, { Value: "2", Text: "February" }, { Value: "3", Text: "March" }, { Value: "4", Text: "April" }, { Value: "5", Text: "May" }, { Value: "6", Text: "June" }, { Value: "7", Text: "July" }, { Value: "8", Text: "August" }, { Value: "9", Text: "September" }, { Value: "10", Text: "October" }, { Value: "11", Text: "November" }, { Value: "12", Text: "December" }];
+        const currentYear = new Date().getFullYear();
+        const yearList = [];
+        for (let y = currentYear; y >= currentYear - 5; y--) { yearList.push({ Value: String(y), Text: String(y) }); }
+        const now = new Date();
+        const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        bindSelect("#fltMonth", monthList, String(prev.getMonth() + 1));
+        bindSelect("#fltYear", yearList, String(prev.getFullYear()));
+    }
+    function bindSelect(selector, list, selectedValue) {
+        const $ddl = $(selector).empty();
+        $.each(list, function (i, x) { $ddl.append(`<option value="${x.Value}">${x.Text}</option>`); });
+        if (selectedValue) $ddl.val(selectedValue);
+    }
+
+    function escapeHtml(text) { return String(text ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
+
+    function toggleFilterPanel() { $("#filterPanel").slideToggle(200); }
+
+    function showPayrollLoader() { $("body").css({ overflow: "hidden", pointerEvents: "none" }); $("#payrollLoader").fadeIn(120).css("pointer-events", "all"); }
+    function hidePayrollLoader() { $("#payrollLoader").fadeOut(120, function () { $("body").css({ overflow: "", pointerEvents: "" }); }); }
+    function renderPaginationButtons(totalItems) {
+        const totalPages = Math.ceil(totalItems / pageSize);
+        const $container = $('#paginationControls').empty();
+        if (totalPages <= 1) return;
+
+        let html = `<div class="pagination-compact">`;
+        html += `<button class="page-btn" ${pageNumber === 1 ? 'disabled' : ''} onclick="changePage(${pageNumber - 1})">‹</button>`;
+
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= pageNumber - 1 && i <= pageNumber + 1)) {
+                html += `<button class="page-btn ${i === pageNumber ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            } else if (i === pageNumber - 2 || i === pageNumber + 2) {
+                html += `<span class="page-ellipsis">…</span>`;
+            }
+        }
+
+        html += `<button class="page-btn" ${pageNumber === totalPages ? 'disabled' : ''} onclick="changePage(${pageNumber + 1})">›</button></div>`;
+        $container.html(html);
+    }
+    function changePageSize() {
+        pageSize = parseInt($("#ddlPageSize").val());
+        pageNumber = 1;
+        refreshGrid();
+    } 
+
+    function changePage(p) {
+        pageNumber = p;
+        refreshGrid();
+    } 
     function processPayment() {
         const ids = getSelectedEmployeeIds();
         if (!ids.length) {
-            alert("Please select at least one employee.");
+            toastr.warning("Please select at least one employee.");
             return;
         }
 
         $("#lblSelectedCount").text(ids.length);
 
-        // default date = today
+        // Set default date to today
         const d = new Date();
         const yyyy = d.getFullYear();
         const mm = String(d.getMonth() + 1).padStart(2, "0");
@@ -1311,7 +1560,6 @@
 
     $(document).on("click", "#btnConfirmPaid", function () {
         const ids = getSelectedEmployeeIds();
-        //alert(ids.length);
         const paidDate = $("#txtPaidDate").val();
 
         if (!ids.length) {
@@ -1325,36 +1573,6 @@
 
         showPayrollLoader();
 
-        //$("#btnConfirmPaid").prop("disabled", true).html('<i class="fa fa-spinner fa-spin"></i> Processing...');
-
-        //$.ajax({
-        //    url: "/PayrollSalaryReport/MarkPaid",
-        //    type: "POST",
-        //    contentType: "application/json; charset=utf-8",
-        //    dataType: "json",
-        //    data: JSON.stringify({
-        //        month: parseInt($("#fltMonth").val(), 10),
-        //        year: parseInt($("#fltYear").val(), 10),
-        //        paidDate: paidDate,
-        //        payrollProcessEmployeeIds: ids.join(",")      // ✅ send EmployeeIDs
-        //    }),
-        //    success: function (res) {
-        //        if (!res || !res.success) {
-        //            alert(res?.message || "Failed to mark paid.");
-        //            return;
-        //        }
-
-        //        $("#MarkPaidModal").modal("hide");
-        //        $("#chkAll").prop("checked", false);
-        //        refreshGrid();
-        //    },
-        //    error: function () {
-        //        alert("Server error while marking paid.");
-        //    },
-        //    complete: function () {
-        //        $("#btnConfirmPaid").prop("disabled", false).html('<i class="fa fa-check"></i> Paid');
-        //    }
-        //});
         $.ajax({
             url: "/PayrollSalaryReport/MarkPaid",
             type: "POST",
@@ -1367,59 +1585,61 @@
                 payrollProcessEmployeeIds: ids.join(",")
             }),
             success: function (res) {
-
                 if (!res || !res.success) {
-                    alert(res?.message || "Failed to mark paid.");
+                    // Check if the server sent back skipped employees even on a "failure" (e.g., none were finalized)
+                    if (res.skippedEmployees && res.skippedEmployees.length > 0) {
+                        showSkippedEmployees(res.skippedEmployees);
+                    }
+                    toastr.error(res?.message || "Failed to mark paid.");
                     return;
                 }
 
-                // ✅ Success message
-                toastr.success(res.message || "Payment processed");
+                // ✅ 1. Success Message
+                toastr.success(res.message || "Payment processed successfully.");
 
-                // ✅ Optional summary toast
-                toastr.info(
-                    `Updated: ${res.paidUpdated}, Paid: ${res.paidEmployees}/${res.totalEmployees}`
-                );
+                // ✅ 2. Optional summary info
+                toastr.info(`Updated: ${res.paidUpdated}, Paid: ${res.paidEmployees}/${res.totalEmployees}`);
 
-                // ⚠️ Show skipped employees (if any)
+                // ⚠️ 3. Show skipped employees (Draft or Rejected records that were selected)
                 if (res.skippedEmployees && res.skippedEmployees.length > 0) {
                     showSkippedEmployees(res.skippedEmployees);
                 }
 
-                // UI reset
-                $("#MarkPaidModal").modal("hide");
-                $("#chkAll").prop("checked", false);
+                // ✅ 4. CRITICAL: Clear global memory after successful payment
+                if (typeof resetGlobalSelection === "function") {
+                    resetGlobalSelection();
+                }
 
+                // 5. UI reset & Refresh
+                $("#MarkPaidModal").modal("hide");
                 refreshGrid();
             },
             error: function () {
-                alert("Server error while marking paid.");
+                toastr.error("Server error while marking paid.");
             },
             complete: function () {
                 hidePayrollLoader();
             }
         });
-
     });
 
     function showSkippedEmployees(list) {
-
         let html = `
-        <table class="table table-sm table-bordered">
+        <p class="text-semibold">The following employees were skipped (Only 'Finalized' records can be marked paid):</p>
+        <table class="table table-sm table-bordered mt-md">
             <thead>
-                <tr>
-                    <th>Employee</th>
+                <tr class="bg-light">
+                    <th>Employee Name</th>
                     <th>Reason</th>
                 </tr>
             </thead>
-            <tbody>
-    `;
+            <tbody>`;
 
         list.forEach(e => {
             html += `
             <tr>
-                <td>${e.EmployeeName}</td>
-                <td>${e.SkipReason}</td>
+                <td>${escapeHtml(e.EmployeeName)}</td>
+                <td><span class="text-danger">${escapeHtml(e.SkipReason)}</span></td>
             </tr>`;
         });
 
@@ -1428,127 +1648,4 @@
         $("#SkippedEmployeeModal .modal-body").html(html);
         $("#SkippedEmployeeModal").modal("show");
     }
-
-    function exportExcel() {
-
-        const month = parseInt($("#fltMonth").val() || "0", 10);
-        const year = parseInt($("#fltYear").val() || "0", 10);
-
-        const companyId = $("#fltCompany").val() ? parseInt($("#fltCompany").val(), 10) : null;
-        const payGroupId = $("#fltPayGroup").val() ? parseInt($("#fltPayGroup").val(), 10) : null;
-        const status = $("#fltStatus").val() ? parseInt($("#fltStatus").val(), 10) : null;
-        const search = ($("#searchInput").val() || "").trim();
-
-        if (!month || !year) {
-            alert("Please select Month and Year");
-            return;
-        }
-
-        // 🔹 Build query string
-        const qs = $.param({
-            month: month,
-            year: year,
-            companyId: companyId,
-            payGroupId: payGroupId,
-            status: status,
-            search: search
-        });
-
-        // 🔹 Trigger download (AJAX is NOT suitable for file streams)
-        window.location.href = `/PayrollSalaryReport/ExportExcel?${qs}`;
-    }
-    /* =====================================================
-       APPROVE SELECTED SALARIES
-       ===================================================== */
-    function approveSelectedSalaries() {
-
-        const ids = getSelectedEmployeeIds(); // Your existing function
-        if (!ids.length) {
-            toastr.warning("Please select at least one employee.");
-            return;
-        }
-
-        if (!confirm(`Are you sure you want to Approve and Finalize salary for ${ids.length} employees? This will lock the data for editing.`)) {
-            return;
-        }
-
-        showPayrollLoader(); // If you have a loader, otherwise use a simple button disable
-
-        $.ajax({
-            url: "/PayrollSalaryReport/BulkApprove",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-                month: parseInt($("#fltMonth").val(), 10),
-                year: parseInt($("#fltYear").val(), 10),
-                payrollProcessEmployeeIds: ids.join(",")
-            }),
-            success: function (res) {
-                if (res.success) {
-                    toastr.success(res.message || "Salaries approved successfully.");
-                    refreshGrid();
-                    $("#chkAll").prop("checked", false);
-                } else {
-                    toastr.error(res.message || "Approval failed.");
-                }
-            },
-            error: function () {
-                toastr.error("Server error during approval.");
-            },
-            complete: function () {
-                hidePayrollLoader();
-            }
-        });
-    }
-
-    /* =====================================================
-       REJECT SELECTED SALARIES
-       ===================================================== */
-    function rejectSelectedSalaries() {
-        const ids = getSelectedEmployeeIds();
-        if (!ids.length) {
-            toastr.warning("Please select at least one employee.");
-            return;
-        }
-
-        const reason = prompt("Please enter the reason for rejection:");
-        if (reason === null) return; // User cancelled
-
-        $.ajax({
-            url: "/PayrollSalaryReport/BulkReject",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-                payrollProcessEmployeeIds: ids.join(","),
-                reason: reason
-            }),
-            success: function (res) {
-                if (res.success) {
-                    toastr.info("Salaries rejected and sent back to Kitchen.");
-                    refreshGrid();
-                    $("#chkAll").prop("checked", false);
-                } else {
-                    toastr.error(res.message || "Rejection failed.");
-                }
-            }
-        });
-    }
-    function showPayrollLoader() {
-        $("body").css({
-            overflow: "hidden",
-            pointerEvents: "none"
-        });
-
-        $("#payrollLoader").fadeIn(120);
-        $("#payrollLoader").css("pointer-events", "all");
-    }
-
-    function hidePayrollLoader() {
-        $("#payrollLoader").fadeOut(120, function () {
-            $("body").css({
-                overflow: "",
-                pointerEvents: ""
-            });
-        });
-    }
-</script>*@
+</script>
