@@ -230,6 +230,8 @@
     <Compile Include="BLL\clsSalary.cs" />
     <Compile Include="BLL\clsState.cs" />
     <Compile Include="BLL\Reports\ClsAllEmpSalaryList.cs" />
+    <Compile Include="BLL\Services\MailService.cs" />
+    <Compile Include="BLL\Services\PayslipPdfService.cs" />
     <Compile Include="Common\clsAppVariables.cs" />
     <Compile Include="Common\clsHelper.cs" />
     <Compile Include="Common\CryptorEngine.cs" />
@@ -244,6 +246,7 @@
     <Compile Include="Controllers\EmployeeListController.cs" />
     <Compile Include="Controllers\EmployeeLoanListController.cs" />
     <Compile Include="Controllers\EmployeeSalaryController.cs" />
+    <Compile Include="Controllers\PayrollreportController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanReportController.cs" />
@@ -2423,6 +2426,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Form16Data\" />
     <Folder Include="Form16\" />
+    <Folder Include="Views\Empty\" />
     <Folder Include="Views\PayGroupEmployeeMapping\" />
     <Folder Include="Views\PayrollLoanOpening\" />
     <Folder Include="Views\SalaryModification\" />

@@ -3550,7 +3550,7 @@
         uploadBody.append(table);
     }
     function loadAttendanceEmployees(payGroupId, payrollType) {
-
+        //alert("Tested OK");
         const payload = {
             payGroupId: payGroupId,
             payrollType: payrollType,
@@ -3597,7 +3597,7 @@
             let tr = `<tr data-employeeid="${r.EmployeeId}" data-name="${r.EmployeeName}">`;
             columns.forEach(col => {
 
-                if (col === "PaidUnits") {
+                if (col === "PaidUnits"|| col==="PaidDays") {
                     tr += `
                     <td class="text-right">
                         <input type="number"
@@ -3667,13 +3667,14 @@
 
         const file = input.files[0];
         const monthYearVal = $("#txtMonthYear").val();
-        const parts = monthYearVal.split("-");
+        const parts = monthYearVal.split("-"); 
 
         const formData = new FormData();
         formData.append("file", file);
         formData.append("configId", ConfigureSalaryComponentId);
         formData.append("month", parseInt(parts[1]));
         formData.append("year", parseInt(parts[0]));
+        formData.append("paygroupid", $("#ddlType").val());
 
         showPayrollLoader();
 
@@ -4141,7 +4142,7 @@
 
         $("#attTableHead th").each(function (i) {
             const headerText = $(this).text().trim().toUpperCase();
-            if (headerText === "PAIDUNITS" || headerText === "PAID DAYS") {
+            if (headerText === "PAIDUNITS" || headerText === "PAIDDAYS") {
                 index = i;
             }
         });
@@ -4438,46 +4439,7 @@
 
                 const cell = row.Cells.find(x => x.PayConfigId === col.PayConfigId);
                 const amount = cell ? cell.Amount : 0;
-                const type = (col.PayType || '').toUpperCase();
-
-                //// ===== Loan logic untouched =====
-                //if (col.IsOther && col.OtherType === "LOANRECOVERY") {
-
-                //    const hasLoan = cell && cell.OriginalAmount > 0;
-
-                //    if (!hasLoan) {
-                //        html += `<td class="text-right cell-deduction" style="font-family:monospace">
-                //                  0
-                //              </td>`;
-                //    }
-                //    else {
-                //        html += `
-                //                <td class="text-right">
-                //                    <div style="
-                //                        display:flex;
-                //                        align-items:center;
-                //                        justify-content:flex-end;
-                //                        gap:8px;
-                //                        white-space:nowrap;
-                //                    ">
-                //                        <span style="font-weight:600;color:#991b1b">
-                //                            ${amount.toLocaleString()}
-                //                        </span>
-
-                //                        ${cell.IsWaivable && Number(window.currentBatchStatus) === 1
-
-                //                ? `<label style="font-size:11px; cursor:pointer;">
-                //                                    <input type="checkbox"
-                //                                           ${cell.IsWaived ? 'checked' : ''}
-                //                                           onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
-                //                                    Skip
-                //                               </label>`
-                //                : ``
-                //            }
-                //                    </div>
-                //                </td>`;
-                //    }
-                //}
+                const type = (col.PayType || '').toUpperCase(); 
                 // ===== Loan logic updated with Ledger link =====
                 if (col.IsOther && col.OtherType === "LOANRECOVERY") {
 
@@ -4489,33 +4451,33 @@
                     else {
                         const loanRefIds = cell.ReferenceIds || '0';
                         html += `
-                <td class="text-right">
-                    <div style="
-                        display:flex;
-                        align-items:center;
-                        justify-content:flex-end;
-                        gap:12px;
-                        white-space:nowrap;
-                    ">
-                        <span class="loan-link" 
-                              style="font-weight:700; color:#d97706; cursor:pointer; border-bottom:1px dashed #d97706;"
-                              data-ref-ids="${loanRefIds}"
-                               onclick="openLoanLedger(${row.EmployeeId}, '${row.EmployeeName.replace(/'/g, "\\'")}', ${cell.OriginalAmount}, ${col.PayConfigId}, ${procMonth}, ${procYear}, '${loanRefIds}')"> 
-                            ${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                        </span>
+                                <td class="text-right">
+                                    <div style="
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:flex-end;
+                                        gap:12px;
+                                        white-space:nowrap;
+                                    ">
+                                        <span class="loan-link" 
+                                              style="font-weight:700; color:#d97706; cursor:pointer; border-bottom:1px dashed #d97706;"
+                                              data-ref-ids="${loanRefIds}"
+                                               onclick="openLoanLedger(${row.EmployeeId}, '${row.EmployeeName.replace(/'/g, "\\'")}', ${cell.OriginalAmount}, ${col.PayConfigId}, ${procMonth}, ${procYear}, '${loanRefIds}')"> 
+                                            ${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                                        </span>
 
-                        ${cell.IsWaivable && Number(window.currentBatchStatus) === 1
-                                ? `<label style="font-size:10px; cursor:pointer; display:flex; align-items:center; gap:3px; background:#fff7ed; padding:2px 5px; border-radius:4px; border:1px solid #ffedd5;">
-                                    <input type="checkbox"
-                                    data-ref-ids="${loanRefIds}"
-                                           ${cell.IsWaived ? 'checked' : ''}
-                                           onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
-                                    <span style="color:#9a3412; font-weight:700;">SKIP</span>
-                               </label>`
-                                : ``
-                            }
-                    </div>
-                </td>`;
+                                        ${cell.IsWaivable && Number(window.currentBatchStatus) === 1
+                                                ? `<label style="font-size:10px; cursor:pointer; display:flex; align-items:center; gap:3px; background:#fff7ed; padding:2px 5px; border-radius:4px; border:1px solid #ffedd5;">
+                                                    <input type="checkbox"
+                                                    data-ref-ids="${loanRefIds}"
+                                                           ${cell.IsWaived ? 'checked' : ''}
+                                                           onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
+                                                    <span style="color:#9a3412; font-weight:700;">SKIP</span>
+                                               </label>`
+                                                : ``
+                                            }
+                                    </div>
+                                </td>`;
                     }
                 }
                 else {
@@ -4816,7 +4778,7 @@
             }
 
             if (id === 'genModal') {
-                selectedEmployees = [];
+                //selectedEmployees = [];
             }
             // 🔑 Add this for your Edit Salary Modal
             if (id === 'editSalaryModal') {

@@ -84,6 +84,7 @@ namespace MendinePayroll.UI.Models
     public class SalaryHead
     {
         public string PayConfigName { get; set; }
+        public decimal ActualAmount { get; set; }
         public decimal Amount { get; set; }
     }
 

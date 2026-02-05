@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
 using MendinePayroll.UI.Common;
 using MendinePayroll.UI.Models;
+using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Org.BouncyCastle.Asn1.Ocsp;
@@ -368,70 +369,230 @@ namespace MendinePayroll.UI.Controllers
             // Used ONLY for FORMULA evaluation
             Dictionary<string, decimal> valueMap = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
 
-            /* =========================
-               PASS 1 : FIXED / MANUAL / EXCEL
-            ========================= */
-            foreach (var c in components.Where(x =>
-                   x.LogicType == "FIXED"
-                || x.LogicType == "MANUAL_INPUT"
-                || x.LogicType == "EXCEL_UPLOAD"
-                || (x.IsOther && x.OtherType == "LOANRECOVERY")
-                || (x.IsStatutory && x.StatutoryType == "TDS")
-            ))
-            {
-                // 🔹 Resolver-based components (ABSOLUTE – NO PRORATE)
-                if (
-                    c.LogicType == "EXCEL_UPLOAD"
-                    || (c.IsOther && c.OtherType == "LOANRECOVERY")
-                    || (c.IsStatutory && c.StatutoryType == "TDS")
-                )
-                {
-                    c.BaseAmount = valueResolver(
-                        employeeId,
-                        c.PayConfigId,
-                        processMonth,
-                        processYear,
-                        c
-                    );
+            ///* =========================
+            //   PASS 1 : FIXED / MANUAL / EXCEL
+            //========================= */
+            //foreach (var c in components.Where(x =>
+            //       x.LogicType == "FIXED"
+            //    || x.LogicType == "MANUAL_INPUT"
+            //    || x.LogicType == "EXCEL_UPLOAD"
+            //    || (x.IsOther && x.OtherType == "LOANRECOVERY")
+            //    || (x.IsStatutory && x.StatutoryType == "TDS")
+            //))
+            //{
+            //    // 🔹 Resolver-based components (ABSOLUTE – NO PRORATE)
+            //    if (
+            //        c.LogicType == "EXCEL_UPLOAD"
+            //        || (c.IsOther && c.OtherType == "LOANRECOVERY")
+            //        || (c.IsStatutory && c.StatutoryType == "TDS")
+            //    )
+            //    {
+            //        c.BaseAmount = valueResolver(
+            //            employeeId,
+            //            c.PayConfigId,
+            //            processMonth,
+            //            processYear,
+            //            c
+            //        );
 
-                    c.Amount = ApplyRounding(c.BaseAmount, "");   // 🔒 NO PRORATE
-                    valueMap[c.PayConfigName] = c.Amount;
+            //        c.Amount = ApplyRounding(c.BaseAmount, "");   // 🔒 NO PRORATE
+            //        valueMap[c.PayConfigName] = c.Amount;
+            //        continue;
+            //    }
+
+            //    // 🔹 Attendance-based components
+            //    c.BaseAmount = c.Amount;
+            //    c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
+            //    valueMap[c.PayConfigName] = c.Amount;
+            //}
+            ///* ============================================================
+            //   PASS 1: FIXED / MANUAL / EXCEL RAW DATA
+            //   ============================================================ */
+            //foreach (var c in components.Where(x => x.LogicType == "FIXED" || x.LogicType == "MANUAL_INPUT" ||x.LogicType == "EXCEL_UPLOAD" 
+            //||(x.IsOther && x.OtherType == "LOANRECOVERY")))
+            //{
+            //    if (c.LogicType == "EXCEL_UPLOAD")
+            //    {
+            //        // 1. Fetch the raw value from your variable table (e.g., 2 days off)
+            //        decimal rawVal = valueResolver(employeeId, c.PayConfigId, processMonth, processYear, c);
+
+            //        // 2. Store it for use in formulas later
+            //        c.BaseAmount = rawVal;
+
+            //        // 3. Populate Map so Pass 2 finds {VAL} and {RATE}
+            //        valueMap["{VAL}"] = rawVal;
+            //        valueMap["{RATE}"] = c.Rate; // For ID 25, this is 2000.00
+
+            //        // Also map the component name itself
+            //        valueMap[c.PayConfigName] = rawVal;
+            //        continue;
+            //    }
+
+            //    // Normal Fixed/Manual Logic
+            //    c.BaseAmount = c.Amount;
+            //    c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
+            //    valueMap[c.PayConfigName] = c.Amount;
+            //}
+            ///* ============================================================
+            //    PASS 2 : FORMULA & EXCEL LOGIC
+            //   ============================================================ */
+            //foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD"))
+            //{
+            //    // Skip if it's an Excel Upload without a formula (e.g., just a raw number)
+            //    if (c.LogicType == "EXCEL_UPLOAD" && string.IsNullOrEmpty(c.CalculationExpression))
+            //        continue;
+
+            //    decimal baseValue = 0;
+
+            //    // 🛡️ BRANCH THE LOGIC HERE
+            //    if (c.LogicType == "EXCEL_UPLOAD")
+            //    {
+            //        // Use the NEW function for tiered IF logic and {VAL}/{RATE} tags
+            //        baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
+            //    }
+            //    else
+            //    {
+            //        // Keep your ORIGINAL function for standard [BASIC]+[HRA] formulas
+            //        baseValue = EvaluateDynamicFormula(c.CalculationExpression, valueMap);
+            //    }
+
+            //    c.BaseAmount = baseValue;
+
+            //    // Apply Percentage logic (if any)
+            //    decimal calculated = c.IsPercentage
+            //        ? baseValue * (c.Rate / 100)
+            //        : baseValue;
+
+            //    // Apply Max Limit / Ceiling
+            //    if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && calculated > c.MaxLimit.Value)
+            //    {
+            //        calculated = c.MaxLimit.Value;
+            //    }
+
+            //    // ROUNDING & PRORATING
+            //    if (c.LogicType == "EXCEL_UPLOAD")
+            //    {
+            //        // 🔒 Excel uploads (like Bonus or OT) are usually absolute results. No proration.
+            //        c.Amount = ApplyRounding(calculated, c.RoundingType);
+            //    }
+            //    else
+            //    {
+            //        // Standard formulas get prorated based on attendance
+            //        c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
+            //    }
+
+            //    // Add to map for next components (like PF/ESIC) to see
+            //    valueMap[c.PayConfigName] = c.Amount;
+            //}
+            /* ============================================================
+               PASS 1: FIXED / MANUAL / EXCEL RAW DATA
+               ============================================================ */
+            foreach (var c in components.Where(x => x.LogicType == "FIXED" ||
+                                                   x.LogicType == "MANUAL_INPUT" ||
+                                                   x.LogicType == "EXCEL_UPLOAD" ||
+                                                   (x.IsOther && x.OtherType == "LOANRECOVERY")))
+            {
+                if (c.LogicType == "EXCEL_UPLOAD")
+                {
+                    // 1. Fetch raw value from DB (e.g., 2.1 for OT or 1.0 for Attendance)
+                    decimal rawVal = valueResolver(employeeId, c.PayConfigId, processMonth, processYear, c);
+
+                    // 2. Store it in the component object for Pass 2
+                    c.BaseAmount = rawVal;
+
+                    // 3. Map the component name so OTHER formulas can use this result
+                    // We DON'T set {VAL} or {RATE} here because they will get overwritten in the loop.
+                    valueMap[c.PayConfigName] = rawVal;
                     continue;
                 }
 
-                // 🔹 Attendance-based components
+                // Normal Fixed/Manual Logic
                 c.BaseAmount = c.Amount;
                 c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
                 valueMap[c.PayConfigName] = c.Amount;
             }
 
-
-            /* =========================
-               PASS 2 : FORMULA
-            ========================= */
-            foreach (var c in components.Where(x => x.LogicType == "FORMULA"))
+            /* ============================================================
+                PASS 2 : FORMULA & EXCEL LOGIC (Handles Fixed & Formula)
+               ============================================================ */
+            foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD"))
             {
-                decimal baseValue = ApplyRounding(EvaluateDynamicFormula(
-                    c.CalculationExpression,
-                    valueMap
-                ), c.RoundingType);
+                decimal baseValue = 0;
+
+                if (c.LogicType == "EXCEL_UPLOAD")
+                {
+                    // 1. If there IS a formula (like Attendance Bonus or OT)
+                    if (!string.IsNullOrEmpty(c.CalculationExpression))
+                    {
+                        valueMap["{VAL}"] = c.BaseAmount;
+                        valueMap["{RATE}"] = c.Rate;
+                        valueMap["{PAID DAYS}"] = c.PaidDays;
+                        valueMap["{WORKING DAYS}"] = totalDays;
+
+                        baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
+                    }
+                    else
+                    {
+                        // 2. If there is NO formula (e.g., a simple Incentive upload)
+                        // Just use the raw value collected in Pass 1
+                        baseValue = c.BaseAmount;
+                    }
+                }
+                else
+                {
+                    // Standard [BASIC]+[DA] formulas
+                    baseValue = EvaluateDynamicFormula(c.CalculationExpression, valueMap);
+                }
 
                 c.BaseAmount = baseValue;
 
-                decimal calculated = c.IsPercentage
-                    ? baseValue * c.Rate / 100
-                    : baseValue;
+                // Apply Percentage logic (usually 100% for fixed uploads)
+                decimal calculated = c.IsPercentage ? baseValue * (c.Rate / 100) : baseValue;
 
-                //if (c.MaxLimit.HasValue && calculated > c.MaxLimit.Value)
-                //    calculated = c.MaxLimit.Value;
+                // Apply Max Limit
                 if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && calculated > c.MaxLimit.Value)
-                {
                     calculated = c.MaxLimit.Value;
+
+                if (c.LogicType == "EXCEL_UPLOAD")
+                {
+                    // No proration for manual Excel uploads
+                    c.Amount = ApplyRounding(calculated, c.RoundingType);
+                }
+                else
+                {
+                    // Standard formula proration
+                    c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
                 }
 
-                c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
+                // Update the map for next components
                 valueMap[c.PayConfigName] = c.Amount;
             }
+            ///* =========================
+            //   PASS 2 : FORMULA
+            //========================= */
+            //foreach (var c in components.Where(x => x.LogicType == "FORMULA"))
+            //{
+            //    decimal baseValue = ApplyRounding(EvaluateDynamicFormula(
+            //        c.CalculationExpression,
+            //        valueMap
+            //    ), c.RoundingType);
+
+            //    c.BaseAmount = baseValue;
+
+            //    decimal calculated = c.IsPercentage
+            //        ? baseValue * c.Rate / 100
+            //        : baseValue;
+
+            //    //if (c.MaxLimit.HasValue && calculated > c.MaxLimit.Value)
+            //    //    calculated = c.MaxLimit.Value;
+            //    if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && calculated > c.MaxLimit.Value)
+            //    {
+            //        calculated = c.MaxLimit.Value;
+            //    }
+
+            //    c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
+            //    valueMap[c.PayConfigName] = c.Amount;
+            //}
 
             ///* =========================
             //   PASS 3 : STATUTORY (MONTHLY RULES)
@@ -611,7 +772,56 @@ namespace MendinePayroll.UI.Controllers
             };
 
         }
+        private static decimal EvaluateDynamicFormulaEXCEL(string formula, Dictionary<string, decimal> valueMap)
+        {
+            if (string.IsNullOrWhiteSpace(formula)) return 0;
 
+            try
+            {
+                string processedFormula = formula;
+
+                // 1. CONVERT EXCEL "IF" TO .NET "IIF"
+                // .NET DataTable.Compute uses "IIF" for logic.
+                processedFormula = Regex.Replace(processedFormula, @"\bIF\(", "IIF(", RegexOptions.IgnoreCase);
+
+                // 2. DYNAMIC TAG REPLACEMENT
+                // This finds everything inside { } and looks it up in your valueMap
+                processedFormula = Regex.Replace(processedFormula, @"\{([^}]+)\}", match =>
+                {
+                    string key = match.Value; // e.g., "{BASIC AMOUNT}" or "{VAL}"
+
+                    if (valueMap.TryGetValue(key, out decimal val))
+                    {
+                        return val.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
+                    // Fallback for component names without braces if they exist in map
+                    string plainKey = match.Groups[1].Value;
+                    if (valueMap.TryGetValue(plainKey, out decimal val2))
+                    {
+                        return val2.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
+                    return "0"; // If variable not found, return 0 to prevent crash
+                });
+
+                // 3. CLEANUP
+                // Replace common Excel symbols if users typed them (like single = for comparison)
+                // Note: DataTable.Compute handles most math (+, -, *, /) automatically.
+
+                // 4. EXECUTE CALCULATION
+                using (System.Data.DataTable dt = new System.Data.DataTable())
+                {
+                    object result = dt.Compute(processedFormula, "");
+                    return Convert.ToDecimal(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log error: formula was likely malformed
+                return 0;
+            }
+        }
         private static decimal EvaluateDynamicFormula(string formula, Dictionary<string, decimal> valueMap)
         {
             if (string.IsNullOrWhiteSpace(formula))
@@ -773,12 +983,19 @@ namespace MendinePayroll.UI.Controllers
         }
         private decimal GetExcelUploadedAmount(int employeeId, int payConfigId, int month, int year)
         {
-            // TODO:
-            // Call SP like: Payroll_GetExcelUploadedComponentAmount
-            // Params: employeeId, payConfigId, month, year
-            // Used for LogicType = EXCEL_UPLOAD
+            try
+            {
+                // Calling the SP
+                object result = clsDatabase.fnDBOperation("SP_Payroll_GetVariableComponentInput", employeeId, payConfigId,month,year,TenantId);
 
-            return 0m;
+                // If result is null, return 0; otherwise convert to decimal
+                return result != null ? Convert.ToDecimal(result) : 0m;
+            }
+            catch (Exception ex)
+            {
+                // Log error if needed
+                return 0m;
+            }
         }
         private bool IsWaivableComponent(SalaryComponentResult c)
         {
@@ -2258,6 +2475,15 @@ namespace MendinePayroll.UI.Controllers
                 // If multiple IDs exist (e.g. "101,102"), we take the first one to show the ledger
                 string targetLoanId = (ReferenceIds ?? "").Split(',')[0];
 
+                // 1. FALLBACK LOGIC: If ReferenceIds is "0" or empty, fetch from processed details
+                if (string.IsNullOrEmpty(targetLoanId) || targetLoanId == "0")
+                {
+                     
+                    object dbRef = clsDatabase.fnDBOperation("SP_get_Loan_ReferenceIds", employeeId,payConfigId,Currentemi,ProcessMonth,ProcessYear,TenantId);
+
+                    targetLoanId = (dbRef ?? "").ToString().Split(',')[0];
+                }
+
                 if (string.IsNullOrEmpty(targetLoanId) || targetLoanId == "0")
                 {
                     return Json(new { Success = false, Message = "No active loan linked to this record." }, JsonRequestBehavior.AllowGet);
@@ -2379,7 +2605,7 @@ namespace MendinePayroll.UI.Controllers
             // Convert month number to Month Name (e.g., 1 -> January)
             string monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
             // 1. Fetch Template Data using the new SP
-            DataSet ds = clsDatabase.fnDataSet("SP_Payroll_GetTemplateData", TenantId, payGroupId, ConfigureSalaryComponentId);
+            System.Data.DataSet ds = clsDatabase.fnDataSet("SP_Payroll_GetTemplateData", TenantId, payGroupId, ConfigureSalaryComponentId);
 
             if (ds == null || ds.Tables.Count < 2 || ds.Tables[1].Rows.Count == 0)
             {
@@ -2443,7 +2669,7 @@ namespace MendinePayroll.UI.Controllers
             }
         }
         [HttpPost]
-        public JsonResult UploadVariableComponentValues(HttpPostedFileBase file, int configId, int month, int year)
+        public JsonResult UploadVariableComponentValues(HttpPostedFileBase file, int configId, int month, int year,int paygroupid)
         {
             if (file == null || file.ContentLength == 0)
                 return Json(new { success = false, message = "Please select a valid Excel file." });
@@ -2481,7 +2707,7 @@ namespace MendinePayroll.UI.Controllers
                     string JsonData = Newtonsoft.Json.JsonConvert.SerializeObject(uploadList);
                     string User = Session["UserName"]?.ToString() ?? "System";
                     // Send to Stored Procedure in ONE call
-                    clsDatabase.fnDBOperation("SP_Payroll_SaveVariableComponentInput_Bulk", JsonData, configId,month,year,TenantId,User);
+                    clsDatabase.fnDBOperation("SP_Payroll_SaveVariableComponentInput_Bulk", JsonData, configId,month,year,TenantId,User, paygroupid);
 
                     return Json(new { success = true, message = $"Successfully updated {uploadList.Count} records." });
                 }

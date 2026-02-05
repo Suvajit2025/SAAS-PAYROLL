@@ -756,7 +756,8 @@ namespace Common.Utility
     {
         public static void fnErrorLog(String SPName, String Result)
         {
-            String path = HttpContext.Current.Server.MapPath("~\\CompanyData\\ErrorLog\\ErrorLog.txt");
+            String path = System.Web.Hosting.HostingEnvironment.MapPath("~\\CompanyData\\ErrorLog\\ErrorLog.txt");
+            //String path = HttpContext.Current.Server.MapPath("~\\CompanyData\\ErrorLog\\ErrorLog.txt");
             String mError = "Date & Time : " + DateTime.Now + Environment.NewLine +
                             "SP Name :  " + SPName + Environment.NewLine +
                             "Message :  " + Result + Environment.NewLine +

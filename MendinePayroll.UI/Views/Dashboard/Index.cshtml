@@ -1,19 +1,260 @@
-﻿
-@{
-    ViewBag.Title = "Index";
+﻿@{
+    ViewBag.Title = "Executive Payroll Command";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="modal fade modal-header-color zoom-anim-dialog" id="payConfig" tabindex="-1" role="dialog" aria-labelledby="">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <section class="">
-                <header class="panel-heading bg-tertiary">
-                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h2 class="panel-title  text-white">Dashboard</h2>
-                </header>
-            </section>
 
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;300;400;500;600&display=swap');
+
+    /* Main Layout - Vertical Scroll */
+    .content-body {
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
+        color: #334155;
+        background-color: #fcfdfe;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    /* Horizontal Scroll for Dept Cards */
+    .dept-scroll-container {
+        display: flex;
+        overflow-x: auto;
+        gap: 12px;
+        padding-bottom: 10px;
+        scrollbar-width: thin;
+    }
+
+        .dept-scroll-container::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .dept-scroll-container::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+    .card-flat {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 16px;
+        height: 100%;
+    }
+
+    /* Bigger Headers */
+    .page-header-text {
+        font-size: 24px;
+        font-weight: 300;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+    }
+
+    .section-title {
+        font-size: 14px;
+        font-weight: 300;
+        color: #1e293b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .label-caps {
+        font-size: 10px;
+        font-weight: 300;
+        color: #94a3b8;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .val-bold {
+        font-size: 18px;
+        font-weight: 300;
+        color: #0f172a;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 220px;
+        width: 100%;
+    }
+
+    .filter-select {
+        background-color: #f1f5f9;
+        border: none;
+        font-size: 11px;
+        font-weight: 300;
+        padding: 6px 12px;
+        border-radius: 6px;
+        outline: none;
+    }
+</style>
+
+<section role="main" class="content-body p-6">
+    <header class="page-header"><h2>Payroll Dashboard</h2></header>
+    <div class="max-w-[1400px] mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 border-b border-slate-100 pb-6">
+            <div>
+                <h1 class="text-lg font-bold text-slate-900 uppercase tracking-tight">Payroll Control</h1>
+                <p class="text-[10px] text-slate-400">Company Internal Assets & Liabilities Dashboard • FY 2025-26</p>
+            </div>
+
+            <div class="flex flex-wrap gap-3 items-center bg-white p-3 rounded-xl shadow-sm border border-slate-100">
+                <select class="filter-select"><option>Select Company</option></select>
+                <select class="filter-select"><option>All Department</option></select>
+                <select class="filter-select"><option>Feb 2026</option></select>
+                <button class="bg-indigo-400 text-white px-5 py-2 rounded-lg font-bold text-[11px] hover:bg-indigo-500 transition-all">REFRESH AUDIT</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            <div class="card-flat border-t-4 border-indigo-500">
+                <span class="label-caps">Total CTC</span>
+                <span class="val-bold">₹84.25L</span>
+                <span class="text-[10px] text-emerald-600 font-bold">↑ 1.2% Trend</span>
+            </div>
+            <div class="card-flat border-t-4 border-emerald-500">
+                <span class="label-caps">Net Salary Recovery</span>
+                <span class="val-bold text-emerald-600">₹62.10L</span>
+            </div>
+            <div class="card-flat border-t-4 border-amber-500">
+                <span class="label-caps">Employer Contribution</span>
+                <span class="val-bold text-amber-600">₹18.15L</span>
+            </div>
+            <div class="card-flat border-t-4 border-blue-500">
+                <span class="label-caps">Employee TDS</span>
+                <span class="val-bold text-blue-600">₹14.20L</span>
+            </div>
+            <div class="card-flat border-t-4 border-rose-500">
+                <span class="label-caps">Audit Exceptions</span>
+                <span class="val-bold text-rose-600">14 Issues</span>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h3 class="section-title mb-4">Department Spend Breakdown (Horizontal Scroll)</h3>
+            <div class="dept-scroll-container">
+                <div class="min-w-[150px] card-flat bg-slate-50 border-none text-center">
+                    <p class="label-caps">Engineering</p><p class="val-bold text-sm">₹24.5L</p>
+                </div>
+                <div class="min-w-[150px] card-flat bg-slate-50 border-none text-center">
+                    <p class="label-caps">Sales & Mkt</p><p class="val-bold text-sm">₹18.2L</p>
+                </div>
+                <div class="min-w-[150px] card-flat bg-slate-50 border-none text-center">
+                    <p class="label-caps">HR / Admin</p><p class="val-bold text-sm">₹8.4L</p>
+                </div>
+                <div class="min-w-[150px] card-flat bg-slate-50 border-none text-center">
+                    <p class="label-caps">Operations</p><p class="val-bold text-sm">₹12.1L</p>
+                </div>
+                <div class="min-w-[150px] card-flat bg-slate-50 border-none text-center">
+                    <p class="label-caps">Finance</p><p class="val-bold text-sm">₹5.5L</p>
+                </div>
+                <div class="min-w-[150px] card-flat bg-slate-50 border-none text-center">
+                    <p class="label-caps">R&D Lab</p><p class="val-bold text-sm">₹9.2L</p>
+                </div>
+                <div class="min-w-[150px] card-flat bg-slate-50 border-none text-center">
+                    <p class="label-caps">Logistics</p><p class="val-bold text-sm">₹4.2L</p>
+                </div>
+                <div class="min-w-[150px] card-flat bg-slate-50 border-none text-center">
+                    <p class="label-caps">Support</p><p class="val-bold text-sm">₹3.1L</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="card-flat">
+                <h3 class="section-title mb-6">Last 3 Months Salary Trends</h3>
+                <div class="chart-container"><canvas id="salaryTrendChart"></canvas></div>
+            </div>
+
+            <div class="card-flat">
+                <h3 class="section-title mb-6">Component Comparison (Net vs Stat vs Contrib)</h3>
+                <div class="chart-container"><canvas id="componentCompareChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="card-flat lg:col-span-2">
+                <h3 class="section-title mb-6">Company-wise Department Spend</h3>
+                <div class="chart-container"><canvas id="companyDeptChart"></canvas></div>
+            </div>
+
+            <div class="card-flat">
+                <h3 class="section-title mb-6">Top Loan Deductions</h3>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[10px] text-slate-400 uppercase border-b pb-2">
+                            <th class="py-2">Employee</th>
+                            <th>EMI Recovery</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-[11px] font-medium">
+                        <tr><td class="py-3 border-b border-slate-50">Amit Sharma</td><td class="py-3 border-b border-slate-50 font-bold text-indigo-600">₹15,000</td></tr>
+                        <tr><td class="py-3 border-b border-slate-50">Suresh Iyer</td><td class="py-3 border-b border-slate-50 font-bold text-indigo-600">₹12,500</td></tr>
+                        <tr><td class="py-3">Vikram Singh</td><td class="py-3 font-bold text-indigo-600">₹8,000</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
+<script>
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 10, weight: '600' } } } },
+        scales: {
+            x: { grid: { display: false } },
+            y: { grid: { borderDash: [5, 5] }, ticks: { font: { size: 10 } } }
+        }
+    };
+
+    // 1. Last 3 Month Salary Trends (Line Chart)
+    new Chart(document.getElementById('salaryTrendChart'), {
+        type: 'line',
+        data: {
+            labels: ['December', 'January', 'February'],
+            datasets: [
+                { label: 'Total Gross', data: [82.5, 84.1, 84.25], borderColor: '#6366f1', tension: 0.2, fill: false },
+                { label: 'Total Net', data: [60.2, 61.8, 62.10], borderColor: '#10b981', tension: 0.2, fill: false }
+            ]
+        },
+        options: commonOptions
+    });
+
+    // 2. Component Comparison (Bar Chart)
+    new Chart(document.getElementById('componentCompareChart'), {
+        type: 'bar',
+        data: {
+            labels: ['December', 'January', 'February'],
+            datasets: [
+                { label: 'Net Payable', data: [60, 61, 62], backgroundColor: '#10b981' },
+                { label: 'Statutory', data: [14, 14, 14.2], backgroundColor: '#f59e0b' },
+                { label: 'Employer Cont.', data: [17, 18, 18.15], backgroundColor: '#4f46e5' }
+            ]
+        },
+        options: commonOptions
+    });
+
+    // 3. Company-wise Department Spend (Stacked Bar)
+    new Chart(document.getElementById('companyDeptChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Comp A', 'Comp B', 'Comp C', 'Comp D'],
+            datasets: [
+                { label: 'IT', data: [45, 30, 20, 10], backgroundColor: '#4f46e5' },
+                { label: 'Sales', data: [30, 25, 15, 8], backgroundColor: '#10b981' },
+                { label: 'HR', data: [15, 10, 5, 4], backgroundColor: '#f59e0b' }
+            ]
+        },
+        options: {
+            ...commonOptions,
+            scales: { x: { stacked: true }, y: { stacked: true } }
+        }
+    });
+</script>

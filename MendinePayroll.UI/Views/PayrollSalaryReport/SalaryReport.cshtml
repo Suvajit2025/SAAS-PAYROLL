@@ -106,7 +106,7 @@
             <div class="btn-group">
                 <button onclick="approveSelectedSalaries()" class="btn btn-primary btn-sm"><i class="fa fa-check-circle mr-xs"></i> Approve / Finalize</button>
                 <button onclick="rejectSelectedSalaries()" class="btn btn-danger btn-sm"><i class="fa fa-times-circle mr-xs"></i> Reject</button>
-                <button onclick="downloadBulkPayslips()" class="btn btn-default btn-sm"><i class="fa fa-file-pdf-o text-danger mr-xs"></i> Bulk Payslips</button>
+                <button onclick="downloadBulkPayslips()" class="btn btn-default btn-sm"><i class="fa fa-file-pdf-o text-danger mr-xs" disabled></i> Bulk Payslips</button>
                 <button onclick="processPayment()" class="btn btn-success btn-sm"><i class="fa fa-check-circle mr-xs"></i> Mark as Paid</button>
             </div>
         </header>
@@ -1144,10 +1144,17 @@
                 <td class="text-right text-danger">${Number(r.TotalDeduction || 0).toLocaleString('en-IN')}</td>
                 <td class="text-right text-primary"><b>${Number(r.TotalTakeHome || 0).toLocaleString('en-IN')}</b></td>
                 <td class="text-center">${statusBadge}</td>
-                <td class="text-center">${r.PaidStatus == 1 ? 'Paid' : 'Pending'}</td>
+                <td class="text-center">${r.PaidStatus == 1
+                    ? '<span class="label label-success">' +
+                    '<i class="fa fa-check-circle"></i> Paid' +
+                    '</span>'
+                    : '<span class="label label-warning">' +
+                    '<i class="fa fa-hourglass-half"></i> Pending' +
+                    '</span>'
+                }</td>
                 <td class="text-center">
                     <button class="btn btn-xs btn-default" onclick="openBankModal(${r.EmployeeID}, '${escapeHtml(r.EmployeeName)}')"><i class="fa fa-university"></i></button>
-                    <button class="btn btn-xs btn-primary" onclick="downloadPayslip(${id})" ${r.Status == 2 ? '' : 'disabled'}><i class="fa fa-file-pdf-o"></i></button>
+                    <button class="btn btn-xs btn-primary" onclick="downloadPayslip(${r.EmployeeID})" ${r.PaidStatus == 1 ? '' : 'disabled'}><i class="fa fa-file-pdf-o"></i></button>
                 </td>
             </tr>`;
             $tbody.append(tr);
@@ -1647,5 +1654,23 @@
 
         $("#SkippedEmployeeModal .modal-body").html(html);
         $("#SkippedEmployeeModal").modal("show");
+    }
+    function downloadPayslip(empId) {
+        // 1. Get the Month Name (Text) and Year (Value)
+        // .find("option:selected").text() gets "January" instead of "1"
+        var monthName = $("#fltMonth").find("option:selected").text();
+        var year = $("#fltYear").val();
+
+        if (!monthName || monthName === "" || !year) {
+            alert("Please select both Month and Year first.");
+            return;
+        }
+
+        // 2. Build the URL
+        // Format: /Payslip/Index?empId=440&month=January&year=2026
+        var url = "/Payslip/Index?empId=" + empId + "&month=" + encodeURIComponent(monthName) + "&year=" + year;
+
+        // 3. Redirect on _blank (New Tab)
+        window.open(url, '_blank');
     }
 </script>
