@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "Payroll Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-body">
+    <header class="page-header">
+        <h2>Salary Register</h2>
+    </header>
+
+    @Html.Partial("_ReportFilters")
+    @Html.Partial("_ReportExport")
+
+    <div id="reportContainer">
+        @Html.Partial("_ReportTable")
+    </div>
+</section>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // 1. Initialize the MultiSelect dropdowns
+            $('.multi-select').select2({
+                placeholder: "Select options",
+                width: '100%',
+                allowClear: true
+            });
+
+            // 2. Populate the Year and Month dropdowns on load
+            populateYearMonth();
+
+            // 3. Attach click event to Reset button
+            $('#btnClearFilters').on('click', function () {
+                $('.multi-select').val(null).trigger('change'); // Clears Select2
+                $('#searchInput').val('');
+                // Add logic here to reset Year/Month to current if needed
+            });
+        });
+
+        function populateYearMonth() {
+            const yearSelect = $('#ddlYear');
+            const currentYear = new Date().getFullYear();
+
+            // Add last 5 years
+            for (let i = 0; i < 5; i++) {
+                yearSelect.append(`<option value="${currentYear - i}">${currentYear - i}</option>`);
+            }
+
+            // Add Months
+            const months = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            months.forEach((m, i) => {
+                $('#ddlMonth').append(`<option value="${i + 1}">${m}</option>`);
+            });
+
+            // Set current month as default
+            $('#ddlMonth').val(new Date().getMonth() + 1);
+        }
+    </script>
+}

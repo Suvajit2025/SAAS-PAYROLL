@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "Salary Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="content-body">
+    <header class="page-header"><h2>Salary Register</h2></header>
+
+    @Html.Partial("_ReportFilters")
+    @Html.Partial("_ReportExport")
+    <div id="reportContainer">
+        @Html.Partial("_ReportTable")
+    </div>
+</section>
+
+@section scripts {
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="~/Content/report-engine.js"></script>
+    <script>
+    $(document).ready(function () {
+
+        const monthText = $('#ddlMonth option:selected').text() || '';
+        const yearText = $('#ddlYear').val() || '';
+
+        ReportEngine.init(
+            '@Url.Action("SalaryRegister", "PayrollReports")',
+            {
+                showExcel: @(ViewBag.ShowExcel.ToString().ToLower()),
+                showPDF: @(ViewBag.ShowPDF.ToString().ToLower()),
+                showCSV: @(ViewBag.ShowCSV.ToString().ToLower()),
+                showPrint: @(ViewBag.ShowPrint.ToString().ToLower())
+            },
+            {
+                title: 'Salary Register Report',
+                subTitle: monthText && yearText
+                    ? `For the Month of ${monthText} ${yearText}`
+                    : ''
+            }
+        );
+
+    });
+    </script>
+
+}

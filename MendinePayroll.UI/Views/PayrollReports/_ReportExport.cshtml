@@ -1,0 +1,61 @@
+﻿<style>
+    /* Align the toolbar to the right */
+    .report-toolbar-container {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    /* Modern button styling to match your filters */
+    .btn-export-group .btn {
+        background-color: #ffffff;
+        border: 1px solid #d1d5db;
+        color: #475569;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.2s ease;
+    }
+
+        .btn-export-group .btn:hover {
+            background-color: #f8fafc;
+            border-color: #94a3b8;
+            color: #1e293b;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+    /* Icon spacing */
+    .mr-xs {
+        margin-right: 5px;
+    }
+
+    /* Hover effect for the refresh button */
+    .btn-refresh:hover i {
+        transform: rotate(180deg);
+        transition: transform 0.4s ease;
+    }
+</style>
+
+<div class="report-toolbar-container">
+    <div class="btn-group btn-export-group">
+        <button type="button" id="btnExpExcel" class="btn btn-default btn-sm" onclick="ReportEngine.exportExcel()" title="Export to Excel">
+            <i class="fa fa-file-excel-o mr-xs" style="color:#16a34a;"></i> Excel
+        </button>
+        <button type="button" id="btnExpPDF" class="btn btn-default btn-sm" onclick="ReportEngine.exportPDF()" title="Export to PDF">
+            <i class="fa fa-file-pdf-o mr-xs" style="color:#dc2626;"></i> PDF
+        </button>
+        <button type="button" id="btnExpCSV" class="btn btn-default btn-sm" onclick="ReportEngine.exportCSV()" title="Export to CSV">
+            <i class="fa fa-file-text-o mr-xs" style="color:#2563eb;"></i> CSV
+        </button>
+        <button type="button" id="btnExpPrint" class="btn btn-default btn-sm" onclick="ReportEngine.printReport()" title="Print Report">
+            <i class="fa fa-print mr-xs" style="color:#4b5563;"></i> Print
+        </button>
+    </div>
+
+    <div class="btn-group btn-export-group">
+        <button id="btnExpRefresh" class="btn btn-default btn-sm btn-refresh" onclick="ReportEngine.loadData(ReportEngine.currentUrl)" title="Refresh Data">
+            <i class="fa fa-refresh"></i>
+        </button>
+    </div>
+</div>

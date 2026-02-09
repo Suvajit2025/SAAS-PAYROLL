@@ -54,10 +54,17 @@ namespace MendinePayroll.UI.Controllers
             Session["UserEmail"] = "suvajit.das@iecsl.co.in";
             Session["TenantID"] = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
             //Session["TenantID"] = "653A2B8B-CF3D-4C5A-8361-5869FE5DC3E3";
+
             //Session["UserName"] = "christopher.fernandes@mega.com";
             //Session["UserId"] = "3";
             //Session["UserEmail"] = "christopher.fernandes@mega.com";
             //Session["TenantID"] = "9CBC5D8B-589C-4144-8AE9-1937A39FC89D";
+
+            //Session["UserName"] = "demo@corporation.in";
+            //Session["UserId"] = "348";
+            //Session["UserEmail"] = "demo@corporation.in";
+            //Session["TenantID"] = "24A72122-DD46-4386-873D-758E450E252A";
+
             //Production
             //Session["UserName"] = Request.QueryString["UserName"];
             //Session["UserId"] = Request.QueryString["UserID"];

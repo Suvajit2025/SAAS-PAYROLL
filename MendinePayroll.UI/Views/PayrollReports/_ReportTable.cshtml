@@ -1,0 +1,169 @@
+﻿<style>
+    .table-card {
+        background: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #eef2f6;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-top: 15px;
+    }
+
+    /* New: Top Bar for Search & Page Size (DataTable style) */
+    .table-header-actions {
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #f1f5f9;
+        background: #fafbfc;
+    }
+
+    .entries-wrapper {
+        font-size: 13px;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .entries-wrapper select {
+            width: 70px;
+            height: 30px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+        }
+
+    .table-search-box {
+        position: relative;
+        width: 250px;
+    }
+
+        .table-search-box i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .table-search-box input {
+            padding-left: 30px;
+            height: 32px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            transition: all 0.2s;
+        }
+
+            .table-search-box input:focus {
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                outline: none;
+            }
+
+    /* Existing Table Styles ... */
+    .table-responsive {
+        max-height: 550px;
+        overflow-y: auto;
+    }
+
+    .table-main {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .table-main thead th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 12px 15px;
+            border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table-main tbody td {
+            padding: 10px 15px;
+            font-size: 13px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+    /* Pagination controls */
+    .pagination-bar {
+        padding: 12px 20px;
+        border-top: 1px solid #eef2f6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-page {
+        padding: 5px 12px;
+        margin-left: 4px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+        .btn-page.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .btn-page:disabled {
+            background: #f8fafc;
+            color: #cbd5e1;
+            cursor: not-allowed;
+        }
+</style>
+
+<div class="table-card">
+    <div class="table-header-actions">
+        <div class="entries-wrapper">
+            Show
+            <select id="ddlPageSize">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            entries
+        </div>
+        <div class="table-search-box">
+            <i class="fa fa-search"></i>
+            <input type="text" id="tableSearch" class="form-control" placeholder="Quick filter rows..." />
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table-main" id="mainReportTable">
+            <thead id="ctcHead"></thead>
+            <tbody id="gridBody">
+                <tr>
+                    <td colspan="100" class="text-center text-center-padding">
+                        <i class="fa fa-info-circle"></i> Use filters above to generate report.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-bar">
+        <div id="paginationInfo">
+            Showing <b>0</b> to <b>0</b> of <b>0</b> entries
+        </div>
+        <div id="paginationControls">
+            <button class="btn-page" id="btnPrev" disabled>Previous</button>
+            <span id="pageNumbers"></span>
+            <button class="btn-page" id="btnNext" disabled>Next</button>
+        </div>
+    </div>
+</div>
