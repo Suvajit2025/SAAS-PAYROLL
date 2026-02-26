@@ -49,54 +49,106 @@ namespace MendinePayroll.UI.Controllers
             var model = GetPayslipData(empId, month, year,false); 
             return View(model);
         }
-
-
-
+ 
         public static string NumberToWords(long number)
-        {
-            if (number == 0) return "ZERO";
-
-            if (number < 0) return "MINUS " + NumberToWords(Math.Abs(number));
-
-            string words = "";
-
-            if ((number / 100000) > 0)
             {
-                words += NumberToWords(number / 100000) + " LAKH ";
-                number %= 100000;
-            }
+                if (number == 0) return "Zero";
 
-            if ((number / 1000) > 0)
-            {
-                words += NumberToWords(number / 1000) + " THOUSAND ";
-                number %= 1000;
-            }
+                if (number < 0)
+                    return "Minus " + NumberToWords(Math.Abs(number));
 
-            if ((number / 100) > 0)
-            {
-                words += NumberToWords(number / 100) + " HUNDRED ";
-                number %= 100;
-            }
+                string words = "";
 
-            if (number > 0)
-            {
-                var unitsMap = new[] { "ZERO","ONE","TWO","THREE","FOUR","FIVE","SIX","SEVEN","EIGHT","NINE","TEN",
-            "ELEVEN","TWELVE","THIRTEEN","FOURTEEN","FIFTEEN","SIXTEEN","SEVENTEEN","EIGHTEEN","NINETEEN" };
-                var tensMap = new[] { "ZERO", "TEN", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY" };
-
-                if (number < 20)
-                    words += unitsMap[number];
-                else
+                if ((number / 100000) > 0)
                 {
-                    words += tensMap[number / 10];
-                    if ((number % 10) > 0)
-                        words += " " + unitsMap[number % 10];
+                    words += NumberToWords(number / 100000) + " Lakh ";
+                    number %= 100000;
                 }
+
+                if ((number / 1000) > 0)
+                {
+                    words += NumberToWords(number / 1000) + " Thousand ";
+                    number %= 1000;
+                }
+
+                if ((number / 100) > 0)
+                {
+                    words += NumberToWords(number / 100) + " Hundred ";
+                    number %= 100;
+                }
+
+                if (number > 0)
+                {
+                    var unitsMap = new[]
+                    {
+                    "Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
+                    "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"
+                };
+
+                    var tensMap = new[]
+                    {
+                    "Zero","Ten","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"
+                };
+
+                    if (number < 20)
+                        words += unitsMap[number];
+                    else
+                    {
+                        words += tensMap[number / 10];
+                        if ((number % 10) > 0)
+                            words += " " + unitsMap[number % 10];
+                    }
+                }
+
+                return words.Trim();
             }
 
-            return words.Trim();
-        }
-        public ActionResult Download(int empId, string month, int year)
+
+    //public static string NumberToWords(long number)
+    //{
+    //    if (number == 0) return "ZERO";
+
+    //    if (number < 0) return "MINUS " + NumberToWords(Math.Abs(number));
+
+    //    string words = "";
+
+    //    if ((number / 100000) > 0)
+    //    {
+    //        words += NumberToWords(number / 100000) + " LAKH ";
+    //        number %= 100000;
+    //    }
+
+    //    if ((number / 1000) > 0)
+    //    {
+    //        words += NumberToWords(number / 1000) + " THOUSAND ";
+    //        number %= 1000;
+    //    }
+
+    //    if ((number / 100) > 0)
+    //    {
+    //        words += NumberToWords(number / 100) + " HUNDRED ";
+    //        number %= 100;
+    //    }
+
+    //    if (number > 0)
+    //    {
+    //        var unitsMap = new[] { "ZERO","ONE","TWO","THREE","FOUR","FIVE","SIX","SEVEN","EIGHT","NINE","TEN",
+    //    "ELEVEN","TWELVE","THIRTEEN","FOURTEEN","FIFTEEN","SIXTEEN","SEVENTEEN","EIGHTEEN","NINETEEN" };
+    //        var tensMap = new[] { "ZERO", "TEN", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY" };
+
+    //        if (number < 20)
+    //            words += unitsMap[number];
+    //        else
+    //        {
+    //            words += tensMap[number / 10];
+    //            if ((number % 10) > 0)
+    //                words += " " + unitsMap[number % 10];
+    //        }
+    //    }
+
+    //    return words.Trim();
+    //}
+    public ActionResult Download(int empId, string month, int year)
         {
             // reuse your Index logic
 

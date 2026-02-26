@@ -10,7 +10,8 @@ namespace MendinePayroll.UI.Models
         // 1 & 2: Time Filters
         public int year { get; set; }
         public int month { get; set; }
-
+        public int isRebateApplied { get; set; } // 0: No Filter, 1: Rebate Applied, 2: Rebate Not Applied
+        public int regime { get; set; } 
         // 3: Company (Multiselect)
         public List<int> companyIds { get; set; }
 

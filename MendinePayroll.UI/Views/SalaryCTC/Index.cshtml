@@ -1983,7 +1983,7 @@
                     if (isESIC) {
                         const esicCap = limit > 0 ? limit : 21000;
 
-                        console.log("   ESIC Cap:", esicCap);
+                        console.log("ESIC Cap:", esicCap);
 
                         if (base <= esicCap) {
                             val = applyRounding((base * rate) / 100, x.rounding);
@@ -1996,6 +1996,35 @@
                         console.log("   ESIC Applicable: FALSE");
                     }
                     break;
+
+                // -----------------------------------------
+                // GRATUITY
+                // -----------------------------------------
+                case "GRATUITY": 
+                    console.log("🟠 GRATUITY Section");
+
+                    console.log("Basic for Gratuity:", base);
+
+                    const gratuityRate = rate > 0 ? rate : 4.81;
+
+                    console.log("gratuityRate  for Gratuity:", gratuityRate);
+                    // Using the 4.81% approach as requested
+                    val = applyRounding((base * gratuityRate) / 100, x.rounding);
+
+                    console.log("Monthly CTC Provision:", val);
+
+                    // UI Styling for CTC Table
+                    $(`#val_${x.id}`)
+                        .val(val.toFixed(0)) // CTC usually uses rounded whole numbers
+                        .prop("readonly", true)
+                        .css({
+                            background: "#f8f9fa",
+                            color: "#555",
+                            fontWeight: "600"
+                        });
+
+                    break;
+
 
                 // -----------------------------------------
                 // PTAX

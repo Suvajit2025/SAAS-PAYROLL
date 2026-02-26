@@ -3381,8 +3381,7 @@ namespace MendinePayroll.UI.Controllers
 
                     MappingType = r["MappingType"],
 
-                    Limit =
-                        r["PercentageOfAmount"] != DBNull.Value
+                    Limit =  r["PercentageOfAmount"] != DBNull.Value
                             ? r["PercentageOfAmount"] + " %"
                             : r["MaxLimitAmount"] != DBNull.Value
                                 ? "₹ " + Convert.ToDecimal(r["MaxLimitAmount"]).ToString("N0")
@@ -3435,6 +3434,157 @@ namespace MendinePayroll.UI.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
 
+        #endregion
+        #region Annual TDS Projection
+
+        public ActionResult AnualTaxProjection()
+        {
+            if (Session["UserName"] == null)
+                return RedirectToAction("Index", "Login");
+
+            clsAccessLogInfo info = new clsAccessLogInfo();
+            info.AccessType = "EMPLOYEE-TDS-PROJECTION";
+            clsAccessLog.AccessLog_Save(info);
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult AnnualTdsProjection(ReportFilterModel filters)
+        {
+            try
+            {
+                // 1. Prepare Parameters (Convert Arrays to Comma Separated Strings)
+                string companyIds = filters.companyIds != null ? string.Join(",", filters.companyIds) : "";
+                string deptIds = filters.deptIds != null ? string.Join(",", filters.deptIds) : "";
+                string empIds = filters.empIds != null ? string.Join(",", filters.empIds) : "";
+                int year = filters.year;
+                int regime = filters.regime;
+                int isRebateApplied = filters.isRebateApplied;
+
+                // 2. Execute Stored Procedure via your Database Utility
+                // Parameters: Year, CompanyList, DeptList, EmpList, TenantId
+                DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_TDS_PROJECTION_GET",year, companyIds, deptIds, empIds, isRebateApplied, TenantId);
+
+                if (dt == null)
+                    return Json(new { success = false, message = "Error executing Tax Engine." });
+
+                // 3. Transform DataTable to List of Objects
+                var dataList = dt.AsEnumerable().Select(row => new
+                {
+                    EmployeeID = row["EmployeeID"].ToString(),
+                    EmployeeName = row["EmployeeName"].ToString(),
+                    // Formatting numbers to 2 decimal places for the UI
+                    AnnualGross = Convert.ToDecimal(row["AnnualGross"]).ToString("N2"),
+                    NetTaxable = Convert.ToDecimal(row["NetTaxable"]).ToString("N2"),
+                    TotalTaxBeforeCess=Convert.ToDecimal(row["TotalTaxBeforeCess"]).ToString("N2"),
+                    CessAmount = Convert.ToDecimal(row["CessAmount"]).ToString("N2"),
+                    AnnualTax = Convert.ToDecimal(row["AnnualTaxLiability"]).ToString("N2"),
+                    MonthlyTDS = Convert.ToDecimal(row["MonthlyTDS"]).ToString("N2")
+                }).ToList();
+
+                return Json(new { success = true, Data = dataList });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception here
+                return Json(new { success = false, message = "Server Error: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult GetTdsAudit(int empId, int year,int isRebateApplied)
+        {
+            try
+            {
+                DataSet ds = clsDatabase.fnDataSet("SP_PAYROLL_TDS_AUDIT_GET", empId, year, isRebateApplied, TenantId);
+
+                // Result Set 1 : Income
+                var income = ds.Tables[0].AsEnumerable()
+                    .Select(r => new {
+                        Name = r["ComponentName"].ToString(),
+                        Amount = Convert.ToDecimal(r["Amount"]).ToString("N2")
+                    }).ToList();
+
+                // Result Set 2 : Slabs (remove zero rows)
+                var slabs = ds.Tables[1].AsEnumerable()
+                    .Where(r =>
+                        Convert.ToDecimal(r["TaxableAmountInSlab"]) > 0
+                        || Convert.ToDecimal(r["TaxAmount"]) > 0
+                    )
+                    .Select(r => new
+                    {
+                        Range = r["SlabRange"].ToString(),
+                        Rate = Convert.ToDecimal(r["TaxRate"]).ToString("0"),
+                        Salary = Convert.ToDecimal(r["TaxableAmountInSlab"]).ToString("N2"),
+                        Tax = Convert.ToDecimal(r["TaxAmount"]).ToString("N2")
+                    })
+                    .ToList();
+
+                // Result Set 3 : Summary
+                var summaryRow = ds.Tables[2].Rows[0];
+
+                var summary = new
+                {
+                    EmployeeName = summaryRow["EmployeeName"].ToString(),
+                    AnnualGross = Convert.ToDecimal(summaryRow["AnnualGross"]).ToString("N2"),
+                    StandardDeduction = Convert.ToDecimal(summaryRow["StandardDeduction"]).ToString("N2"),
+                    NetTaxable = Convert.ToDecimal(summaryRow["NetTaxableIncome"]).ToString("N2"),
+                    TotalTaxBeforeCess = Convert.ToDecimal(summaryRow["TotalTaxBeforeCess"]).ToString("N2"),
+                    CessAmount = Convert.ToDecimal(summaryRow["CessAmount"]).ToString("N2"),
+                    MonthlyTDS = Convert.ToDecimal(summaryRow["MonthlyTDS"]).ToString("N2"),
+                    TotalBaseTax = Convert.ToDecimal(summaryRow["ActualTotalTaxBeforeCess"]).ToString("N2"),
+                    RebateApplied = isRebateApplied,
+                    // Rebate fields
+                    RebateThreshold = Convert.ToDecimal(summaryRow["RebateIncomeThreshold"]).ToString("N2"),
+                    RebateLimit = Convert.ToDecimal(summaryRow["RebateLimit87A"]).ToString("N2")
+                };
+
+                return Json(new
+                {
+                    success = true,
+                    Income = income,
+                    Slabs = slabs,
+                    Summary = summary,
+                    EmployeeName = summary.EmployeeName
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult FinalizeTdsProjection(string FinancialYear, int RegimeId, string DataJson)
+        {
+            string FinalizedBy= Session["UserName"]?.ToString() ?? "system";
+
+            if (string.IsNullOrEmpty(DataJson))
+                return Json(new { success = false, message = "No data received." });
+
+            var data = JsonConvert.DeserializeObject<List<TdsProjectionDto>>(DataJson);
+
+            if (data == null || data.Count == 0)
+                return Json(new { success = false, message = "Invalid data." });
+
+
+            DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_SAAS_TDS_PROJECTION_FINALIZE_SAVE_JSON",TenantId,FinancialYear,RegimeId,FinalizedBy, DataJson);
+  
+            return Json(new { success = true, message = "Saved successfully" });
+        }
+         
+
+        public class TdsProjectionDto
+        {
+            public int EmployeeId { get; set; }
+            public decimal AnnualGross { get; set; }
+            public decimal NetTaxable { get; set; }
+            public decimal TotalTaxBeforeCess { get; set; }
+            public decimal CessAmount { get; set; }
+            public decimal AnnualTax { get; set; }
+            public decimal MonthlyTDS { get; set; }
+            public bool RebateApplied { get; set; }
+        }
         #endregion
     }
 

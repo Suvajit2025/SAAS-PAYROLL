@@ -2514,6 +2514,7 @@
                                     <th class="hidden">MonthID</th>
                                     <th class="hidden">YearID</th>
                                     <th class="hidden">PayGroupID</th>
+                                    <th class="hidden">StatusID</th>
                                 </tr>
                             </thead>
                             <tbody id="empWiseBody"></tbody>
@@ -3281,9 +3282,9 @@
                 try {
                     const tbody = $('#empWiseBody').empty();
 
-                    if (!res || res.length === 0) {
-                        tbody.append('<tr><td colspan="12" class="text-center">No employee records found.</td></tr>');
-                    } else {
+                    //if (!res || res.length === 0) {
+                    //    tbody.append('<tr><td colspan="12" class="text-center">No employee records found.</td></tr>');
+                    //} else {
                         res.forEach(r => {
                             let statusBadge = '';
                             let rowClass = '';
@@ -3355,7 +3356,7 @@
                             </tr>
                         `);
                         });
-                    }
+                    //}
 
                     // 4. Initialize DataTable
                     empDtInstance = $('#empWiseTable').DataTable({
@@ -3537,9 +3538,9 @@
                         <i class="fas fa-file-upload"></i>
                     </button>
                     <input type="file"
-                           id="file_${c.id}"
-                           style="display:none"
-                           onchange="uploadComponentFile(${c.id}, this)">
+                            id="file_${c.id}"
+                            style="display:none"
+                            onchange="uploadComponentFile(${c.id}, this,false)">
                 </td>
             </tr>
         `;
@@ -3662,12 +3663,52 @@
         window.location.href = `/bulkSalaryProcess/DownloadVariableTemplate?payGroupId=${payGroupId}&ConfigureSalaryComponentId=${ConfigureSalaryComponentID}&month=${month}&year=${year}`;
     }
     /*====== Upload Excel Logic ========*/
-    function uploadComponentFile(ConfigureSalaryComponentId, input) {
+    //function uploadComponentFile(ConfigureSalaryComponentId, input) {
+    //    if (!input.files || input.files.length === 0) return;
+
+    //    const file = input.files[0];
+    //    const monthYearVal = $("#txtMonthYear").val();
+    //    const parts = monthYearVal.split("-");
+
+    //    const formData = new FormData();
+    //    formData.append("file", file);
+    //    formData.append("configId", ConfigureSalaryComponentId);
+    //    formData.append("month", parseInt(parts[1]));
+    //    formData.append("year", parseInt(parts[0]));
+    //    formData.append("paygroupid", $("#ddlType").val());
+
+    //    showPayrollLoader();
+
+    //    $.ajax({
+    //        url: '/bulkSalaryProcess/UploadVariableComponentValues',
+    //        type: 'POST',
+    //        data: formData,
+    //        processData: false,
+    //        contentType: false,
+    //        success: function (res) {
+    //            if (res.success) {
+    //                toastr.success(res.message);
+    //                // Refresh the attendance grid to show updated numbers if necessary
+    //                loadAttendanceEmployees($("#ddlGroup").val(), $("#ddlType").val());
+    //            } else {
+    //                toastr.error(res.message);
+    //            }
+    //        },
+    //        error: function () {
+    //            toastr.error("Server error during file upload.");
+    //        },
+    //        complete: function () {
+    //            hidePayrollLoader();
+    //            $(input).val(''); // Clear file input for next use
+    //        }
+    //    });
+    //}
+    function uploadComponentFile(ConfigureSalaryComponentId, input, forceUpdate = false) {
         if (!input.files || input.files.length === 0) return;
 
         const file = input.files[0];
         const monthYearVal = $("#txtMonthYear").val();
-        const parts = monthYearVal.split("-"); 
+        const parts = monthYearVal.split("-");
 
         const formData = new FormData();
         formData.append("file", file);
@@ -3675,6 +3716,8 @@
         formData.append("month", parseInt(parts[1]));
         formData.append("year", parseInt(parts[0]));
         formData.append("paygroupid", $("#ddlType").val());
+        // Add the forceUpdate flag to the request
+        formData.append("forceUpdate", forceUpdate);
 
         showPayrollLoader();
 
@@ -3685,20 +3728,37 @@
             processData: false,
             contentType: false,
             success: function (res) {
-                if (res.success) {
+                // Check if data already exists and permission is needed
+                if (res.exists) {
+                    hidePayrollLoader(); // Hide loader while user decides
+
+                    if (confirm(res.message)) {
+                        // If user clicks OK, re-run with forceUpdate set to true
+                        uploadComponentFile(ConfigureSalaryComponentId, input, true);
+                    } else {
+                        $(input).val(''); // Reset input if cancelled
+                    }
+                }
+                else if (res.success) {
                     toastr.success(res.message);
-                    // Refresh the attendance grid to show updated numbers if necessary
+                    // Refresh grid using current filter values
                     loadAttendanceEmployees($("#ddlGroup").val(), $("#ddlType").val());
-                } else {
+                    $(input).val('');
+                }
+                else {
                     toastr.error(res.message);
+                    $(input).val('');
                 }
             },
             error: function () {
                 toastr.error("Server error during file upload.");
+                $(input).val('');
             },
             complete: function () {
-                hidePayrollLoader();
-                $(input).val(''); // Clear file input for next use
+                // Only hide loader here if we didn't hit the confirmation block
+                if ($(".swal2-container").length === 0) {
+                    hidePayrollLoader();
+                }
             }
         });
     }

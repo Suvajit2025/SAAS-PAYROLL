@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using UI.BLL;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace MendinePayroll.UI.Controllers
@@ -51,6 +52,12 @@ namespace MendinePayroll.UI.Controllers
 
         public ActionResult Index()
         {
+            if (Session["UserName"] == null)
+                return RedirectToAction("Index", "Login");
+
+            clsAccessLogInfo info = new clsAccessLogInfo();
+            info.AccessType = "EMPLOYEE-BULK-SALARY-ENTRY";
+            clsAccessLog.AccessLog_Save(info);
             return View();
         }
         [HttpGet]
@@ -70,7 +77,8 @@ namespace MendinePayroll.UI.Controllers
         [HttpGet]
         public JsonResult GetPayGroups(int payrollType)
         {
-            DataTable dt = clsDatabase.fnDataTable("Payroll_SaaS_PayGroupTypewise", payrollType, TenantId);
+            string UserId = Session["UserId"].ToString();
+            DataTable dt = clsDatabase.fnDataTable("Payroll_SaaS_PayGroupTypewise", payrollType, TenantId, UserId);
 
             var data = dt.AsEnumerable().Select(x => new
             {
@@ -368,122 +376,7 @@ namespace MendinePayroll.UI.Controllers
 
             // Used ONLY for FORMULA evaluation
             Dictionary<string, decimal> valueMap = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
-
-            ///* =========================
-            //   PASS 1 : FIXED / MANUAL / EXCEL
-            //========================= */
-            //foreach (var c in components.Where(x =>
-            //       x.LogicType == "FIXED"
-            //    || x.LogicType == "MANUAL_INPUT"
-            //    || x.LogicType == "EXCEL_UPLOAD"
-            //    || (x.IsOther && x.OtherType == "LOANRECOVERY")
-            //    || (x.IsStatutory && x.StatutoryType == "TDS")
-            //))
-            //{
-            //    // 🔹 Resolver-based components (ABSOLUTE – NO PRORATE)
-            //    if (
-            //        c.LogicType == "EXCEL_UPLOAD"
-            //        || (c.IsOther && c.OtherType == "LOANRECOVERY")
-            //        || (c.IsStatutory && c.StatutoryType == "TDS")
-            //    )
-            //    {
-            //        c.BaseAmount = valueResolver(
-            //            employeeId,
-            //            c.PayConfigId,
-            //            processMonth,
-            //            processYear,
-            //            c
-            //        );
-
-            //        c.Amount = ApplyRounding(c.BaseAmount, "");   // 🔒 NO PRORATE
-            //        valueMap[c.PayConfigName] = c.Amount;
-            //        continue;
-            //    }
-
-            //    // 🔹 Attendance-based components
-            //    c.BaseAmount = c.Amount;
-            //    c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
-            //    valueMap[c.PayConfigName] = c.Amount;
-            //}
-            ///* ============================================================
-            //   PASS 1: FIXED / MANUAL / EXCEL RAW DATA
-            //   ============================================================ */
-            //foreach (var c in components.Where(x => x.LogicType == "FIXED" || x.LogicType == "MANUAL_INPUT" ||x.LogicType == "EXCEL_UPLOAD" 
-            //||(x.IsOther && x.OtherType == "LOANRECOVERY")))
-            //{
-            //    if (c.LogicType == "EXCEL_UPLOAD")
-            //    {
-            //        // 1. Fetch the raw value from your variable table (e.g., 2 days off)
-            //        decimal rawVal = valueResolver(employeeId, c.PayConfigId, processMonth, processYear, c);
-
-            //        // 2. Store it for use in formulas later
-            //        c.BaseAmount = rawVal;
-
-            //        // 3. Populate Map so Pass 2 finds {VAL} and {RATE}
-            //        valueMap["{VAL}"] = rawVal;
-            //        valueMap["{RATE}"] = c.Rate; // For ID 25, this is 2000.00
-
-            //        // Also map the component name itself
-            //        valueMap[c.PayConfigName] = rawVal;
-            //        continue;
-            //    }
-
-            //    // Normal Fixed/Manual Logic
-            //    c.BaseAmount = c.Amount;
-            //    c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
-            //    valueMap[c.PayConfigName] = c.Amount;
-            //}
-            ///* ============================================================
-            //    PASS 2 : FORMULA & EXCEL LOGIC
-            //   ============================================================ */
-            //foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD"))
-            //{
-            //    // Skip if it's an Excel Upload without a formula (e.g., just a raw number)
-            //    if (c.LogicType == "EXCEL_UPLOAD" && string.IsNullOrEmpty(c.CalculationExpression))
-            //        continue;
-
-            //    decimal baseValue = 0;
-
-            //    // 🛡️ BRANCH THE LOGIC HERE
-            //    if (c.LogicType == "EXCEL_UPLOAD")
-            //    {
-            //        // Use the NEW function for tiered IF logic and {VAL}/{RATE} tags
-            //        baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
-            //    }
-            //    else
-            //    {
-            //        // Keep your ORIGINAL function for standard [BASIC]+[HRA] formulas
-            //        baseValue = EvaluateDynamicFormula(c.CalculationExpression, valueMap);
-            //    }
-
-            //    c.BaseAmount = baseValue;
-
-            //    // Apply Percentage logic (if any)
-            //    decimal calculated = c.IsPercentage
-            //        ? baseValue * (c.Rate / 100)
-            //        : baseValue;
-
-            //    // Apply Max Limit / Ceiling
-            //    if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && calculated > c.MaxLimit.Value)
-            //    {
-            //        calculated = c.MaxLimit.Value;
-            //    }
-
-            //    // ROUNDING & PRORATING
-            //    if (c.LogicType == "EXCEL_UPLOAD")
-            //    {
-            //        // 🔒 Excel uploads (like Bonus or OT) are usually absolute results. No proration.
-            //        c.Amount = ApplyRounding(calculated, c.RoundingType);
-            //    }
-            //    else
-            //    {
-            //        // Standard formulas get prorated based on attendance
-            //        c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
-            //    }
-
-            //    // Add to map for next components (like PF/ESIC) to see
-            //    valueMap[c.PayConfigName] = c.Amount;
-            //}
+ 
             /* ============================================================
                PASS 1: FIXED / MANUAL / EXCEL RAW DATA
                ============================================================ */
@@ -492,7 +385,7 @@ namespace MendinePayroll.UI.Controllers
                                                    x.LogicType == "EXCEL_UPLOAD" ||
                                                    (x.IsOther && x.OtherType == "LOANRECOVERY")))
             {
-                if (c.LogicType == "EXCEL_UPLOAD")
+                if (c.LogicType == "EXCEL_UPLOAD" || (c.IsStatutory && c.StatutoryType == "TDS") || (c.IsOther && c.OtherType == "LOANRECOVERY"))
                 {
                     // 1. Fetch raw value from DB (e.g., 2.1 for OT or 1.0 for Attendance)
                     decimal rawVal = valueResolver(employeeId, c.PayConfigId, processMonth, processYear, c);
@@ -502,10 +395,10 @@ namespace MendinePayroll.UI.Controllers
 
                     // 3. Map the component name so OTHER formulas can use this result
                     // We DON'T set {VAL} or {RATE} here because they will get overwritten in the loop.
-                    valueMap[c.PayConfigName] = rawVal;
+                    c.Amount = ApplyRounding(c.BaseAmount, "");
+                    valueMap[c.PayConfigName] = c.Amount;
                     continue;
-                }
-
+                } 
                 // Normal Fixed/Manual Logic
                 c.BaseAmount = c.Amount;
                 c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
@@ -515,7 +408,7 @@ namespace MendinePayroll.UI.Controllers
             /* ============================================================
                 PASS 2 : FORMULA & EXCEL LOGIC (Handles Fixed & Formula)
                ============================================================ */
-            foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD"))
+            foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD" ))
             {
                 decimal baseValue = 0;
 
@@ -526,8 +419,8 @@ namespace MendinePayroll.UI.Controllers
                     {
                         valueMap["{VAL}"] = c.BaseAmount;
                         valueMap["{RATE}"] = c.Rate;
-                        valueMap["{PAID DAYS}"] = c.PaidDays;
-                        valueMap["{WORKING DAYS}"] = totalDays;
+                        valueMap["{PAIDDAYS}"] = c.PaidDays;
+                        valueMap["{WORKINGDAYS}"] = totalDays;
 
                         baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
                     }
@@ -567,100 +460,7 @@ namespace MendinePayroll.UI.Controllers
                 // Update the map for next components
                 valueMap[c.PayConfigName] = c.Amount;
             }
-            ///* =========================
-            //   PASS 2 : FORMULA
-            //========================= */
-            //foreach (var c in components.Where(x => x.LogicType == "FORMULA"))
-            //{
-            //    decimal baseValue = ApplyRounding(EvaluateDynamicFormula(
-            //        c.CalculationExpression,
-            //        valueMap
-            //    ), c.RoundingType);
-
-            //    c.BaseAmount = baseValue;
-
-            //    decimal calculated = c.IsPercentage
-            //        ? baseValue * c.Rate / 100
-            //        : baseValue;
-
-            //    //if (c.MaxLimit.HasValue && calculated > c.MaxLimit.Value)
-            //    //    calculated = c.MaxLimit.Value;
-            //    if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && calculated > c.MaxLimit.Value)
-            //    {
-            //        calculated = c.MaxLimit.Value;
-            //    }
-
-            //    c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
-            //    valueMap[c.PayConfigName] = c.Amount;
-            //}
-
-            ///* =========================
-            //   PASS 3 : STATUTORY (MONTHLY RULES)
-            //========================= */
-            //decimal basicAmount = components
-            //    .Where(x => x.IsBasicComponent)
-            //    .Sum(x => x.Amount);
-
-            //decimal grossAmount = components
-            //    .Where(x => x.IsGrossComponent)
-            //    .Sum(x => x.Amount);
-
-            //decimal actualMonthlyGross = components
-            //    .Where(x => x.IsGrossComponent)
-            //    .Select(x => x.BaseAmount)
-            //    .FirstOrDefault();
-
-            //foreach (var c in components.Where(x => x.IsStatutory))
-            //{
-            //    // 🔹 PF
-            //    if (c.StatutoryType.StartsWith("PF"))
-            //    {
-            //        if (!isPFApplicable)
-            //        {
-            //            c.Amount = 0;
-            //            continue;
-            //        }
-
-            //        decimal pfBase = basicAmount;
-            //        if (c.MaxLimit.HasValue && pfBase > c.MaxLimit.Value)
-            //            pfBase = c.MaxLimit.Value;
-
-            //        c.BaseAmount = pfBase;
-            //        c.Amount = ApplyRounding(pfBase * (c.Rate / 100), c.RoundingType);
-            //        //c.Amount = ApplyRounding(Prorate(pfBase * c.Rate / 100, c.PaidDays, totalDays), c.RoundingType);
-            //    }
-
-            //    // 🔹 ESIC (MONTHLY GROSS CHECK – NOT PRORATED)
-            //    else if (c.StatutoryType.StartsWith("ESIC"))
-            //    {
-            //        if (!isESICApplicable ||
-            //            (c.MaxLimit.HasValue && actualMonthlyGross > c.MaxLimit.Value))
-            //        {
-            //            c.Amount = 0;
-            //            continue;
-            //        }
-
-            //        c.BaseAmount = grossAmount;
-
-            //        c.Amount = ApplyRounding(Prorate(grossAmount * c.Rate / 100, c.PaidDays, totalDays), c.RoundingType);
-            //    }
-
-            //    // 🔹 PTAX
-            //    else if (c.StatutoryType == "PTAX")
-            //    {
-            //        if (!isPTaxApplicable)
-            //        {
-            //            c.Amount = 0;
-            //            continue;
-            //        }
-
-            //        decimal slabAmount =
-            //            CalculatePTaxFromJson(grossAmount, c.PTaxSlabsJson);
-
-            //        c.BaseAmount = actualMonthlyGross;
-            //        c.Amount = ApplyRounding(slabAmount, c.RoundingType);
-            //    }
-            //}
+             
             /* =========================
                PASS 3 : STATUTORY (DYNAMIC VIA FORMULA)
                ========================= */
@@ -730,6 +530,14 @@ namespace MendinePayroll.UI.Controllers
 
                     c.BaseAmount = dynamicBaseValue;
                     c.Amount = ApplyRounding(slabAmount, c.RoundingType);
+
+                    valueMap[c.PayConfigName] = c.Amount;
+                }
+                // 🔹 PTAX CALCULATION
+                else if (c.StatutoryType == "GRATUITY")
+                { 
+                    c.BaseAmount = dynamicBaseValue;
+                    c.Amount = ApplyRounding(dynamicBaseValue * (c.Rate / 100), c.RoundingType);
 
                     valueMap[c.PayConfigName] = c.Amount;
                 }
@@ -908,33 +716,7 @@ namespace MendinePayroll.UI.Controllers
                 return GetExcelUploadedAmount(employeeId, payConfigId, month, year);
 
             return component.Amount;
-        }
-        //private decimal GetEmployeeLoanEMI(int employeeId, int month, int Year)
-        //{
-
-        //    // 🔒 Check if already paid via salary
-        //    decimal amountPaid = IsLoanAlreadyPaid(employeeId, month, Year);
-
-        //    // ✅ If already paid, RETURN that amount
-        //    if (amountPaid > 0)
-        //        return amountPaid;
-
-        //    // 🔁 Else calculate pending EMI
-        //    string EmployeeIds = employeeId.ToString();
-        //    // ✅ Convert month number to month name
-        //    string Month = new DateTime(Year, month, 1)
-        //                        .ToString("MMMM", CultureInfo.InvariantCulture);
-
-        //    DataTable dt = clsDatabase.fnDataTable("PRC_Bulk_EmployeeLoan_PendingList", EmployeeIds, Month, Year, TenantId);
-
-        //    if (dt == null || dt.Rows.Count == 0)
-        //        return 0m;
-
-        //    if (dt.Columns.Contains("AmountToBePaid") && dt.Rows[0]["AmountToBePaid"] != DBNull.Value)
-        //        return Convert.ToDecimal(dt.Rows[0]["AmountToBePaid"]);
-
-        //    return 0m;
-        //}
+        } 
         private decimal IsLoanAlreadyPaid(int employeeId, int month, int year, out string loanIds)
         {
             loanIds = "0";
@@ -997,31 +779,7 @@ namespace MendinePayroll.UI.Controllers
                 return 0m;
             }
         }
-        private bool IsWaivableComponent(SalaryComponentResult c)
-        {
-            if (c == null)
-                return false;
-
-            var payType = (c.PayType ?? "").Trim().ToUpperInvariant();
-            var otherType = (c.OtherType ?? "").Trim().ToUpperInvariant();
-            var statutoryType = (c.StatutoryType ?? "").Trim().ToUpperInvariant();
-
-            // ❌ Employer contribution is NEVER waivable
-            if (payType == "CC")
-                return false;
-
-            // ❌ Statutory deductions are NEVER waivable
-            if (c.IsStatutory)
-                return false;
-
-            // ✅ Loan / Advance deductions are waivable
-            if (payType == "DEDUCTION" &&
-                c.IsOther &&
-                (otherType == "LOANRECOVERY" || otherType == "ADVANCE"))
-                return true;
-
-            return false;
-        }
+      
         private PayrollPivotResponse BuildPivot(PayrollProcessRequest request, List<EmployeeSalaryResponse> results)
         {
             /* =========================
@@ -1100,51 +858,7 @@ namespace MendinePayroll.UI.Controllers
                     ManualDeduction = emp.ManualDeduction,
 
                     Cells = new List<PivotCellDto>()
-                };
-
-                //foreach (var col in columns)
-                //{
-                //    var comp = emp.Components
-                //        ?.FirstOrDefault(x => x.PayConfigId == col.PayConfigId);
-
-                //    bool isLoanCell =
-                //        col.IsWaivable
-                //        && (col.OtherType ?? "")
-                //            .Equals("LOANRECOVERY", StringComparison.OrdinalIgnoreCase);
-
-                //    decimal amount = comp?.Amount ?? 0;
-
-                //    // 🔒 Check if loan already paid in this month
-                //    string processedLoanIds;
-                //    decimal loanPaidAmount = isLoanCell
-                //            ? IsLoanAlreadyPaid(
-                //                emp.EmployeeId,
-                //                request.ProcessMonth.GetValueOrDefault(),
-                //                request.ProcessYear.GetValueOrDefault(),
-                //                out processedLoanIds
-                //                )
-                //            : 0m;
-
-                //    bool loanAlreadyPaid = loanPaidAmount > 0;
-                //    string finalReferenceIds = loanAlreadyPaid ? processedLoanIds : (comp?.ReferenceIds ?? "0");
-                //    row.Cells.Add(new PivotCellDto
-                //    {
-                //        PayConfigId = col.PayConfigId,
-                //        Amount = amount,
-                //        BaseAmount = comp?.BaseAmount ?? 0,
-
-                //        // 🔒 Disable skip if already paid
-                //        IsEditable = isLoanCell && !loanAlreadyPaid,
-                //        IsWaivable = isLoanCell && !loanAlreadyPaid,
-
-                //        IsWaived = false,
-
-                //        // 🔒 Preserve EMI only for loan
-                //        OriginalAmount = isLoanCell ? amount : 0,
-                //        // 🔑 PASS THE IDs TO THE UI
-                //        ReferenceIds = isLoanCell ? finalReferenceIds : null
-                //    });
-                //}
+                }; 
                 foreach (var col in columns)
                 {
                     var comp = emp.Components
@@ -1247,22 +961,7 @@ namespace MendinePayroll.UI.Controllers
             }
         }
 
-        //private decimal IsLoanAlreadyPaid(int EmployeeId, int Month, int Year)
-        //{
-        //    DataTable dt = clsDatabase.fnDataTable("PRC_CheckLoanPaidForMonth", EmployeeId, Month, Year, TenantId);
-
-        //    if (dt == null || dt.Rows.Count == 0)
-        //        return 0m;
-
-        //    if (dt.Columns.Contains("AmountPaid") &&
-        //        dt.Rows[0]["AmountPaid"] != DBNull.Value)
-        //    {
-        //        return Convert.ToDecimal(dt.Rows[0]["AmountPaid"]);
-        //    }
-
-        //    return 0m;
-        //}
-        
+         
         [HttpPost]
         public JsonResult SavePayrollBatch(PayrollBatchSaveDto dto)
         {
@@ -1413,7 +1112,8 @@ namespace MendinePayroll.UI.Controllers
         [HttpGet]
         public JsonResult GetPayrollDashboard()
         {
-            var dt = clsDatabase.fnDataTable("SP_Payroll_SaaS_GetBatchSalary", TenantId);
+            string UserId = Session["UserId"].ToString();
+            var dt = clsDatabase.fnDataTable("SP_Payroll_SaaS_GetBatchSalary", TenantId, UserId);
 
             var list = dt.AsEnumerable().Select(r => new
             {
@@ -1451,7 +1151,8 @@ namespace MendinePayroll.UI.Controllers
         {
             try
             {
-                DataTable dt = clsDatabase.fnDataTable("SP_Payroll_SaaS_GetEmployeeSalary", TenantId);
+                string UserId = Session["UserId"].ToString();
+                DataTable dt = clsDatabase.fnDataTable("SP_Payroll_SaaS_GetEmployeeSalary", TenantId, UserId);
 
                 var result = dt.AsEnumerable().Select(r => new
                 {
@@ -1806,9 +1507,6 @@ namespace MendinePayroll.UI.Controllers
             }
         }
 
-
-
-
         static decimal GetDecimal(DataRow r, string col)
          => r[col] == DBNull.Value ? 0m : Convert.ToDecimal(r[col]);
 
@@ -2001,72 +1699,7 @@ namespace MendinePayroll.UI.Controllers
                 TotalNetPay
             );
         }
-        //[HttpPost]
-        //public JsonResult SubmitPreviewEdits(SubmitPreviewEditsRequest request)
-        //{
-        //    if (request == null || request.PreviewBatchId <= 0)
-        //    {
-        //        return Json(new { success = false, message = "Invalid preview batch" });
-        //    }
-
-        //    try
-        //    {
-        //        string userName = Session["UserName"]?.ToString();
-
-        //        /* =================================================
-        //           CASE 1: NO CHANGES → UPDATE STATUS ONLY
-        //        ================================================= */
-        //        if (request.Edits == null || !request.Edits.Any())
-        //        {
-        //            clsDatabase.fnDBOperation(
-        //                "SP_Payroll_MarkPreviewBatchReviewed",   // 🔑 new / existing SP
-        //                request.PreviewBatchId,
-        //                userName
-        //            );
-
-        //            return Json(new
-        //            {
-        //                success = true,
-        //                message = "No changes detected. Batch marked as reviewed."
-        //            });
-        //        }
-
-        //        /* =================================================
-        //           CASE 2: CHANGES EXIST → SAVE + APPLY
-        //        ================================================= */
-
-        //        string editsJson = JsonConvert.SerializeObject(request.Edits);
-
-        //        // 1️⃣ Save preview edits (delta table)
-        //        clsDatabase.fnDBOperation(
-        //            "SP_Payroll_SavePreviewEdits",
-        //            request.PreviewBatchId,
-        //            editsJson,
-        //            userName
-        //        );
-
-        //        // 2️⃣ Apply preview edits to preview tables
-        //        clsDatabase.fnDBOperation(
-        //            "SP_Payroll_ApplyPreviewEdits",
-        //            request.PreviewBatchId
-        //        );
-
-        //        return Json(new
-        //        {
-        //            success = true,
-        //            message = "Preview changes saved and applied successfully"
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new
-        //        {
-        //            success = false,
-        //            message = "Failed to process preview batch",
-        //            error = ex.Message
-        //        });
-        //    }
-        //}
+        
         [HttpPost]
         public JsonResult SubmitPreviewEdits(SubmitPreviewEditsRequest request)
         {
@@ -2103,192 +1736,7 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
-        //[HttpPost]
-        //public JsonResult GetEmployeeSalaryForEdit(EditSalaryRequest req)
-        //{
-        //    if (req == null || req.EmployeeID <= 0)
-        //        return Json(new { Success = false, Message = "Invalid request" });
-
-        //    /* ==========================================================
-        //       1) LOAD PREVIEW CONTEXT (ALWAYS)
-        //    ========================================================== */
-        //    DataTable dtCtx = clsDatabase.fnDataTable(
-        //        "SP_Payroll_GetEmployeePreviewContext",
-        //        TenantId,
-        //        req.PreviewBatchID,
-        //        req.PayrollProcessEmployeeID,
-        //        req.EmployeeID
-        //    );
-
-        //    if (dtCtx.Rows.Count == 0)
-        //        return Json(new { Success = false, Message = "Preview record not found" });
-
-        //    DataRow ctx = dtCtx.Rows[0];
-
-        //    string payrollType = ctx["PayrollType"].ToString();
-        //    int processMonth = Convert.ToInt32(ctx["ProcessMonth"]);
-        //    int processYear = Convert.ToInt32(ctx["ProcessYear"]);
-        //    string employeename = ctx["EmployeeName"].ToString();
-        //    string empcode = ctx["empcode"].ToString();
-        //    string empno = ctx["empno"].ToString();
-        //    DateTime? fromDate = ctx["FromDate"] == DBNull.Value ? null : (DateTime?)ctx["FromDate"];
-        //    DateTime? toDate = ctx["ToDate"] == DBNull.Value ? null : (DateTime?)ctx["ToDate"];
-
-        //    int totalDays = payrollType == "1"
-        //        ? DateTime.DaysInMonth(processYear, processMonth)
-        //        : (toDate.Value - fromDate.Value).Days + 1;
-
-        //    decimal paidDays = ctx["TotalPaidDays"] == DBNull.Value
-        //        ? totalDays
-        //        : Convert.ToInt32(ctx["TotalPaidDays"]);
-
-        //    decimal manualAdd = ctx["ManualAddition"] == DBNull.Value ? 0 : Convert.ToDecimal(ctx["ManualAddition"]);
-        //    decimal manualDed = ctx["ManualDeduction"] == DBNull.Value ? 0 : Convert.ToDecimal(ctx["ManualDeduction"]);
-        //    bool loanWaived = ctx["LoanWaivedYN"] != DBNull.Value && Convert.ToBoolean(ctx["LoanWaivedYN"]);
-
-        //    long previewEmployeeId = Convert.ToInt64(ctx["PreviewEmployeeID"]);
-
-        //    /* ==========================================================
-        //       2) FIRST LOAD → RETURN PREVIEW DATA ONLY
-        //       (NO CALCULATION)
-        //    ========================================================== */
-
-        //    if (!req.IsDaysChanged)
-        //    {
-        //        DataTable dtPrev = clsDatabase.fnDataTable("SP_Payroll_GetEmployeePreviewDetails", TenantId, previewEmployeeId, req.EmployeeID);
-
-        //        // 1. Map the initial list and handle Loan Master lookups
-        //        var finalDetails = dtPrev.AsEnumerable().Select(r => {
-        //            int payConfigId = Convert.ToInt32(r["PayConfigID"]);
-        //            decimal currentAmount = Convert.ToDecimal(r["PayValue"]);
-        //            string otherType = r.Table.Columns.Contains("OtherType") ? r["OtherType"]?.ToString() : "";
-        //            string refIds = r.Table.Columns.Contains("ReferenceIds") ? r["ReferenceIds"]?.ToString() : "";
-
-        //            decimal originalAmount = currentAmount;
-
-        //            // 🔑 If it's a loan, fetch the Master EMI using the stored ReferenceIds
-        //            if (otherType == "LOANRECOVERY" && !string.IsNullOrEmpty(refIds) && refIds != "0")
-        //            {
-        //                DataTable dtLoanMaster = clsDatabase.fnDataTable(
-        //                    "SP_Payroll_GetEmployeeActiveLoanTotal",
-        //                    TenantId,
-        //                    req.EmployeeID,
-        //                    refIds
-        //                );
-
-        //                if (dtLoanMaster.Rows.Count > 0)
-        //                {
-        //                    // This is the EMI from the Loan Master tables
-        //                    originalAmount = Convert.ToDecimal(dtLoanMaster.Rows[0]["TotalEMI"]);
-        //                }
-        //            }
-
-        //            return new
-        //            {
-        //                PayConfigId = payConfigId,
-        //                PayConfigName = r["PayConfigName"].ToString(),
-        //                PayType = r["PayType"].ToString(),
-        //                Amount = currentAmount,
-        //                OriginalAmount = originalAmount, // 💰 HR can use this to "Restore" a skipped loan
-        //                ReferenceIds = refIds,
-        //                IsManualAllowed = Convert.ToInt32(r["IsManualAllowed"]),
-        //                IsAutoCalculated = Convert.ToInt32(r["IsAutoCalculated"]),
-        //                OtherType = otherType,
-        //                LogicType = r["LogicType"].ToString()
-        //            };
-        //        }).ToList();
-
-        //        return Json(new
-        //        {
-        //            Success = true,
-        //            Mode = "PREVIEW_LOAD",
-        //            Header = new
-        //            {
-        //                EmployeeName = employeename,
-        //                Empno = empno,
-        //                EmpCode = empcode,
-        //                PaidDays = paidDays,
-        //                TotalMonthDays = totalDays,
-        //                ManualAddition = manualAdd,
-        //                ManualDeduction = manualDed,
-        //                LoanWaivedYN = loanWaived,
-        //                TotalGross = ctx["TotalGross"],
-        //                TotalDeduction = ctx["TotalDeduction"],
-        //                TotalTakeHome = ctx["TotalTakeHome"]
-        //            },
-        //            Details = finalDetails // 🔑 Now contains corrected Loan data
-        //        }, JsonRequestBehavior.AllowGet);
-        //    }
-        //    /* ==========================================================
-        //       3) DAYS CHANGED → FULL BACKEND RECALCULATION
-        //    ========================================================== */
-        //    paidDays = req.PaidDays.Value;
-
-        //    DataTable dtHeader = clsDatabase.fnDataTable(
-        //        "Payroll_SaaS_GetSalaryHeader",
-        //        TenantId,
-        //        req.EmployeeID
-        //    );  
-
-        //    if (dtHeader.Rows.Count == 0)
-        //        return Json(new { Success = false, Message = "Salary master not configured" });
-
-        //    DataRow h = dtHeader.Rows[0];
-
-        //    int empSalaryConfigId = Convert.ToInt32(h["EmpSalaryConfigID"]);
-        //    bool isPF = Convert.ToBoolean(h["IsPF_Applicable"]);
-        //    bool isESIC = Convert.ToBoolean(h["IsESIC_Applicable"]);
-        //    bool isPTax = Convert.ToBoolean(h["IsPTax_Applicable"]);
-
-        //    DataTable dtComp = clsDatabase.fnDataTable(
-        //        "Payroll_SaaS_GetSalaryDetails",
-        //        empSalaryConfigId
-        //    );
-
-        //    var components = MapComponents(dtComp, paidDays, totalDays);
-
-        //    var salary = CalculateMonthlySalary(
-        //        components,
-        //        req.EmployeeID,
-        //        processMonth,
-        //        processYear,
-        //        isPF,
-        //        isESIC,
-        //        isPTax,
-        //        PayrollValueResolver
-        //    );
-
-        //    if (salary == null)
-        //        return Json(new { Success = false, Message = "Salary calculation failed" });
-
-        //    return Json(new
-        //    {
-        //        Success = true,
-        //        Mode = "DAYS_RECALC",
-
-        //        Header = new
-        //        {
-        //            EmployeeName = employeename,
-        //            Empno = empno,
-        //            EmpCode = empcode,
-        //            PaidDays = paidDays,
-        //            // 🔑 ADD THIS: This is your safe month limit from DB logic
-        //            TotalMonthDays = totalDays,
-        //            TotalGross = salary.TotalEarnings,
-        //            TotalDeduction = salary.TotalDeductions,
-        //            TotalTakeHome = salary.NetPay
-        //        },
-
-        //        Details = salary.Components.Select(c => new
-        //        {
-        //            c.PayConfigId,
-        //            c.PayConfigName,
-        //            c.PayType,
-        //            Amount = c.Amount, 
-        //            c.OtherType
-        //        })
-        //    }, JsonRequestBehavior.AllowGet);
-        //}
+        
         [HttpPost]
         public JsonResult GetEmployeeSalaryForEdit(EditSalaryRequest req)
         {
@@ -2615,8 +2063,19 @@ namespace MendinePayroll.UI.Controllers
 
             string componentName = ds.Tables[0].Rows[0]["PayConfigName"].ToString();
             DataTable dtEmployees = ds.Tables[1];
+            // Professional Labeling Logic
+            string valueHeader = "Value";
+            if (componentName.ToUpper().Contains("CONTINUOUS ATTENDANCE"))
+                valueHeader = "Day Off";
+            else if (componentName.ToUpper().Contains("OVERTIME"))
+                valueHeader = "Overtime Hours";
+            else if (componentName.ToUpper().Contains("PRODUCTION BONUS"))
+                valueHeader = "Target Achieved %";
+            else if (componentName.ToUpper().Contains("SPECIAL ALLOWANCE"))
+                valueHeader = "Special Amount";
             // Set the license context to NonCommercial (REQUIRED for free usage)
             OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+             
             using (ExcelPackage package = new ExcelPackage())
             {
                 var ws = package.Workbook.Worksheets.Add("UploadSheet");
@@ -2627,7 +2086,7 @@ namespace MendinePayroll.UI.Controllers
                 ws.Cells[1, 3].Value = "Employee Name";
                 ws.Cells[1, 4].Value = "Month";
                 ws.Cells[1, 5].Value = "Year";
-                ws.Cells[1, 6].Value = "Value (" + componentName + ")"; // Your {VAL}
+                ws.Cells[1, 6].Value = "Value (" + valueHeader + ")"; // Your {VAL}
 
                 // --- Styling (Applied to all 6 columns) ---
                 using (var range = ws.Cells[1, 1, 1, 6])
@@ -2669,13 +2128,31 @@ namespace MendinePayroll.UI.Controllers
             }
         }
         [HttpPost]
-        public JsonResult UploadVariableComponentValues(HttpPostedFileBase file, int configId, int month, int year,int paygroupid)
+        public JsonResult UploadVariableComponentValues(HttpPostedFileBase file, int configId, int month, int year,int paygroupid, bool forceUpdate = false)
         {
             if (file == null || file.ContentLength == 0)
                 return Json(new { success = false, message = "Please select a valid Excel file." });
 
             try
             {
+                // 1. Check if data already exists for this month/year/config before processing the file
+                if (!forceUpdate)
+                {
+                    // Assume fnExecuteScalar returns the count of existing records
+                    int existingCount = Convert.ToInt32(clsDatabase.fnDBOperation("SP_Get_Payroll_SaaS_Variable_Component_Inputs", configId, month, year, TenantId, paygroupid));
+
+                    if (existingCount > 0)
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            exists = true,
+                            message = $"Data already exists for {month}/{year}. Do you want to overwrite it?"
+                        });
+                    }
+                }
+
+                // 2. Process Excel (Standard EPPlus Logic)
                 OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
 
                 var uploadList = new List<object>(); // List to hold JSON data

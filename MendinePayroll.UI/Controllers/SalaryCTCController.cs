@@ -86,8 +86,8 @@ namespace MendinePayroll.UI.Controllers
 
         public JsonResult GetPayGroupList()
         {
-    
-            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_PAYGROUP", tenantID);
+            string UserId = Session["UserId"].ToString();
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_PAYGROUP", tenantID, UserId);
 
             var list = dt.AsEnumerable().Select(r => new
             {
@@ -99,8 +99,8 @@ namespace MendinePayroll.UI.Controllers
         }
         public JsonResult GetPayGroupListConfigWise()
         {
-
-            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_PAYGROUP_CONFIG", tenantID);
+            string UserId = Session["UserId"].ToString();
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_PAYGROUP_CONFIG", tenantID, UserId);
 
             var list = dt.AsEnumerable().Select(r => new
             {
@@ -112,12 +112,12 @@ namespace MendinePayroll.UI.Controllers
         }
         public JsonResult GetEmployeeList(List<string> companyIds, List<string> deptIds, List<string> categoryIds)
         {
-
+            string UserId = Session["UserId"].ToString();
             string companyFilter = NormalizeMultiSelect(companyIds);
             string deptFilter = NormalizeMultiSelect(deptIds);
             string categoryFilter = NormalizeMultiSelect(categoryIds);
 
-            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEE_CTC",tenantID,companyFilter,deptFilter,categoryFilter);
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEE_CTC",tenantID,companyFilter,deptFilter,categoryFilter, UserId);
 
             var list = dt.AsEnumerable().Select(r => new
             {
@@ -330,12 +330,12 @@ namespace MendinePayroll.UI.Controllers
 
         public JsonResult GetEmployeeSalaryList(List<string> companyIds, List<string> deptIds, List<string> categoryIds)
         {
-
+            string UserId = Session["UserId"].ToString();
             string companyFilter = NormalizeMultiSelect(companyIds);
             string deptFilter = NormalizeMultiSelect(deptIds);
             string categoryFilter = NormalizeMultiSelect(categoryIds);
 
-            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEE_SALARY_STRUCTURE", tenantID, companyFilter, deptFilter, categoryFilter);
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEE_SALARY_STRUCTURE", tenantID, companyFilter, deptFilter, categoryFilter, UserId);
 
             var list = dt.AsEnumerable().Select(r => new
             {

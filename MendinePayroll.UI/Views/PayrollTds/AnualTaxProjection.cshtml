@@ -1,0 +1,969 @@
+﻿@{
+    ViewBag.Title = "Annual Tax Projection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    .tax-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .filter-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 12px 10px;
+        background: #f8f9fb;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #eef0f2;
+    }
+
+    .filter-item {
+        flex: 1 1 180px;
+        min-width: 160px;
+    }
+
+        .filter-item label {
+            display: block;
+            font-weight: bold;
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .filter-item select, .btn-action {
+            height: 32px !important;
+            border-radius: 4px !important;
+            font-size: 13px;
+        }
+
+    .filter-break {
+        flex-basis: 100%;
+        height: 0;
+    }
+
+    .btn-generate {
+        background: #2e7d32;
+        color: white;
+        border: none;
+        padding: 0 15px;
+        font-weight: bold;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: 0.2s;
+    }
+
+        .btn-generate:hover {
+            background: #1b5e20;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+    .btn-reset {
+        background: #fff;
+        color: #d32f2f;
+        border: 1px solid #d32f2f;
+        padding: 0 12px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+        .btn-reset:hover {
+            background: #ffebee;
+        }
+
+    .tax-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .tax-table th {
+            background: #1a237e;
+            color: white;
+            padding: 10px;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .tax-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .bold-blue {
+        font-weight: bold;
+        color: #1a237e;
+    }
+
+    /* Modal */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9999;
+        backdrop-filter: blur(2px);
+    }
+
+    .modal-card {
+        position: relative;
+        background: white;
+        width: 900px;
+        max-width: calc(100% - 30px);
+        margin: 50px auto;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: #1a237e;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-body {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .section-title {
+        font-weight: bold;
+        color: #1a237e;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+
+    .calc-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px dashed #f1f5f9;
+        font-size: 13px;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        font-weight: bold;
+        border-top: 2px solid #1a237e;
+        margin-top: 10px;
+        color: #1a237e;
+    }
+
+    .tax-result-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .monthly-val {
+        font-size: 24px;
+        font-weight: 800;
+        color: #1a237e;
+        margin: 5px 0;
+    }
+
+    /* Toggle */
+    .rebate-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 3px;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 42px;
+        height: 22px;
+        flex: 0 0 auto;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #c62828;
+        transition: .3s;
+        border-radius: 22px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+    input:checked + .slider {
+        background-color: #2e7d32;
+    }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+    .toggle-text {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    @@media(max-width: 767px) {
+        .modal-body {
+            grid-template-columns: 1fr;
+        }
+    }
+    .rebate-section {
+        display: none;
+        margin-top: 15px;
+    }
+</style>
+
+<section class="content-body">
+    <header class="page-header"><h2>Annual Tax Projection</h2></header>
+
+    <div class="tax-card">
+        <div class="filter-container">
+            <div class="filter-item">
+                <label>FY Year</label>
+                <select id="ddlFY" class="form-control">
+                    <option value="2026">2026-2027</option>
+                    <option value="2025">2025-2026</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label>Regime</label>
+                <select id="ddlRegime" class="form-control" disabled style="background-color: #f1f3f5;">
+                    <option value="2">New Tax Regime</option>
+                </select>
+            </div>
+
+            <!-- Global rebate toggle (projection run) -->
+            <input type="hidden" name="isRebateApplied" id="isRebateApplied" value="0" />
+
+            <div class="filter-item" style="flex:0 0 190px;">
+                <label>Section 87A Rebate</label>
+                <div class="rebate-toggle">
+                    <label class="switch">
+                        <input type="checkbox" id="chkRebate">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-text" id="rebateText">Not Applied</span>
+                </div>
+            </div>
+
+            <div class="filter-break"></div>
+
+            <div class="filter-item">
+                <label>Company</label>
+                <select id="ddlCompany" class="form-control multi-select" multiple="multiple"></select>
+            </div>
+
+            <div class="filter-item">
+                <label>Department</label>
+                <select id="ddlDepartment" class="form-control multi-select" multiple="multiple"></select>
+            </div>
+
+            <div class="filter-item">
+                <label>Employee</label>
+                <select id="ddlEmployee" class="form-control multi-select" multiple="multiple"></select>
+            </div>
+
+            <div class="filter-item" style="flex: 0 0 auto; display: flex; gap: 5px;">
+                <button type="button" class="btn-reset btn-action" onclick="location.reload()" title="Reset Filters">
+                    <i class="fa fa-refresh"></i> Reset
+                </button>
+                <button type="button" class="btn-generate btn-action" onclick="calculateProjections()">
+                    <i class="fa fa-calculator"></i> Generate
+                </button>
+                <button type="button" class="btn btn-primary btn-action" onclick="finalizeProjection()">
+                    <i class="fa fa-save"></i> Finalize & Save
+                </button>
+            </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; gap:10px; flex-wrap:wrap;">
+
+            <div>
+                <input type="text" id="txtSearch" class="form-control" placeholder="Search employee..." style="width:250px;">
+            </div>
+
+            <div>
+                <select id="ddlPageSize" class="form-control" style="width:100px;">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+
+        </div>
+
+
+
+        <div class="table-responsive">
+            <table class="tax-table" id="tblProjections">
+                <thead>
+                    <tr>
+                        <th>Emp ID</th>
+                        <th>Name</th>
+                        <th class="text-right">Annual Gross</th>
+                        <th class="text-right">Net Taxable</th>
+                        <th class="text-right">Total Tax (Before Cess)</th>
+                        <th class="text-right">Cess Amount</th>
+                        <th class="text-right">Annual Tax</th>
+                        <th class="text-right">Monthly TDS</th>
+                        <th style="text-align:center">Audit</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyData">
+                    <tr><td colspan="9" class="text-center">Select filters and click Generate.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; gap:10px; flex-wrap:wrap;"> 
+            <div id="recordInfo" style="font-size:12px; color:#64748b; margin-bottom:8px;"></div>
+            <div id="paginationContainer" style="text-align:center; margin-top:15px;"></div>
+        </div>
+        
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal-overlay" id="tdsModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div>
+                <h3 style="margin:0">TDS Projection Detail</h3>
+                <small id="lblModalEmpName">Employee Detail</small>
+            </div>
+            <button onclick="closeModal()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Left -->
+            <div>
+                <div class="section-title">Annual Income Projection</div>
+                <div id="incomeContainer"></div>
+
+                <div class="total-row">
+                    <span>Est. Annual Gross</span>
+                    <span id="lblModalAnnualGross">0.00</span>
+                </div>
+
+                <div class="section-title" style="margin-top:25px;">Standard Deductions</div>
+                <div class="calc-row"><span>Standard Deduction (Sec 16ia)</span><span id="lblModalStdDed">- 0.00</span></div>
+
+                <div class="total-row" style="color:#c62828; border-color:#c62828;">
+                    <span>Net Taxable Income</span>
+                    <span id="lblModalNetTaxable">0.00</span>
+                </div>
+            </div>
+
+            <!-- Right -->
+            <div>
+                <div class="calc-row" style="align-items:center;">
+                    <span><strong>Apply Section 87A Rebate</strong></span>
+                    <label class="switch">
+                        <input type="checkbox" id="chkEmpRebate">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <small style="color:#64748b; display:block; margin-bottom:10px;">
+                    This override applies only for this employee.
+                </small>
+
+                <div class="section-title">Slab-wise Computation</div>
+                <div id="slabContainer"></div>
+
+                <div class="calc-row" style="font-weight:600; border-top:1px dashed #ddd; margin-top:8px; padding-top:6px;">
+                    <span>Total Tax as per Slabs</span>
+                    <span id="lblModalSlabTotal">0.00</span>
+                </div>
+
+                <div id="rebateSection" class="rebate-section">
+                    <div class="section-title" style="color:#2e7d32;">
+                        Rebate Applied (Section 87A)
+                    </div>
+
+                    <div class="calc-row">
+                        <span>Rebate Income Limit</span>
+                        <span id="lblRebateThreshold">0.00</span>
+                    </div>
+
+                    <div class="calc-row">
+                        <span>Maximum Rebate Allowed</span>
+                        <span id="lblRebateLimit">0.00</span>
+                    </div>
+
+                    <div class="calc-row" style="color:#2e7d32; font-weight:600;">
+                        <span>Tax After Rebate</span>
+                        <span id="lblTaxAfterRebate">₹ 0.00</span>
+                    </div>
+                </div>
+
+                <div style="margin-top:15px; border-top: 1px solid #eee; padding-top:10px;">
+                    <div class="calc-row"><span>Total Base Tax</span><span id="lblModalBaseTax">0.00</span></div>
+                    <div class="calc-row"><span>Health & Edu Cess (4%)</span><span id="lblModalCess">0.00</span></div>
+                </div>
+
+                <div class="tax-result-box">
+                    <small style="text-transform:uppercase; color:#64748b; font-weight:bold;">Monthly Projected TDS</small>
+                    <div class="monthly-val" id="lblModalMonthlyTDS">₹ 0.00</div>
+                    <small style="color:#94a3b8;">(Annual Tax / 12)</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+  <script>
+        // ================= PAGINATION STATE =================
+        let currentPage = 1;
+        let pageSize = 10;
+        let allRows = [];
+        let filteredRows = [];
+
+        // ================= INITIALIZE PAGINATION =================
+        function setupPagination() {
+
+            allRows = $('#tbodyData tr[data-empid]').toArray();
+            filteredRows = [...allRows];
+
+            currentPage = 1;
+            renderTable();
+        }
+
+        // ================= RENDER TABLE =================
+        function renderTable() {
+
+            const totalRows = filteredRows.length;
+            const totalPages = Math.ceil(totalRows / pageSize);
+
+            // Hide all rows first
+            $('#tbodyData tr[data-empid]').hide();
+
+            if (totalRows === 0) {
+                $('#paginationContainer').html('');
+                return;
+            }
+
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+
+            filteredRows.slice(start, end).forEach(row => {
+                $(row).show();
+            });
+            // 🔹 Record count text
+            $('#recordInfo').text(
+                `Showing ${start + 1}–${end} of ${totalRows} rows`
+            );
+
+            renderPaginationControls(totalPages);
+        }
+
+        // ================= PAGINATION BUTTONS =================
+        function renderPaginationControls(totalPages) {
+
+            let html = '';
+
+            if (totalPages <= 1) {
+                $('#paginationContainer').html('');
+                return;
+            }
+
+            const maxVisible = 5; // how many buttons to show
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+            // Adjust start if near end
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            // Prev button
+            html += `<button class="btn btn-sm btn-light" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Prev</button> `;
+
+            // First page + dots
+            if (startPage > 1) {
+                html += `<button class="btn btn-sm btn-light" onclick="changePage(1)">1</button> `;
+                if (startPage > 2) {
+                    html += `<span class="btn btn-sm btn-light disabled">...</span> `;
+                }
+            }
+
+            // Visible page range
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'}"
+                    onclick="changePage(${i})">${i}</button> `;
+            }
+
+            // Last page + dots
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += `<span class="btn btn-sm btn-light disabled">...</span> `;
+                }
+                html += `<button class="btn btn-sm btn-light" onclick="changePage(${totalPages})">${totalPages}</button> `;
+            }
+
+            // Next button
+            html += `<button class="btn btn-sm btn-light" onclick="changePage(${currentPage + 1})"
+                ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+
+            $('#paginationContainer').html(html);
+        }
+
+        // ================= PAGE CHANGE =================
+        function changePage(page) {
+
+            const totalPages = Math.ceil(filteredRows.length / pageSize);
+
+            if (page < 1 || page > totalPages) return;
+
+            currentPage = page;
+            renderTable();
+        }
+
+        // ================= SEARCH =================
+        $('#txtSearch').on('keyup', function () {
+
+            const keyword = $(this).val().toLowerCase().trim();
+
+            if (keyword === '') {
+                filteredRows = [...allRows];
+            } else {
+                filteredRows = allRows.filter(row =>
+                    $(row).text().toLowerCase().includes(keyword)
+                );
+            }
+
+            currentPage = 1;
+            renderTable();
+        });
+
+        // ================= PAGE SIZE CHANGE =================
+        $('#ddlPageSize').on('change', function () {
+
+            pageSize = parseInt($(this).val());
+            currentPage = 1;
+            renderTable();
+        });
+    </script>
+  <script>
+    // ---------- State ----------
+    let currentEmpId = 0;
+
+    // ---------- Global (Projection) rebate toggle ----------
+    $(document).on('change', '#chkRebate', function () {
+        if ($(this).is(':checked')) {
+            $('#isRebateApplied').val(1);
+            $('#rebateText').text('Applied');
+        } else {
+            $('#isRebateApplied').val(0);
+            $('#rebateText').text('Not Applied');
+        }
+    });
+
+    // ---------- Modal employee rebate toggle ----------
+    $(document).on('change', '#chkEmpRebate', function () {
+        if (!currentEmpId) return;
+        const isApplied = $(this).is(':checked') ? 1 : 0;
+
+        recalculateEmployeeTax(currentEmpId, isApplied);
+    });
+
+    // ---------- Page init ----------
+    $(document).ready(function () {
+        $('.multi-select').multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            buttonWidth: '100%',
+            nonSelectedText: 'Select...',
+            maxHeight: 250
+        });
+
+        loadInitialFilters();
+
+        $('#ddlCompany, #ddlDepartment').on('change', function () {
+            loadEmployeeByFilters();
+        });
+    });
+
+    function loadInitialFilters() {
+        loadDropdown('/SalaryCTC/GetCompanyList', '#ddlCompany', 'CompanyId', 'CompanyName');
+        loadDropdown('/SalaryCTC/GetDepartmentList', '#ddlDepartment', 'DepartmentID', 'DepartmentName');
+    }
+
+    function loadDropdown(url, ddl, id, text) {
+        $.getJSON(url, function (res) {
+            const $ddl = $(ddl).empty();
+            res.forEach(x => $ddl.append(`<option value="${x[id]}">${x[text]}</option>`));
+            $ddl.multiselect('rebuild');
+        });
+    }
+
+    function loadEmployeeByFilters() {
+        const companyIds = $('#ddlCompany').val() || [];
+        const deptIds = $('#ddlDepartment').val() || [];
+        const categoryIds = 1;
+
+        $.ajax({
+            url: '/SalaryCTC/GetEmployeeList',
+            type: 'GET',
+            traditional: true,
+            data: { companyIds, deptIds, categoryIds },
+            success: function (res) {
+                const $ddl = $('#ddlEmployee').empty();
+                const activeEmployees = (res || []).filter(x => x.Empstatus === 'ACTIVE');
+
+                activeEmployees.forEach(x => {
+                    $ddl.append(`<option value="${x.EmpID}">${x.EmpName} (${x.EmpCode})</option>`);
+                });
+
+                $ddl.multiselect('rebuild');
+            }
+        });
+    }
+
+    // ---------- Projection ----------
+    function calculateProjections() {
+        const companyIds = ($('#ddlCompany').val() || []).filter(v => v !== 'multiselect-all');
+        const deptIds = ($('#ddlDepartment').val() || []).filter(v => v !== 'multiselect-all');
+        const empIds = ($('#ddlEmployee').val() || []).filter(v => v !== 'multiselect-all');
+        const isRebateApplied = $('#isRebateApplied').val();
+        const year = $('#ddlFY').val();
+        const regime = $('#ddlRegime').val();
+
+        if (companyIds.length === 0) {
+            alert("Please select at least one Company.");
+            return;
+        }
+
+        const filters = { companyIds, deptIds, empIds, year, regime, isRebateApplied };
+
+        $('#tbodyData').html('<tr><td colspan="9" class="text-center"><i class="fa fa-spinner fa-spin"></i> Processing Tax Engine...</td></tr>');
+
+        $.ajax({
+            url: "@Url.Action("AnnualTdsProjection", "PayrollTds")",
+            type: 'POST',
+            data: filters,
+            traditional: true,
+            success: function (res) {
+                if (!res || !res.success) {
+                    $('#tbodyData').html(`<tr><td colspan="9" class="text-center text-danger">${(res && res.message) ? res.message : 'Error'} </td></tr>`);
+                    return;
+                }
+
+                let html = '';
+                if (!res.Data || res.Data.length === 0) {
+                    html = '<tr><td colspan="9" class="text-center">No records found for selected filters.</td></tr>';
+                } else {
+                    res.Data.forEach(function (row, index) {
+                        html += `<tr data-empid="${row.EmployeeID}">
+                        <td class="text-center">${index + 1}</td>
+                        <td>${row.EmployeeName}</td>
+                        <td class="text-right annualgross">${row.AnnualGross}</td>
+                        <td class="text-right nettaxable">${row.NetTaxable}</td>
+                        <td class="text-right totalBaseTax">${row.TotalTaxBeforeCess}</td>
+                        <td class="text-right cessAmount">${row.CessAmount}</td>
+                        <td class="text-right annualTax">${row.AnnualTax}</td>
+                        <td class="text-right monthlyTds bold-blue">${row.MonthlyTDS}</td>
+                        <input type="hidden" class="rebateApplied" value="${row.RebateApplied || 0}" />
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-primary"
+                                onclick="viewDetails('${row.EmployeeID}')">
+                                <i class="fa fa-list-alt"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                    });
+                }
+                $('#tbodyData').html(html);
+                setupPagination();
+            },
+            error: function () {
+                $('#tbodyData').html('<tr><td colspan="9" class="text-center text-danger">Error contacting server.</td></tr>');
+            }
+        });
+    }
+
+    // ---------- Modal open ----------
+    function viewDetails(empId) {
+        currentEmpId = empId;
+
+        const year = $('#ddlFY').val();
+        const globalRebate = parseInt($('#isRebateApplied').val() || '0', 10);
+
+        $('#incomeContainer').html('<p><i class="fa fa-spinner fa-spin"></i> Loading...</p>');
+        $('#slabContainer').html('<p><i class="fa fa-spinner fa-spin"></i> Loading...</p>');
+
+        // default toggle state = global projection toggle
+        $('#chkEmpRebate').prop('checked', globalRebate === 1);
+
+        $.post("@Url.Action("GetTdsAudit", "PayrollTds")", { empId: empId, year: year, isRebateApplied: globalRebate }, function (res) {
+            if (!res || !res.success) {
+                alert(res && res.message ? res.message : 'Error');
+                return;
+            }
+            renderAuditModal(res);
+            $('#tdsModal').fadeIn(200);
+        });
+    }
+
+    function closeModal() {
+        $('#tdsModal').fadeOut();
+    }
+
+    // ---------- Modal recalculation ----------
+    function recalculateEmployeeTax(empId, isRebateApplied) {
+        const year = $('#ddlFY').val();
+
+        $('#slabContainer').html('<p><i class="fa fa-spinner fa-spin"></i> Recalculating...</p>');
+
+        $.post("@Url.Action("GetTdsAudit", "PayrollTds")",
+            { empId: empId, year: year, isRebateApplied: isRebateApplied },
+            function (res) {
+                if (!res || !res.success) {
+                    alert(res && res.message ? res.message : 'Error');
+                    return;
+                }
+
+                renderAuditModal(res);
+
+                const rebateFlag = res.Summary?.RebateApplied ? 1 : 0;
+
+                const $row = $('#tbodyData tr[data-empid="' + empId + '"]');
+
+                if ($row.length) {
+
+                    // 🔹 Update grid numbers
+                    $row.find('.annualgross')
+                        .text(res.Summary?.AnnualGross || '0.00');
+                    $row.find('.nettaxable')
+                        .text(res.Summary?.NetTaxable || '0.00');
+                    $row.find('.totalBaseTax')
+                        .text(res.Summary?.TotalTaxBeforeCess || '0.00');
+
+                    $row.find('.cessAmount')
+                        .text(res.Summary?.CessAmount || '0.00');
+
+                    $row.find('.annualTax')
+                        .text(res.Summary?.TotalTaxPayable || '0.00');
+
+                    $row.find('.monthlyTds')
+                        .text(res.Summary?.MonthlyTDS || '0.00');
+
+                    // 🔹 Update hidden rebate flag
+                    $row.find('.rebateApplied').val(rebateFlag);
+
+                    // 🔹 Optional highlight
+                    if (rebateFlag === 1) {
+                        $row.addClass('table-success');
+                    } else {
+                        $row.removeClass('table-success');
+                    }
+                }
+            }
+        );
+    }
+    // ---------- Render modal ----------
+    function renderAuditModal(res) {
+        // Income
+        let incomeHtml = '';
+        (res.Income || []).forEach(i => {
+            incomeHtml += `
+                <div class="calc-row">
+                    <span>${i.Name}</span>
+                    <span>${i.Amount}</span>
+                </div>`;
+        });
+        $('#incomeContainer').html(incomeHtml);
+
+        // Slabs
+        let slabHtml = '';
+        (res.Slabs || []).forEach(s => {
+            // IMPORTANT: use @@ to avoid Razor @@ parsing in cshtml
+            slabHtml += `
+                <div class="calc-row">
+                    <span>${s.Range} @@ ${s.Rate}% (₹ ${s.Salary})</span>
+                    <span>${s.Tax}</span>
+                </div>`;
+        });
+        $('#slabContainer').html(slabHtml);
+
+        // Summary
+        $('#lblModalEmpName').text(res.EmployeeName || 'Employee Detail');
+        $('#lblModalAnnualGross').text(res.Summary?.AnnualGross || '0.00');
+        $('#lblModalStdDed').text('- ' + (res.Summary?.StandardDeduction || '0.00'));
+        $('#lblModalNetTaxable').text(res.Summary?.NetTaxable || '0.00');
+
+        // Slab total = slab tax before rebate (recommended field)
+        const slabTotal = res.Summary?.SlabTaxBeforeRebate || res.Summary?.TotalBaseTax || '0.00';
+        $('#lblModalSlabTotal').text(slabTotal);
+
+        $('#lblModalBaseTax').text(res.Summary?.TotalTaxBeforeCess || '0.00');
+        $('#lblModalCess').text(res.Summary?.CessAmount || '0.00');
+        $('#lblModalMonthlyTDS').text('₹ ' + (res.Summary?.MonthlyTDS || '0.00'));
+
+        // Sync employee toggle based on server
+        if (typeof res.Summary?.RebateApplied !== 'undefined') {
+            $('#chkEmpRebate').prop('checked', res.Summary.RebateApplied === 1);
+        }
+
+        // ---- Rebate Section Control ----
+        const rebateApplied = parseInt(res.Summary?.RebateApplied || 0, 10) === 1;
+
+        // Always reset first
+        $('#rebateSection').hide();
+
+        if (rebateApplied) {
+
+            $('#lblRebateThreshold').text('₹ ' + (res.Summary?.RebateThreshold || '0.00'));
+            $('#lblRebateLimit').text('₹ ' + (res.Summary?.RebateLimit || '0.00'));
+            $('#lblTaxAfterRebate').text('₹ ' + (res.Summary?.TaxAfterRebate || res.Summary?.TotalTaxBeforeCess || '0.00'));
+
+            $('#rebateSection').fadeIn(150);
+        }
+    }
+
+    function finalizeProjection() {
+
+        const year = $('#ddlFY').val();
+        const regime = $('#ddlRegime').val();
+
+        const rows = $('#tbodyData tr[data-empid]');
+        if (rows.length === 0) {
+            alert('No projection data to save.');
+            return;
+        }
+
+        let projectionData = [];
+
+        rows.each(function () {
+
+            const $row = $(this);
+
+            const empId = $row.data('empid');
+            const rebateApplied = parseInt($row.find('.rebateApplied').val() || 0);
+
+            function cleanNumber(val) {
+                return parseFloat(
+                    val.replace(/₹/g, '')
+                        .replace(/,/g, '')
+                        .trim()
+                ) || 0;
+            }
+            const annualgross = cleanNumber($row.find('.annualgross').text());
+            const nettaxable = cleanNumber($row.find('.nettaxable').text());
+            const totalBaseTax = cleanNumber($row.find('.totalBaseTax').text());
+            const cessAmount = cleanNumber($row.find('.cessAmount').text());
+            const annualTax = cleanNumber($row.find('.annualTax').text());
+            const monthlyTds = cleanNumber($row.find('.monthlyTds').text());
+
+            projectionData.push({
+                EmployeeId: empId,
+                FinancialYear: year,
+                RegimeId: regime,
+                AnnualGross: annualgross,
+                NetTaxable:nettaxable,
+                TotalTaxBeforeCess: totalBaseTax,
+                CessAmount: cessAmount,
+                AnnualTax: annualTax,
+                MonthlyTDS: monthlyTds,
+
+                RebateApplied: rebateApplied
+            });
+        });
+
+        if (projectionData.length === 0) {
+            alert('Nothing to save.');
+            return;
+        }
+
+        if (!confirm('Are you sure you want to finalize and save this projection?')) {
+            return;
+        }
+
+        $('#btnFinalize').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+
+        $.ajax({
+                url: "@Url.Action("FinalizeTdsProjection", "PayrollTds")",
+                type: "POST",
+                data: {
+                    FinancialYear: year,
+                    RegimeId: regime,
+                    DataJson: JSON.stringify(projectionData)
+                },
+                success: function (res) {
+                    if (!res.success) {
+                        alert(res.message);
+                        return;
+                    }
+                    alert("Saved successfully");
+                },
+                error: function (err) {
+                    console.log(err);
+                    alert("Server error");
+                }
+            });
+        }
+    function lockProjectionUI() {
+
+        $('#btnFinalize').prop('disabled', true);
+        $('#chkRebate').prop('disabled', true);
+        $('.multi-select').multiselect('disable');
+
+        $('#tblProjections button').prop('disabled', true);
+
+        $('<div style="margin-top:10px;color:#2e7d32;font-weight:bold;">Projection Finalized</div>')
+            .insertAfter('#paginationContainer');
+    }
+  </script>
+}

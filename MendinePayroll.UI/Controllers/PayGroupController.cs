@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Net.Http;
+﻿using Common.Utility;
+using MendinePayroll.Models;
+using MendinePayroll.UI.Models;
 using MendinePayroll.UI.Utility;
 using Newtonsoft.Json;
-using MendinePayroll.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Net.Http;
+using System.Web;
+using System.Web.Mvc;
 using UI.BLL;
-using MendinePayroll.UI.Models;
 
 namespace MendinePayroll.UI.Controllers
 {
@@ -276,6 +278,146 @@ namespace MendinePayroll.UI.Controllers
         }
         #endregion
 
+        #region PayGroup_Access
+        public ActionResult PayGroupAccess(int? selectedEmpId = null)
+        {
+            // 1. Session Security & Access Log
+            if (Session["UserName"] == null || Session["TenantID"] == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            clsAccessLogInfo info = new clsAccessLogInfo { AccessType = "PAYGROUP-ACCESS-MAPPING" };
+            clsAccessLog.AccessLog_Save(info);
+
+            // 2. Prepare the Model
+            PayGroupModel payGroupModel = new PayGroupModel();
+            string tenantID = Session["TenantID"].ToString();
+            string jsonParams = JsonConvert.SerializeObject(new { TenantID = tenantID });
+
+            #region Bind HR Dropdown (Employee List)
+            List<SelectListItem> HRList = new List<SelectListItem>();
+            HRList.Add(new SelectListItem { Text = "-- Select HR Personnel --", Value = "0" });
+
+            HttpResponseMessage empResponse = ObjAPI.CallAPI("api/PayGroup/GetAllEmployeeByDesignation", jsonParams);
+            if (empResponse.IsSuccessStatusCode)
+            {
+                string resString = empResponse.Content.ReadAsStringAsync().Result;
+                if (!string.IsNullOrEmpty(resString))
+                {
+                    var empData = JsonConvert.DeserializeObject<List<EmpbasicModel>>(resString);
+                    foreach (var item in empData)
+                    {
+                        HRList.Add(new SelectListItem
+                        {
+                            Text = $"{item.empfirstname} {item.emplastname} ({item.empcode})",
+                            Value = item.empid.ToString(),
+                            // Keeps the dropdown selected if we are reloading for a specific employee
+                            Selected = (selectedEmpId.HasValue && item.empid == selectedEmpId.Value)
+                        });
+                    }
+                }
+            }
+            payGroupModel.masterModel.selectListItems = HRList;
+            #endregion
+
+            #region Bind PayGroup Checkbox List
+            payGroupModel.TenantID = tenantID;
+            payGroupModel.PayGroupID = 0; // To get all groups
+
+            string pgContent = JsonConvert.SerializeObject(payGroupModel);
+            HttpResponseMessage pgResponse = ObjAPI.CallAPI("api/PayGroup/GetAllPayGroupList", pgContent);
+
+            if (pgResponse.IsSuccessStatusCode)
+            {
+                string pgResString = pgResponse.Content.ReadAsStringAsync().Result;
+                if (!string.IsNullOrEmpty(pgResString))
+                {
+                    var fullList = JsonConvert.DeserializeObject<List<PayGroupModel>>(pgResString);
+
+                    // --- LOGIC: Check previously mapped groups from Database ---
+                    if (selectedEmpId.HasValue && selectedEmpId > 0)
+                    {
+                        int EmployeeID= selectedEmpId.Value;
+                        DataTable dtMapping = clsDatabase.fnDataTable("SP_Get_User_Mapped_PayGroups", EmployeeID, tenantID);
+
+                        if (dtMapping != null && dtMapping.Rows.Count > 0)
+                        {
+                            // Extract mapped IDs into a hashset for faster lookup
+                            var mappedIds = dtMapping.AsEnumerable()
+                                                     .Select(r => r.Field<int>("PayGroupID"))
+                                                     .ToList();
+
+                            // Mark items as checked in the list
+                            foreach (var pg in fullList)
+                            {
+                                if (mappedIds.Contains(pg.PayGroupID))
+                                {
+                                    pg.IsChecked = true;
+                                }
+                            }
+                        }
+                    }
+
+                    payGroupModel.PayGroupList = fullList;
+                }
+            }
+            #endregion
+
+            return View(payGroupModel);
+        }
+
+        [HttpPost]
+        public JsonResult SaveMapping(string employeeId, string payGroupIds)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(employeeId) || employeeId == "0")
+                {
+                    return Json(new { success = false, message = "Invalid Employee Selection" });
+                }
+
+                // 1. Prepare Parameters
+                int EmployeeID = Convert.ToInt32(employeeId);
+                string TenantID = Session["TenantID"].ToString();
+                string EntryUser = Session["UserName"]?.ToString() ?? "System";
+
+                // 2. Call Stored Procedure using clsDatabase
+                // Assuming your utility supports: fnExecuteNonQuery(SPName, params...) 
+
+                clsDatabase.fnDBOperation("SP_Payroll_Update_PayGroup_Mapping", EmployeeID, payGroupIds, TenantID, EntryUser);
+
+                return Json(new { success = true, message = "Access permissions saved successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Database Error: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetMappedPayGroups(string EmployeeID)
+        {
+            try
+            {
+                string tenantId = Session["TenantID"].ToString();
+
+                // Use your Stored Procedure here 
+                DataTable dt = clsDatabase.fnDataTable("SP_Get_User_Mapped_PayGroups", EmployeeID, tenantId);
+
+                // Convert the "PayGroupID" column into a List of ints
+                var mappedIds = dt.AsEnumerable()
+                                 .Select(r => r.Field<int>("PayGroupID"))
+                                 .ToList();
+
+                return Json(mappedIds, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new List<int>(), JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
 
     }
 }

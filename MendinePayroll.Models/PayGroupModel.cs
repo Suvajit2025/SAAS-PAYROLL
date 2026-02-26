@@ -27,5 +27,6 @@ namespace MendinePayroll.Models
             public List<SelectListItem> selectListItems { get; set; }
             public string TenantID { get; set; }=string.Empty;
             public string EntryUser { get; set; }=String.Empty;
+            public bool? IsChecked { get; set; }  
     }
 }

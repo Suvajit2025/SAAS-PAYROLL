@@ -1,29 +1,32 @@
 ﻿/* ========================================================================
    ReportEngine.js - Global Engine for ieHRMS Reports
-   Handles Filters + Dynamic Exporting + Visibility Control
+   Filters + Client Pagination + Search + Export
    ======================================================================== */
 
 var ReportEngine = {
+
+    /* ================= STATE ================= */
     currentData: [],
     currentHeaders: [],
     currentUrl: '',
 
-    // Generic Report Header Info (Injected from Page)
+    currentPage: 1,
+    pageSize: 10,
+
     reportTitle: '',
-    reportSubTitle: '', 
+    reportSubTitle: '',
 
     /* ================= INIT ================= */
     init: function (dataUrl, options, reportInfo) {
-        var self = this;
+        const self = this;
         self.currentUrl = dataUrl;
 
-        // Optional Report Header Info
         if (reportInfo) {
             self.reportTitle = reportInfo.title || '';
             self.reportSubTitle = reportInfo.subTitle || '';
         }
 
-        var settings = $.extend({
+        const settings = $.extend({
             showExcel: true,
             showPDF: true,
             showCSV: true,
@@ -50,10 +53,23 @@ var ReportEngine = {
         self.loadStaticLookups();
 
         $('#ddlCompany, #ddlDepartment, #ddlCategory, #ddlstatus')
-            .on('change', function () { self.loadEmployees(); });
+            .on('change', () => self.loadEmployees());
 
-        $('.filter-trigger')
-            .on('change', function () { self.loadData(self.currentUrl); });
+        $('.filter-trigger').on('change', () => self.loadData(self.currentUrl));
+
+        $('#ddlPageSize').on('change', function () {
+            self.pageSize = parseInt(this.value);
+            self.currentPage = 1;
+            self.renderTable();
+        });
+
+        $('#tableSearch').on('keyup', function () {
+            self.currentPage = 1;
+            self.renderTable();
+        });
+
+        $('#btnPrev').on('click', () => self.prevPage());
+        $('#btnNext').on('click', () => self.nextPage());
 
         $('#btnClearFilters').on('click', function () {
             $('.multi-select').val(null);
@@ -88,7 +104,7 @@ var ReportEngine = {
     },
 
     loadStaticLookups: function () {
-        var self = this;
+        const self = this;
 
         $.get('/PayrollReports/GetCompanyList', res => {
             $('#ddlCompany').empty();
@@ -122,7 +138,7 @@ var ReportEngine = {
             deptIds: ($('#ddlDepartment').val() || []).join(','),
             categoryIds: ($('#ddlCategory').val() || []).join(','),
             status: $('#ddlstatus').val()
-        }, function (res) {
+        }, res => {
             const ddl = $('#ddlEmployee').empty();
             res.forEach(x => ddl.append(new Option(x.EmployeeName, x.EmployeeID)));
             ddl.multiselect('rebuild');
@@ -132,11 +148,11 @@ var ReportEngine = {
     /* ================= DATA ================= */
 
     loadData: function (url) {
-        var self = this;
+        const self = this;
 
         $('#gridBody').html(
-            '<tr><td colspan="100" class="text-center" style="padding:40px;">' +
-            '<i class="fa fa-spinner fa-spin"></i> Generating Report...</td></tr>'
+            `<tr><td colspan="100" class="text-center" style="padding:40px;">
+             <i class="fa fa-spinner fa-spin"></i> Generating Report...</td></tr>`
         );
 
         $.ajax({
@@ -157,6 +173,7 @@ var ReportEngine = {
                 if (res.success && res.Data) {
                     self.currentData = res.Data;
                     self.currentHeaders = res.Headers;
+                    self.currentPage = 1;
                     self.renderTable();
                 } else {
                     $('#gridBody').html('<tr><td colspan="100" class="text-center">No records found</td></tr>');
@@ -165,140 +182,136 @@ var ReportEngine = {
         });
     },
 
+    /* ================= TABLE + PAGINATION ================= */
+
     renderTable: function () {
-        var h = '<tr><th>SL</th>';
-        this.currentHeaders.forEach(x => h += `<th>${x}</th>`);
+        const self = this;
+        const search = $('#tableSearch').val().toLowerCase();
+
+        const filtered = self.currentData.filter(r =>
+            self.currentHeaders.some(h =>
+                (r[h] ?? '').toString().toLowerCase().includes(search)
+            )
+        );
+
+        const total = filtered.length;
+        const totalPages = Math.ceil(total / self.pageSize) || 1;
+        if (self.currentPage > totalPages) self.currentPage = totalPages;
+
+        const start = (self.currentPage - 1) * self.pageSize;
+        const pageData = filtered.slice(start, start + self.pageSize);
+
+        /* Header */
+        let h = '<tr><th>SL</th>';
+        self.currentHeaders.forEach(x => h += `<th>${x}</th>`);
         $('#ctcHead').html(h + '</tr>');
 
-        var b = '';
-        this.currentData.forEach((r, i) => {
-            b += `<tr><td>${i + 1}</td>`;
-            this.currentHeaders.forEach(h => b += `<td>${r[h] ?? ''}</td>`);
+        /* Body */
+        let b = '';
+        pageData.forEach((r, i) => {
+            b += `<tr><td>${start + i + 1}</td>`;
+            self.currentHeaders.forEach(h => b += `<td>${r[h] ?? ''}</td>`);
             b += '</tr>';
         });
-        $('#gridBody').html(b);
+        $('#gridBody').html(b || '<tr><td colspan="100" class="text-center">No data</td></tr>');
+
+        /* Info */
+        $('#paginationInfo').html(
+            `Showing <b>${total ? start + 1 : 0}</b>
+             to <b>${Math.min(start + self.pageSize, total)}</b>
+             of <b>${total}</b> entries`
+        );
+
+        /* Buttons */
+        $('#btnPrev').prop('disabled', self.currentPage === 1);
+        $('#btnNext').prop('disabled', self.currentPage === totalPages);
+
+        /* Page Numbers */
+        let p = '';
+        for (let i = 1; i <= totalPages; i++) {
+            p += `<button class="btn-page ${i === self.currentPage ? 'active' : ''}"
+                   onclick="ReportEngine.gotoPage(${i})">${i}</button>`;
+        }
+        $('#pageNumbers').html(p);
     },
 
-    /* ================= EXPORT ================= */
+    gotoPage: function (p) {
+        this.currentPage = p;
+        this.renderTable();
+    },
+    nextPage: function () {
+        this.currentPage++;
+        this.renderTable();
+    },
+    prevPage: function () {
+        this.currentPage--;
+        this.renderTable();
+    },
+
+    /* ================= EXPORT (UNCHANGED) ================= */
 
     buildExcelHeader: function () {
         const lines = [];
-        const now = new Date().toLocaleString();
-
-        // Add custom titles from reportInfo
         if (this.reportTitle) lines.push(this.reportTitle.toUpperCase());
         if (this.reportSubTitle) lines.push(this.reportSubTitle);
-        lines.push(`Generated On : ${now}`);
-        lines.push(''); // Spacing
-
+        lines.push(`Generated On : ${new Date().toLocaleString()}`);
+        lines.push('');
         return lines.join('\r\n');
     },
 
-    //exportExcel: function () {
-    //    if (this.currentData.length === 0) {
-    //        alert("No data to export");
-    //        return;
-    //    }
-
-    //    // IMPORTANT: tell Excel explicitly it's TAB-separated
-    //    //const content = "sep=\t\r\n" + this.generateFileContent("\t");
-    //    const headerInfo = this.buildExcelHeader();
-    //    const content = "sep=\t\r\n" + headerInfo + this.generateFileContent("\t");
-    //    const blob = new Blob(
-    //        ["\uFEFF", content],
-    //        { type: "application/vnd.ms-excel;charset=utf-16le;" }
-    //    );
-
-    //    this.downloadFile(blob, "xls");
-    //},
-
     exportExcel: function () {
-        const self = this;
-        if (!self.currentData.length) {
-            alert("No data to export");
-            return;
-        }
+        if (!this.currentData.length) return alert("No data to export");
 
-        const headers = ["SL"].concat(self.currentHeaders);
-        const colCount = headers.length;
-
-        // 1. Prepare the Array of Arrays (AOA) for SheetJS
+        const headers = ["SL"].concat(this.currentHeaders);
         const sheetData = [];
 
-        // 2. Add Merged Header Information
-        sheetData.push([self.reportTitle.toUpperCase()]); // Row 0
-        sheetData.push([self.reportSubTitle]);           // Row 1
-        sheetData.push([`Generated On: ${new Date().toLocaleString()}`]); // Row 2
-        sheetData.push([]); // Spacer Row 3
+        sheetData.push([this.reportTitle.toUpperCase()]);
+        sheetData.push([this.reportSubTitle]);
+        sheetData.push([`Generated On: ${new Date().toLocaleString()}`]);
+        sheetData.push([]);
+        sheetData.push(headers);
 
-        // 3. Add Table Column Headers
-        sheetData.push(headers); // Row 4
-
-        // 4. Add Body Data
-        self.currentData.forEach((r, i) => {
-            const row = headers.map(h => {
-                if (h === 'SL') return i + 1;
-                let val = r[h] ?? '';
-                // Convert to number for Excel calculations, removing any display commas
-                return isNaN(val) || val === '' ? val : parseFloat(val.toString().replace(/,/g, ""));
-            });
-            sheetData.push(row);
+        this.currentData.forEach((r, i) => {
+            sheetData.push(headers.map(h =>
+                h === 'SL' ? i + 1 :
+                    isNaN(r[h]) ? r[h] : parseFloat(r[h].toString().replace(/,/g, ''))
+            ));
         });
 
-        // 5. Create Worksheet
-        const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Salary Register");
-
-        // 6. Define Merges (s = start, e = end, r = row, c = column)
-        worksheet['!merges'] = [
-            { s: { r: 0, c: 0 }, e: { r: 0, c: colCount - 1 } }, // Merge Title across all columns
-            { s: { r: 1, c: 0 }, e: { r: 1, c: colCount - 1 } }, // Merge Subtitle
-            { s: { r: 2, c: 0 }, e: { r: 2, c: colCount - 1 } }  // Merge Date
+        const ws = XLSX.utils.aoa_to_sheet(sheetData);
+        ws['!merges'] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } },
+            { s: { r: 1, c: 0 }, e: { r: 1, c: headers.length - 1 } },
+            { s: { r: 2, c: 0 }, e: { r: 2, c: headers.length - 1 } }
         ];
 
-        // 7. Auto-Size Columns (Approximate)
-        worksheet['!cols'] = headers.map(h => ({ wch: Math.max(h.length, 12) }));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Salary Register");
 
-        // 8. Trigger File Download
-        const m = $('#ddlMonth option:selected').text();
-        const y = $('#ddlYear').val();
-        XLSX.writeFile(workbook, `Salary_Register_${m}_${y}.xlsx`);
+        XLSX.writeFile(
+            wb,
+            `Salary_Register_${$('#ddlMonth option:selected').text()}_${$('#ddlYear').val()}.xlsx`
+        );
     },
+
     exportCSV: function () {
-        if (!this.currentData.length) {
-            alert('No data to export');
-            return;
-        }
-        // 1. Build Header info + separator instruction + table content
-        const headerInfo = this.buildExcelHeader();
-        const content = 'sep=,\r\n' + headerInfo + this.generateFileContent(',');
-        //const content = 'sep=,\r\n' + this.generateFileContent(',');
-        const blob = new Blob(['\uFEFF', content], { type: 'text/csv;charset=utf-8;' });
+        if (!this.currentData.length) return alert("No data to export");
+
+        const headers = ['SL'].concat(this.currentHeaders);
+        const rows = [headers.join(',')];
+
+        this.currentData.forEach((r, i) => {
+            rows.push(headers.map(h => h === 'SL' ? i + 1 : (r[h] ?? '')).join(','));
+        });
+
+        const blob = new Blob(['\uFEFF', rows.join('\r\n')], { type: 'text/csv' });
         this.downloadFile(blob, 'csv');
     },
 
-    generateFileContent: function (sep) {
-        const rows = [];
-        const headers = ['SL'].concat(this.currentHeaders);
-
-        rows.push(headers.join(sep));
-
-        this.currentData.forEach((r, i) => {
-            const row = headers.map(h => h === 'SL' ? i + 1 : (r[h] ?? ''));
-            rows.push(row.join(sep));
-        });
-
-        return rows.join('\r\n');
-    },
-
     downloadFile: function (blob, ext) {
-        const m = $('#ddlMonth option:selected').text();
-        const y = $('#ddlYear').val();
         const a = document.createElement('a');
-
         a.href = URL.createObjectURL(blob);
-        a.download = `Salary_Register_${m}_${y}.${ext}`;
+        a.download = `Salary_Register_${$('#ddlMonth option:selected').text()}_${$('#ddlYear').val()}.${ext}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -307,23 +320,9 @@ var ReportEngine = {
     exportPDF: function () { this.printReport(); },
 
     printReport: function () {
-        const m = $('#ddlMonth option:selected').text();
-        const y = $('#ddlYear').val();
         const w = window.open('', '', 'width=900,height=700');
-
-        w.document.write(
-            `<html><head><title>${this.reportTitle}</title>
-             <style>
-               table{width:100%;border-collapse:collapse}
-               th,td{border:1px solid #ccc;padding:6px;font-size:10px}
-               th{background:#f4f4f4}
-             </style></head>
-             <body><h2>${this.reportTitle}</h2>
-             <h4>${this.reportSubTitle}</h4>
-             ${document.getElementById('reportContainer').innerHTML}
-             </body></html>`
-        );
-
+        w.document.write(`<html><head><title>${this.reportTitle}</title></head>
+            <body>${document.getElementById('reportContainer').innerHTML}</body></html>`);
         w.document.close();
         setTimeout(() => { w.print(); w.close(); }, 500);
     }

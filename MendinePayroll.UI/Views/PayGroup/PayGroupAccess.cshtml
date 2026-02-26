@@ -1,0 +1,366 @@
+﻿@model MendinePayroll.Models.PayGroupModel
+@{
+    ViewBag.Title = "Pay Group Access Mapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    :root {
+        --primary: #0f172a; /* Slate 900 */
+        --secondary: #64748b; /* Slate 500 */
+        --accent: #4f46e5; /* Indigo 600 */
+        --accent-hover: #4338ca;
+        --border: #e2e8f0;
+        --bg-body: #f1f5f9;
+        --radius: 8px;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg-body);
+        color: var(--primary);
+    }
+
+    /* Panel Styling */
+    .panel-modern {
+        border: none;
+        border-radius: var(--radius);
+        background: #ffffff;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        margin-bottom: 20px;
+    }
+
+    .panel-header-modern {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .panel-title-modern {
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--primary);
+        margin: 0;
+    }
+
+    /* Selection Card (Left Side) */
+    .selection-sidebar {
+        background: #f8fafc;
+        border-right: 1px solid var(--border);
+        padding: 24px;
+        min-height: 500px;
+    }
+
+    /* Table Styling */
+    .table-modern {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .table-modern thead th {
+            background: #f8fafc;
+            color: var(--secondary);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-modern tbody td {
+            padding: 14px 24px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            color: #334155;
+            vertical-align: middle;
+        }
+
+        .table-modern tbody tr:hover td {
+            background-color: #f1f5f9;
+            transition: 0.2s;
+        }
+
+    /* Custom Checkbox */
+    .custom-chk {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: var(--accent);
+    }
+
+    /* Action Buttons */
+    .btn-indigo {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+        transition: 0.2s;
+    }
+
+        .btn-indigo:hover {
+            background: var(--accent-hover);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+    .form-control-modern {
+        display: block;
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 13px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        outline: none;
+    }
+
+        .form-control-modern:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+    .badge-code {
+        background: #eff6ff;
+        color: #1e40af;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 11px;
+    }
+</style>
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2 style="font-weight:700; color: var(--primary);">User Access Management</h2>
+    </header>
+
+    <div class="panel-modern">
+        <div class="row no-gutters">
+
+            <div class="col-md-4 selection-sidebar">
+                <h6 class="text-uppercase font-weight-bold mb-3" style="font-size: 11px; color: var(--secondary); letter-spacing: 1px;">
+                    1. Select HR Personnel
+                </h6>
+                <div class="form-group mb-4">
+                    @* Added ID 'TargetHR' specifically for JS hooks *@
+                    @Html.DropDownList("TargetHR", Model.masterModel.selectListItems, new { @id = "TargetHR", @class = "form-control-modern select2", onchange = "loadExistingMapping()" })
+                </div>
+
+                <div id="infoAlert" class="p-3 border-rounded" style="background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 8px;">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-info-circle text-blue-600 mr-2" style="color: #0284c7;"></i>
+                        <span style="font-size: 12px; color: #0369a1; font-weight: 500;">
+                            Selecting an HR will filter and display their current Pay Group assignments.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="panel-header-modern">
+                    <h5 class="panel-title-modern">Assign Pay Groups</h5>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="position-relative mr-3" style="width: 250px;">
+                            <i class="fa fa-search position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: var(--secondary); font-size: 12px;"></i>
+                            <input type="text" id="txtSearchPayGroup" class="form-control-modern" placeholder="Search Pay Groups..." style="padding-left: 32px; height: 34px;">
+                        </div>
+
+                        <div class="custom-control custom-checkbox mr-3">
+                            <input type="checkbox" class="custom-control-input" id="chkSelectAll" onclick="toggleSelectAll(this)">
+                            <label class="custom-control-label font-weight-bold small" for="chkSelectAll" style="cursor:pointer">Select All</label>
+                        </div>
+
+                        <button class="btn-indigo" onclick="saveMapping()">
+                            <i class="fa fa-save mr-2"></i> Save Permissions
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                    <table class="table-modern">
+                        <thead>
+                            <tr>
+                                <th class="text-center" width="80">Access</th>
+                                <th>Pay Group Name</th>
+                                <th>Master Code</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        @* Add the ID here *@
+                        <tbody id="payGroupTableBody">
+                            @foreach (var item in Model.PayGroupList)
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        <input type="checkbox" class="pg-chk custom-chk" value="@item.PayGroupID" id="pg_@item.PayGroupID">
+                                    </td>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--primary);">@item.PayGroupName</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-code">@item.PayGroupMasterCode</span>
+                                    </td>
+                                    <td class="text-muted small">@item.Description</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ... (Toastr Scripts) ... *@
+
+<script>
+    // Ensure "Select All" works even on initial load if everything is pre-checked
+    $(document).ready(function () {
+        // Search Filter Logic
+        $("#txtSearchPayGroup").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+
+            $("#payGroupTableBody tr").filter(function () {
+                // This searches in both the Name and the Master Code columns
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+
+            // If searching, we might want to temporarily disable the "Checked to Top" move 
+            // to avoid jumping, or simply reset the scroll.
+            $(".table-responsive").scrollTop(0);
+        });
+        checkIfAllSelected();
+    });
+
+    function toggleSelectAll(source) {
+        $('.pg-chk').prop('checked', source.checked);
+    }
+
+    function checkIfAllSelected() {
+        var total = $('.pg-chk').length;
+        var checked = $('.pg-chk:checked').length;
+        if (total > 0 && total === checked) {
+            $("#chkSelectAll").prop('checked', true);
+        } else {
+            $("#chkSelectAll").prop('checked', false);
+        }
+    }
+
+    //function loadExistingMapping() {
+    //    var empId = $("#TargetHR").val();
+
+    //    // Reset state
+    //    $(".pg-chk").prop('checked', false);
+    //    $("#chkSelectAll").prop('checked', false);
+
+    //    if (empId != "0" && empId != "") {
+    //        // Show a simple loader in the button or table if possible
+    //        $.ajax({
+    //            url: "/PayGroup/GetMappedPayGroups",
+    //            type: "GET",
+    //            data: { EmployeeID: empId },
+    //            success: function (data) {
+    //                if (data && data.length > 0) {
+    //                    data.forEach(id => {
+    //                        // Using value attribute to find the checkbox safely
+    //                        $(`.pg-chk[value="${id}"]`).prop('checked', true);
+    //                    });
+    //                    checkIfAllSelected();
+    //                }
+    //            },
+    //            error: function () {
+    //                toastr.error("Failed to load existing permissions.");
+    //            }
+    //        });
+    //    }
+    //}
+    function loadExistingMapping() {
+        var empId = $("#TargetHR").val();
+
+        // 1. Reset: Uncheck, Clear Search, and Sort A-Z
+        $("#txtSearchPayGroup").val(""); // Clear search box
+        $("#payGroupTableBody tr").show(); // Show all hidden rows
+        $(".pg-chk").prop('checked', false);
+        $("#chkSelectAll").prop('checked', false);
+        sortRowsAlphabetically();
+
+        if (empId != "0" && empId != "") {
+            $.get("/PayGroup/GetMappedPayGroups", { EmployeeID: empId }, function (data) {
+                if (data && data.length > 0) {
+                    // 2. Move checked items to top
+                    data.reverse().forEach(id => {
+                        var checkbox = $(`.pg-chk[value="${id}"]`);
+                        checkbox.prop('checked', true);
+
+                        var row = checkbox.closest('tr');
+                        $("#payGroupTableBody").prepend(row);
+                    });
+
+                    $(".table-responsive").scrollTop(0);
+                    checkIfAllSelected();
+                }
+            });
+        }
+    }
+
+    // Helper: Sorts the table by Pay Group Name (Column 2)
+    function sortRowsAlphabetically() {
+        var rows = $('#payGroupTableBody tr').get();
+        rows.sort(function (a, b) {
+            var A = $(a).children('td').eq(1).text().toUpperCase();
+            var B = $(b).children('td').eq(1).text().toUpperCase();
+            return (A < B) ? -1 : (A > B) ? 1 : 0;
+        });
+        $.each(rows, function (index, row) {
+            $('#payGroupTableBody').append(row);
+        });
+    }
+
+    function checkIfAllSelected() {
+        var total = $('.pg-chk').length;
+        var checked = $('.pg-chk:checked').length;
+        $("#chkSelectAll").prop('checked', (total > 0 && total === checked));
+    }
+    function saveMapping() {
+        var empId = $("#TargetHR").val();
+        if (empId == "0" || empId == "") {
+            toastr.warning("Please select an HR Personnel first.");
+            return;
+        }
+
+        var selectedIds = [];
+        $('.pg-chk:checked').each(function () {
+            selectedIds.push($(this).val());
+        });
+
+        if (selectedIds.length === 0) {
+            if (!confirm("No groups selected. This will remove ALL access for this user. Continue?")) return;
+        }
+
+        // Use proper AJAX structure for better error handling
+        $.ajax({
+            url: "/PayGroup/SaveMapping",
+            type: "POST",
+            data: {
+                employeeId: empId,
+                payGroupIds: selectedIds.join(',')
+            },
+            success: function (res) {
+                if (res.success) {
+                    toastr.success(res.message || "Access Mapping updated successfully.");
+                } else {
+                    toastr.error(res.message || "Error updating mapping.");
+                }
+            },
+            error: function () {
+                toastr.error("Server error while saving mapping.");
+            }
+        });
+    }
+</script>

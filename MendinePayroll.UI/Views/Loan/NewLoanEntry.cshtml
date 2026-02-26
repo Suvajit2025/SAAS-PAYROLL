@@ -434,7 +434,7 @@
                         <label class="control-label text-xs">Status</label>
                         <select id="fltStatus" class="form-control input-sm" onchange="applyFilters()">
                             <option value="">All Statuses</option>
-                            <option value="Active">Active</option>
+                            <option value="ACTIVE">Active</option>
                             <option value="Closed">Closed</option>
                         </select>
                     </div>
@@ -1119,6 +1119,10 @@
         document.getElementById('c_RefDate').valueAsDate = new Date();
         // Reset display texts
         $("#display_Principal, #display_Interest, #display_TotalInt, #display_TotalLoan").text("-");
+        // 3. FORCE MODE TO: EMI → Tenure
+        // Set the checkbox to checked and call switchCalcMode to update UI state
+        $("#toggleCalcMode").prop('checked', true);
+        switchCalcMode();
         // 4. RESET HEADER TEXT (Back to Create Mode)
         $("#createModalTitle").html('<i class="fa fa-plus-circle mr-sm"></i>Create New Loan');
         $("#createModalSubtitle").text("Enter loan details and financial terms");
@@ -1608,34 +1612,69 @@
         applyFilters();
     }
 
-    // 3. Multi-Criteria Filter Logic (Replaces old filterTable)
+    //// 3. Multi-Criteria Filter Logic (Replaces old filterTable)
+    //function applyFilters() {
+    //    // Get values
+    //    const term = $("#searchInput").val().toLowerCase().trim();
+    //    const status = $("#fltStatus").val();
+    //    const type = $("#fltType").val();
+
+    //    // Filter the master array (allLoans)
+    //    filteredData = allLoans.filter(l => {
+    //        // 1. Search Text Match (Loan No OR Name)
+    //        const matchesTerm = (term === "") ||
+    //            (l.no?.toLowerCase().includes(term)) ||
+    //            (l.emp?.toLowerCase().includes(term));
+
+    //        // 2. Status Match
+    //        const matchesStatus = (status === "") || (l.status === status);
+
+    //        // 3. Type Match
+    //        const matchesType = (type === "") || (l.type === type);
+
+    //        return matchesTerm && matchesStatus && matchesType;
+    //    });
+
+    //    // Reset to Page 1 and render
+    //    currentPage = 1;
+    //    renderTable();
+    //}
     function applyFilters() {
-        // Get values
-        const term = $("#searchInput").val().toLowerCase().trim();
-        const status = $("#fltStatus").val();
-        const type = $("#fltType").val();
+        // 1. Get current values from the UI
+        const searchTerm = $("#searchInput").val().toLowerCase().trim();
+        const statusFilter = $("#fltStatus").val();
+        const typeFilter = $("#fltType").val();
 
-        // Filter the master array (allLoans)
-        filteredData = allLoans.filter(l => {
-            // 1. Search Text Match (Loan No OR Name)
-            const matchesTerm = (term === "") ||
-                (l.no?.toLowerCase().includes(term)) ||
-                (l.emp?.toLowerCase().includes(term));
+        console.log(statusFilter);
+        // 2. Filter the master 'allLoans' array
+        filteredData = allLoans.filter(loan => {
+            // Text Match: Checks Loan Number OR Employee Name
+            const matchesSearch = searchTerm === "" ||
+                (loan.no && loan.no.toLowerCase().includes(searchTerm)) ||
+                (loan.emp && loan.emp.toLowerCase().includes(searchTerm));
 
-            // 2. Status Match
-            const matchesStatus = (status === "") || (l.status === status);
+            // Status Match: Strict match from dropdown
+            const matchesStatus = statusFilter === "" || loan.status === statusFilter;
+            console.log(loan.status);
+            // Type Match: Strict match from dropdown
+            const matchesType = typeFilter === "" || loan.type === typeFilter;
 
-            // 3. Type Match
-            const matchesType = (type === "") || (l.type === type);
-
-            return matchesTerm && matchesStatus && matchesType;
+            // Only return true if ALL conditions are met
+            return matchesSearch && matchesStatus && matchesType;
         });
 
-        // Reset to Page 1 and render
+        // 3. Reset to page 1 and refresh the table
         currentPage = 1;
         renderTable();
     }
+    function clearFilters() {
+        $("#searchInput").val("");
+        $("#fltStatus").val("");
+        $("#fltType").val("");
 
+        // Refresh the grid with the cleared inputs
+        applyFilters();
+    }
     // 4. Export Main Grid to Excel
     function exportMainGrid() {
         if (!filteredData || filteredData.length === 0) {

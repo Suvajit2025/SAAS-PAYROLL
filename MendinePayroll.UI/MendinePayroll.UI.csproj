@@ -2388,6 +2388,8 @@
     <Content Include="Views\PayrollReports\_ReportExport.cshtml" />
     <Content Include="Views\PayrollReports\_ReportTable.cshtml" />
     <Content Include="Views\PayrollReports\SalaryRegister.cshtml" />
+    <Content Include="Views\PayrollTds\AnualTaxProjection.cshtml" />
+    <Content Include="Views\PayGroup\PayGroupAccess.cshtml" />
     <None Include="Web References\LoginWebService\logincontrol.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

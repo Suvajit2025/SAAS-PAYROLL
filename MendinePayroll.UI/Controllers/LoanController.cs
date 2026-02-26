@@ -391,7 +391,7 @@ namespace MendinePayroll.UI.Controllers
             // 🎯 If permissions needed, check here
             // Example:
             // if(UserRole == "HR_View_Self_Only") employeeId = CurrentUserEmployeeId; 
-
+            string UserId = Session["UserId"].ToString();
             DataTable dt = clsDatabase.fnDataTable("SP_Get_EmployeeLoan", TenantId, IDEmployee);
 
             List<object> loans = new List<object>();

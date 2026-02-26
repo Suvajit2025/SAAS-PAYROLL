@@ -219,23 +219,23 @@
             </tbody>
         </table>
     }
-        <!--Loan Details-->
-        @if (Model.LoanInstallment > 0 || Model.OpeningLoan > 0 || Model.ClosingLoan > 0)
-        {
-            <h3>Loan Details</h3>
-            <table>
-                <tr>
-                    <th>Opening Loan Balance</th>
-                    <th>Current Installment</th>
-                    <th>Closing Loan Balance</th>
-                </tr>
-                <tr>
-                    <td>₹ @Model.OpeningLoan.ToString("N2")</td>
-                    <td>₹ @Model.LoanInstallment.ToString("N2")</td>
-                    <td>₹ @Model.ClosingLoan.ToString("N2")</td>
-                </tr>
-            </table>
-        }
+    <!--Loan Details-->
+    @if (Model.LoanInstallment > 0 || Model.OpeningLoan > 0 || Model.ClosingLoan > 0)
+    {
+        <h3>Loan Details</h3>
+        <table>
+            <tr>
+                <th>Opening Loan Balance</th>
+                <th>Current Installment</th>
+                <th>Closing Loan Balance</th>
+            </tr>
+            <tr>
+                <td>₹ @Model.OpeningLoan.ToString("N2")</td>
+                <td>₹ @Model.LoanInstallment.ToString("N2")</td>
+                <td>₹ @Model.ClosingLoan.ToString("N2")</td>
+            </tr>
+        </table>
+    }
 
     <!-- Salary -->
     <h3>Salary Details</h3>
@@ -263,34 +263,12 @@
 
     <!-- Net -->
     <h3>Net Salary</h3>
-    @if (Model.LoanInstallment > 0)
-    {
-        <table class="summary">
-            <tr>
-                <td>Net Salary (Before Loan Deduction)</td>
-                <td>₹ @((Model.NetPay + Model.LoanInstallment).ToString("N2"))</td>
-            </tr>
-            <tr>
-                <td>Less: Loan / Advance Recovery</td>
-                <td>₹ @Model.LoanInstallment.ToString("N2")</td>
-            </tr>
-            <tr>
-                <td class="netpay">Final Take Home (After Loan Deduction)</td>
-                <td class="netpay">₹ @Model.NetPay.ToString("N2")</td>
-            </tr>
-
-            <tr><td>Amount in Words</td><td>@Model.NetPayWords</td></tr>
-            <tr><td>Salary Credited To</td><td>@Model.BankName (****@Model.BankAccount.Substring(Math.Max(0, Model.BankAccount.Length - 4)))</td></tr>
-        </table>
-    }
-    else
-    {
-        <table class="summary">
-            <tr><td class="netpay">Net Pay (Take Home)</td><td class="netpay">₹ @Model.NetPay.ToString("N2")</td></tr>
-            <tr><td>Amount in Words</td><td>@Model.NetPayWords</td></tr>
-            <tr><td>Salary Credited To</td><td>@Model.BankName (****@Model.BankAccount.Substring(Math.Max(0, Model.BankAccount.Length - 4)))</td></tr>
-        </table>
-    }
+    <table class="summary">
+        <tr><td class="netpay">Net Pay (Take Home)</td><td class="netpay">₹ @Model.NetPay.ToString("N2")</td></tr>
+        <tr><td>Amount in Words</td><td>@($"{Model.NetPayWords} Only")</td></tr>
+        <!--<tr><td>Salary Credited To</td><td>@Model.BankName (****@Model.BankAccount.Substring(Math.Max(0, Model.BankAccount.Length - 4)))</td></tr>-->
+    </table>
+    
 
 
 
