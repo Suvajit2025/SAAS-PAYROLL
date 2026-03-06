@@ -18,6 +18,22 @@ namespace MendinePayroll.UI.Reports
 {
     public partial class SalaryRegister : System.Web.UI.Page
     {
+        private string TenantId
+        {
+            get
+            {
+                if (Session["TenantID"] == null || string.IsNullOrWhiteSpace(Session["TenantID"].ToString()))
+                {
+                    // Centralized session expiry handling
+                    Response.Redirect(
+                        ConfigurationManager.AppSettings["PayrollLogout"].ToString(),
+                        true
+                    );
+                }
+
+                return Session["TenantID"].ToString();
+            }
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             SessionOut();
@@ -31,7 +47,7 @@ namespace MendinePayroll.UI.Reports
         {
             // Employee 
             String con = ConfigurationManager.ConnectionStrings["Admin"].ConnectionString;
-            ddlEmployee.DataSource = clsSalary.EmployeeList();
+            ddlEmployee.DataSource = clsSalary.TenantEmployeeList(TenantId);
             ddlEmployee.DataTextField = "EmployeeName";
             ddlEmployee.DataValueField = "IDEmployee";
             ddlEmployee.DataBind();

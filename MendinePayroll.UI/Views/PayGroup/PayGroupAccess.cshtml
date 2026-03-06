@@ -217,7 +217,8 @@
     </div>
 </section>
 
-@* ... (Toastr Scripts) ... *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
     // Ensure "Select All" works even on initial load if everything is pre-checked
@@ -231,7 +232,7 @@
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
             });
 
-            // If searching, we might want to temporarily disable the "Checked to Top" move 
+            // If searching, we might want to temporarily disable the "Checked to Top" move
             // to avoid jumping, or simply reset the scroll.
             $(".table-responsive").scrollTop(0);
         });

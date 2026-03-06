@@ -187,7 +187,22 @@ namespace MendinePayroll.UI.BLL
             return mlist;
 
         }
+        public static List<clsEmployeeInfo> TenantEmployeeList(String TenantId)
+        {
+            List<clsEmployeeInfo> mlist = new List<clsEmployeeInfo>();
+            DataTable DT = clsDatabase.fnDataTable("PRC_Employee_List", TenantId);
+            foreach (DataRow DR in DT.Rows)
+            {
+                mlist.Add(new clsEmployeeInfo()
+                {
+                    IDEmployee = clsHelper.fnConvert2Int(DR["Empid"]),
+                    EmployeeNo = DR["EmpNo"].ToString(),
+                    EmployeeName = DR["Employee"].ToString()
+                });
+            }
+            return mlist;
 
+        }
         public static List<clsEmployeeInfo> Employee_List()
         {
             List<clsEmployeeInfo> mlist = new List<clsEmployeeInfo>();

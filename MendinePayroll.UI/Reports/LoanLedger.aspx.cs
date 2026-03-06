@@ -14,6 +14,22 @@ namespace MendinePayroll.UI.Report.Loan
 {
     public partial class LoanLedger : System.Web.UI.Page
     {
+        private string TenantId
+        {
+            get
+            {
+                if (Session["TenantID"] == null || string.IsNullOrWhiteSpace(Session["TenantID"].ToString()))
+                {
+                    // Centralized session expiry handling
+                    Response.Redirect(
+                        ConfigurationManager.AppSettings["PayrollLogout"].ToString(),
+                        true
+                    );
+                }
+
+                return Session["TenantID"].ToString();
+            }
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             SessionOut();
@@ -25,7 +41,7 @@ namespace MendinePayroll.UI.Report.Loan
         private void Default()
         {
             string con = ConfigurationManager.ConnectionStrings["Admin"].ConnectionString;
-            ddlEmployee.DataSource = clsALLEmpLoan.Loan_List_Employee_Wise_All();
+            ddlEmployee.DataSource = clsALLEmpLoan.Loan_List_Tenantwise_Employee_Wise_All(TenantId);
             ddlEmployee.DataTextField = "EmployeeName";
             ddlEmployee.DataValueField = "IDEmployee";
             ddlEmployee.DataBind();
@@ -41,7 +57,7 @@ namespace MendinePayroll.UI.Report.Loan
         {
             string IDEmp = ddlEmployee.SelectedValue;
             string con = ConfigurationManager.ConnectionStrings["Admin"].ConnectionString;
-            DataTable DT = clsALLEmpLoan.Employee_Loan_Ledger(IDEmp);
+            DataTable DT = clsALLEmpLoan.Employee_Loan_Ledger_TenantWise(TenantId, IDEmp);
             RVViewer.ProcessingMode = ProcessingMode.Local;
             RVViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/RDLC/LoanLedger.rdlc");
             ReportDataSource DTLoanDetails = new ReportDataSource("DSLoanLedger", DT);

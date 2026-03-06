@@ -13,6 +13,10 @@ namespace MendinePayroll.UI.BLL.Report
         {
             return clsDatabase.fnDataTable( "Payroll_PRC_EmployeeWiseLoan");
         }
+        public static DataTable Loan_List_Tenantwise_Employee_Wise_All(string TenantId)
+        {
+            return clsDatabase.fnDataTable("Payroll_PRC_Tenantwise_EmployeeWiseLoan", TenantId);
+        }
         public static DataTable Employee_Wise_LoanDetails(long IDEmp,String AsOnDate)
         {
             return clsDatabase.fnDataTable("Payroll_PRC_Employee_Loan_Register", IDEmp, AsOnDate);
@@ -20,6 +24,10 @@ namespace MendinePayroll.UI.BLL.Report
         public static DataTable Employee_Loan_Ledger(String IDEmp)
         {
             return clsDatabase.fnDataTable("PRC_Loan_Ledger", IDEmp);
+        }
+        public static DataTable Employee_Loan_Ledger_TenantWise(String TenantId, String IDEmployee)
+        {
+            return clsDatabase.fnDataTable("PRC_GetLoanLedger_TenantWise", TenantId, IDEmployee);
         }
     }
 }

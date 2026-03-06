@@ -2514,6 +2514,7 @@
                                     <th class="hidden">MonthID</th>
                                     <th class="hidden">YearID</th>
                                     <th class="hidden">PayGroupID</th>
+                                    <th class="hidden">StatusID</th>
                                 </tr>
                             </thead>
                             <tbody id="empWiseBody"></tbody>
@@ -3281,9 +3282,9 @@
                 try {
                     const tbody = $('#empWiseBody').empty();
 
-                    if (!res || res.length === 0) {
-                        tbody.append('<tr><td colspan="12" class="text-center">No employee records found.</td></tr>');
-                    } else {
+                    //if (!res || res.length === 0) {
+                    //    tbody.append('<tr><td colspan="12" class="text-center">No employee records found.</td></tr>');
+                    //} else {
                         res.forEach(r => {
                             let statusBadge = '';
                             let rowClass = '';
@@ -3355,7 +3356,7 @@
                             </tr>
                         `);
                         });
-                    }
+                    //}
 
                     // 4. Initialize DataTable
                     empDtInstance = $('#empWiseTable').DataTable({

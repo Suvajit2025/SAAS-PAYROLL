@@ -65,9 +65,9 @@ namespace MendinePayroll.UI.Controllers
 
         [HttpGet]
         public JsonResult GetFilterData()
-        { 
-
-            DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_FilterData", TenantId);
+        {
+            string UserId = Session["UserId"].ToString();
+            DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_FilterData", TenantId, UserId);
 
             var companies = ds.Tables[0].AsEnumerable().Select(r => new {
                 Value = r["Value"]?.ToString(),
@@ -84,11 +84,11 @@ namespace MendinePayroll.UI.Controllers
         [HttpGet]
         public JsonResult GetGrid(int month, int year, int? companyId, int? payGroupId, string search,int? status, int pageNumber, int pageSize)
         {
-
+            string UserId = Session["UserId"].ToString();
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1) pageSize = 10;
 
-            DataSet ds = clsDatabase.fnDataSet( "SP_Payroll_SalaryRegister_Grid",TenantId, month, year, companyId, payGroupId, search, status, pageNumber, pageSize);
+            DataSet ds = clsDatabase.fnDataSet( "SP_Payroll_SalaryRegister_Grid",TenantId, month, year, companyId, payGroupId, search, status,  pageNumber, pageSize);
 
             int totalRows = ds.Tables[0].Rows.Count > 0 ? Convert.ToInt32(ds.Tables[0].Rows[0]["TotalRows"]) : 0;
 
@@ -670,109 +670,12 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
-        //private void SendBulkPayslips(string payrollProcessEmployeeIds,int month,int year,string tenantId)
-        //{
-        //    try
-        //    {
-        //        DataTable dtValidation =
-        //            clsDatabase.fnDataTable(
-        //                "SP_Payroll_GetEmployeeStatusesForValidation",
-        //                payrollProcessEmployeeIds);
-
-        //        string monthName =
-        //            CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
-
-        //        // 🔥 FULL MVC CONTEXT (REQUIRED)
-        //        var request = new HttpRequest("", "http://localhost/", "");
-        //        var response = new HttpResponse(new StringWriter());
-        //        var httpContext = new HttpContext(request, response);
-        //        System.Web.HttpContext.Current = httpContext; // 🔴 FIX: Use Syst
-        //                                                      // em.Web.HttpContext.Current
-        //        var contextWrapper = new HttpContextWrapper(httpContext);
-
-        //        // 🔥 REAL controller (NOT empty)
-        //        var payslipCtrl = new PayslipController
-        //        {
-        //            ManualTenantId = tenantId,
-        //            ViewData = new ViewDataDictionary(),
-        //            TempData = new TempDataDictionary()
-        //        };
-
-        //        var routeData = new RouteData();
-        //        routeData.Values["controller"] = "Payslip";
-        //        routeData.Values["action"] = "Index";
-
-        //        var controllerContext = new ControllerContext(
-        //            contextWrapper,
-        //            routeData,
-        //            payslipCtrl
-        //        );
-
-        //        payslipCtrl.ControllerContext = controllerContext;
-
-        //        foreach (DataRow dr in dtValidation.Rows)
-        //        {
-        //            try
-        //            {
-        //                int empId = Convert.ToInt32(dr["EmployeeId"]);
-        //                string email = dr["empemail"]?.ToString();
-        //                string firstName = dr["empfirstname"]?.ToString();
-
-        //                if (string.IsNullOrWhiteSpace(email))
-        //                    continue;
-
-        //                // 1️⃣ Data
-        //                var model = payslipCtrl.GetPayslipData(
-        //                    empId,
-        //                    monthName,
-        //                    year,
-        //                    true);
-
-        //                if (model == null)
-        //                    continue;
-
-        //                // 2️⃣ PDF
-        //                var pdf = new Rotativa.ViewAsPdf(
-        //                    "~/Views/Payslip/Index.cshtml",
-        //                    model)
-        //                {
-        //                    PageSize = Rotativa.Options.Size.A4,
-        //                    PageOrientation = Rotativa.Options.Orientation.Portrait
-        //                };
-
-        //                byte[] pdfBytes = pdf.BuildFile(controllerContext);
-
-        //                if (pdfBytes == null || pdfBytes.Length == 0)
-        //                    throw new Exception("Rotativa generated empty PDF.");
-        //                        var mailService = new MailService();
-        //                        mailService.SendMails(
-        //                             toEmail: email,
-        //                             fromEmail: "",
-        //                             bodyHtml: $"Dear {firstName},<br/><br/>Please find your payslip attached.<br/><br/>Regards,<br/>Payroll Team",
-        //                             subject: $"Payslip for {monthName} {year}",
-        //                             attachmentBytes: pdfBytes,
-        //                             fileNameWithoutExt: $"Payslip_{monthName}_{year}"
-        //                         );
-        //                    }
-        //            catch (Exception ex)
-        //            {
-        //                clsDatabase.fnErrorLog("BulkPayslipLoopError", ex.ToString());
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        clsDatabase.fnErrorLog("BulkPayslipMainError", ex.ToString());
-        //    }
-        //}
+        
         private void SendBulkPayslips(string payrollProcessEmployeeIds,int month,int year,string tenantId)
         {
             try
             {
-                DataTable dtValidation =
-                    clsDatabase.fnDataTable(
-                        "SP_Payroll_GetEmployeeStatusesForValidation",
-                        payrollProcessEmployeeIds);
+                DataTable dtValidation =clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation",payrollProcessEmployeeIds);
 
                 if (dtValidation == null || dtValidation.Rows.Count == 0)
                     return;
@@ -781,7 +684,7 @@ namespace MendinePayroll.UI.Controllers
                     CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
 
                 // 🔥 Create FULL HttpContext (REQUIRED for Rotativa)
-                var request = new HttpRequest("", "http://localhost/", "");
+                var request = new HttpRequest("", "https://liliospayroll.iecsl.in/", "");
                 var response = new HttpResponse(new StringWriter());
                 var httpContext = new HttpContext(request, response);
 

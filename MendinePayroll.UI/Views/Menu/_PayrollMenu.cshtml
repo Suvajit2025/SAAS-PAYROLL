@@ -1,0 +1,37 @@
+﻿@model List<MenuVM>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="nav nav-main">
+        @foreach (var main in Model)
+        {
+            <li class="nav-parent">
+                <a>
+                    <i class="fa fa-folder"></i>
+                    <span>@main.MainMenu</span>
+                </a>
+
+                <ul class="nav nav-children">
+                    @foreach (var sub in main.Children)
+                    {
+                        if (string.IsNullOrWhiteSpace(sub.URL))
+                        {
+                            <li class="nav-header" style="padding:8px 15px; font-weight:600;">
+                                @sub.SubMenu
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="@Url.Content(sub.URL)">
+                                    <i class="fa fa-caret-right"></i>
+                                    <span>@sub.SubMenu</span>
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+}

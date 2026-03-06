@@ -295,29 +295,40 @@ namespace MendinePayroll.UI.Controllers
             string tenantID = Session["TenantID"].ToString();
             string jsonParams = JsonConvert.SerializeObject(new { TenantID = tenantID });
 
-            #region Bind HR Dropdown (Employee List)
+            #region Bind HR Dropdown (Direct SP Call)
             List<SelectListItem> HRList = new List<SelectListItem>();
             HRList.Add(new SelectListItem { Text = "-- Select HR Personnel --", Value = "0" });
 
-            HttpResponseMessage empResponse = ObjAPI.CallAPI("api/PayGroup/GetAllEmployeeByDesignation", jsonParams);
-            if (empResponse.IsSuccessStatusCode)
+            try
             {
-                string resString = empResponse.Content.ReadAsStringAsync().Result;
-                if (!string.IsNullOrEmpty(resString))
+                // Calling the Database Operation directly
+                // Ensure the parameter names match your Stored Procedure (@TenantID)
+                DataTable dtEmp = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEE_LIST", tenantID);
+
+                if (dtEmp != null && dtEmp.Rows.Count > 0)
                 {
-                    var empData = JsonConvert.DeserializeObject<List<EmpbasicModel>>(resString);
-                    foreach (var item in empData)
+                    foreach (DataRow row in dtEmp.Rows)
                     {
+                        int empId = Convert.ToInt32(row["empid"]);
+                        string firstName = row["empfirstname"].ToString();
+                        string lastName = row["emplastname"].ToString();
+                        string empCode = row["empcode"].ToString();
+
                         HRList.Add(new SelectListItem
                         {
-                            Text = $"{item.empfirstname} {item.emplastname} ({item.empcode})",
-                            Value = item.empid.ToString(),
-                            // Keeps the dropdown selected if we are reloading for a specific employee
-                            Selected = (selectedEmpId.HasValue && item.empid == selectedEmpId.Value)
+                            Text = $"{firstName} {lastName} ({empCode})",
+                            Value = empId.ToString(),
+                            Selected = (selectedEmpId.HasValue && empId == selectedEmpId.Value)
                         });
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                // Log error accordingly
+                ViewBag.Error = "Error loading HR Personnel: " + ex.Message;
+            }
+
             payGroupModel.masterModel.selectListItems = HRList;
             #endregion
 

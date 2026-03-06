@@ -169,10 +169,7 @@ namespace MendinePayroll.UI.Controllers
         {
             var list = new List<EmployeeInput>();
 
-            DataTable dt = clsDatabase.fnDataTable(
-                "PRC_GetEmployeeSalaryInputs",
-                EmployeeId 
-            );
+            DataTable dt = clsDatabase.fnDataTable("PRC_GetEmployeeSalaryInputs",EmployeeId);
 
             foreach (DataRow row in dt.Rows)
             {

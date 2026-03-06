@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -643,7 +644,149 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new { Success = false, Message = ex.Message });
             }
         }
+        #region ESIC_SetUp
+        public List<EmployeeListModel> GetAllEmployee()
+        {
+            //Saikat Mondal start
+            List<EmployeeListModel> list = new List<EmployeeListModel>();
+            DataTable dt = clsDatabase.fnDataTable("EmployeeList_Get", TenantId);
 
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                list = (from DataRow row in dt.Rows
+                        select new EmployeeListModel
+                        {
+                            empid = Convert.ToInt32(row["empid"]),
+                            empno = Convert.ToInt32(row["empno"]),
+                            EmployeeName = row["EmployeeName"].ToString(),
+                            empcode = row["empcode"].ToString(),
+                            postname = row["postname"].ToString(),
+                            Designation = row["Designation"].ToString(),
+                            Department = row["Department"].ToString(),
+                            //PayGroupName = row["PayGroupName"] == DBNull.Value ? null : row["PayGroupName"].ToString()
+                        }).ToList();
+            }
+
+            return list;
+            
+        }
+        public List<SelectListItem> GetMonthList()
+        {
+            List<SelectListItem> MonthList = new List<SelectListItem>();
+            var months = CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
+            DateTimeFormatInfo info = DateTimeFormatInfo.GetInstance(null);
+            for (int i = 1; i < 13; i++)
+            {
+                MonthList.Add(new SelectListItem
+                {
+                    Text = info.GetMonthName(i),
+                    Value = i.ToString(),
+                    Selected = (i == DateTime.Now.AddMonths(-1).Month ? true : false)
+                });
+
+            }
+            return MonthList;
+        }
+        public List<SelectListItem> GetYearList()
+        {
+            List<SelectListItem> YearList = new List<SelectListItem>();
+            int year = DateTime.Now.Year;
+            for (int j = year - 20; j < year + 20; j++)
+            {
+                YearList.Add(new SelectListItem
+                {
+                    Text = j.ToString(),
+                    Value = j.ToString(),
+                    Selected = (j == DateTime.Now.AddMonths(-1).Year ? true : false)
+                });
+
+            }
+            return YearList;
+        }
+        public ActionResult ESIC_SetUp()
+        {
+            if (Session["UserName"] == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            // Esic Process
+            clsAccessLogInfo info = new clsAccessLogInfo();
+            info.AccessType = "ESIC-EMPLOYEE-PROCESS";
+            clsAccessLog.AccessLog_Save(info);
+            EmployeeSalaryModel employeeSalaryModel = new EmployeeSalaryModel();
+            #region bind Employee
+            EmployeeListModel employeeListModel = new EmployeeListModel();
+            List<SelectListItem> EmpList = new List<SelectListItem>();
+            EmpList.Add(new SelectListItem { Text = "Select Employee", Value = "0", Selected = true });
+            employeeListModel.empid = 0;
+            List<EmployeeListModel> employeedata = GetAllEmployee();
+            foreach (var items in employeedata)
+            {
+                EmpList.Add(new SelectListItem
+                {
+                    Text = $"{items.EmployeeName} - {items.empno}",
+                    Value = items.empid.ToString()
+                });
+            }
+            #endregion
+            employeeSalaryModel.masterModel.selectListItems = EmpList;
+            employeeSalaryModel.MonthList = GetMonthList();
+            employeeSalaryModel.YearList = GetYearList();
+            return View(employeeSalaryModel);
+        }
+        [HttpPost]
+        public JsonResult SaveEmployeeSlab(int EmployeeId, int SlabId, int IsEligible, string remark)
+        {
+            try
+            {
+                // Insert into DB (Payroll_ESIC_EmployeeSlab)
+                Payroll_ESIC_EmployeeSlab model = new Payroll_ESIC_EmployeeSlab
+                {
+                    EmployeeId = EmployeeId,
+                    SlabId = SlabId,
+                    IsEligible = Convert.ToBoolean(IsEligible),
+                    Remark = remark,
+                    CreatedBy = Session["UserName"].ToString()
+                };
+
+                clsDatabase.fnDataTable("SP_Save_ESIC_EmployeeSlab", model.EmployeeId, model.SlabId, model.IsEligible, model.Remark, model.CreatedBy,TenantId);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        public JsonResult GetEmployeeSlabs()
+        {
+            // Fetch from DB (Payroll_ESIC_EmployeeSlab with join on Employee and SlabMaster)
+            DataTable DT = clsDatabase.fnDataTable("SP_Get_ESIC_EmployeeSlabs");
+            var data = DT.AsEnumerable().Select(row => new
+            {
+                EmployeeSlabId = row.Field<int>("EmployeeSlabId"),
+                EmployeeName = row.Field<string>("EmployeeName"),
+                SlabName = row.Field<string>("SlabName"),
+                IsEligible = row.Field<bool>("IsEligible")
+            }).ToList();
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteEmployeeSlab(int EmployeeSlabId)
+        {
+            try
+            {
+                DataTable dataTable = clsDatabase.fnDataTable("SP_Delete_ESIC_EmployeeSlab", EmployeeSlabId,TenantId);
+                return Json(new { success = true, message = "Delete Successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
 
     }
 }

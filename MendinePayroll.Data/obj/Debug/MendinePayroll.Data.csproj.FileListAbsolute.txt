@@ -261,3 +261,15 @@ D:\PayrollUI-SAAS\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.csproj.CoreC
 D:\PayrollUI-SAAS\MendinePayroll.Data\obj\Debug\MendineP.E9C25D64.Up2Date
 D:\PayrollUI-SAAS\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.dll
 D:\PayrollUI-SAAS\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Debug\MendinePayroll.Data.dll.config
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Debug\MendinePayroll.Data.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Debug\MendinePayroll.Data.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Debug\EntityFramework.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Debug\EntityFramework.SqlServer.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Debug\EntityFramework.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\bin\Debug\EntityFramework.SqlServer.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.csproj.AssemblyReference.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.csproj.CoreCompileInputs.cache
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Debug\MendineP.E9C25D64.Up2Date
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Data\obj\Debug\MendinePayroll.Data.pdb
