@@ -2807,12 +2807,13 @@
                             <tr style="background: #ffffff; border-bottom: 2px solid #f1f5f9;">
                                 <th style="padding: 10px; text-align: center; width: 50px;">Month</th>
                                 <th style="padding: 10px; text-align: left;">Year</th>
+                                <th style="padding: 10px; text-align: center;">Paid Days</th>
                                 <th style="padding: 10px; text-align: right;">Basic</th>
-                                <th style="padding: 10px; text-align: right;">Gross</th>
                                 <th style="padding: 10px; text-align: right;">Total Alloances</th>
+                                <th style="padding: 10px; text-align: right;">Gross</th>
                                 <th style="padding: 10px; text-align: right;">Total Deduction</th>
                                 <th style="padding: 10px; text-align: right;">Net pay</th>
-                                <th style="padding: 10px; text-align: center;">Action</th>
+                                <th style="padding: 10px; text-align: center;">Pay Slip</th>
                             </tr>
                         </thead>
                         <tbody id="salaryHistoryBody">
@@ -4798,99 +4799,7 @@
         for (let y = yearNow - 5; y <= yearNow + 1; y++) {
             yddl.append(`<option value="${y}">${y}</option>`);
         }
-    }
-
-
-    /* ===============================
-       LOAD DASHBOARD GRID (SAFE)
-    ================================ */
-    //function loadPayrollBatchGrid() {
-
-    //    $.ajax({
-    //        url: '/bulkSalaryProcess/GetPayrollDashboard',
-    //        type: 'GET',
-    //        dataType: 'json',
-    //        success: function (res) {
-
-    //            // ✅ BEFORE DESTROY: move filters out of DT wrapper so they won't vanish
-    //            if (groupDtInstance && $.fn.DataTable.isDataTable('#dashboardTable')) {
-    //                $('#dash-filter-source')
-    //                    .append($('#ddlDashMonth'))
-    //                    .append($('#ddlDashYear'));
-
-    //                groupDtInstance.destroy();   // true = remove DT wrapper
-    //                groupDtInstance = null;
-    //            }
-
-    //            const tbody = $("#dashboardTable tbody");
-    //            tbody.empty();
-
-    //            // Fill rows (or let DataTables show empty message)
-    //            if (Array.isArray(res) && res.length > 0) {
-    //                res.forEach(r => {
-    //                    tbody.append(`
-    //                    <tr>
-    //                        <td><strong>${r.RefNo ?? ''}</strong></td>
-    //                        <td>${r.PeriodText ?? ''}</td>
-    //                        <td>${r.PayGroupName ?? ''}</td>
-    //                        <td>${r.PayrollTypeText ?? ''}</td>
-    //                        <td class="text-center">${r.TotalEmployees ?? 0}</td>
-    //                        <td class="text-right">₹ ${Number(r.TotalCost ?? 0).toLocaleString()}</td>
-    //                        <td class="text-right" style="font-weight:700;color:#0E7777">
-    //                            ₹ ${Number(r.NetPayout ?? 0).toLocaleString()}
-    //                        </td>
-    //                        <td>${r.Status === 2 ? 'FINALIZED' : 'DRAFT'}</td>
-    //                        <td class="text-right">
-    //                            <button class="btn-outline"
-    //                                onclick="openBatchView(${r.PayrollBatchID}, ${r.PayGroupID}, ${r.Status})">
-    //                                <i class="fa fa-eye"></i>
-    //                            </button>
-    //                        </td>
-    //                        <td>${r.ProcessMonth ?? ''}</td>
-    //                        <td>${r.ProcessYear ?? ''}</td>
-    //                    </tr>
-    //                `);
-    //                });
-    //            }
-
-    //            // ✅ ALWAYS init DataTable with same DOM/options (even if res is empty)
-    //            groupDtInstance = $('#dashboardTable').DataTable({
-    //                pageLength: 10,
-    //                ordering: false,
-    //                lengthChange: false,
-    //                searching: true,
-    //                info: true,
-
-    //                columnDefs: [
-    //                    { targets: [9, 10], visible: false }
-    //                ],
-
-    //                dom: '<"dt-top-row"<"dt-left"><"dt-right"f>>rt<"dt-bottom"ip>',
-
-    //                language: {
-    //                    search: "",
-    //                    searchPlaceholder: "Search batch...",
-    //                    emptyTable: "No payroll batches found"
-    //                }
-    //            });
-
-    //            // ✅ Move Excel + Month/Year filters into dt-left
-    //            const leftBox = $('#dashboardTable_wrapper .dt-left');
-
-    //            leftBox.empty()
-    //                //    .append(`
-    //                //    <button id="btnExcelExport" class="btn-export" title="Export Excel">
-    //                //        <i class="fas fa-file-excel"></i>
-    //                //    </button>
-    //                //`)
-    //                .append($('#ddlDashMonth').show())
-    //                .append($('#ddlDashYear').show());
-
-    //            // Optional: apply current filter values after reload
-    //            applyDashboardFilters();
-    //        }
-    //    });
-    //}
+    } 
     function loadPayrollBatchGrid() {
         $.ajax({
             url: '/bulkSalaryProcess/GetPayrollDashboard',
@@ -5928,17 +5837,17 @@
                     <tr style="border-bottom:1px solid #f1f5f9;">
                         <td style="padding:10px;text-align:center;font-weight:bold;">${row.monthName}</td>
                         <td style="padding:10px;">${row.processYear}</td>
-
+                        <td style="padding:10px;">${row.paidDays}</td>
                         <td style="padding:10px;text-align:right;font-family:monospace;">
                             ₹${(row.basic || 0).toLocaleString('en-IN')}
                         </td>
 
                         <td style="padding:10px;text-align:right;font-family:monospace;">
-                            ₹${(row.gross || 0).toLocaleString('en-IN')}
+                            ₹${(row.totalAllowances || 0).toLocaleString('en-IN')}
                         </td>
 
                         <td style="padding:10px;text-align:right;font-family:monospace;">
-                            ₹${(row.totalAllowances || 0).toLocaleString('en-IN')}
+                            ₹${(row.gross || 0).toLocaleString('en-IN')}
                         </td>
 
                         <td style="padding:10px;text-align:right;font-family:monospace;color:#dc2626;">
@@ -5950,9 +5859,10 @@
                         </td>
 
                         <td style="text-align:center;">
-                            <button class="btn btn-sm btn-outline-primary"
+                            <button class="btn btn-sm btn-danger"
+                                title="Download Payslip"
                                 onclick="downloadPayslip(${row.empid},${row.processMonth},${row.processYear})">
-                                Payslip
+                                <i class="fas fa-file-pdf"></i>
                             </button>
                         </td>
                     </tr>`;
@@ -5972,7 +5882,23 @@
 
         $("#salaryHistoryModal").fadeIn(200);
     }
-     
+    function downloadPayslip(empId, processMonth, processYear) {
+        // 1️⃣ Month Name Array
+        var months = [
+            "January", "February", "March", "April",
+            "May", "June", "July", "August",
+            "September", "October", "November", "December"
+        ];
+
+        // 2️⃣ Get Month Name from Month Number
+        var monthName = months[processMonth - 1];
+        // 2. Build the URL
+        // Format: /Payslip/Index?empId=440&month=January&year=2026
+        var url = "/Payslip/Index?empId=" + empId + "&month=" + encodeURIComponent(monthName) + "&year=" + processYear;
+
+        // 3. Redirect on _blank (New Tab)
+        window.open(url, '_blank');
+    }
     function saveModalSalary() {
         const empId = window.editSalaryCtx.employeeId;
         const batchId = window.editSalaryCtx.previewBatchId;
