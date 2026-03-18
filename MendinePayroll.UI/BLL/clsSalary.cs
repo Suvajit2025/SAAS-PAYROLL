@@ -339,11 +339,67 @@ namespace MendinePayroll.UI.BLL
 
         }
 
-        public static DataTable  SalaryRegisterNew(long IDEmployee, String StartMonth, int StartYear, String EndMonth, int EndYear)
-        {
-            return  clsDatabase.fnDataTable("PRC_Salary_Register", IDEmployee, StartMonth, StartYear, EndMonth, EndYear);
-        }
+        //public static DataTable  SalaryRegisterNew(string TenantId,long IDEmployee, String StartMonth, int StartYear, String EndMonth, int EndYear)
+        //{
+        //    string spName;
 
+        //    if (EndMonth.Equals("December", StringComparison.OrdinalIgnoreCase) && EndYear == 2025)
+        //    {
+        //        spName = "PRC_Salary_Register";
+        //    }
+        //    else
+        //    {
+        //        spName = "PRC_Salary_Register_New"; // your other stored procedure
+        //    }
+
+        //    return clsDatabase.fnDataTable(spName, IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
+        //    //return  clsDatabase.fnDataTable("PRC_Salary_Register", IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
+        //}
+        public static DataTable SalaryRegisterNew(string TenantId, long IDEmployee, string StartMonth, int StartYear, string EndMonth, int EndYear)
+        {
+            DateTime startDate = DateTime.Parse("01 " + StartMonth + " " + StartYear);
+            DateTime endDate = DateTime.Parse("01 " + EndMonth + " " + EndYear);
+
+            DateTime cutOff = new DateTime(2025, 12, 1);
+
+            DataTable result = new DataTable();
+
+            // Case 1 : Entirely old
+            if (endDate <= cutOff)
+            {
+                result = clsDatabase.fnDataTable("PRC_Salary_Register",
+                    IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
+            }
+
+            // Case 2 : Entirely new
+            else if (startDate > cutOff)
+            {
+                result = clsDatabase.fnDataTable("PRC_Salary_Register_New",
+                    IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
+            }
+
+            // Case 3 : Cross period
+            else
+            {
+                // Old data
+                DataTable dtOld = clsDatabase.fnDataTable("PRC_Salary_Register",
+                    IDEmployee, StartMonth, StartYear, "December", 2025, TenantId);
+
+                // New data
+                DataTable dtNew = clsDatabase.fnDataTable("PRC_Salary_Register_New",
+                    IDEmployee, "January", 2026, EndMonth, EndYear, TenantId);
+
+                result = dtOld.Clone();
+
+                foreach (DataRow row in dtOld.Rows)
+                    result.ImportRow(row);
+
+                foreach (DataRow row in dtNew.Rows)
+                    result.ImportRow(row);
+            }
+
+            return result;
+        }
         public static DataTable GetBonusList(long IDEmployee,String IDDepartment,String CompanyCode, long IDDesignation, long IDLocation, int Year)
         {
             return clsDatabase.fnDataTable("PRC_Get_Bonus_List_Sample", IDEmployee, IDDepartment, CompanyCode, IDDesignation, IDLocation, Year);

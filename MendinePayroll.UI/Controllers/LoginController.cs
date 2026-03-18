@@ -49,11 +49,11 @@ namespace MendinePayroll.UI.Controllers
             //Session["UserEmail"] = "suvajit.das@iecsl.co.in";
 
             // Development 
-            //Session["RoleID"] = "10195";
-            //Session["UserName"] = "suvajit.das@iecsl.co.in";
-            //Session["UserId"] = "1142";
-            //Session["UserEmail"] = "suvajit.das@iecsl.co.in";
-            //Session["TenantID"] = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
+            Session["RoleID"] = "10195";
+            Session["UserName"] = "suvajit.das@iecsl.co.in";
+            Session["UserId"] = "476";
+            Session["UserEmail"] = "suvajit.das@iecsl.co.in";
+            Session["TenantID"] = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
 
 
             //Session["RoleID"] = "10152";
@@ -62,11 +62,11 @@ namespace MendinePayroll.UI.Controllers
             //Session["UserEmail"] = "christopher.fernandes@mega.com";
             //Session["TenantID"] = "9CBC5D8B-589C-4144-8AE9-1937A39FC89D";
 
-            Session["RoleID"] = "10152";
-            Session["UserName"] = "demo@corporation.in";
-            Session["UserId"] = "348";
-            Session["UserEmail"] = "demo@corporation.in";
-            Session["TenantID"] = "24A72122-DD46-4386-873D-758E450E252A";
+            //Session["RoleID"] = "10152";
+            //Session["UserName"] = "demo@corporation.in";
+            //Session["UserId"] = "348";
+            //Session["UserEmail"] = "demo@corporation.in";
+            //Session["TenantID"] = "24A72122-DD46-4386-873D-758E450E252A";
 
             //Production
             //Session["RoleID"] = Request.QueryString["RoleID"];

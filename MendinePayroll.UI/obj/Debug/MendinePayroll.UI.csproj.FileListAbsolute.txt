@@ -3507,3 +3507,4 @@ D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\obj\Debug\MendinePay
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\obj\Debug\MendineP.9C171235.Up2Date
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\obj\Debug\MendinePayroll.UI.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\obj\Debug\MendinePayroll.UI.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.MSXML.dll

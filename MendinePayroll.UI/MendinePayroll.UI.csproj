@@ -412,7 +412,6 @@
     <Compile Include="Controllers\bulkCTCCalculationController.cs" />
     <Compile Include="Controllers\bulkSalaryProcessController.cs" />
     <Compile Include="Controllers\ConfigureSalaryComponentController.cs" />
-    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\EmployeeListController.cs" />
     <Compile Include="Controllers\EmployeeLoanListController.cs" />
     <Compile Include="Controllers\EmployeeSalaryController.cs" />
@@ -679,6 +678,7 @@
     <Content Include="Content\SELECT2\select2.min.css" />
     <Content Include="Content\SELECT2\select2.min.js" />
     <Content Include="Content\Site.css" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -2565,6 +2565,7 @@
     <Content Include="Views\Menu\_PayrollMenu.cshtml" />
     <Content Include="Views\PayrollChallanReport\EpfEcrChallanReport.cshtml" />
     <Content Include="Views\SalaryConfig\ESIC_SetUp.cshtml" />
+    <Content Include="Views\PayrollReports\LoanRegister.cshtml" />
     <None Include="Web References\LoginWebService\logincontrol.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

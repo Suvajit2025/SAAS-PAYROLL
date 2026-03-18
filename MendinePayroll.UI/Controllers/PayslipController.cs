@@ -111,12 +111,7 @@ namespace MendinePayroll.UI.Controllers
 
             var model = GetPayslipData(empId, month, year,true);
 
-            //return new Rotativa.ViewAsPdf("Index", model)
-            //{
-            //    FileName = $"Payslip_{model.EmpName}_{month}_{year}.pdf",
-            //    PageSize = Rotativa.Options.Size.A4,
-            //    PageOrientation = Rotativa.Options.Orientation.Portrait
-            //};
+           
             var pdfService = new PayslipPdfService();
             byte[] pdfBytes = pdfService.GeneratePayslipPdf(
                 this.ControllerContext,
@@ -140,229 +135,946 @@ namespace MendinePayroll.UI.Controllers
             return new EmptyResult();
             //return File(pdfBytes, "application/pdf");
         }
-        internal PayslipViewModel GetPayslipData(int EmpId, string Month, int Year,bool ispdf)
+    //internal PayslipViewModel GetPayslipData(int EmpId, string Month, int Year,bool ispdf)
+        //{
+        //    var model = new PayslipViewModel
+        //    {
+        //        Month = Month,
+        //        Year = Year,
+        //        isPdf = ispdf
+        //    };
+        //    // Convert Month Name to Month Number
+        //    int monthNum = DateTime.ParseExact(Month,"MMMM",System.Globalization.CultureInfo.InvariantCulture).Month;
+
+        //    string spName;
+
+        //    // Cutoff logic
+        //    if (Year <= 2025 || (Year == 2025 && monthNum >= 12))
+        //        spName = "Essp.dbo.PRC_Get_PayslipFullData";
+        //    DataSet ds1 = clsDatabase.fnDataSet("Essp.dbo.PRC_Get_PayslipFullData", EmpId, Month, Year, TenantId)
+        //        if (ds1 != null && ds1.Tables.Count > 0)
+        //    {
+        //        // 1. Company Info
+        //        if (ds1.Tables[0].Rows.Count > 0)
+        //        {
+        //            var row = ds1.Tables[0].Rows[0];
+        //            model.CompanyName = row["Company"].ToString();
+        //            model.CompanyLogoUrl = row["CompanyLogoUrl"].ToString();
+        //            model.CompanyAddressLine1 = row["Address1"].ToString();
+        //            model.CompanyAddressLine2 = row["Address2"].ToString();
+        //        }
+
+        //        // 2. Employee Info
+        //        if (ds1.Tables.Count > 1 && ds1.Tables[1].Rows.Count > 0)
+        //        {
+        //            var row = ds1.Tables[1].Rows[0];
+        //            model.EmpId = Convert.ToInt32(row["empid"]);
+        //            model.EmpNo = row["empno"].ToString();
+        //            model.EmpCode = row["empcode"].ToString();
+        //            model.EmpName = row["EmployeeName"].ToString();
+        //            model.Designation = row["Designation"].ToString();
+        //            model.Department = row["Department"].ToString();
+        //            model.DOJ = Convert.ToDateTime(row["joining"]);
+        //            model.PAN = row["emppancardno"].ToString();
+        //            model.UAN = row["empuanno"].ToString();
+        //            model.PFNo = row["empepfno"].ToString();
+        //            model.ESICNo = row["empesicno"].ToString();
+        //            model.BankAccount = row["empaccountno"].ToString();
+        //            model.BankName = row["bankname"].ToString();
+        //        }
+        //        // 3. Attendance Summary
+        //        var SalesEmpNo = clsDatabase.fnDBOperation("PROC_GETEMPNO_SALES", EmpId);
+        //        if (!string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
+        //        {
+        //            DataTable officeTable = clsDatabase.fnDataTable("proc_dailyattendance", Month, Year, SalesEmpNo, "");
+        //            // Step 2: Fetch API data (Sales)
+        //            List<AttendanceLog> apiLogs = new List<AttendanceLog>();
+        //            if (!string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
+        //            {
+        //                using (var client = new HttpClient())
+        //                {
+        //                    string url = $"https://crmfieldforceapi.mendine.co.in/api/crm/HRMSApi/EmployeeAttendanceSheet?Businessid=MEND-PVTL-890&Employeeno={SalesEmpNo}&Month={Month}&Year={Year}";
+        //                    var response = client.GetStringAsync(url).Result;
+
+
+
+        //                    //apiLogs = JsonSerializer.Deserialize<List<AttendanceLog>>(response,
+        //                    //    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        //                    apiLogs = JsonConvert.DeserializeObject<List<AttendanceLog>>(response);
+
+        //                    // Log response
+        //                    System.IO.File.WriteAllText(
+        //                         System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AttendanceApiLog.txt"),
+        //                         JsonConvert.SerializeObject(apiLogs, Formatting.Indented)
+        //                     );
+
+        //                }
+
+        //            }
+        //            // Step 3: Merge sources if Hybrid
+        //            int totalDays = 0, presentDays = 0, leaveDays = 0;
+
+        //            int monthNumber = DateTime.ParseExact(Month, "MMMM", System.Globalization.CultureInfo.InvariantCulture).Month;
+        //            int yearNumber = Convert.ToInt32(Year);
+
+        //            var calendarDays = Enumerable.Range(1, DateTime.DaysInMonth(yearNumber, monthNumber))
+        //                                         .Select(d => new DateTime(yearNumber, monthNumber, d));
+
+        //            foreach (var day in calendarDays)
+        //            {
+        //                totalDays++;
+
+        //                // ✅ check from proc_dailyattendance (office punches)
+        //                bool officePresent = officeTable?.AsEnumerable().Any(r =>
+        //                    Convert.ToDateTime(r["LOGDATE"]).Date == day.Date &&
+        //                    !string.IsNullOrWhiteSpace(r["INTIME"]?.ToString()) &&
+        //                    !string.IsNullOrWhiteSpace(r["OUTTIME"]?.ToString()) &&
+        //                    r["DURATION"] != DBNull.Value &&
+        //                    r["DURATION"].ToString() != "00:00:00"
+        //                ) ?? false;
+
+        //                var apiDay = apiLogs.FirstOrDefault(l =>
+        //                {
+        //                    if (string.IsNullOrWhiteSpace(l.LogDate))
+        //                        return false;
+
+        //                    DateTime parsed;
+        //                    if (!DateTime.TryParseExact(l.LogDate,
+        //                        new[] { "dd/MM/yyyy", "yyyy-MM-dd", "MM/dd/yyyy HH:mm:ss" },
+        //                        System.Globalization.CultureInfo.InvariantCulture,
+        //                        System.Globalization.DateTimeStyles.None,
+        //                        out parsed))
+        //                        return false;
+
+        //                    return parsed.Date == day.Date;
+        //                });
+
+        //                bool apiPresent = apiDay != null && !string.IsNullOrWhiteSpace(apiDay.CheckIn);
+        //                bool isLeave = apiDay != null && apiDay.WorkType?.Trim().ToUpper() == "LEAVE";
+
+        //                if (isLeave)
+        //                    leaveDays++;
+        //                else if (officePresent || apiPresent)
+        //                    presentDays++;
+        //                else
+        //                    leaveDays++;
+        //            }
+        //            // Assign
+        //            model.TotalDays = totalDays;
+        //            model.WorkedDays = presentDays;  // or adjust with policy
+        //            model.LeaveTaken = leaveDays;
+        //            if (ds1.Tables.Count > 2 && ds1.Tables[2].Rows.Count > 0)
+        //            {
+        //                var dsRow = ds1.Tables[2].Rows[0];
+        //                model.TotalDays = Convert.ToInt32(dsRow["TotalDays"]);
+        //                model.PayableDays = Convert.ToInt32(dsRow["TotalDays"]);
+        //                model.LeaveTaken = Convert.ToInt32(dsRow["TotalLeave"]);
+        //            }
+
+        //        }
+        //        else
+        //        {
+        //            // 3. Attendance Summary For except Sales Employee
+        //            if (ds1.Tables.Count > 2 && ds1.Tables[2].Rows.Count > 0)
+        //            {
+        //                var row = ds1.Tables[2].Rows[0];
+        //                model.TotalDays = Convert.ToInt32(row["TotalDays"]);
+        //                model.WorkedDays = Convert.ToInt32(row["WorkedDays"]);
+        //                model.LOPDays = 0;
+        //                model.PayableDays = Convert.ToInt32(row["TotalDays"]); // or DaysPayable
+        //                model.LeaveTaken = Convert.ToInt32(row["TotalLeave"]);
+        //            }
+        //        }
+        //        // Step 1: Fetch office data (DB)
+        //        //DataTable officeTable = ds.Tables.Count > 2 ? ds.Tables[2] : null;
+
+        //        // 4. Leave Balances
+        //        if (ds1.Tables.Count > 3)
+        //        {
+        //            foreach (DataRow row in ds1.Tables[3].Rows)
+        //            {
+        //                model.LeaveBalances.Add(new LeaveBalance
+        //                {
+        //                    CodeType = row["CodeType"].ToString(),
+        //                    Balance = Convert.ToDecimal(row["LeaveBalance"])
+        //                });
+        //            }
+        //        }
+        //        // 5. Earnings (Table 4) → skip 0 and Gross Amount
+        //        if (ds1.Tables.Count > 4)
+        //        {
+        //            var earningsList = new List<SalaryHead>();
+
+        //            foreach (DataRow row in ds1.Tables[4].Rows)
+        //            {
+        //                decimal amount = Convert.ToDecimal(row["Amount"]);
+        //                string name = row["PayConfigName"].ToString();
+
+        //                if (amount == 0) continue;
+        //                if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
+
+        //                earningsList.Add(new SalaryHead
+        //                {
+        //                    PayConfigName = ToTitleCase(name),
+        //                    Amount = amount
+        //                });
+        //            }
+
+        //            // ✅ Priority Order: Basic > Stipend > Others
+        //            model.Earnings = earningsList
+        //                .OrderBy(e =>
+        //                    e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
+        //                    e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
+        //                )
+        //                .ThenBy(e => e.PayConfigName) // optional: alphabetical for the rest
+        //                .ToList();
+        //        }
+
+        //        // 6. Deductions (Table 5) → skip 0 values
+        //        if (ds1.Tables.Count > 5)
+        //        {
+        //            foreach (DataRow row in ds1.Tables[5].Rows)
+        //            {
+        //                decimal amount = Convert.ToDecimal(row["Amount"]);
+        //                if (amount == 0) continue;
+
+        //                model.Deductions.Add(new SalaryHead
+        //                {
+        //                    PayConfigName = ToTitleCase(row["PayConfigName"].ToString()),
+        //                    Amount = amount
+        //                });
+        //            }
+        //        }
+
+        //        //7. Net Pay 
+        //        if (ds1.Tables.Count > 5 && ds1.Tables[6].Rows.Count > 0)
+        //        {
+        //            var row = ds1.Tables[6].Rows[0];
+        //            model.NetPay = Convert.ToDecimal(row["NetPay"]);
+        //        }
+        //        //7. Loan 
+        //        // 7. Loan (only if SP returned a loan dataset with values)
+        //        if (ds1.Tables.Count > 7 && ds1.Tables[7] != null && ds1.Tables[7].Rows.Count > 0)
+        //        {
+        //            var row = ds1.Tables[7].Rows[0];
+
+        //            model.LoanInstallment = row["LoanInstallment"] == DBNull.Value ? 0
+        //                                    : Math.Round(Convert.ToDecimal(row["LoanInstallment"]), 0);
+
+        //            model.OpeningLoan = row["OpeningAmount"] == DBNull.Value ? 0
+        //                                    : Math.Round(Convert.ToDecimal(row["OpeningAmount"]), 0);
+
+        //            model.ClosingLoan = row["ClosingAmount"] == DBNull.Value ? 0
+        //                                    : Math.Round(Convert.ToDecimal(row["ClosingAmount"]), 0);
+        //        }
+
+        //        // Totals
+        //        var grossRow = model.Earnings
+        //            .FirstOrDefault(x => x.PayConfigName.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase));
+        //        model.GrossEarnings = grossRow != null ? grossRow.Amount : model.Earnings.Sum(x => x.Amount);
+        //        model.TotalDeductions = model.Deductions.Sum(x => x.Amount);
+        //        //model.NetPay = model.GrossEarnings - model.TotalDeductions;
+        //        model.NetPayWords = NumberToWords((long)model.NetPay);
+        //    }
+
+        //    return model;
+        //    else
+        //        spName = "PRC_Get_PayslipFullData"; 
+        //        DataSet ds = clsDatabase.fnDataSet("PRC_Get_PayslipFullData", EmpId, Month, Year, TenantId);
+        //    // DataSet ds = clsDatabase.fnDataSet("PRC_Get_PayslipFullData", EmpId, Month, Year, TenantId);
+
+        //    if (ds != null && ds.Tables.Count > 0)
+        //    {
+        //        // 1. Company Info
+        //        if (ds.Tables[0].Rows.Count > 0)
+        //        {
+        //            var row = ds.Tables[0].Rows[0];
+        //            model.CompanyName = row["Company"].ToString();
+        //            model.CompanyLogoUrl = row["CompanyLogoUrl"].ToString();
+        //            model.CompanyAddressLine1 = row["Address1"].ToString();
+        //            model.CompanyAddressLine2 = row["Address2"].ToString();
+        //        }
+
+        //        // 2. Employee Info
+        //        if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
+        //        {
+        //            var row = ds.Tables[1].Rows[0];
+        //            model.EmpId = Convert.ToInt32(row["empid"]);
+        //            model.EmpNo = row["empno"].ToString();
+        //            model.EmpCode = row["empcode"].ToString();
+        //            model.EmpName = row["EmployeeName"].ToString();
+        //            model.Designation = row["Designation"].ToString();
+        //            model.Department = row["Department"].ToString();
+        //            model.DOJ = Convert.ToDateTime(row["joining"]);
+        //            model.PAN = row["emppancardno"].ToString();
+        //            model.UAN = row["empuanno"].ToString();
+        //            model.PFNo = row["empepfno"].ToString();
+        //            model.ESICNo = row["empesicno"].ToString();
+        //            model.BankAccount = row["empaccountno"].ToString();
+        //            model.BankName = row["bankname"].ToString();
+        //        } 
+        //        // 3. Attendance Summary
+        //        var SalesEmpNo = clsDatabase.fnDBOperation("PROC_GETEMPNO_SALES", EmpId);
+
+        //        // Define your fix TenantID here
+        //        string targetTenantId = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
+
+        //        if (TenantId == targetTenantId && !string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
+        //        {
+        //            DataTable officeTable = clsDatabase.fnDataTable("proc_dailyattendance", Month, Year, SalesEmpNo, "");
+        //            List<AttendanceLog> apiLogs = new List<AttendanceLog>();
+
+        //            // Step 2: Fetch API data (Sales Force API)
+        //            using (var client = new HttpClient())
+        //            {
+        //                string url = $"https://crmfieldforceapi.mendine.co.in/api/crm/HRMSApi/EmployeeAttendanceSheet?Businessid=MEND-PVTL-890&Employeeno={SalesEmpNo}&Month={Month}&Year={Year}";
+        //                var response = client.GetStringAsync(url).Result;
+        //                apiLogs = JsonConvert.DeserializeObject<List<AttendanceLog>>(response) ?? new List<AttendanceLog>();
+        //            }
+
+        //            // Step 3: Merge sources
+        //            int totalDays = 0, presentDays = 0, leaveDays = 0;
+
+        //            int monthNumber = DateTime.ParseExact(Month, "MMMM", System.Globalization.CultureInfo.InvariantCulture).Month;
+        //            int yearNumber = Convert.ToInt32(Year);
+
+        //            var calendarDays = Enumerable.Range(1, DateTime.DaysInMonth(yearNumber, monthNumber))
+        //                                 .Select(d => new DateTime(yearNumber, monthNumber, d));
+
+        //            foreach (var day in calendarDays)
+        //            {
+        //                totalDays++;
+
+        //                // Check Office DB Punches
+        //                bool officePresent = officeTable?.AsEnumerable().Any(r =>
+        //                    Convert.ToDateTime(r["LOGDATE"]).Date == day.Date &&
+        //                    !string.IsNullOrWhiteSpace(r["INTIME"]?.ToString()) &&
+        //                    !string.IsNullOrWhiteSpace(r["OUTTIME"]?.ToString())
+        //                ) ?? false;
+
+        //                // Check API Field Punches
+        //                var apiDay = apiLogs.FirstOrDefault(l => {
+        //                    DateTime parsed;
+        //                    return DateTime.TryParse(l.LogDate, out parsed) && parsed.Date == day.Date;
+        //                });
+
+        //                bool apiPresent = apiDay != null && !string.IsNullOrWhiteSpace(apiDay.CheckIn);
+        //                bool isLeave = apiDay != null && apiDay.WorkType?.Trim().ToUpper() == "LEAVE";
+
+        //                if (isLeave)
+        //                    leaveDays++;
+        //                else if (officePresent || apiPresent)
+        //                    presentDays++;
+        //                // If neither present nor leave, it's counted as absent/leave depending on your policy
+        //            }
+
+        //            // Final Assignment for Sales Tenant
+        //            model.TotalDays = totalDays;
+        //            model.WorkedDays = presentDays;
+        //            model.LeaveTaken = leaveDays;
+        //            model.PayableDays = totalDays - (totalDays - presentDays - leaveDays); // Adjust based on your policy
+        //        }
+        //        else
+        //        {
+        //            // Default logic for all other Tenants / Non-Sales Employees
+        //            if (ds.Tables.Count > 2 && ds.Tables[2].Rows.Count > 0)
+        //            {
+        //                var row = ds.Tables[2].Rows[0];
+        //                model.TotalDays = Convert.ToInt32(row["TotalDays"]);
+        //                model.WorkedDays = Convert.ToInt32(row["WorkedDays"]);
+        //                model.LOPDays = row.Table.Columns.Contains("LOPDays") ? Convert.ToInt32(row["LOPDays"]) : 0;
+        //                model.PayableDays = Convert.ToInt32(row["TotalDays"]);
+        //                model.LeaveTaken = Convert.ToInt32(row["TotalLeave"]);
+        //            }
+        //        }
+        //        // Step 1: Fetch office data (DB)
+        //        //DataTable officeTable = ds.Tables.Count > 2 ? ds.Tables[2] : null;
+
+        //        // 4. Leave Balances
+        //        if (ds.Tables.Count > 3)
+        //        {
+        //            foreach (DataRow row in ds.Tables[3].Rows)
+        //            {
+        //                model.LeaveBalances.Add(new LeaveBalance
+        //                {
+        //                    CodeType = row["CodeType"].ToString(),
+        //                    Balance = Convert.ToDecimal(row["LeaveBalance"])
+        //                });
+        //            }
+        //        }
+        //        // 5. Earnings (Table 4) → Side-by-Side Actual vs Earned
+
+        //        if (ds.Tables.Count > 4)
+        //        {
+        //            var earningsList = new List<SalaryHead>();
+
+        //            foreach (DataRow row in ds.Tables[4].Rows)
+        //            {
+        //                // Adjust column names to match your new SP output
+        //                decimal actual = row.Table.Columns.Contains("ActualAmount") ? Convert.ToDecimal(row["ActualAmount"]) : 0;
+        //                decimal earned = row.Table.Columns.Contains("EarnedAmount") ? Convert.ToDecimal(row["EarnedAmount"]) : 0;
+        //                string name = row["AllowanceName"].ToString();
+
+        //                // Skip if both are zero or if it's the Total row
+        //                if (actual == 0 && earned == 0) continue;
+        //                if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
+
+        //                earningsList.Add(new SalaryHead
+        //                {
+        //                    PayConfigName = ToTitleCase(name),
+        //                    ActualAmount = actual,
+        //                    Amount = earned
+        //                });
+        //            }
+
+        //            // ✅ Priority Order: Basic > Stipend > Others
+        //            model.Earnings = earningsList
+        //                .OrderBy(e =>
+        //                    e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
+        //                    e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
+        //                )
+        //                .ThenBy(e => e.PayConfigName)
+        //                .ToList();
+        //        }
+
+        //        // 6. Deductions (Table 5) 
+        //        if (ds.Tables.Count > 5)
+        //        {
+        //            foreach (DataRow row in ds.Tables[5].Rows)
+        //            {
+        //                // Adjust column names to match your new Deduction SP output
+        //                decimal configDeduction = row.Table.Columns.Contains("ConfiguredDeduction") ? Convert.ToDecimal(row["ConfiguredDeduction"]) : 0;
+        //                decimal actualDeduction = row.Table.Columns.Contains("ActualDeduction") ? Convert.ToDecimal(row["ActualDeduction"]) : 0;
+
+        //                if (configDeduction == 0 && actualDeduction == 0) continue;
+
+        //                model.Deductions.Add(new SalaryHead
+        //                {
+        //                    PayConfigName = ToTitleCase(row["DeductionName"].ToString()),
+        //                    ActualAmount = configDeduction, // Standard deduction
+        //                    Amount = actualDeduction     // Processed deduction
+        //                });
+        //            }
+        //        }
+
+        //        //7. Net Pay 
+        //        if (ds.Tables.Count > 5 && ds.Tables[6].Rows.Count > 0)
+        //        {
+        //            var row = ds.Tables[6].Rows[0];
+        //            model.NetPay = Convert.ToDecimal(row["NetPay"]);
+        //        }
+        //        //7. Loan 
+        //        // 7. Loan (only if SP returned a loan dataset with values)
+        //        if (ds.Tables.Count > 7 && ds.Tables[7]?.Rows.Count > 0)
+        //        {
+        //            var row = ds.Tables[7].Rows[0];
+        //            var cols = ds.Tables[7].Columns;
+
+        //            // Helper function to safely parse and round decimals
+        //            decimal GetSafeDecimal(DataRow r, string colName)
+        //            {
+        //                if (!cols.Contains(colName) || r[colName] == DBNull.Value)
+        //                    return 0;
+        //                return Math.Round(Convert.ToDecimal(r[colName]), 0);
+        //            }
+
+        //            model.LoanInstallment = GetSafeDecimal(row, "EMIAmount");
+        //            model.OpeningLoan = GetSafeDecimal(row, "OpeningBalance");
+        //            model.ClosingLoan = GetSafeDecimal(row, "ClosingBalance");
+        //        }
+
+        //        // Totals
+        //        var grossRow = model.Earnings
+        //            .FirstOrDefault(x => x.PayConfigName.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase));
+        //        model.GrossEarnings = grossRow != null ? grossRow.Amount : model.Earnings.Sum(x => x.Amount);
+        //        model.TotalDeductions = model.Deductions.Sum(x => x.Amount);
+        //        //model.NetPay = model.GrossEarnings - model.TotalDeductions;
+        //        model.NetPayWords = NumberToWords((long)model.NetPay);
+        //    }
+
+        //    return model;
+        //}
+    internal PayslipViewModel GetPayslipData(int EmpId, string Month, int Year, bool ispdf)
+    {
+        var model = new PayslipViewModel
         {
-            var model = new PayslipViewModel
+            Month = Month,
+            Year = Year,
+            isPdf = ispdf
+        };
+
+        int monthNum = DateTime.ParseExact(
+            Month,
+            "MMMM",
+            System.Globalization.CultureInfo.InvariantCulture
+        ).Month;
+
+        //-------------------------------------------------------
+        // OLD ENGINE (UP TO DECEMBER 2025)
+        //-------------------------------------------------------
+        if (Year <= 2025)
+        {
+            DataSet ds1 = clsDatabase.fnDataSet(
+                "Essp.dbo.PRC_Get_PayslipFullData",
+                EmpId, Month, Year, TenantId);
+
+            if (ds1 == null || ds1.Tables.Count == 0)
+                return model;
+
+            // Company
+            if (ds1.Tables[0].Rows.Count > 0)
             {
-                Month = Month,
-                Year = Year,
-                isPdf = ispdf
-            };
+                var row = ds1.Tables[0].Rows[0];
+                model.CompanyName = row["Company"].ToString();
+                model.CompanyLogoUrl = row["CompanyLogoUrl"].ToString();
+                model.CompanyAddressLine1 = row["Address1"].ToString();
+                model.CompanyAddressLine2 = row["Address2"].ToString();
+            }
 
-            DataSet ds = clsDatabase.fnDataSet("PRC_Get_PayslipFullData", EmpId, Month, Year, TenantId);
-
-            if (ds != null && ds.Tables.Count > 0)
+            // Employee
+            if (ds1.Tables.Count > 1 && ds1.Tables[1].Rows.Count > 0)
             {
-                // 1. Company Info
-                if (ds.Tables[0].Rows.Count > 0)
+                var row = ds1.Tables[1].Rows[0];
+
+                model.EmpId = Convert.ToInt32(row["empid"]);
+                model.EmpNo = row["empno"].ToString();
+                model.EmpCode = row["empcode"].ToString();
+                model.EmpName = row["EmployeeName"].ToString();
+                model.Designation = row["Designation"].ToString();
+                model.Department = row["Department"].ToString();
+                model.DOJ = Convert.ToDateTime(row["joining"]);
+                model.PAN = row["emppancardno"].ToString();
+                model.UAN = row["empuanno"].ToString();
+                model.PFNo = row["empepfno"].ToString();
+                model.ESICNo = row["empesicno"].ToString();
+                model.BankAccount = row["empaccountno"].ToString();
+                model.BankName = row["bankname"].ToString();
+            }
+
+            // 3. Attendance Summary
+            var SalesEmpNo = clsDatabase.fnDBOperation("Essp.dbo.PROC_GETEMPNO_SALES", EmpId);
+            if (!string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
+            {
+                DataTable officeTable = clsDatabase.fnDataTable("proc_dailyattendance", Month, Year, SalesEmpNo, "");
+                // Step 2: Fetch API data (Sales)
+                List<AttendanceLog> apiLogs = new List<AttendanceLog>();
+                if (!string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
                 {
-                    var row = ds.Tables[0].Rows[0];
-                    model.CompanyName = row["Company"].ToString();
-                    model.CompanyLogoUrl = row["CompanyLogoUrl"].ToString();
-                    model.CompanyAddressLine1 = row["Address1"].ToString();
-                    model.CompanyAddressLine2 = row["Address2"].ToString();
-                }
-
-                // 2. Employee Info
-                if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
-                {
-                    var row = ds.Tables[1].Rows[0];
-                    model.EmpId = Convert.ToInt32(row["empid"]);
-                    model.EmpNo = row["empno"].ToString();
-                    model.EmpCode = row["empcode"].ToString();
-                    model.EmpName = row["EmployeeName"].ToString();
-                    model.Designation = row["Designation"].ToString();
-                    model.Department = row["Department"].ToString();
-                    model.DOJ = Convert.ToDateTime(row["joining"]);
-                    model.PAN = row["emppancardno"].ToString();
-                    model.UAN = row["empuanno"].ToString();
-                    model.PFNo = row["empepfno"].ToString();
-                    model.ESICNo = row["empesicno"].ToString();
-                    model.BankAccount = row["empaccountno"].ToString();
-                    model.BankName = row["bankname"].ToString();
-                } 
-                // 3. Attendance Summary
-                var SalesEmpNo = clsDatabase.fnDBOperation("PROC_GETEMPNO_SALES", EmpId);
-
-                // Define your fix TenantID here
-                string targetTenantId = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
-
-                if (TenantId == targetTenantId && !string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
-                {
-                    DataTable officeTable = clsDatabase.fnDataTable("proc_dailyattendance", Month, Year, SalesEmpNo, "");
-                    List<AttendanceLog> apiLogs = new List<AttendanceLog>();
-
-                    // Step 2: Fetch API data (Sales Force API)
                     using (var client = new HttpClient())
                     {
                         string url = $"https://crmfieldforceapi.mendine.co.in/api/crm/HRMSApi/EmployeeAttendanceSheet?Businessid=MEND-PVTL-890&Employeeno={SalesEmpNo}&Month={Month}&Year={Year}";
                         var response = client.GetStringAsync(url).Result;
-                        apiLogs = JsonConvert.DeserializeObject<List<AttendanceLog>>(response) ?? new List<AttendanceLog>();
+
+
+
+                        //apiLogs = JsonSerializer.Deserialize<List<AttendanceLog>>(response,
+                        //    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        apiLogs = JsonConvert.DeserializeObject<List<AttendanceLog>>(response);
+
+                        // Log response
+                        System.IO.File.WriteAllText(
+                                System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AttendanceApiLog.txt"),
+                                JsonConvert.SerializeObject(apiLogs, Formatting.Indented)
+                            );
+
                     }
 
-                    // Step 3: Merge sources
-                    int totalDays = 0, presentDays = 0, leaveDays = 0;
-
-                    int monthNumber = DateTime.ParseExact(Month, "MMMM", System.Globalization.CultureInfo.InvariantCulture).Month;
-                    int yearNumber = Convert.ToInt32(Year);
-
-                    var calendarDays = Enumerable.Range(1, DateTime.DaysInMonth(yearNumber, monthNumber))
-                                         .Select(d => new DateTime(yearNumber, monthNumber, d));
-
-                    foreach (var day in calendarDays)
-                    {
-                        totalDays++;
-
-                        // Check Office DB Punches
-                        bool officePresent = officeTable?.AsEnumerable().Any(r =>
-                            Convert.ToDateTime(r["LOGDATE"]).Date == day.Date &&
-                            !string.IsNullOrWhiteSpace(r["INTIME"]?.ToString()) &&
-                            !string.IsNullOrWhiteSpace(r["OUTTIME"]?.ToString())
-                        ) ?? false;
-
-                        // Check API Field Punches
-                        var apiDay = apiLogs.FirstOrDefault(l => {
-                            DateTime parsed;
-                            return DateTime.TryParse(l.LogDate, out parsed) && parsed.Date == day.Date;
-                        });
-
-                        bool apiPresent = apiDay != null && !string.IsNullOrWhiteSpace(apiDay.CheckIn);
-                        bool isLeave = apiDay != null && apiDay.WorkType?.Trim().ToUpper() == "LEAVE";
-
-                        if (isLeave)
-                            leaveDays++;
-                        else if (officePresent || apiPresent)
-                            presentDays++;
-                        // If neither present nor leave, it's counted as absent/leave depending on your policy
-                    }
-
-                    // Final Assignment for Sales Tenant
-                    model.TotalDays = totalDays;
-                    model.WorkedDays = presentDays;
-                    model.LeaveTaken = leaveDays;
-                    model.PayableDays = totalDays - (totalDays - presentDays - leaveDays); // Adjust based on your policy
                 }
-                else
+                // Step 3: Merge sources if Hybrid
+                int totalDays = 0, presentDays = 0, leaveDays = 0;
+
+                int monthNumber = DateTime.ParseExact(Month, "MMMM", System.Globalization.CultureInfo.InvariantCulture).Month;
+                int yearNumber = Convert.ToInt32(Year);
+
+                var calendarDays = Enumerable.Range(1, DateTime.DaysInMonth(yearNumber, monthNumber))
+                                                .Select(d => new DateTime(yearNumber, monthNumber, d));
+
+                foreach (var day in calendarDays)
                 {
-                    // Default logic for all other Tenants / Non-Sales Employees
-                    if (ds.Tables.Count > 2 && ds.Tables[2].Rows.Count > 0)
+                    totalDays++;
+
+                    // ✅ check from proc_dailyattendance (office punches)
+                    bool officePresent = officeTable?.AsEnumerable().Any(r =>
+                        Convert.ToDateTime(r["LOGDATE"]).Date == day.Date &&
+                        !string.IsNullOrWhiteSpace(r["INTIME"]?.ToString()) &&
+                        !string.IsNullOrWhiteSpace(r["OUTTIME"]?.ToString()) &&
+                        r["DURATION"] != DBNull.Value &&
+                        r["DURATION"].ToString() != "00:00:00"
+                    ) ?? false;
+
+                    var apiDay = apiLogs.FirstOrDefault(l =>
                     {
-                        var row = ds.Tables[2].Rows[0];
-                        model.TotalDays = Convert.ToInt32(row["TotalDays"]);
-                        model.WorkedDays = Convert.ToInt32(row["WorkedDays"]);
-                        model.LOPDays = row.Table.Columns.Contains("LOPDays") ? Convert.ToInt32(row["LOPDays"]) : 0;
-                        model.PayableDays = Convert.ToInt32(row["TotalDays"]);
-                        model.LeaveTaken = Convert.ToInt32(row["TotalLeave"]);
-                    }
-                }
-                // Step 1: Fetch office data (DB)
-                //DataTable officeTable = ds.Tables.Count > 2 ? ds.Tables[2] : null;
+                        if (string.IsNullOrWhiteSpace(l.LogDate))
+                            return false;
 
-                // 4. Leave Balances
-                if (ds.Tables.Count > 3)
+                        DateTime parsed;
+                        if (!DateTime.TryParseExact(l.LogDate,
+                            new[] { "dd/MM/yyyy", "yyyy-MM-dd", "MM/dd/yyyy HH:mm:ss" },
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            System.Globalization.DateTimeStyles.None,
+                            out parsed))
+                            return false;
+
+                        return parsed.Date == day.Date;
+                    });
+
+                    bool apiPresent = apiDay != null && !string.IsNullOrWhiteSpace(apiDay.CheckIn);
+                    bool isLeave = apiDay != null && apiDay.WorkType?.Trim().ToUpper() == "LEAVE";
+
+                    if (isLeave)
+                        leaveDays++;
+                    else if (officePresent || apiPresent)
+                        presentDays++;
+                    else
+                        leaveDays++;
+                }
+                // Assign
+                model.TotalDays = totalDays;
+                model.WorkedDays = presentDays;  // or adjust with policy
+                model.LeaveTaken = leaveDays;
+                if (ds1.Tables.Count > 2 && ds1.Tables[2].Rows.Count > 0)
                 {
-                    foreach (DataRow row in ds.Tables[3].Rows)
-                    {
-                        model.LeaveBalances.Add(new LeaveBalance
-                        {
-                            CodeType = row["CodeType"].ToString(),
-                            Balance = Convert.ToDecimal(row["LeaveBalance"])
-                        });
-                    }
+                    var dsRow = ds1.Tables[2].Rows[0];
+                    model.TotalDays = Convert.ToInt32(dsRow["TotalDays"]);
+                    model.PayableDays = Convert.ToInt32(dsRow["TotalDays"]);
+                    model.LeaveTaken = Convert.ToInt32(dsRow["TotalLeave"]);
                 }
-                // 5. Earnings (Table 4) → Side-by-Side Actual vs Earned
 
-                if (ds.Tables.Count > 4)
+            }
+            else
+            {
+                // 3. Attendance Summary For except Sales Employee
+                if (ds1.Tables.Count > 2 && ds1.Tables[2].Rows.Count > 0)
                 {
-                    var earningsList = new List<SalaryHead>();
-
-                    foreach (DataRow row in ds.Tables[4].Rows)
-                    {
-                        // Adjust column names to match your new SP output
-                        decimal actual = row.Table.Columns.Contains("ActualAmount") ? Convert.ToDecimal(row["ActualAmount"]) : 0;
-                        decimal earned = row.Table.Columns.Contains("EarnedAmount") ? Convert.ToDecimal(row["EarnedAmount"]) : 0;
-                        string name = row["AllowanceName"].ToString();
-
-                        // Skip if both are zero or if it's the Total row
-                        if (actual == 0 && earned == 0) continue;
-                        if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
-
-                        earningsList.Add(new SalaryHead
-                        {
-                            PayConfigName = ToTitleCase(name),
-                            ActualAmount = actual,
-                            Amount = earned
-                        });
-                    }
-
-                    // ✅ Priority Order: Basic > Stipend > Others
-                    model.Earnings = earningsList
-                        .OrderBy(e =>
-                            e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
-                            e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
-                        )
-                        .ThenBy(e => e.PayConfigName)
-                        .ToList();
+                    var row = ds1.Tables[2].Rows[0];
+                    model.TotalDays = Convert.ToInt32(row["TotalDays"]);
+                    model.WorkedDays = Convert.ToInt32(row["WorkedDays"]);
+                    model.LOPDays = 0;
+                    model.PayableDays = Convert.ToInt32(row["TotalDays"]); // or DaysPayable
+                    model.LeaveTaken = Convert.ToInt32(row["TotalLeave"]);
                 }
-
-                // 6. Deductions (Table 5) 
-                if (ds.Tables.Count > 5)
-                {
-                    foreach (DataRow row in ds.Tables[5].Rows)
-                    {
-                        // Adjust column names to match your new Deduction SP output
-                        decimal configDeduction = row.Table.Columns.Contains("ConfiguredDeduction") ? Convert.ToDecimal(row["ConfiguredDeduction"]) : 0;
-                        decimal actualDeduction = row.Table.Columns.Contains("ActualDeduction") ? Convert.ToDecimal(row["ActualDeduction"]) : 0;
-
-                        if (configDeduction == 0 && actualDeduction == 0) continue;
-
-                        model.Deductions.Add(new SalaryHead
-                        {
-                            PayConfigName = ToTitleCase(row["DeductionName"].ToString()),
-                            ActualAmount = configDeduction, // Standard deduction
-                            Amount = actualDeduction     // Processed deduction
-                        });
-                    }
-                }
-
-                //7. Net Pay 
-                if (ds.Tables.Count > 5 && ds.Tables[6].Rows.Count > 0)
-                {
-                    var row = ds.Tables[6].Rows[0];
-                    model.NetPay = Convert.ToDecimal(row["NetPay"]);
-                }
-                //7. Loan 
-                // 7. Loan (only if SP returned a loan dataset with values)
-                if (ds.Tables.Count > 7 && ds.Tables[7]?.Rows.Count > 0)
-                {
-                    var row = ds.Tables[7].Rows[0];
-                    var cols = ds.Tables[7].Columns;
-
-                    // Helper function to safely parse and round decimals
-                    decimal GetSafeDecimal(DataRow r, string colName)
-                    {
-                        if (!cols.Contains(colName) || r[colName] == DBNull.Value)
-                            return 0;
-                        return Math.Round(Convert.ToDecimal(r[colName]), 0);
-                    }
-
-                    model.LoanInstallment = GetSafeDecimal(row, "EMIAmount");
-                    model.OpeningLoan = GetSafeDecimal(row, "OpeningBalance");
-                    model.ClosingLoan = GetSafeDecimal(row, "ClosingBalance");
-                }
-
-                // Totals
-                var grossRow = model.Earnings
-                    .FirstOrDefault(x => x.PayConfigName.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase));
-                model.GrossEarnings = grossRow != null ? grossRow.Amount : model.Earnings.Sum(x => x.Amount);
-                model.TotalDeductions = model.Deductions.Sum(x => x.Amount);
-                //model.NetPay = model.GrossEarnings - model.TotalDeductions;
-                model.NetPayWords = NumberToWords((long)model.NetPay);
             }
 
-            return model;
+            // 4. Leave Balances
+            if (ds1.Tables.Count > 3)
+            {
+                foreach (DataRow row in ds1.Tables[3].Rows)
+                {
+                    model.LeaveBalances.Add(new LeaveBalance
+                    {
+                        CodeType = row["CodeType"].ToString(),
+                        Balance = Convert.ToDecimal(row["LeaveBalance"])
+                    });
+                }
+            }
+            // 5. Earnings (Table 4) → skip 0 and Gross Amount
+            if (ds1.Tables.Count > 4)
+            {
+                var earningsList = new List<SalaryHead>();
+
+                foreach (DataRow row in ds1.Tables[4].Rows)
+                {
+                    decimal amount = Convert.ToDecimal(row["Amount"]);
+                    string name = row["PayConfigName"].ToString();
+
+                    if (amount == 0) continue;
+                    if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
+
+                    earningsList.Add(new SalaryHead
+                    {
+                        PayConfigName = ToTitleCase(name),
+                        Amount = amount
+                    });
+                }
+
+                // ✅ Priority Order: Basic > Stipend > Others
+                model.Earnings = earningsList
+                    .OrderBy(e =>
+                        e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
+                        e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
+                    )
+                    .ThenBy(e => e.PayConfigName) // optional: alphabetical for the rest
+                    .ToList();
+            }
+
+            // 6. Deductions (Table 5) → skip 0 values
+            if (ds1.Tables.Count > 5)
+            {
+                foreach (DataRow row in ds1.Tables[5].Rows)
+                {
+                    decimal amount = Convert.ToDecimal(row["Amount"]);
+                    if (amount == 0) continue;
+
+                    model.Deductions.Add(new SalaryHead
+                    {
+                        PayConfigName = ToTitleCase(row["PayConfigName"].ToString()),
+                        Amount = amount
+                    });
+                }
+            }
+
+            //7. Net Pay 
+            if (ds1.Tables.Count > 5 && ds1.Tables[6].Rows.Count > 0)
+            {
+                var row = ds1.Tables[6].Rows[0];
+                model.NetPay = Convert.ToDecimal(row["NetPay"]);
+            }
+            //7. Loan 
+            // 7. Loan (only if SP returned a loan dataset with values)
+            if (ds1.Tables.Count > 7 && ds1.Tables[7] != null && ds1.Tables[7].Rows.Count > 0)
+            {
+                var row = ds1.Tables[7].Rows[0];
+
+                model.LoanInstallment = row["LoanInstallment"] == DBNull.Value ? 0
+                                        : Math.Round(Convert.ToDecimal(row["LoanInstallment"]), 0);
+
+                model.OpeningLoan = row["OpeningAmount"] == DBNull.Value ? 0
+                                        : Math.Round(Convert.ToDecimal(row["OpeningAmount"]), 0);
+
+                model.ClosingLoan = row["ClosingAmount"] == DBNull.Value ? 0
+                                        : Math.Round(Convert.ToDecimal(row["ClosingAmount"]), 0);
+            }
+
+            // Totals
+            var grossRow = model.Earnings
+                .FirstOrDefault(x => x.PayConfigName.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase));
+            model.GrossEarnings = grossRow != null ? grossRow.Amount : model.Earnings.Sum(x => x.Amount);
+            model.TotalDeductions = model.Deductions.Sum(x => x.Amount);
+            //model.NetPay = model.GrossEarnings - model.TotalDeductions;
+            model.NetPayWords = NumberToWords((long)model.NetPay);
         }
 
+        //-------------------------------------------------------
+        // NEW ENGINE (JANUARY 2026 ONWARDS)
+        //-------------------------------------------------------
+        else
+        {
+            DataSet ds = clsDatabase.fnDataSet(
+                "PRC_Get_PayslipFullData",
+                EmpId, Month, Year, TenantId);
+
+            if (ds == null || ds.Tables.Count == 0)
+                return model;
+
+            // Company
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                var row = ds.Tables[0].Rows[0];
+                model.CompanyName = row["Company"].ToString();
+                model.CompanyLogoUrl = row["CompanyLogoUrl"].ToString();
+                model.CompanyAddressLine1 = row["Address1"].ToString();
+                model.CompanyAddressLine2 = row["Address2"].ToString();
+            }
+
+            // Employee
+            if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
+            {
+                var row = ds.Tables[1].Rows[0];
+
+                model.EmpId = Convert.ToInt32(row["empid"]);
+                model.EmpNo = row["empno"].ToString();
+                model.EmpCode = row["empcode"].ToString();
+                model.EmpName = row["EmployeeName"].ToString();
+                model.Designation = row["Designation"].ToString();
+                model.Department = row["Department"].ToString();
+                model.DOJ = Convert.ToDateTime(row["joining"]);
+                model.PAN = row["emppancardno"].ToString();
+                model.UAN = row["empuanno"].ToString();
+                model.PFNo = row["empepfno"].ToString();
+                model.ESICNo = row["empesicno"].ToString();
+                model.BankAccount = row["empaccountno"].ToString();
+                model.BankName = row["bankname"].ToString();
+            }
+
+            // 3. Attendance Summary
+            var SalesEmpNo = clsDatabase.fnDBOperation("PROC_GETEMPNO_SALES", EmpId);
+
+            // Define your fix TenantID here
+            string targetTenantId = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
+
+            if (TenantId == targetTenantId && !string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
+            {
+                DataTable officeTable = clsDatabase.fnDataTable("proc_dailyattendance", Month, Year, SalesEmpNo, "");
+                List<AttendanceLog> apiLogs = new List<AttendanceLog>();
+
+                // Step 2: Fetch API data (Sales Force API)
+                using (var client = new HttpClient())
+                {
+                    string url = $"https://crmfieldforceapi.mendine.co.in/api/crm/HRMSApi/EmployeeAttendanceSheet?Businessid=MEND-PVTL-890&Employeeno={SalesEmpNo}&Month={Month}&Year={Year}";
+                    var response = client.GetStringAsync(url).Result;
+                    apiLogs = JsonConvert.DeserializeObject<List<AttendanceLog>>(response) ?? new List<AttendanceLog>();
+                }
+
+                // Step 3: Merge sources
+                int totalDays = 0, presentDays = 0, leaveDays = 0;
+
+                int monthNumber = DateTime.ParseExact(Month, "MMMM", System.Globalization.CultureInfo.InvariantCulture).Month;
+                int yearNumber = Convert.ToInt32(Year);
+
+                var calendarDays = Enumerable.Range(1, DateTime.DaysInMonth(yearNumber, monthNumber))
+                                        .Select(d => new DateTime(yearNumber, monthNumber, d));
+
+                foreach (var day in calendarDays)
+                {
+                    totalDays++;
+
+                    // Check Office DB Punches
+                    bool officePresent = officeTable?.AsEnumerable().Any(r =>
+                        Convert.ToDateTime(r["LOGDATE"]).Date == day.Date &&
+                        !string.IsNullOrWhiteSpace(r["INTIME"]?.ToString()) &&
+                        !string.IsNullOrWhiteSpace(r["OUTTIME"]?.ToString())
+                    ) ?? false;
+
+                    // Check API Field Punches
+                    var apiDay = apiLogs.FirstOrDefault(l => {
+                        DateTime parsed;
+                        return DateTime.TryParse(l.LogDate, out parsed) && parsed.Date == day.Date;
+                    });
+
+                    bool apiPresent = apiDay != null && !string.IsNullOrWhiteSpace(apiDay.CheckIn);
+                    bool isLeave = apiDay != null && apiDay.WorkType?.Trim().ToUpper() == "LEAVE";
+
+                    if (isLeave)
+                        leaveDays++;
+                    else if (officePresent || apiPresent)
+                        presentDays++;
+                    // If neither present nor leave, it's counted as absent/leave depending on your policy
+                }
+
+                // Final Assignment for Sales Tenant
+                model.TotalDays = totalDays;
+                model.WorkedDays = presentDays;
+                model.LeaveTaken = leaveDays;
+                model.PayableDays = totalDays - (totalDays - presentDays - leaveDays); // Adjust based on your policy
+            }
+            else
+            {
+                // Default logic for all other Tenants / Non-Sales Employees
+                if (ds.Tables.Count > 2 && ds.Tables[2].Rows.Count > 0)
+                {
+                    var row = ds.Tables[2].Rows[0];
+                    model.TotalDays = Convert.ToInt32(row["TotalDays"]);
+                    model.WorkedDays = Convert.ToInt32(row["WorkedDays"]);
+                    model.LOPDays = row.Table.Columns.Contains("LOPDays") ? Convert.ToInt32(row["LOPDays"]) : 0;
+                    model.PayableDays = Convert.ToInt32(row["TotalDays"]);
+                    model.LeaveTaken = Convert.ToInt32(row["TotalLeave"]);
+                }
+            }
+            // Step 1: Fetch office data (DB)
+            //DataTable officeTable = ds.Tables.Count > 2 ? ds.Tables[2] : null;
+
+            // 4. Leave Balances
+            if (ds.Tables.Count > 3)
+            {
+                foreach (DataRow row in ds.Tables[3].Rows)
+                {
+                    model.LeaveBalances.Add(new LeaveBalance
+                    {
+                        CodeType = row["CodeType"].ToString(),
+                        Balance = Convert.ToDecimal(row["LeaveBalance"])
+                    });
+                }
+            }
+            // 5. Earnings (Table 4) → Side-by-Side Actual vs Earned
+
+            if (ds.Tables.Count > 4)
+            {
+                var earningsList = new List<SalaryHead>();
+
+                foreach (DataRow row in ds.Tables[4].Rows)
+                {
+                    // Adjust column names to match your new SP output
+                    decimal actual = row.Table.Columns.Contains("ActualAmount") ? Convert.ToDecimal(row["ActualAmount"]) : 0;
+                    decimal earned = row.Table.Columns.Contains("EarnedAmount") ? Convert.ToDecimal(row["EarnedAmount"]) : 0;
+                    string name = row["AllowanceName"].ToString();
+
+                    // Skip if both are zero or if it's the Total row
+                    if (actual == 0 && earned == 0) continue;
+                    if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
+
+                    earningsList.Add(new SalaryHead
+                    {
+                        PayConfigName = ToTitleCase(name),
+                        ActualAmount = actual,
+                        Amount = earned
+                    });
+                }
+
+                // ✅ Priority Order: Basic > Stipend > Others
+                model.Earnings = earningsList
+                    .OrderBy(e =>
+                        e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
+                        e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
+                    )
+                    .ThenBy(e => e.PayConfigName)
+                    .ToList();
+            }
+
+            // 6. Deductions (Table 5) 
+            if (ds.Tables.Count > 5)
+            {
+                foreach (DataRow row in ds.Tables[5].Rows)
+                {
+                    // Adjust column names to match your new Deduction SP output
+                    decimal configDeduction = row.Table.Columns.Contains("ConfiguredDeduction") ? Convert.ToDecimal(row["ConfiguredDeduction"]) : 0;
+                    decimal actualDeduction = row.Table.Columns.Contains("ActualDeduction") ? Convert.ToDecimal(row["ActualDeduction"]) : 0;
+
+                    if (configDeduction == 0 && actualDeduction == 0) continue;
+
+                    model.Deductions.Add(new SalaryHead
+                    {
+                        PayConfigName = ToTitleCase(row["DeductionName"].ToString()),
+                        ActualAmount = configDeduction, // Standard deduction
+                        Amount = actualDeduction     // Processed deduction
+                    });
+                }
+            }
+
+            //7. Net Pay 
+            if (ds.Tables.Count > 5 && ds.Tables[6].Rows.Count > 0)
+            {
+                var row = ds.Tables[6].Rows[0];
+                model.NetPay = Convert.ToDecimal(row["NetPay"]);
+            }
+            //7. Loan 
+            // 7. Loan (only if SP returned a loan dataset with values)
+            if (ds.Tables.Count > 7 && ds.Tables[7]?.Rows.Count > 0)
+            {
+                var row = ds.Tables[7].Rows[0];
+                var cols = ds.Tables[7].Columns;
+
+                // Helper function to safely parse and round decimals
+                decimal GetSafeDecimal(DataRow r, string colName)
+                {
+                    if (!cols.Contains(colName) || r[colName] == DBNull.Value)
+                        return 0;
+                    return Math.Round(Convert.ToDecimal(r[colName]), 0);
+                }
+
+                model.LoanInstallment = GetSafeDecimal(row, "EMIAmount");
+                model.OpeningLoan = GetSafeDecimal(row, "OpeningBalance");
+                model.ClosingLoan = GetSafeDecimal(row, "ClosingBalance");
+            }
+
+            // Totals
+            var grossRow = model.Earnings
+                .FirstOrDefault(x => x.PayConfigName.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase));
+            model.GrossEarnings = grossRow != null ? grossRow.Amount : model.Earnings.Sum(x => x.Amount);
+            model.TotalDeductions = model.Deductions.Sum(x => x.Amount);
+            //model.NetPay = model.GrossEarnings - model.TotalDeductions;
+            model.NetPayWords = NumberToWords((long)model.NetPay);
+            // Remaining ds logic same as your previous block
+        }
+
+        //-------------------------------------------------------
+        // Final Totals
+        //-------------------------------------------------------
+        model.GrossEarnings = model.Earnings.Sum(x => x.Amount);
+        model.TotalDeductions = model.Deductions.Sum(x => x.Amount);
+        model.NetPayWords = NumberToWords((long)model.NetPay);
+
+        return model;
+    }
         [HttpPost]
         public ActionResult DownloadBulk(string empIds, string month, int year)
         {

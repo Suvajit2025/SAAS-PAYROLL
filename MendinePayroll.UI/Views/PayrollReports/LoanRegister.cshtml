@@ -1,0 +1,549 @@
+﻿```cshtml
+@model MendinePayroll.Models.EmployeeSalaryModel
+@{
+    ViewBag.Title = "Loan Register Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section role="main" class="content-body">
+
+    <header class="page-header">
+        <h2>Loan Register Report</h2>
+    </header>
+
+    <style>
+
+.subtotal-row{
+    font-weight:600;
+    background:#f7f7f7;
+}
+
+.grandtotal-row{
+    font-weight:700;
+    background:#ffeeba;
+}
+
+.filter-item{
+    display:flex;
+    flex-direction:column;
+}
+
+.filter-item label{
+    font-size:11px;
+    font-weight:600;
+    margin-bottom:3px;
+}
+
+#loanRegister{
+    font-size:12px;
+    width:100%;
+}
+
+#loanRegister th,#loanRegister td{
+    padding:4px 6px;
+    text-align:center;
+    white-space:nowrap;
+}
+
+#loanRegister thead th{
+    background:#0d6efd;
+    color:#fff;
+}
+
+#pagination li a{
+    color:#007bff;
+}
+
+#pagination li.active a{
+    background:#007bff;
+    color:#fff;
+}
+
+#pageLoader{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(255,255,255,.8);
+    z-index:9999;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+
+.loader-spinner{
+    border:6px solid #f3f3f3;
+    border-top:6px solid #0E7777;
+    border-radius:50%;
+    width:60px;
+    height:60px;
+    animation:spin 1s linear infinite;
+}
+
+.loader-text{
+    margin-top:10px;
+    font-weight:600;
+}
+
+@@keyframes spin{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
+    </style>
+
+    <section class="panel">
+
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button onclick="BacktoEmpList();" class="btn btn-sm btn-default">
+                    <i class="fa fa-arrow-circle-left"></i> Back
+                </button>
+            </div>
+
+            <h2 class="panel-title">Employee Loan Register List</h2>
+        </header>
+
+
+        <div class="panel-body">
+
+            <!-- FILTERS -->
+            <div class="row mb-md">
+
+                <div class="col-md-2 filter-item">
+                    <label>Financial Year</label>
+
+                    @Html.DropDownListFor(
+                    m => m.Year,
+                    Model.YearList,
+                    new { @class = "form-control", @id = "ddlyear" }
+                    )
+
+                </div>
+
+
+                <div class="col-md-2 filter-item">
+                    <label>Company</label>
+                    <select id="ddlCompany" class="form-control multi-select" multiple></select>
+                </div>
+
+
+                <div class="col-md-2 filter-item">
+                    <label>Department</label>
+                    <select id="ddlDepartment" class="form-control multi-select" multiple></select>
+                </div>
+
+
+                <div class="col-md-2 filter-item">
+                    <label>Employee</label>
+                    <select id="ddlEmployee" class="form-control multi-select" multiple></select>
+                </div>
+
+
+                <div class="col-md-2 filter-item">
+                    <label>&nbsp;</label>
+                    <button id="btnClearFilters" class="btn btn-default btn-block">
+                        Reset
+                    </button>
+                </div>
+
+
+                <div class="col-md-2 filter-item">
+                    <label>&nbsp;</label>
+                    <button onclick="exportLoanRegisterToCSV()" class="btn btn-primary btn-block">
+                        Export CSV
+                    </button>
+                </div>
+
+            </div>
+
+
+            <!-- PAGE SIZE -->
+            <div class="row mb-sm">
+
+                <div class="col-md-2 col-md-offset-10">
+                    <label>Page Row</label>
+
+                    <select id="Pagrow" class="form-control input-sm">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-striped" id="loanRegister">
+
+                    <thead id="loanHeader"></thead>
+
+                    <tbody></tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="row mt-md">
+
+                <div class="col-md-6">
+                    <label id="Showing_no_Row"></label>
+                </div>
+
+                <div class="col-md-6 text-right">
+                    <ul id="pagination" class="pagination pagination-sm"></ul>
+                </div>
+
+            </div>
+
+
+        </div>
+    </section>
+
+</section>
+
+
+<!-- LOADER -->
+<div id="pageLoader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">Loading please wait...</div>
+</div>
+
+
+
+<script src="~/plugins/cdnjs/jquery.twbsPagination.min.js"></script>
+
+<script>
+
+    var $pagination = $('#pagination'),
+        isPaginationInitialized = false;
+
+
+    $(document).ready(function () {
+
+        initMultiSelects();
+
+        loadFilters();
+
+        reloadLoanRegister(1);
+
+        $("#Pagrow").change(function () {
+            reloadLoanRegister(1);
+        });
+
+        $("#btnClearFilters").click(function (e) {
+
+            e.preventDefault();
+
+            $('#ddlCompany').multiselect('deselectAll', false).multiselect('updateButtonText');
+
+            $('#ddlDepartment').multiselect('deselectAll', false).multiselect('updateButtonText');
+
+            $('#ddlEmployee').multiselect('deselectAll', false).multiselect('updateButtonText');
+
+            reloadLoanRegister(1);
+
+        });
+
+    });
+
+
+
+    function initMultiSelects() {
+
+        $('.multi-select').multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            buttonWidth: '100%',
+            maxHeight: 220,
+            nonSelectedText: 'All',
+            numberDisplayed: 1,
+            buttonClass: 'btn btn-default btn-sm'
+        });
+
+    }
+
+
+
+    function loadFilters() {
+
+        loadDropdown('/SalaryCTC/GetCompanyList', '#ddlCompany', 'CompanyId', 'CompanyName');
+
+        loadDropdown('/SalaryCTC/GetDepartmentList', '#ddlDepartment', 'DepartmentID', 'DepartmentName');
+
+        loadEmployeeByFilters();
+
+    }
+
+
+
+    function loadDropdown(url, ddl, id, text) {
+
+        $.getJSON(url, function (res) {
+
+            const $ddl = $(ddl).empty();
+
+            res.forEach(x => {
+                $ddl.append(`<option value="${x[id]}">${x[text]}</option>`)
+            });
+
+            $ddl.multiselect('rebuild');
+
+        });
+
+    }
+
+
+
+    function loadEmployeeByFilters() {
+
+        const companyIds = $('#ddlCompany').val() || [];
+        const deptIds = $('#ddlDepartment').val() || [];
+
+        $.ajax({
+
+            url: '/SalaryCTC/GetEmployeeList',
+            type: 'GET',
+            traditional: true,
+
+            data: {
+                companyIds: companyIds,
+                deptIds: deptIds
+            },
+
+            success: function (res) {
+
+                const $ddl = $('#ddlEmployee');
+
+                $ddl.empty();
+
+                res.filter(x => x.Empstatus === "ACTIVE")
+                    .forEach(x => {
+
+                        $ddl.append(`<option value="${x.EmpID}">${x.EmpName} (${x.EmpCode})</option>`);
+
+                    });
+
+                $ddl.multiselect('rebuild');
+
+            }
+
+        });
+
+    }
+
+
+
+    function reloadLoanRegister(page) {
+
+        var year = $("#ddlyear option:selected").text();
+
+        var empIds = $("#ddlEmployee").val() || [];
+
+        var rows = $("#Pagrow").val();
+
+        var pagnumber = page;
+
+
+        $.ajax({
+
+            type: "POST",
+
+            url: '/PayrollReports/GetAllEmployeeLoanRegister',
+
+            traditional: true,
+
+            data: {
+                FinancialYear: year,
+                empIds: empIds,
+                numberofRow: rows,
+                pagenumber: pagnumber
+            },
+
+            beforeSend: function () {
+
+                $("#pageLoader").css("display", "flex");
+
+            },
+
+            success: function (data) {
+
+                $("#pageLoader").hide();
+
+                $("#loanRegister tbody").empty();
+
+                $("#loanHeader").empty();
+
+                $("#Showing_no_Row").text("");
+
+                if (!data || data.length == 0) {
+
+                    $("#Showing_no_Row").text("No Records Found");
+
+                    return;
+
+                }
+
+
+                let allCols = Object.keys(data[0]).filter(c => c !== "RN" && c !== "TotalCount");
+
+                let loanCols = [
+                    "Financial Year",
+                    "Loan No",
+                    "Employee Name",
+                    "Loan Taken On",
+                    "Loan Status",
+                    "Loan Amount",
+                    "Loan Opening Balance",
+                    "Department"
+                ];
+
+                let closingCols = ["Closing Balance"];
+
+                let installmentCols = allCols.filter(c => !loanCols.includes(c) && !closingCols.includes(c));
+
+
+                let header1 = `<tr>
+                <th colspan="${loanCols.length}">Loan Details</th>
+                <th colspan="${installmentCols.length}">Installments</th>
+                <th colspan="${closingCols.length}">Closing</th>
+                </tr>`;
+
+                let header2 = "<tr>";
+
+                loanCols.forEach(c => header2 += `<th>${c}</th>`);
+
+                installmentCols.forEach(c => header2 += `<th>${c}</th>`);
+
+                closingCols.forEach(c => header2 += `<th>${c}</th>`);
+
+                header2 += "</tr>";
+
+                $("#loanHeader").html(header1 + header2);
+
+
+                $.each(data, function (_, value) {
+
+                    let rowHtml = "<tr>";
+
+                    loanCols.forEach(col => {
+
+                        let cell = value[col] ?? "";
+
+                        if (col === "Loan Status") {
+
+                            if (cell === "Complete")
+                                cell = `<span class="badge bg-success">${cell}</span>`;
+
+                            if (cell === "Running")
+                                cell = `<span class="badge bg-warning">${cell}</span>`;
+
+                        }
+
+                        rowHtml += `<td>${cell}</td>`;
+
+                    });
+
+
+                    installmentCols.forEach(col => {
+
+                        let cell = value[col] ?? 0;
+
+                        if (!isNaN(cell)) cell = parseFloat(cell).toFixed(2);
+
+                        rowHtml += `<td>${cell}</td>`;
+
+                    });
+
+
+                    closingCols.forEach(col => {
+
+                        let cell = value[col] ?? 0;
+
+                        if (!isNaN(cell)) cell = parseFloat(cell).toFixed(2);
+
+                        rowHtml += `<td>${cell}</td>`;
+
+                    });
+
+                    rowHtml += "</tr>";
+
+                    $("#loanRegister tbody").append(rowHtml);
+
+                });
+
+
+                let totalCount = parseInt(data[0].TotalCount) || data.length;
+
+                $("#Showing_no_Row").text("Total Records : " + totalCount);
+
+            }
+
+        });
+
+    }
+
+
+
+    function exportLoanRegisterToCSV() {
+
+        var year = $("#ddlyear option:selected").text();
+
+        var empIds = $("#ddlEmployee").val() || [];
+
+        $("#pageLoader").css("display", "flex");
+
+        $.ajax({
+
+            type: "POST",
+
+            url: '/PayrollReports/ExportLoanRegisterToCSV',
+
+            traditional: true,
+
+            data: { FinancialYear: year, empIds: empIds },
+
+            success: function (fileName) {
+
+                $("#pageLoader").hide();
+
+                if (fileName === "NODATA") { alert("No data found"); return; }
+
+                const link = document.createElement("a");
+
+                link.href = '/EmployeeList/DownloadCsv?fileName=' + fileName;
+
+                document.body.appendChild(link);
+
+                link.click();
+
+                document.body.removeChild(link);
+
+            }
+
+        });
+
+    }
+
+
+
+    function BacktoEmpList() {
+
+        window.location.href = "/Dashboard";
+
+    }
+
+</script>
+```

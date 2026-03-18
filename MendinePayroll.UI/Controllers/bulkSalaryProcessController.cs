@@ -397,12 +397,14 @@ namespace MendinePayroll.UI.Controllers
 
                     // 3. Map the component name so OTHER formulas can use this result
                     // We DON'T set {VAL} or {RATE} here because they will get overwritten in the loop.
+                    c.OriginalAmount = rawVal;
                     c.Amount = ApplyRounding(c.BaseAmount, "");
                     valueMap[c.PayConfigName] = c.Amount;
                     continue;
                 } 
                 // Normal Fixed/Manual Logic
                 c.BaseAmount = c.Amount;
+                c.OriginalAmount = Prorate(c.BaseAmount, c.PaidDays, totalDays);
                 c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
                 valueMap[c.PayConfigName] = c.Amount;
             }
@@ -466,11 +468,13 @@ namespace MendinePayroll.UI.Controllers
                 if (c.LogicType == "EXCEL_UPLOAD")
                 {
                     // No proration for manual Excel uploads
+                    c.OriginalAmount = calculated;
                     c.Amount = ApplyRounding(calculated, c.RoundingType);
                 }
                 else
                 {
                     // Standard formula proration
+                    c.OriginalAmount = Prorate(calculated, c.PaidDays, totalDays);
                     c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
                 }
 
@@ -515,6 +519,7 @@ namespace MendinePayroll.UI.Controllers
 
                     c.BaseAmount = pfBase;
                     // Calculation on already-prorated base
+                    c.OriginalAmount = pfBase * (c.Rate / 100);
                     c.Amount = ApplyRounding(pfBase * (c.Rate / 100), c.RoundingType);
 
                     valueMap[c.PayConfigName] = c.Amount;
@@ -573,6 +578,7 @@ namespace MendinePayroll.UI.Controllers
 
                     if (!isESICApplicable || (!isInActiveWindow && actualMonthlyGross > esicLimit))
                     {
+                        c.OriginalAmount = 0;
                         c.Amount = 0;
                         valueMap[c.PayConfigName] = 0;
                     }
@@ -582,6 +588,7 @@ namespace MendinePayroll.UI.Controllers
                         c.BaseAmount = dynamicBaseValue;
 
                         // ESIC Rule: Round UP to the next higher rupee (Ceiling)
+                        c.OriginalAmount = dynamicBaseValue * (c.Rate / 100);
                         c.Amount = Math.Ceiling(dynamicBaseValue * (c.Rate / 100));
 
                         valueMap[c.PayConfigName] = c.Amount;
@@ -602,6 +609,7 @@ namespace MendinePayroll.UI.Controllers
                     decimal slabAmount = CalculatePTaxFromJson(grossAmount, c.PTaxSlabsJson);
 
                     c.BaseAmount = dynamicBaseValue;
+                    c.OriginalAmount = slabAmount;
                     c.Amount = ApplyRounding(slabAmount, c.RoundingType);
 
                     valueMap[c.PayConfigName] = c.Amount;
@@ -610,6 +618,7 @@ namespace MendinePayroll.UI.Controllers
                 else if (c.StatutoryType == "GRATUITY")
                 { 
                     c.BaseAmount = dynamicBaseValue;
+                    c.OriginalAmount = dynamicBaseValue * (c.Rate / 100);
                     c.Amount = ApplyRounding(dynamicBaseValue * (c.Rate / 100), c.RoundingType);
 
                     valueMap[c.PayConfigName] = c.Amount;
@@ -626,15 +635,15 @@ namespace MendinePayroll.UI.Controllers
 
                 if (pt == "ALLOWANCES")
                 {
-                    totalEarnings += c.Amount;
+                    totalEarnings += c.OriginalAmount;
                 }
                 else if (pt == "DEDUCTION")
                 {
-                    totalDeductions += c.Amount;
+                    totalDeductions += c.OriginalAmount;
                 }
                 else if (pt == "CC")
                 {
-                    totalEmployerCC += c.Amount;   // employer cost only
+                    totalEmployerCC += c.OriginalAmount;   // employer cost only
                 }
             }
 
@@ -644,11 +653,11 @@ namespace MendinePayroll.UI.Controllers
 
             return new EmployeeSalaryResponse
             {
-                TotalEarnings = Math.Round(totalEarnings, 2),
-                TotalDeductions = Math.Round(totalDeductions, 2),
-                NetPay = Math.Round(netPay, 2),
-                EmployerContribution = Math.Round(totalEmployerCC, 2), // ✅ add this property (recommended)
-                MonthlyCTC = Math.Round(monthlyCTC, 2),                // ✅ add this property (recommended)
+                TotalEarnings = Math.Round(totalEarnings, 0),
+                TotalDeductions = Math.Round(totalDeductions, 0),
+                NetPay = Math.Round(netPay, 0),
+                EmployerContribution = Math.Round(totalEmployerCC, 0), // ✅ add this property (recommended)
+                MonthlyCTC = Math.Round(monthlyCTC, 0),                // ✅ add this property (recommended)
                 Components = components
             };
 

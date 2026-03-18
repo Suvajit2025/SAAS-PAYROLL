@@ -1500,10 +1500,33 @@
             // =========================
             // OPTIONAL: Reload employee list
             // =========================
-            loadEmployees();
+            //loadEmployees();
         });
     }
+    function updateRowAfterSave() {
 
+        let empId = $('#hdnSelectedEmpId').val();
+
+        let gross = $('#lblTotalGross').text();
+        let ded = $('#lblTotalDed').text();
+        let net = $('#lblNetPay').text();
+
+        // find row in DataTable
+        let rows = dt.rows().nodes();
+
+        $(rows).each(function () {
+
+            let btn = $(this).find('button');
+
+            if (btn.attr('onclick')?.includes(empId)) {
+
+                // update columns
+                $(this).find('td:eq(5)').html(`<div class="tbl-text text-success">${gross}</div>`);
+                $(this).find('td:eq(6)').html(`<div class="tbl-text text-danger">${ded}</div>`);
+                $(this).find('td:eq(7)').html(`<div class="tbl-text text-dark">${net}</div>`);
+            }
+        });
+    }
 
     //function closeModal() {
     //    $('#ctcModal').fadeOut(200, function () {
@@ -2361,9 +2384,10 @@
                 if (res.Success) {
                     toastr.success(res.Message);     // Better UI than alert
                     closeModal();
-
+                    // ✅ Update only that row instead of reload
+                    updateRowAfterSave();
                     // Optionally refresh employee list (status: Configured)
-                    loadEmployees();
+                    //loadEmployees();
                 }
                 else {
                     toastr.error(res.Message || "Save failed.");

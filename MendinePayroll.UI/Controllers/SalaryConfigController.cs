@@ -761,7 +761,7 @@ namespace MendinePayroll.UI.Controllers
         public JsonResult GetEmployeeSlabs()
         {
             // Fetch from DB (Payroll_ESIC_EmployeeSlab with join on Employee and SlabMaster)
-            DataTable DT = clsDatabase.fnDataTable("SP_Get_ESIC_EmployeeSlabs");
+            DataTable DT = clsDatabase.fnDataTable("SP_Get_ESIC_EmployeeSlabs",TenantId);
             var data = DT.AsEnumerable().Select(row => new
             {
                 EmployeeSlabId = row.Field<int>("EmployeeSlabId"),

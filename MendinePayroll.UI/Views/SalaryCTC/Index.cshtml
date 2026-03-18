@@ -2324,9 +2324,37 @@
                 if (res.Success) {
                     toastr.success(res.Message);     // Better UI than alert
                     closeModal();
+                    // 🔁 Update only current employee in local array
+                    let empId = $('#hdnSelectedEmpId').val();
 
-                    // Optionally refresh employee list (status: Configured)
-                    loadEmployees();
+                    // Update local data
+                    let emp = allEmployees.find(x => String(x.EmpID) === String(empId));
+                    if (emp) {
+                        emp.Status = "Configured";
+                    }
+
+                    // 🔁 Update ONLY that row in DataTable
+                    if (dt) {
+                        dt.rows().every(function () {
+                            let rowData = this.data();
+
+                            // Match by EmpID (use hidden or column value)
+                            let rowNode = this.node();
+
+                            // You need a way to identify row → easiest: add data attribute
+                            if ($(rowNode).attr('data-empid') == empId) {
+
+                                // Update badge only
+                                $(rowNode).find('td:eq(5)').html(`
+                                    <span class="badge-saas badge-done">
+                                        Configured
+                                    </span>
+                                `);
+
+                                return false; // break loop
+                            }
+                        });
+                    }
                 }
                 else {
                     toastr.error(res.Message || "Save failed.");

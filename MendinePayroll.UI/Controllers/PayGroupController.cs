@@ -297,7 +297,7 @@ namespace MendinePayroll.UI.Controllers
 
             #region Bind HR Dropdown (Direct SP Call)
             List<SelectListItem> HRList = new List<SelectListItem>();
-            HRList.Add(new SelectListItem { Text = "-- Select HR Personnel --", Value = "0" });
+            HRList.Add(new SelectListItem { Text = "-- Select Personnel --", Value = "0" });
 
             try
             {

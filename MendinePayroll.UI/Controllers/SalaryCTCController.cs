@@ -73,7 +73,6 @@ namespace MendinePayroll.UI.Controllers
         }
         public JsonResult GetCategoryList()
         {
-
             DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPCATEGORY", tenantID);
             var list = dt.AsEnumerable().Select(r => new
             {
@@ -88,7 +87,6 @@ namespace MendinePayroll.UI.Controllers
         {
             string UserId = Session["UserId"].ToString();
             DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_PAYGROUP", tenantID, UserId);
-
             var list = dt.AsEnumerable().Select(r => new
             {
                 PayGroupID = r["PayGroupID"].ToString(),
@@ -125,6 +123,7 @@ namespace MendinePayroll.UI.Controllers
                 EmpSalaryConfigID = r["EmpSalaryConfigID"]?.ToString(),
 
                 EmpName = r["EmpName"]?.ToString(),
+
                 EmpCode = r["EmpCode"]?.ToString(),
 
                 Designation = r["Designation"]?.ToString(),
@@ -218,87 +217,108 @@ namespace MendinePayroll.UI.Controllers
         public JsonResult GetEmployeeSalaryConfig(long empSalaryConfigID, long EmployeeID)
         {
             try
-            { 
-                // Step 2: Call your SP EXACTLY as required
-                DataSet ds = clsDatabase.fnDataSet("PRC_Get_EmployeeSalaryConfig",tenantID, empSalaryConfigID,EmployeeID);
+            {
+                DataSet ds = clsDatabase.fnDataSet(
+                    "PRC_Get_EmployeeSalaryConfig",
+                    tenantID,
+                    empSalaryConfigID,
+                    EmployeeID
+                );
 
-                // Safety Check
-                if (ds == null || ds.Tables.Count < 3)
+                if (ds == null || ds.Tables.Count < 3 || ds.Tables[0].Rows.Count == 0)
                 {
-                    return Json(new { Success = false, Message = "Invalid salary config response." },
-                                JsonRequestBehavior.AllowGet);
+                    return Json(new
+                    {
+                        Success = false,
+                        Message = "Invalid salary config response."
+                    }, JsonRequestBehavior.AllowGet);
                 }
 
-                // ----------------  HEADER  ----------------
+                // ================= HEADER =================
                 var h = ds.Tables[0].Rows[0];
 
                 var header = new
                 {
-                    EmpSalaryConfigID = h["EmpSalaryConfigID"],
-                    EmployeeID = h["EmployeeID"],
-                    PayGroupID = h["PayGroupID"],
-                    IsPF_Applicable = h["IsPF"],
-                    IsESIC_Applicable = h["IsESIC"],
-                    IsPTAX_Applicable = h["IsPTAX"],
-                    MonthlyGross = h["MonthlyGross"],
-                    TotalAllowance = h["TotalAllowance"],
-                    TotalDeduction = h["TotalDeduction"],
-                    TotalContribution = h["TotalContribution"],
-                    NetPay = h["NetPay"],
-                    MonthlyCTC = h["MonthlyCTC"],
-                    AnnualCTC = h["AnnualCTC"]
+                    EmpSalaryConfigID = Convert.ToInt64(h["EmpSalaryConfigID"]),
+                    EmployeeID = Convert.ToInt64(h["EmployeeID"]),
+                    PayGroupID = Convert.ToInt64(h["PayGroupID"]),
+
+                    IsPF_Applicable = Convert.ToBoolean(h["IsPF"]),
+                    IsESIC_Applicable = Convert.ToBoolean(h["IsESIC"]),
+                    IsPTAX_Applicable = Convert.ToBoolean(h["IsPTAX"]),
+
+                    MonthlyGross = Convert.ToDecimal(h["MonthlyGross"]),
+                    TotalAllowance = Convert.ToDecimal(h["TotalAllowance"]),
+                    TotalDeduction = Convert.ToDecimal(h["TotalDeduction"]),
+                    TotalContribution = Convert.ToDecimal(h["TotalContribution"]),
+                    NetPay = Convert.ToDecimal(h["NetPay"]),
+                    MonthlyCTC = Convert.ToDecimal(h["MonthlyCTC"]),
+                    AnnualCTC = Convert.ToDecimal(h["AnnualCTC"])
                 };
 
-                // ----------------  DETAIL LIST  ----------------
+                // ================= DETAIL =================
                 var detailList = ds.Tables[1].AsEnumerable().Select(r => new
                 {
-                    PayConfigId = r["PayConfigId"],
-                    PayConfigName = r["PayConfigName"],
-                    PayType = r["PayType"],
-                    MonthlyAmount = r["MonthlyAmount"],
-                    YearlyAmount = r["YearlyAmount"],
-                    TimeBasis = r["TimeBasis"],
-                    LogicType = r["LogicType"],
-                    MappedColumn = r["MappedColumn"],
-                    CalculationFormula = r["CalculationFormula"],
-                    ManualRate = r["ManualRate"],
-                    ISPercentage = r["ISPercentage"],
-                    IsBasicComponent = r["IsBasicComponent"],
-                    IsGrossComponent = r["IsGrossComponent"],
-                    IsStatutory = r["IsStatutory"],
-                    StatutoryType = r["StatutoryType"],
-                    IsOther = r["IsOther"],
-                    OtherType = r["OtherType"],
-                    MaxLimit = r["MaxLimit"],
-                    RoundingType = r["RoundingType"],
-                    PTaxSlabsJson = r["PTaxSlabsJson"]
+                    PayConfigId = Convert.ToInt64(r["PayConfigId"]),
+                    PayConfigName = Convert.ToString(r["PayConfigName"]),
+                    PayType = Convert.ToString(r["PayType"]),
+
+                    MonthlyAmount = Convert.ToDecimal(r["MonthlyAmount"]),
+                    YearlyAmount = Convert.ToDecimal(r["YearlyAmount"]),
+
+                    TimeBasis = Convert.ToString(r["TimeBasis"]),
+                    LogicType = Convert.ToString(r["LogicType"]),
+                    MappedColumn = Convert.ToString(r["MappedColumn"]),
+                    CalculationFormula = Convert.ToString(r["CalculationFormula"]),
+
+                    ManualRate = Convert.ToDecimal(r["ManualRate"]),
+                    ISPercentage = Convert.ToBoolean(r["ISPercentage"]),
+
+                    IsBasicComponent = Convert.ToBoolean(r["IsBasicComponent"]),
+                    IsGrossComponent = Convert.ToBoolean(r["IsGrossComponent"]),
+                    IsStatutory = Convert.ToBoolean(r["IsStatutory"]),
+                    StatutoryType = Convert.ToString(r["StatutoryType"]),
+
+                    IsOther = Convert.ToBoolean(r["IsOther"]),
+                    OtherType = Convert.ToString(r["OtherType"]),
+
+                    MaxLimit = r["MaxLimit"] == DBNull.Value ? 0 : Convert.ToDecimal(r["MaxLimit"]),
+                    RoundingType = Convert.ToString(r["RoundingType"]),
+
+                    PTaxSlabsJson = r["PTaxSlabsJson"]?.ToString()
                 }).ToList();
 
-                // ----------------  TEMPLATE (MASTER PAYGROUP RULES) ----------------
+                // ================= TEMPLATE =================
                 var template = ds.Tables[2].AsEnumerable().Select(r => new
                 {
-                    PayConfigId = r["PayConfigId"],
-                    PayConfigName = r["PayConfigName"],
-                    PayType = r["PayType"],
-                    LogicType = r["LogicType"],
-                    TimeBasis = r["TimeBasis"],
-                    ManualRate = r["ManualRate"],
-                    ISPercentage = r["ISPercentage"],
+                    PayConfigId = Convert.ToInt64(r["PayConfigId"]),
+                    PayConfigName = Convert.ToString(r["PayConfigName"]),
+                    PayType = Convert.ToString(r["PayType"]), // 🔴 IMPORTANT FIX
 
-                    IsBasicComponent = r["IsBasicComponent"],
-                    IsGrossComponent = r["IsGrossComponent"],
-                    IsLoanComponent = r["IsLoanComponent"],
-                    IsCalculative = r["IScalculative"],
-                    IsVariableAmt = r["IsVariableAmt"],
+                    LogicType = Convert.ToString(r["LogicType"]),
+                    TimeBasis = Convert.ToString(r["TimeBasis"]),
 
-                    IsStatutory = r["IsStatutory"],
-                    StatutoryType = r["StatutoryType"],
-                    MaxLimit = r["MaxLimit"],
-                    RoundingType = r["RoundingType"],
-                    IsOther = r["IsOther"],
-                    OtherType = r["OtherType"],
-                    MappedColumn = r["MappedColumn"],
-                    CalculationFormula = r["CalculationFormula"],
+                    ManualRate = Convert.ToDecimal(r["ManualRate"]),
+                    ISPercentage = Convert.ToBoolean(r["ISPercentage"]),
+
+                    IsBasicComponent = Convert.ToBoolean(r["IsBasicComponent"]),
+                    IsGrossComponent = Convert.ToBoolean(r["IsGrossComponent"]),
+                    IsLoanComponent = Convert.ToBoolean(r["IsLoanComponent"]),
+                    IsCalculative = Convert.ToBoolean(r["IScalculative"]),
+                    IsVariableAmt = Convert.ToBoolean(r["IsVariableAmt"]),
+
+                    IsStatutory = Convert.ToBoolean(r["IsStatutory"]),
+                    StatutoryType = Convert.ToString(r["StatutoryType"]),
+
+                    MaxLimit = r["MaxLimit"] == DBNull.Value ? 0 : Convert.ToDecimal(r["MaxLimit"]),
+                    RoundingType = Convert.ToString(r["RoundingType"]),
+
+                    IsOther = Convert.ToBoolean(r["IsOther"]),
+                    OtherType = Convert.ToString(r["OtherType"]),
+
+                    MappedColumn = Convert.ToString(r["MappedColumn"]),
+                    CalculationFormula = Convert.ToString(r["CalculationFormula"]),
+
                     PTAXSlabs = r["ptaxSlabs"]?.ToString()
                 }).ToList();
 
@@ -315,10 +335,118 @@ namespace MendinePayroll.UI.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { Success = false, Message = ex.Message },
-                            JsonRequestBehavior.AllowGet);
+                return Json(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
             }
         }
+        //[HttpGet]
+        //public JsonResult GetEmployeeSalaryConfig(long empSalaryConfigID, long EmployeeID)
+        //{
+        //    try
+        //    { 
+        //        // Step 2: Call your SP EXACTLY as required
+        //        DataSet ds = clsDatabase.fnDataSet("PRC_Get_EmployeeSalaryConfig",tenantID, empSalaryConfigID,EmployeeID);
+
+        //        // Safety Check
+        //        if (ds == null || ds.Tables.Count < 3)
+        //        {
+        //            return Json(new { Success = false, Message = "Invalid salary config response." },
+        //                        JsonRequestBehavior.AllowGet);
+        //        }
+
+        //        // ----------------  HEADER  ----------------
+        //        var h = ds.Tables[0].Rows[0];
+
+        //        var header = new
+        //        {
+        //            EmpSalaryConfigID = h["EmpSalaryConfigID"],
+        //            EmployeeID = h["EmployeeID"],
+        //            PayGroupID = h["PayGroupID"],
+        //            IsPF_Applicable = h["IsPF"],
+        //            IsESIC_Applicable = h["IsESIC"],
+        //            IsPTAX_Applicable = h["IsPTAX"],
+        //            MonthlyGross = h["MonthlyGross"],
+        //            TotalAllowance = h["TotalAllowance"],
+        //            TotalDeduction = h["TotalDeduction"],
+        //            TotalContribution = h["TotalContribution"],
+        //            NetPay = h["NetPay"],
+        //            MonthlyCTC = h["MonthlyCTC"],
+        //            AnnualCTC = h["AnnualCTC"]
+        //        };
+
+        //        // ----------------  DETAIL LIST  ----------------
+        //        var detailList = ds.Tables[1].AsEnumerable().Select(r => new
+        //        {
+        //            PayConfigId = r["PayConfigId"],
+        //            PayConfigName = r["PayConfigName"],
+        //            PayType = r["PayType"],
+        //            MonthlyAmount = r["MonthlyAmount"],
+        //            YearlyAmount = r["YearlyAmount"],
+        //            TimeBasis = r["TimeBasis"],
+        //            LogicType = r["LogicType"],
+        //            MappedColumn = r["MappedColumn"],
+        //            CalculationFormula = r["CalculationFormula"],
+        //            ManualRate = r["ManualRate"],
+        //            ISPercentage = r["ISPercentage"],
+        //            IsBasicComponent = r["IsBasicComponent"],
+        //            IsGrossComponent = r["IsGrossComponent"],
+        //            IsStatutory = r["IsStatutory"],
+        //            StatutoryType = r["StatutoryType"],
+        //            IsOther = r["IsOther"],
+        //            OtherType = r["OtherType"],
+        //            MaxLimit = r["MaxLimit"],
+        //            RoundingType = r["RoundingType"],
+        //            PTaxSlabsJson = r["PTaxSlabsJson"]
+        //        }).ToList();
+
+        //        // ----------------  TEMPLATE (MASTER PAYGROUP RULES) ----------------
+        //        var template = ds.Tables[2].AsEnumerable().Select(r => new
+        //        {
+        //            PayConfigId = r["PayConfigId"],
+        //            PayConfigName = r["PayConfigName"],
+        //            PayType = r["PayType"],
+        //            LogicType = r["LogicType"],
+        //            TimeBasis = r["TimeBasis"],
+        //            ManualRate = r["ManualRate"],
+        //            ISPercentage = r["ISPercentage"],
+
+        //            IsBasicComponent = r["IsBasicComponent"],
+        //            IsGrossComponent = r["IsGrossComponent"],
+        //            IsLoanComponent = r["IsLoanComponent"],
+        //            IsCalculative = r["IScalculative"],
+        //            IsVariableAmt = r["IsVariableAmt"],
+
+        //            IsStatutory = r["IsStatutory"],
+        //            StatutoryType = r["StatutoryType"],
+        //            MaxLimit = r["MaxLimit"],
+        //            RoundingType = r["RoundingType"],
+        //            IsOther = r["IsOther"],
+        //            OtherType = r["OtherType"],
+        //            MappedColumn = r["MappedColumn"],
+        //            CalculationFormula = r["CalculationFormula"],
+        //            PTAXSlabs = r["ptaxSlabs"]?.ToString()
+        //        }).ToList();
+
+        //        return Json(new
+        //        {
+        //            Success = true,
+        //            Data = new
+        //            {
+        //                Header = header,
+        //                DetailList = detailList,
+        //                Template = template
+        //            }
+        //        }, JsonRequestBehavior.AllowGet);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { Success = false, Message = ex.Message },
+        //                    JsonRequestBehavior.AllowGet);
+        //    }
+        //}
 
         public ActionResult SalaryRevision()
         {

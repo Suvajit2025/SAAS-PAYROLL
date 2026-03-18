@@ -60,6 +60,7 @@ namespace MendinePayroll.UI.Models
            Calculation
         ========================= */
         public decimal Amount { get; set; }        // Final calculated (prorated) amount
+        public decimal OriginalAmount { get; set; }
         public decimal BaseAmount { get; set; }    // Base value used for % calculation
         public decimal Rate { get; set; }          // Percentage (ManualRate)
 

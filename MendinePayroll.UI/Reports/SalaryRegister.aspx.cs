@@ -83,7 +83,7 @@ namespace MendinePayroll.UI.Reports
             String EndMonth = ddlEndMonth.SelectedItem.Text;
             int EndYear = clsHelper.fnConvert2Int(ddlEndYear.SelectedItem.Text);
 
-            DataTable dt = clsSalary.SalaryRegisterNew(IDEmployee, StartMonth, StartYear, EndMonth, EndYear);
+            DataTable dt = clsSalary.SalaryRegisterNew(TenantId,IDEmployee, StartMonth, StartYear, EndMonth, EndYear);
 
 
             RVViewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
