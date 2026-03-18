@@ -1,0 +1,111 @@
+﻿@{
+    Layout = null; // Ensuring it doesn't inherit the main layout if called standalone
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<style>
+    .unauthorized-container {
+        height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .unauthorized-card {
+        max-width: 460px;
+        width: 100%;
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f1f5f9;
+    }
+
+    .icon-circle {
+        background: #fff1f2;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        border: 4px solid #ffffff;
+        box-shadow: 0 0 0 1px #fee2e2;
+    }
+
+    .unauthorized-card h3 {
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 12px;
+        font-size: 22px;
+    }
+
+    .unauthorized-card p {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        font-size: 15px;
+    }
+
+    .alert-box {
+        padding: 14px;
+        background: #f8fafc;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        border-left: 4px solid #e11d48;
+    }
+
+    .btn-portal {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: #2563eb;
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        width: 100%;
+        transition: 0.2s ease;
+    }
+
+        .btn-portal:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="unauthorized-container">
+    <div class="unauthorized-card">
+        <div class="icon-circle">
+            <i class="fa fa-shield-halved" style="font-size: 32px; color: #e11d48;"></i>
+        </div>
+
+        <h3>Access Restricted</h3>
+
+        <p>
+            Hello <strong>@Session["UserName"]</strong>,<br />
+            You do not have the required permissions to access the <strong>Payroll Module</strong>.
+        </p>
+
+        <div class="alert-box">
+            <small style="color: #475569; font-weight: 500;">
+                <i class="fa fa-info-circle mr-1"></i> Please contact your HR Administrator to enable your access.
+            </small>
+        </div>
+
+        <a href="https://iehrms.iecsl.in/Account/ChoosePortal.aspx" class="btn-portal">
+            <i class="fa fa-arrow-left"></i> Return to Main Portal
+        </a>
+
+        <div style="margin-top: 20px;">
+            <small class="text-muted" style="font-size: 11px;">User ID: @Session["EmployeeNo"]</small>
+        </div>
+    </div>
+</div>

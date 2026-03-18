@@ -231,6 +231,18 @@ D:\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.dll
 D:\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.pdb
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\MendinePayroll.Models.pdb
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.Mvc.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.Razor.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.WebPages.Razor.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.WebPages.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\Microsoft.Web.Infrastructure.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.WebPages.Deployment.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.Mvc.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.Razor.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.WebPages.Razor.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.WebPages.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\Microsoft.Web.Infrastructure.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\bin\Debug\System.Web.WebPages.Deployment.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.AssemblyReference.cache
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendinePayroll.Models.csproj.CoreCompileInputs.cache
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.Models\obj\Debug\MendineP.DBBBFFCE.Up2Date

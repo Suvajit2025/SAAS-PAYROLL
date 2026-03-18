@@ -9,6 +9,8 @@ namespace MendinePayroll.UI
         {
             filters.Add(new HandleErrorAttribute());
             //filters.Add(new SessionAuthorizeAttribute()); // ✅ GLOBAL
+            // ✅ This activates the security check for the WHOLE app
+            filters.Add(new MendinePayroll.UI.Utility.SessionAuthorizeAttribute());
         }
     }
 }

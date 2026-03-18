@@ -52,6 +52,7 @@ namespace MendinePayroll.UI.Controllers
             Session["RoleID"] = "10195";
             Session["UserName"] = "suvajit.das@iecsl.co.in";
             Session["UserId"] = "476";
+            Session["EmployeeNo"] = "101450";
             Session["UserEmail"] = "suvajit.das@iecsl.co.in";
             Session["TenantID"] = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
 

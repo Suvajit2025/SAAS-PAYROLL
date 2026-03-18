@@ -551,6 +551,7 @@
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Utility\ApiCommon.cs" />
     <Compile Include="Utility\DataEncryption.cs" />
+    <Compile Include="Utility\SessionAuthorizeAttribute.cs" />
     <Compile Include="Web References\LoginWebService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2566,6 +2567,8 @@
     <Content Include="Views\PayrollChallanReport\EpfEcrChallanReport.cshtml" />
     <Content Include="Views\SalaryConfig\ESIC_SetUp.cshtml" />
     <Content Include="Views\PayrollReports\LoanRegister.cshtml" />
+    <Content Include="Views\Shared\_UnauthorizedPayroll.cshtml" />
+    <Content Include="Views\SalaryConfiguration\PayrollAccess.cshtml" />
     <None Include="Web References\LoginWebService\logincontrol.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -2682,7 +2685,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>61101</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:60974/</IISUrl>
+          <IISUrl>http://localhost:60975/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

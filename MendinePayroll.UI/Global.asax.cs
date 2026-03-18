@@ -21,15 +21,16 @@ namespace MendinePayroll.UI
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+
+            // ✅ ADD THIS LINE to enable your filters/authorization
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            // 🔑 ENSURE JSON VALUE PROVIDER IS REGISTERED
-            if (!ValueProviderFactories.Factories
-                .Any(f => f is JsonValueProviderFactory))
+            // 🔑 JSON VALUE PROVIDER
+            if (!ValueProviderFactories.Factories.Any(f => f is JsonValueProviderFactory))
             {
-                ValueProviderFactories.Factories.Add(
-                    new JsonValueProviderFactory()
-                );
+                ValueProviderFactories.Factories.Add(new JsonValueProviderFactory());
             }
         }
 

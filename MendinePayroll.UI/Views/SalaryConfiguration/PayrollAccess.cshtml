@@ -1,0 +1,349 @@
+﻿@model PayrollAccessViewModel
+@{
+    ViewBag.Title = "Payroll Access Configuration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Match your existing alignment preferences */
+    .center-block {
+        align-items: center;
+    }
+
+    /* Select2 Checkbox Customization */
+    .select2-results__option--selectable {
+        padding: 8px 12px !important;
+    }
+
+    .emp-checkbox {
+        margin-right: 10px;
+        pointer-events: none;
+    }
+
+    /* Styling to make Select2 match your form-control look */
+    .select2-container--default .select2-selection--multiple,
+    .select2-container--default .select2-selection--single {
+        border-color: #cccccc !important;
+        border-radius: 4px !important;
+        min-height: 34px;
+    }
+
+    /* Modal Single Row Layout */
+    .modal-flex-row {
+        display: flex;
+        gap: 15px;
+        align-items: flex-end;
+    }
+
+    .flex-dept {
+        flex: 4;
+    }
+
+    .flex-emp {
+        flex: 8;
+    }
+
+    /* The container */
+    .switch-real {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+        vertical-align: middle;
+    }
+
+        /* Hide default checkbox */
+        .switch-real input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    /* The slider - Default OFF State (Red) */
+    .slider-real {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ef4444; /* Real Red */
+        transition: .3s;
+        border-radius: 34px;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); /* Inner shadow for depth */
+    }
+
+        /* The circular knob */
+        .slider-real:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Knob shadow */
+        }
+
+    /* ON State (Green) */
+    input:checked + .slider-real {
+        background-color: #22c55e; /* Real Green */
+    }
+
+        /* Knob movement */
+        input:checked + .slider-real:before {
+            transform: translateX(24px);
+        }
+
+    /* Status Labels (Optional text inside/beside) */
+    .status-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+
+    .text-active {
+        color: #22c55e;
+    }
+
+    .text-inactive {
+        color: #ef4444;
+    }
+</style>
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2>Payroll Access</h2>
+    </header>
+
+    <section class="panel">
+        <header class="panel-heading">
+            <div class="panel-actions">
+                <button type="button" class="btn btn-sm btn-primary text-weight-semibold" onclick="openModal()">
+                    <i class="fa fa-plus"></i> Add Access
+                </button>
+            </div>
+            <h2 class="panel-title">Authorized Employee List</h2>
+        </header>
+
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped mb-none">
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th> 
+                            <th>Department</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in Model.EmployeeAccessList)
+                        {
+                        <tr>
+                            <td>
+                                <div style="font-weight:600;">@e.EmployeeName</div>
+                                <small class="text-muted">#@e.EmployeeNo</small>
+                            </td>
+                            <td>@e.Department</td>
+                            <td class="text-center">
+                                <div class="d-flex align-items-center justify-content-center" style="gap: 10px;">
+                                    <label class="switch-real">
+                                        <input type="checkbox"
+                                               id="chk_@e.EmployeeNo"
+                                               @(e.IsActive ? "checked='checked'" : "" )
+                                               onchange="updateStatus('@e.EmployeeNo', this)">
+                                        <span class="slider-real"></span>
+                                    </label>
+
+                                    <span id="lbl_@e.EmployeeNo" class="status-label @(e.IsActive ? " text-active" : "text-inactive" )">
+                                        @(e.IsActive ? "ON" : "OFF")
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</section>
+
+<div class="modal fade" id="empModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <header class="panel-heading">
+                <h2 class="panel-title">Grant Payroll Access</h2>
+            </header>
+            <div class="panel-body">
+                <div class="modal-flex-row">
+                    <div class="flex-dept">
+                        <div class="form-group">
+                            <label class="control-label">Department</label>
+                            <select id="ddlDept" class="form-control populate">
+                                <option value="">Select Department</option>
+                                @foreach (var d in Model.DepartmentList)
+                                {
+                                    <option value="@d.Value">@d.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex-emp">
+                        <div class="form-group">
+                            <label class="control-label">Employees (Select Multiple)</label>
+                            <select id="ddlEmp" class="form-control" multiple="multiple">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="panel-footer">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-primary" id="btnSaveAccess" onclick="save()">Save</button>
+                        <button class="btn btn-default modal-dismiss" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Init Dept Select2
+        $('#ddlDept').select2({
+            dropdownParent: $('#empModal'),
+            width: '100%'
+        });
+
+        // Init Employee Multi-Select with Checkbox UI
+        $('#ddlEmp').select2({
+            placeholder: "Choose employees...",
+            closeOnSelect: false,
+            allowClear: true,
+            width: '100%',
+            dropdownParent: $('#empModal'),
+            templateResult: formatEmployeeOption,
+            escapeMarkup: function (m) { return m; }
+        });
+    });
+
+    // Function to add checkbox look to dropdown items
+    function formatEmployeeOption(opt) {
+        if (!opt.id) return opt.text;
+        return `<div class="d-flex align-items-center">
+                    <input type="checkbox" class="emp-checkbox" ${opt.selected ? 'checked' : ''}>
+                    <span style="font-size:13px;">${opt.text}</span>
+                </div>`;
+    }
+
+    function openModal() {
+        $('#empModal').modal('show');
+    }
+
+    // Load employees on Department Change
+    $(document).ready(function() {
+    // Re-initialize and bind specifically to select2 event
+    $('#ddlDept').on('select2:select', function (e) {
+        var deptId = e.params.data.id;
+        console.log("Select2 detected change: " + deptId);
+        loadEmployees(deptId);
+    });
+});
+
+function loadEmployees(deptId) {
+    var ddl = $('#ddlEmp');
+    if (!deptId) {
+        ddl.empty().trigger('change');
+        return;
+    }
+
+    // Use Url.Action to prevent path errors
+    var url = '@Url.Action("GetEmployeesByDepartment", "SalaryConfiguration")';
+
+    $.get(url, { departmentId: deptId }, function (res) {
+        ddl.empty();
+        if (res && res.length > 0) {
+            res.forEach(function (x) {
+                var newOption = new Option(x.EmployeeName + " (" + x.EmployeeNo + ")", x.EmployeeNo, false, false);
+                ddl.append(newOption);
+            });
+        }
+        ddl.trigger('change');
+    });
+}
+
+    function save() {
+        var empList = $('#ddlEmp').val();
+
+        if (!empList || empList.length === 0) {
+            alert("Please select at least one employee.");
+            return;
+        }
+
+        $.ajax({
+            url: '/SalaryConfiguration/SaveEmployees',
+            type: 'POST',
+            data: { employees: empList },
+            traditional: true,
+            success: function () {
+                $('#empModal').modal('hide');
+                location.reload();
+            },
+            error: function () {
+                alert("Error saving access configuration.");
+            }
+        });
+    }
+
+    function updateStatus(empNo, element) {
+        const isChecked = element.checked;
+        const activeFlag = isChecked ? 1 : 0;
+        const label = $('#lbl_' + empNo);
+
+        // Visual feedback
+        if (isChecked) {
+            label.text("ON").removeClass("text-inactive").addClass("text-active");
+        } else {
+            label.text("OFF").removeClass("text-active").addClass("text-inactive");
+        }
+
+        $.ajax({
+            url: '@Url.Action("UpdateAccessStatus", "SalaryConfiguration")',
+            type: 'POST',
+            data: {
+                employeeNo: empNo,
+                status: activeFlag
+            },
+            success: function (res) {
+                if (!res.success) {
+                    // If DB update fails, alert the user and flip the switch back
+                    alert("Update Failed: " + res.message);
+                    element.checked = !isChecked; // Revert switch position
+
+                    // Revert label text
+                    if (!isChecked) {
+                        label.text("ON").removeClass("text-inactive").addClass("text-active");
+                    } else {
+                        label.text("OFF").removeClass("text-active").addClass("text-inactive");
+                    }
+                }
+            },
+            error: function () {
+                alert("Network error. Please try again.");
+                element.checked = !isChecked;
+                location.reload();
+            }
+        });
+    }
+</script>
