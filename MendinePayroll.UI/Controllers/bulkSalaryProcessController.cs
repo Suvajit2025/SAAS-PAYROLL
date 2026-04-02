@@ -68,7 +68,7 @@ namespace MendinePayroll.UI.Controllers
             DataTable dt = clsDatabase.fnDataTable("Payroll_SaaS_Company", TenantId);
 
             var data = dt.AsEnumerable().Select(x => new
-            {
+            { 
                 value = x["CompanyID"]?.ToString(),
                 text = x["CompanyName"]?.ToString(),
                 code = x["CompnayCode"]?.ToString()
@@ -359,80 +359,74 @@ namespace MendinePayroll.UI.Controllers
             // =============================
             return Json(pivot, JsonRequestBehavior.AllowGet);
         }
-
-        
         public static EmployeeSalaryResponse CalculateMonthlySalary(List<SalaryComponentResult> components, int employeeId, int processMonth, int processYear,
-                                                                     bool isPFApplicable, bool isESICApplicable, bool isPTaxApplicable, ComponentValueResolver valueResolver)
+                                                               bool isPFApplicable, bool isESICApplicable, bool isPTaxApplicable, ComponentValueResolver valueResolver)
         {
             if (components == null || components.Count == 0)
                 return null;
 
+            // Determine total days in month for proration
             decimal totalDays = components.First().TotalDays > 0
                 ? components.First().TotalDays
                 : DateTime.DaysInMonth(processYear, processMonth);
 
-            //decimal totalDays = 30;
-
             decimal totalEarnings = 0;
             decimal totalDeductions = 0;
 
-            // Used ONLY for FORMULA evaluation
+            // Used for FORMULA evaluation mapping
             Dictionary<string, decimal> valueMap = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
- 
+
             /* ============================================================
-               PASS 1: FIXED / MANUAL / EXCEL RAW DATA
+                PASS 1: FIXED / MANUAL / EXCEL RAW DATA
                ============================================================ */
             foreach (var c in components.Where(x => x.LogicType == "FIXED" ||
-                                                   x.LogicType == "MANUAL_INPUT" ||
-                                                   x.LogicType == "EXCEL_UPLOAD" ||
-                                                   (x.IsOther && x.OtherType == "LOANRECOVERY")))
+                                                    x.LogicType == "MANUAL_INPUT" ||
+                                                    x.LogicType == "EXCEL_UPLOAD" ||
+                                                    (x.IsOther && x.OtherType == "LOANRECOVERY")))
             {
                 if (c.LogicType == "EXCEL_UPLOAD" || (c.IsStatutory && c.StatutoryType == "TDS") || (c.IsOther && c.OtherType == "LOANRECOVERY"))
                 {
-                    // 1. Fetch raw value from DB (e.g., 2.1 for OT or 1.0 for Attendance)
+                    // 1. Fetch raw value from DB (e.g., OT hours or Bonus amount)
                     decimal rawVal = valueResolver(employeeId, c.PayConfigId, processMonth, processYear, c);
 
-                    // 2. Store it in the component object for Pass 2
                     c.BaseAmount = rawVal;
-
-                    // 3. Map the component name so OTHER formulas can use this result
-                    // We DON'T set {VAL} or {RATE} here because they will get overwritten in the loop.
                     c.OriginalAmount = rawVal;
+                    c.Rate = c.Amount; // Keep master rate in Rate field
                     c.Amount = ApplyRounding(c.BaseAmount, "");
                     valueMap[c.PayConfigName] = c.Amount;
                     continue;
-                } 
-                // Normal Fixed/Manual Logic
+                }
+
+                // Normal Fixed/Manual Logic with Proration
                 c.BaseAmount = c.Amount;
-                c.OriginalAmount = Prorate(c.BaseAmount, c.PaidDays, totalDays);
-                c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
+                decimal prorated = Prorate(c.BaseAmount, c.PaidDays, totalDays);
+                c.OriginalAmount = prorated;
+                c.Amount = ApplyRounding(prorated, c.RoundingType);
                 valueMap[c.PayConfigName] = c.Amount;
             }
 
             /* ============================================================
-                PASS 2 : FORMULA & EXCEL LOGIC (Handles Fixed & Formula)
+                PASS 2 : FORMULA & EXCEL LOGIC
                ============================================================ */
-            foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD" ))
+            foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD"))
             {
                 decimal baseValue = 0;
                 bool formulaEvaluated = false;
+
                 if (c.LogicType == "EXCEL_UPLOAD")
                 {
-                    // 1. If there IS a formula (like Attendance Bonus or OT)
                     if (!string.IsNullOrEmpty(c.CalculationExpression))
                     {
                         valueMap["{VAL}"] = c.BaseAmount;
                         valueMap["{RATE}"] = c.Rate;
                         valueMap["{PAIDDAYS}"] = c.PaidDays;
-                        valueMap["{WORKINGDAYS}"] = totalDays;
+                        valueMap["{WORKING_DAYS}"] = totalDays;
 
                         baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
                         formulaEvaluated = true;
                     }
                     else
                     {
-                        // 2. If there is NO formula (e.g., a simple Incentive upload)
-                        // Just use the raw value collected in Pass 1
                         baseValue = c.BaseAmount;
                     }
                 }
@@ -443,116 +437,81 @@ namespace MendinePayroll.UI.Controllers
                 }
 
                 c.BaseAmount = baseValue;
-
-                //// Apply Percentage logic (usually 100% for fixed uploads)
-                //decimal calculated = c.IsPercentage ? baseValue * (c.Rate / 100) : baseValue;
-                // --- LOGIC UPDATE STARTS HERE ---
                 decimal calculated = 0;
 
-                // If it's an Excel Upload with a formula, we assume the formula 
-                // result (baseValue) is the final amount.
                 if (c.LogicType == "EXCEL_UPLOAD" && formulaEvaluated)
                 {
                     calculated = baseValue;
                 }
                 else
                 {
-                    // Standard behavior: Apply Percentage/Rate logic
                     calculated = c.IsPercentage ? baseValue * (c.Rate / 100) : baseValue;
                 }
-                // --- LOGIC UPDATE ENDS HERE ---
+
                 // Apply Max Limit
                 if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && calculated > c.MaxLimit.Value)
                     calculated = c.MaxLimit.Value;
 
                 if (c.LogicType == "EXCEL_UPLOAD")
                 {
-                    // No proration for manual Excel uploads
                     c.OriginalAmount = calculated;
                     c.Amount = ApplyRounding(calculated, c.RoundingType);
                 }
                 else
                 {
-                    // Standard formula proration
-                    c.OriginalAmount = Prorate(calculated, c.PaidDays, totalDays);
-                    c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
+                    decimal proratedFormula = Prorate(calculated, c.PaidDays, totalDays);
+                    c.OriginalAmount = proratedFormula;
+                    c.Amount = ApplyRounding(proratedFormula, c.RoundingType);
                 }
 
-                // Update the map for next components
                 valueMap[c.PayConfigName] = c.Amount;
             }
-             
-            /* =========================
-               PASS 3 : STATUTORY (DYNAMIC VIA FORMULA)
-               ========================= */
-            decimal basicAmount = components
-                .Where(x => x.IsBasicComponent)
+
+            /* ============================================================
+                DYNAMIC GROSS CALCULATION (For Factory Employees)
+               ============================================================ */
+            decimal calculatedGrossSum = components
+                .Where(x => (x.PayType ?? "").Trim().ToUpperInvariant() == "ALLOWANCES")
                 .Sum(x => x.Amount);
 
-            decimal grossAmount = components
-                .Where(x => x.IsGrossComponent)
-                .Sum(x => x.Amount);
+            var grossComp = components.FirstOrDefault(x => x.IsGrossComponent);
+            if (grossComp != null && grossComp.Amount == 0)
+            {
+                grossComp.Amount = calculatedGrossSum;
+                grossComp.OriginalAmount = calculatedGrossSum;
+                grossComp.BaseAmount = calculatedGrossSum;
+                valueMap[grossComp.PayConfigName] = calculatedGrossSum;
+            }
 
-            decimal actualMonthlyGross = components
-                .Where(x => x.IsGrossComponent)
-                .Select(x => x.BaseAmount)
-                .FirstOrDefault();
+            /* ============================================================
+                PASS 3 : STATUTORY CALCULATION
+               ============================================================ */
+            decimal grossAmount = (grossComp != null && grossComp.Amount > 0) ? grossComp.Amount : calculatedGrossSum;
+            decimal actualMonthlyGross = (grossComp != null && grossComp.BaseAmount > 0) ? grossComp.BaseAmount : grossAmount;
+
             foreach (var c in components.Where(x => x.IsStatutory))
             {
-                // 1. DYNAMIC BASE CALCULATION
-                // Use the stored formula (CalculationExpression) to find the Base (e.g., "[BASIC]+[DA]")
-                decimal dynamicBaseValue = ApplyRounding(EvaluateDynamicFormula(
-                    c.CalculationExpression,
-                    valueMap
-                ), c.RoundingType);
+                decimal dynamicBaseValue = ApplyRounding(EvaluateDynamicFormula(c.CalculationExpression, valueMap), c.RoundingType);
 
-                // 🔹 PF CALCULATION
+                // 🔹 PF
                 if (c.StatutoryType.StartsWith("PF"))
                 {
                     if (!isPFApplicable) { c.Amount = 0; continue; }
-
                     decimal pfBase = dynamicBaseValue;
-
-                    // Apply Statutory Ceiling (e.g., 15,000)
                     if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && pfBase > c.MaxLimit.Value)
                         pfBase = c.MaxLimit.Value;
 
                     c.BaseAmount = pfBase;
-                    // Calculation on already-prorated base
                     c.OriginalAmount = pfBase * (c.Rate / 100);
-                    c.Amount = ApplyRounding(pfBase * (c.Rate / 100), c.RoundingType);
-
+                    c.Amount = ApplyRounding(c.OriginalAmount, c.RoundingType);
                     valueMap[c.PayConfigName] = c.Amount;
                 }
-
-                //// 🔹 ESIC CALCULATION
-                //else if (c.StatutoryType.StartsWith("ESIC"))
-                //{
-                //    // Eligibility check usually remains against the MASTER Gross (Fixed)
-                //    // You can use actualMonthlyGross calculated earlier for this.
-                //    if (!isESICApplicable || (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && actualMonthlyGross > c.MaxLimit.Value))
-                //    {
-                //        c.Amount = 0;
-                //        continue;
-                //    }
-
-                //    c.BaseAmount = dynamicBaseValue; // Based on formula like "[GROSS]"
-                //    c.Amount = ApplyRounding(dynamicBaseValue * (c.Rate / 100), c.RoundingType);
-
-                //    valueMap[c.PayConfigName] = c.Amount;
-                //}
-
-                // 🔹 ESIC CALCULATION (Integrated with Slab Logic)
+                // 🔹 ESIC
                 else if (c.StatutoryType.StartsWith("ESIC"))
                 {
                     bool isSlabEligible = false;
-                    int slabStart = 0;
-                    int slabEnd = 0;
-                    int currentID = 0;
-
-                    // 1. Fetch the Slab Status from your stored procedure
+                    int slabStart = 0, slabEnd = 0, currentID = 0;
                     DataTable esidt = clsDatabase.fnDataTable("SP_Check_ESIC_SLAB", employeeId);
-
                     if (esidt != null && esidt.Rows.Count > 0)
                     {
                         slabStart = Convert.ToInt32(esidt.Rows[0]["SlabStartMonth"]);
@@ -561,107 +520,375 @@ namespace MendinePayroll.UI.Controllers
                         currentID = Convert.ToInt32(esidt.Rows[0]["ID"]);
                     }
 
-                    // 2. Cross-Year Window Logic
-                    // If slabStart is 10 (Oct) and slabEnd is 3 (March), then months 10,11,12 OR 1,2,3 are valid.
                     bool isInActiveWindow = false;
                     if (isSlabEligible)
                     {
-                        if (slabStart <= slabEnd) // Normal window (e.g., 4 to 9)
-                            isInActiveWindow = (processMonth >= slabStart && processMonth <= slabEnd);
-                        else // Crossing New Year window (e.g., 10 to 3)
-                            isInActiveWindow = (processMonth >= slabStart || processMonth <= slabEnd);
+                        if (slabStart <= slabEnd) isInActiveWindow = (processMonth >= slabStart && processMonth <= slabEnd);
+                        else isInActiveWindow = (processMonth >= slabStart || processMonth <= slabEnd);
                     }
 
-                    // 3. Eligibility Check: Apply ESIC if in Window OR if Gross <= Limit
-                    // (ActualMonthlyGross is the fixed master gross used for entry-level eligibility)
                     decimal esicLimit = c.MaxLimit ?? 21000;
-
                     if (!isESICApplicable || (!isInActiveWindow && actualMonthlyGross > esicLimit))
                     {
-                        c.OriginalAmount = 0;
                         c.Amount = 0;
-                        valueMap[c.PayConfigName] = 0;
+                        c.OriginalAmount = 0;
                     }
                     else
                     {
-                        // 4. Calculate based on dynamicBaseValue (the earned gross/formula result)
                         c.BaseAmount = dynamicBaseValue;
-
-                        // ESIC Rule: Round UP to the next higher rupee (Ceiling)
                         c.OriginalAmount = dynamicBaseValue * (c.Rate / 100);
-                        c.Amount = Math.Ceiling(dynamicBaseValue * (c.Rate / 100));
-
-                        valueMap[c.PayConfigName] = c.Amount;
-
-                        // 5. Update the Tag if we've hit the end of the contribution period
-                        if (processMonth == slabEnd)
-                        {
-                            clsDatabase.fnDataTable("SP_UPDATE_ESIC_TAG", employeeId, currentID);
-                        }
+                        c.Amount = Math.Ceiling(c.OriginalAmount); // ESIC rounds UP
+                        if (processMonth == slabEnd) clsDatabase.fnDataTable("SP_UPDATE_ESIC_TAG", employeeId, currentID);
                     }
+                    valueMap[c.PayConfigName] = c.Amount;
                 }
-                // 🔹 PTAX CALCULATION
+                // 🔹 PTAX
                 else if (c.StatutoryType == "PTAX")
                 {
                     if (!isPTaxApplicable) { c.Amount = 0; continue; }
-
-                    // Use formula result (Actual Earned Gross) for slab check
                     decimal slabAmount = CalculatePTaxFromJson(grossAmount, c.PTaxSlabsJson);
-
                     c.BaseAmount = dynamicBaseValue;
                     c.OriginalAmount = slabAmount;
                     c.Amount = ApplyRounding(slabAmount, c.RoundingType);
-
                     valueMap[c.PayConfigName] = c.Amount;
                 }
-                // 🔹 PTAX CALCULATION
+                // 🔹 GRATUITY
                 else if (c.StatutoryType == "GRATUITY")
-                { 
+                {
                     c.BaseAmount = dynamicBaseValue;
                     c.OriginalAmount = dynamicBaseValue * (c.Rate / 100);
-                    c.Amount = ApplyRounding(dynamicBaseValue * (c.Rate / 100), c.RoundingType);
-
+                    c.Amount = ApplyRounding(c.OriginalAmount, c.RoundingType);
                     valueMap[c.PayConfigName] = c.Amount;
                 }
             }
-            /* =========================
-               TOTALS
-            ========================= */
-            decimal totalEmployerCC = 0;        // Employer contributions (CTC part, NOT net)
 
+            /* ============================================================
+                TOTALS & RESPONSE
+               ============================================================ */
+            decimal totalEmployerCC = 0;
             foreach (var c in components)
             {
                 var pt = (c.PayType ?? "").Trim().ToUpperInvariant();
-
-                if (pt == "ALLOWANCES")
-                {
-                    totalEarnings += c.OriginalAmount;
-                }
-                else if (pt == "DEDUCTION")
-                {
-                    totalDeductions += c.OriginalAmount;
-                }
-                else if (pt == "CC")
-                {
-                    totalEmployerCC += c.OriginalAmount;   // employer cost only
-                }
+                if (pt == "ALLOWANCES") totalEarnings += c.OriginalAmount;
+                else if (pt == "DEDUCTION") totalDeductions += c.OriginalAmount;
+                else if (pt == "CC") totalEmployerCC += c.OriginalAmount;
             }
-
-            var netPay = totalEarnings - totalDeductions;          // ✅ CC excluded
-            var monthlyCTC = totalEarnings + totalEmployerCC;      // ✅ optional for pivot use
-
 
             return new EmployeeSalaryResponse
             {
                 TotalEarnings = Math.Round(totalEarnings, 0),
                 TotalDeductions = Math.Round(totalDeductions, 0),
-                NetPay = Math.Round(netPay, 0),
-                EmployerContribution = Math.Round(totalEmployerCC, 0), // ✅ add this property (recommended)
-                MonthlyCTC = Math.Round(monthlyCTC, 0),                // ✅ add this property (recommended)
+                //NetPay = Math.Round(totalEarnings - totalDeductions, 0),
+                NetPay = (decimal)Math.Floor(totalEarnings - totalDeductions),
+                EmployerContribution = Math.Round(totalEmployerCC, 0),
+                MonthlyCTC = Math.Round(totalEarnings + totalEmployerCC, 0),
                 Components = components
             };
-
         }
+
+        //public static EmployeeSalaryResponse CalculateMonthlySalary(List<SalaryComponentResult> components, int employeeId, int processMonth, int processYear,
+        //                                                             bool isPFApplicable, bool isESICApplicable, bool isPTaxApplicable, ComponentValueResolver valueResolver)
+        //{
+        //    if (components == null || components.Count == 0)
+        //        return null;
+
+        //    decimal totalDays = components.First().TotalDays > 0
+        //        ? components.First().TotalDays
+        //        : DateTime.DaysInMonth(processYear, processMonth);
+
+        //    //decimal totalDays = 30;
+
+        //    decimal totalEarnings = 0;
+        //    decimal totalDeductions = 0;
+
+        //    // Used ONLY for FORMULA evaluation
+        //    Dictionary<string, decimal> valueMap = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+
+        //    /* ============================================================
+        //       PASS 1: FIXED / MANUAL / EXCEL RAW DATA
+        //       ============================================================ */
+        //    foreach (var c in components.Where(x => x.LogicType == "FIXED" ||
+        //                                           x.LogicType == "MANUAL_INPUT" ||
+        //                                           x.LogicType == "EXCEL_UPLOAD" ||
+        //                                           (x.IsOther && x.OtherType == "LOANRECOVERY")))
+        //    {
+        //        if (c.LogicType == "EXCEL_UPLOAD" || (c.IsStatutory && c.StatutoryType == "TDS") || (c.IsOther && c.OtherType == "LOANRECOVERY"))
+        //        {
+        //            // 1. Fetch raw value from DB (e.g., 2.1 for OT or 1.0 for Attendance)
+        //            decimal rawVal = valueResolver(employeeId, c.PayConfigId, processMonth, processYear, c);
+
+        //            // 2. Store it in the component object for Pass 2
+        //            c.BaseAmount = rawVal;
+
+        //            // 3. Map the component name so OTHER formulas can use this result
+        //            // We DON'T set {VAL} or {RATE} here because they will get overwritten in the loop.
+        //            c.OriginalAmount = rawVal;
+        //            c.Rate = c.Amount;
+        //            c.Amount = ApplyRounding(c.BaseAmount, "");
+        //            valueMap[c.PayConfigName] = c.Amount;
+
+        //            continue;
+        //        } 
+        //        // Normal Fixed/Manual Logic
+        //        c.BaseAmount = c.Amount;
+        //        c.OriginalAmount = Prorate(c.BaseAmount, c.PaidDays, totalDays);
+        //        c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
+        //        valueMap[c.PayConfigName] = c.Amount;
+        //    }
+
+        //    /* ============================================================
+        //        PASS 2 : FORMULA & EXCEL LOGIC (Handles Fixed & Formula)
+        //       ============================================================ */
+        //    foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD" ))
+        //    {
+        //        decimal baseValue = 0;
+        //        bool formulaEvaluated = false;
+        //        if (c.LogicType == "EXCEL_UPLOAD")
+        //        {
+        //            // 1. If there IS a formula (like Attendance Bonus or OT)
+        //            if (!string.IsNullOrEmpty(c.CalculationExpression))
+        //            {
+        //                valueMap["{VAL}"] = c.BaseAmount;
+        //                valueMap["{RATE}"] = c.Rate;
+        //                valueMap["{PAIDDAYS}"] = c.PaidDays;
+        //                valueMap["{WORKING_DAYS}"] = totalDays;
+
+        //                baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
+        //                formulaEvaluated = true;
+        //            }
+        //            else
+        //            {
+        //                // 2. If there is NO formula (e.g., a simple Incentive upload)
+        //                // Just use the raw value collected in Pass 1
+        //                baseValue = c.BaseAmount;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            // Standard [BASIC]+[DA] formulas
+        //            baseValue = EvaluateDynamicFormula(c.CalculationExpression, valueMap);
+        //        }
+
+        //        c.BaseAmount = baseValue;
+
+        //        //// Apply Percentage logic (usually 100% for fixed uploads)
+        //        //decimal calculated = c.IsPercentage ? baseValue * (c.Rate / 100) : baseValue;
+        //        // --- LOGIC UPDATE STARTS HERE ---
+        //        decimal calculated = 0;
+
+        //        // If it's an Excel Upload with a formula, we assume the formula 
+        //        // result (baseValue) is the final amount.
+        //        if (c.LogicType == "EXCEL_UPLOAD" && formulaEvaluated)
+        //        {
+        //            calculated = baseValue;
+        //        }
+        //        else
+        //        {
+        //            // Standard behavior: Apply Percentage/Rate logic
+        //            calculated = c.IsPercentage ? baseValue * (c.Rate / 100) : baseValue;
+        //        }
+        //        // --- LOGIC UPDATE ENDS HERE ---
+        //        // Apply Max Limit
+        //        if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && calculated > c.MaxLimit.Value)
+        //            calculated = c.MaxLimit.Value;
+
+        //        if (c.LogicType == "EXCEL_UPLOAD")
+        //        {
+        //            // No proration for manual Excel uploads
+        //            c.OriginalAmount = calculated;
+        //            c.Amount = ApplyRounding(calculated, c.RoundingType);
+        //        }
+        //        else
+        //        {
+        //            // Standard formula proration
+        //            c.OriginalAmount = Prorate(calculated, c.PaidDays, totalDays);
+        //            c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
+        //        }
+
+        //        // Update the map for next components
+        //        valueMap[c.PayConfigName] = c.Amount;
+        //    }
+
+        //    /* =========================
+        //       PASS 3 : STATUTORY (DYNAMIC VIA FORMULA)
+        //       ========================= */
+        //    decimal basicAmount = components
+        //        .Where(x => x.IsBasicComponent)
+        //        .Sum(x => x.Amount);
+
+        //    decimal grossAmount = components
+        //        .Where(x => x.IsGrossComponent)
+        //        .Sum(x => x.Amount);
+
+        //    decimal actualMonthlyGross = components
+        //        .Where(x => x.IsGrossComponent)
+        //        .Select(x => x.BaseAmount)
+        //        .FirstOrDefault();
+        //    foreach (var c in components.Where(x => x.IsStatutory))
+        //    {
+        //        // 1. DYNAMIC BASE CALCULATION
+        //        // Use the stored formula (CalculationExpression) to find the Base (e.g., "[BASIC]+[DA]")
+        //        decimal dynamicBaseValue = ApplyRounding(EvaluateDynamicFormula(
+        //            c.CalculationExpression,
+        //            valueMap
+        //        ), c.RoundingType);
+
+        //        // 🔹 PF CALCULATION
+        //        if (c.StatutoryType.StartsWith("PF"))
+        //        {
+        //            if (!isPFApplicable) { c.Amount = 0; continue; }
+
+        //            decimal pfBase = dynamicBaseValue;
+
+        //            // Apply Statutory Ceiling (e.g., 15,000)
+        //            if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && pfBase > c.MaxLimit.Value)
+        //                pfBase = c.MaxLimit.Value;
+
+        //            c.BaseAmount = pfBase;
+        //            // Calculation on already-prorated base
+        //            c.OriginalAmount = pfBase * (c.Rate / 100);
+        //            c.Amount = ApplyRounding(pfBase * (c.Rate / 100), c.RoundingType);
+
+        //            valueMap[c.PayConfigName] = c.Amount;
+        //        }
+
+        //        //// 🔹 ESIC CALCULATION
+        //        //else if (c.StatutoryType.StartsWith("ESIC"))
+        //        //{
+        //        //    // Eligibility check usually remains against the MASTER Gross (Fixed)
+        //        //    // You can use actualMonthlyGross calculated earlier for this.
+        //        //    if (!isESICApplicable || (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && actualMonthlyGross > c.MaxLimit.Value))
+        //        //    {
+        //        //        c.Amount = 0;
+        //        //        continue;
+        //        //    }
+
+        //        //    c.BaseAmount = dynamicBaseValue; // Based on formula like "[GROSS]"
+        //        //    c.Amount = ApplyRounding(dynamicBaseValue * (c.Rate / 100), c.RoundingType);
+
+        //        //    valueMap[c.PayConfigName] = c.Amount;
+        //        //}
+
+        //        // 🔹 ESIC CALCULATION (Integrated with Slab Logic)
+        //        else if (c.StatutoryType.StartsWith("ESIC"))
+        //        {
+        //            bool isSlabEligible = false;
+        //            int slabStart = 0;
+        //            int slabEnd = 0;
+        //            int currentID = 0;
+
+        //            // 1. Fetch the Slab Status from your stored procedure
+        //            DataTable esidt = clsDatabase.fnDataTable("SP_Check_ESIC_SLAB", employeeId);
+
+        //            if (esidt != null && esidt.Rows.Count > 0)
+        //            {
+        //                slabStart = Convert.ToInt32(esidt.Rows[0]["SlabStartMonth"]);
+        //                slabEnd = Convert.ToInt32(esidt.Rows[0]["SlabEndMonth"]);
+        //                isSlabEligible = Convert.ToBoolean(esidt.Rows[0]["IsEligible"]);
+        //                currentID = Convert.ToInt32(esidt.Rows[0]["ID"]);
+        //            }
+
+        //            // 2. Cross-Year Window Logic
+        //            // If slabStart is 10 (Oct) and slabEnd is 3 (March), then months 10,11,12 OR 1,2,3 are valid.
+        //            bool isInActiveWindow = false;
+        //            if (isSlabEligible)
+        //            {
+        //                if (slabStart <= slabEnd) // Normal window (e.g., 4 to 9)
+        //                    isInActiveWindow = (processMonth >= slabStart && processMonth <= slabEnd);
+        //                else // Crossing New Year window (e.g., 10 to 3)
+        //                    isInActiveWindow = (processMonth >= slabStart || processMonth <= slabEnd);
+        //            }
+
+        //            // 3. Eligibility Check: Apply ESIC if in Window OR if Gross <= Limit
+        //            // (ActualMonthlyGross is the fixed master gross used for entry-level eligibility)
+        //            decimal esicLimit = c.MaxLimit ?? 21000;
+
+        //            if (!isESICApplicable || (!isInActiveWindow && actualMonthlyGross > esicLimit))
+        //            {
+        //                c.OriginalAmount = 0;
+        //                c.Amount = 0;
+        //                valueMap[c.PayConfigName] = 0;
+        //            }
+        //            else
+        //            {
+        //                // 4. Calculate based on dynamicBaseValue (the earned gross/formula result)
+        //                c.BaseAmount = dynamicBaseValue;
+
+        //                // ESIC Rule: Round UP to the next higher rupee (Ceiling)
+        //                c.OriginalAmount = dynamicBaseValue * (c.Rate / 100);
+        //                c.Amount = Math.Ceiling(dynamicBaseValue * (c.Rate / 100));
+
+        //                valueMap[c.PayConfigName] = c.Amount;
+
+        //                // 5. Update the Tag if we've hit the end of the contribution period
+        //                if (processMonth == slabEnd)
+        //                {
+        //                    clsDatabase.fnDataTable("SP_UPDATE_ESIC_TAG", employeeId, currentID);
+        //                }
+        //            }
+        //        }
+        //        // 🔹 PTAX CALCULATION
+        //        else if (c.StatutoryType == "PTAX")
+        //        {
+        //            if (!isPTaxApplicable) { c.Amount = 0; continue; }
+
+        //            // Use formula result (Actual Earned Gross) for slab check
+        //            decimal slabAmount = CalculatePTaxFromJson(grossAmount, c.PTaxSlabsJson);
+
+        //            c.BaseAmount = dynamicBaseValue;
+        //            c.OriginalAmount = slabAmount;
+        //            c.Amount = ApplyRounding(slabAmount, c.RoundingType);
+
+        //            valueMap[c.PayConfigName] = c.Amount;
+        //        }
+        //        // 🔹 PTAX CALCULATION
+        //        else if (c.StatutoryType == "GRATUITY")
+        //        { 
+        //            c.BaseAmount = dynamicBaseValue;
+        //            c.OriginalAmount = dynamicBaseValue * (c.Rate / 100);
+        //            c.Amount = ApplyRounding(dynamicBaseValue * (c.Rate / 100), c.RoundingType);
+
+        //            valueMap[c.PayConfigName] = c.Amount;
+        //        }
+        //    }
+        //    /* =========================
+        //       TOTALS
+        //    ========================= */
+        //    decimal totalEmployerCC = 0;        // Employer contributions (CTC part, NOT net)
+
+        //    foreach (var c in components)
+        //    {
+        //        var pt = (c.PayType ?? "").Trim().ToUpperInvariant();
+
+        //        if (pt == "ALLOWANCES")
+        //        {
+        //            totalEarnings += c.OriginalAmount;
+        //        }
+        //        else if (pt == "DEDUCTION")
+        //        {
+        //            totalDeductions += c.OriginalAmount;
+        //        }
+        //        else if (pt == "CC")
+        //        {
+        //            totalEmployerCC += c.OriginalAmount;   // employer cost only
+        //        }
+        //    }
+
+        //    var netPay = totalEarnings - totalDeductions;          // ✅ CC excluded
+        //    var monthlyCTC = totalEarnings + totalEmployerCC;      // ✅ optional for pivot use
+
+
+        //    return new EmployeeSalaryResponse
+        //    {
+        //        TotalEarnings = Math.Round(totalEarnings, 0),
+        //        TotalDeductions = Math.Round(totalDeductions, 0),
+        //        NetPay = Math.Round(netPay, 0),
+        //        EmployerContribution = Math.Round(totalEmployerCC, 0), // ✅ add this property (recommended)
+        //        MonthlyCTC = Math.Round(monthlyCTC, 0),                // ✅ add this property (recommended)
+        //        Components = components
+        //    };
+
+        //}
         private static decimal EvaluateDynamicFormulaEXCEL(string formula, Dictionary<string, decimal> valueMap)
         {
             if (string.IsNullOrWhiteSpace(formula)) return 0;
@@ -823,12 +1050,15 @@ namespace MendinePayroll.UI.Controllers
 
             return 0m;
         }
-        private decimal GetEmployeeTDS(int employeeId, int month, int year)
+        private decimal GetEmployeeTDS(int employeeId, int monthSalaryMonth, int SalaryYear)
         {
-            // TODO:
-            // Call SP like: Payroll_GetEmployeeTDS
-            // Params: employeeId, month, year
-            // Return calculated TDS for the month
+            DataTable dt = clsDatabase.fnDataTable("Payroll_GetEmployeeTDS", employeeId, monthSalaryMonth, SalaryYear, TenantId);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                 
+                return Convert.ToDecimal(dt.Rows[0]["TdsAmount"]);
+            }
 
             return 0m;
         }
@@ -847,8 +1077,7 @@ namespace MendinePayroll.UI.Controllers
                 // Log error if needed
                 return 0m;
             }
-        }
-      
+        } 
         private PayrollPivotResponse BuildPivot(PayrollProcessRequest request, List<EmployeeSalaryResponse> results)
         {
             /* =========================
@@ -990,8 +1219,7 @@ namespace MendinePayroll.UI.Controllers
                 Columns = columns,
                 Rows = rows
             };
-        }
-
+        } 
         private int GetDisplayOrder(SalaryComponentResult c)
         {
             var payType = (c.PayType ?? "").Trim().ToUpperInvariant();
@@ -1269,8 +1497,9 @@ namespace MendinePayroll.UI.Controllers
         {
             try
             {
+                string UserId = Session["UserId"].ToString();
                 // 1. Reuse the SAME Stored Procedure
-                DataTable dt = clsDatabase.fnDataTable("SP_Payroll_SaaS_GetEmployeeSalary", TenantId);
+                DataTable dt = clsDatabase.fnDataTable("SP_Payroll_SaaS_GetEmployeeSalary", TenantId, UserId);
 
                 if (dt == null || dt.Rows.Count == 0)
                 {

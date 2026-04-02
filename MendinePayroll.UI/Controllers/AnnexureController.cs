@@ -15,6 +15,27 @@ namespace MendinePayroll.UI.Controllers
 {
     public class AnnexureController : Controller
     {
+        private string TenantId
+        {
+            get
+            {
+                try
+                {
+                    if (Session["TenantID"] == null)
+                    {
+                        // Redirect to login or handle gracefully
+                        throw new Exception("Session expired. Please log in again.");
+                    }
+                    return Session["TenantID"].ToString();
+                }
+                catch (Exception ex)
+                {
+                    // Log the error (you can use your existing logging mechanism)
+                    System.Diagnostics.Debug.WriteLine("TenantID retrieval error: " + ex.Message);
+                    throw; // Let it bubble to global error handler if configured
+                }
+            }
+        }
         public ActionResult Annexure92B()
         {
             return View();
@@ -63,13 +84,13 @@ namespace MendinePayroll.UI.Controllers
         [HttpGet]
         public JsonResult CompanyList()
         {
-            var comp = clsSalary.CompanyList();
+            var comp = clsSalary.CompanyList(TenantId);
             return Json(comp, JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
         public JsonResult EmployeeList(String Companycode)
         {
-            var emp = clsSalary.EmployeeListCompanyWise(Companycode);
+            var emp = clsSalary.EmployeeListCompanyWise(Companycode,TenantId);
             return Json(emp, JsonRequestBehavior.AllowGet);
         }
         [HttpGet]

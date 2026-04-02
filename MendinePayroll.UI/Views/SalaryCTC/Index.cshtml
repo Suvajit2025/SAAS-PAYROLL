@@ -1053,8 +1053,6 @@
             .on('change', applyFilters);
     });
     // ===================== AJAX LOAD DROPDOWNS =====================
-
-
     function loadFilters() {
 
         // ----------- LOAD COMPANY -----------
@@ -1132,8 +1130,6 @@
         });
 
     }
-     
-
     /* ===============================
        LOAD DATA FROM SERVER (ONCE)
     ================================ */
@@ -1158,43 +1154,9 @@
             }
         });
     }
-
     /* ===============================
        APPLY CLIENT-SIDE FILTERS
     ================================ */
-    //function applyFilters() {
-
-    //    let companyIds = ($('#ddlCompany').val() || []).map(String);
-    //    let deptIds = ($('#ddlDepartment').val() || []).map(String);
-    //    let categoryIds = ($('#ddlCategory').val() || []).map(String);
-    //    let paygroupIds = ($('#ddlpaygroup').val() || []).map(String);
-    //    let status = $('#ddlstatus').val() || 'ACTIVE';
-
-    //    let filtered = allEmployees.filter(emp => {
-
-    //        // Status (default ACTIVE)
-    //        if (status !== 'All' && String(emp.Empstatus) !== status)
-    //            return false;
-
-    //        // Company
-    //        if (companyIds.length && !companyIds.includes(String(emp.CompanyID)))
-    //            return false;
-
-    //        // Department
-    //        if (deptIds.length && !deptIds.includes(String(emp.DepartmentID)))
-    //            return false;
-
-    //        // Category
-    //        if (categoryIds.length && !categoryIds.includes(String(emp.CategoryID)))
-    //            return false;
-    //        // PayGroup
-    //        if (paygroupIds.length && !paygroupIds.includes(String(emp.PayGroupID)))
-    //            return false;
-    //        return true;
-    //    });
-
-    //    renderTable(filtered);
-    //}
     function applyFilters() {
 
         let companyIds = ($('#ddlCompany').val() || []).map(v => String(v));
@@ -1236,7 +1198,6 @@
 
         renderTable(filtered);
     }
-
     /* ===============================
        RENDER DATATABLE
     ================================ */
@@ -1325,8 +1286,6 @@
             .replaceAll('"', "&quot;")
             .replaceAll("'", "&#039;");
     }
-
-    
     // ==========================================
     //        MODAL CALCULATION LOGIC
     // ==========================================
@@ -1763,8 +1722,6 @@
         $(elem).val(val);
         reCalculateAll();
     }
-
-
      
     function evaluateFormula(formula, calcs) {
         if (!formula || typeof formula !== "string") return 0;
@@ -1822,7 +1779,6 @@
             return 0;
         }
     }
-
 
     function reCalculateAll() {
         if (!curConfig || !curConfig.length) return;

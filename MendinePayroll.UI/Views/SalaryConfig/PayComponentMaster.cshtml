@@ -352,6 +352,47 @@
 
     #txtName { text-transform: uppercase; }
     #chkVar, #chkLoan { display: none; }
+    /* Base header setup */
+    #compTable thead th {
+        position: relative;
+        cursor: pointer;
+        padding-right: 18px;
+    }
+
+        /* Remove any previous icons first */
+        #compTable thead th::after {
+            content: "";
+        }
+
+        /* Neutral (before sorting) */
+        #compTable thead th.sorting::after {
+            content: "\f0dc"; /* fa-sort */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 6px;
+            color: #ccc;
+        }
+
+        /* Ascending */
+        #compTable thead th.sorting_asc::after {
+            content: "\f0de"; /* fa-sort-up */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 6px;
+            color: #0E7777;
+        }
+
+        /* Descending */
+        #compTable thead th.sorting_desc::after {
+            content: "\f0dd"; /* fa-sort-down */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 6px;
+            color: #0E7777;
+        }
 </style>
 
 <section role="main" class="content-body">

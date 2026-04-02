@@ -508,7 +508,7 @@ namespace MendinePayroll.UI.Controllers
 
                                 bool isWaived = Convert.ToBoolean(r["LoanWaivedYN"]);
                                 decimal previewPayValue = Convert.ToDecimal(r["PayValue"]);
-
+                                //var prevDate = new DateTime(currentYear, currentMonth, 1).AddMonths(-1);
                                 loanJsonList.Add(new
                                 {
                                     

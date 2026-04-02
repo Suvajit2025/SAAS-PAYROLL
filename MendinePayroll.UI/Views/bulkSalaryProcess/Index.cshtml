@@ -8,6 +8,2457 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
 
+@*<style>
+        /* --- CORE STYLES --- */
+        #salary-process-wrapper {
+            font-family: 'Inter', sans-serif;
+            color: #2c3e50;
+            font-size: 13px;
+        }
+
+        :root {
+            --primary: #0E7777;
+            --primary-light: #e0f2f2;
+            --text: #2c3e50;
+            --border: #e0e0e0;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --focus-ring: rgba(14, 119, 119, 0.15);
+        }
+
+        .custom-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+
+            .custom-page-header h1 {
+                margin: 0;
+                font-size: 18px;
+                color: var(--primary);
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+        /* Buttons */
+        .btn-create, .btn-outline, .btn-reject, .btn-approve, .btn-export, .btn-upload {
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            padding: 6px 14px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .btn-create {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+            .btn-create:hover {
+                background: #095555;
+            }
+
+        .btn-outline {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            color: var(--text);
+        }
+
+            .btn-outline:hover {
+                background: #f8fafc;
+                border-color: #94a3b8;
+            }
+
+        .btn-reject {
+            background: #fff;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: white;
+            border: none;
+        }
+
+        .btn-export {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #64748b;
+        }
+
+        .btn-upload {
+            background: #f0f9ff;
+            border: 1px dashed #0284c7;
+            color: #0284c7;
+        }
+
+            .btn-upload:hover {
+                background: #e0f2fe;
+            }
+
+        /* Toggle & Filter */
+        .view-toggle-container {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .view-toggle-btn {
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .view-toggle-btn.active {
+                background: #fff;
+                color: var(--primary);
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                font-weight: 700;
+            }
+
+        .filter-select {
+            padding: 6px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 12px;
+            outline: none;
+            min-width: 160px;
+            background-color: #fff;
+        }
+
+        /* Batch Grid */
+        .batch-card {
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            min-height: 200px;
+        }
+
+        .batch-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+            .batch-table th {
+                background: #f8fafc;
+                padding: 10px 15px;
+                text-align: left;
+                border-bottom: 1px solid var(--border);
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+            }
+
+            .batch-table td {
+                padding: 10px 15px;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+            }
+
+        .comp-col {
+            background-color: #fffbeb;
+            border-left: 1px solid #fef3c7;
+            color: #92400e;
+        }
+
+        /* Modals Common */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 9999;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-box {
+            background: #fff;
+            margin: 2vh auto;
+            border-radius: 8px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.25s ease;
+        }
+
+        @@keyframes slideUp {
+            from {
+                transform: translateY(15px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-lg {
+            width: 900px;
+            max-height: 85vh;
+            margin: 5vh auto;
+        }
+
+        .modal-xl {
+            width: 98%;
+            max-width: 1550px;
+            height: 94vh;
+        }
+
+        .modal-md {
+            width: 600px;
+        }
+
+        .modal-header-custom {
+            padding: 12px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 4px solid var(--primary);
+            border-radius: 6px 6px 0 0;
+        }
+
+        .modal-title-custom h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .modal-title-custom small {
+            display: block;
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .btn-close-custom {
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        .modal-footer-custom {
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            background: #f8fafc;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-radius: 0 0 6px 6px;
+        }
+
+        /* Detail Modal & Grids */
+        .emp-link {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+            .emp-link:hover {
+                text-decoration: underline;
+            }
+
+        .grid-container {
+            flex: 1;
+            overflow: hidden;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+
+        table.dataTable {
+            margin: 0 !important;
+            width: 100%;
+            border-collapse: collapse !important;
+        }
+
+            table.dataTable thead th {
+                background: #f1f5f9;
+                color: #475569;
+                font-size: 11px;
+                text-transform: uppercase;
+                font-weight: 700;
+                padding: 10px 8px;
+                border-bottom: 1px solid #cbd5e1;
+                white-space: nowrap;
+            }
+
+            table.dataTable tbody td {
+                font-size: 12px;
+                padding: 4px 8px;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+                height: 32px;
+            }
+
+        .dt-money {
+            text-align: right;
+            font-family: 'Consolas', monospace;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .dt-net {
+            background-color: #f0fdfa !important;
+            font-weight: 700;
+            color: #0f766e;
+            border-left: 2px solid #ccfbf1;
+        }
+
+        .grid-input {
+            width: 100%;
+            border: 1px solid transparent;
+            background: transparent;
+            text-align: right;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            padding: 2px 4px;
+            height: 26px;
+            border-radius: 3px;
+        }
+
+            .grid-input:focus {
+                border-color: var(--primary);
+                background: #fff;
+                box-shadow: 0 0 0 2px var(--focus-ring);
+                outline: none;
+            }
+
+        .is-changed {
+            background-color: #fffbeb !important;
+        }
+
+        /* Loan Widget */
+        .loan-cell-content {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .loan-link {
+            color: #d97706;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 1px dashed #d97706;
+            font-size: 11px;
+        }
+
+        .waive-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            background: #f8fafc;
+            padding: 1px 4px;
+            border-radius: 3px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .is-waived .loan-link {
+            text-decoration: line-through;
+            color: #cbd5e1;
+            border-color: transparent;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 2px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            height: 40px;
+        }
+
+        .stats-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            white-space: nowrap;
+        }
+
+        .stats-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            font-weight: 400;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .val-earn {
+            color: var(--success);
+        }
+
+        .val-ded {
+            color: var(--danger);
+        }
+
+        .val-net {
+            color: var(--primary);
+        }
+
+        .divider {
+            width: 1px;
+            height: 18px;
+            background: #e5e7eb;
+        }
+
+        /* Gen Modal Styles */
+        .form-control-custom {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        .form-group-custom {
+            margin-bottom: 15px;
+        }
+
+        .form-label-custom {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .selection-container {
+            display: flex;
+            height: 350px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .selection-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+        }
+
+        .col-header {
+            padding: 8px 12px;
+            background: #f8fafc;
+            font-weight: 700;
+            font-size: 11px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .emp-list-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+            max-height: 100%;
+        }
+
+        .emp-item {
+            padding: 6px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Loan Cards & History */
+        .loan-card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .loan-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .loan-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .loan-val {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .hist-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+            .hist-table th {
+                background: #334155;
+                color: #fff;
+                padding: 8px 10px;
+                text-align: left;
+            }
+
+            .hist-table td {
+                padding: 8px 10px;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+        /* --- EDIT SALARY MODAL (Industry Standard) --- */
+        .edit-modal-layout {
+            display: flex;
+            height: 480px;
+        }
+        /* Increased Height for new fields */
+        .edit-sidebar {
+            width: 260px;
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .edit-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .input-group-custom label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .input-field-styled {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: #334155;
+        }
+
+            .input-field-styled:focus {
+                border-color: var(--primary);
+                outline: none;
+            }
+
+        .salary-slip-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .slip-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .slip-header {
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+            .slip-header.earn {
+                background: #f0fdf4;
+                color: #166534;
+            }
+
+            .slip-header.ded {
+                background: #fef2f2;
+                color: #991b1b;
+            }
+
+        .slip-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+
+            .slip-table td {
+                padding: 6px 12px;
+                border-bottom: 1px solid #f1f5f9;
+            }
+
+        .slip-amt {
+            text-align: right;
+            font-family: 'Consolas', monospace;
+            font-weight: 600;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 16px;
+                width: 16px;
+                left: 2px;
+                bottom: 2px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+            input:checked + .slider:before {
+                transform: translateX(20px);
+            }
+
+        .net-pay-banner {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .net-pay-val {
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Consolas', monospace;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center !important;
+        }
+
+        .text-right {
+            text-align: right !important;
+        }
+
+        .accordion-section {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .accordion-header {
+            padding: 12px 20px;
+            background: #f8fafc;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-body {
+            padding: 0;
+        }
+
+        .acc-icon {
+            transition: transform 0.2s;
+        }
+
+        .acc-open {
+            transform: rotate(180deg);
+        }
+        /* ===== EXCEL WRAPPER ===== */
+        .excel-wrapper {
+            max-height: 58vh;
+            overflow: auto;
+            background: #fff;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* ===== TABLE ===== */
+        .excel-table {
+            border-collapse: collapse;
+            width: max-content;
+            min-width: 100%;
+            font-size: 12px;
+        }
+
+            /* ===== HEADER ===== */
+            .excel-table thead th {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background: #f8fafc;
+                color: #0f172a;
+                font-weight: 600;
+                border: 1px solid #e5e7eb;
+                padding: 8px;
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            /* ===== FREEZE FIRST 2 COLS ===== */
+            .excel-table th.sticky-col,
+            .excel-table td.sticky-col {
+                position: sticky;
+                left: 0;
+                z-index: 8;
+                background: #ffffff;
+            }
+
+            .excel-table th.sticky-col-2,
+            .excel-table td.sticky-col-2 {
+                position: sticky;
+                left: 80px;
+                z-index: 8;
+                background: #ffffff;
+            }
+
+            /* ===== CELLS ===== */
+            .excel-table td {
+                border: 1px solid #e5e7eb;
+                padding: 6px 8px;
+                text-align: right;
+                white-space: nowrap;
+                background: #ffffff;
+            }
+
+            /* ===== ROW HOVER ===== */
+            .excel-table tbody tr:hover td {
+                background: #f1f5f9;
+            }
+
+            /* ===== TEXT ALIGN ===== */
+            .excel-table td.left {
+                text-align: left;
+            }
+
+        /* ===== INPUT CELL ===== */
+        .excel-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: right;
+            font-size: 12px;
+            outline: none;
+        }
+
+            .excel-input:focus {
+                background: #ecfeff;
+                box-shadow: inset 0 0 0 1px #0E7777;
+            }
+
+        /* ===== COLORS ===== */
+        .cell-earn {
+            color: #065f46;
+            font-weight: 600;
+        }
+
+        .cell-ded {
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        .cell-net {
+            font-weight: 700;
+            background: #f0fdfa;
+        }
+
+        /* ===== LOAN ===== */
+        .loan-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .loan-box label {
+                font-size: 10px;
+                font-weight: 700;
+                color: #b45309;
+                cursor: pointer;
+            }
+
+        /* ===== WAIVED ===== */
+        .is-waived {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+        /* --- PREMIUM DETAIL MODAL OVERHAUL --- */
+        #detailModal .modal-xl {
+            background: #f1f5f9; /* Subtle grey background for the container */
+            border-top: 5px solid var(--primary);
+        }
+
+        #detailModal .stats-bar {
+            background: white;
+            padding: 4px 3px;
+            height: auto;
+            border-bottom: 2px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 18px; /* Larger, more readable values */
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+        }
+
+        /* --- THE EXCEL GRID OVERHAUL --- */
+        .excel-wrapper {
+            /*margin: 15px;*/
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            background: white;
+        }
+
+        .excel-table {
+            border-spacing: 0;
+        }
+
+            .excel-table thead th {
+                background: #f8fafc;
+                color: #475569;
+                font-weight: 700;
+                font-size: 11px;
+                text-transform: uppercase;
+                padding: 12px 10px;
+                border-bottom: 2px solid #cbd5e1;
+                border-right: 1px solid #e2e8f0;
+            }
+
+            /* Frozen Column Effect */
+            .excel-table .sticky-col,
+            .excel-table .sticky-col-2 {
+                background: #fdfdfd !important;
+                border-right: 2px solid #e2e8f0 !important;
+            }
+
+            .excel-table tbody td {
+                padding: 8px 12px;
+                border-bottom: 1px solid #f1f5f9;
+                border-right: 1px solid #f1f5f9;
+                font-family: 'Inter', sans-serif;
+                color: #334155;
+                transition: background 0.2s;
+            }
+
+            .excel-table tbody tr:hover td {
+                background-color: #f0f9ff !important; /* Soft blue highlight */
+            }
+
+        /* Net Pay Column - High Highlight */
+        .cell-net {
+            background: #f0fdfa !important;
+            color: #0d9488 !important;
+            font-weight: 800 !important;
+            border-left: 2px solid #5eead4 !important;
+            font-size: 13px;
+        }
+
+        /* Input Styling inside Excel */
+        .excel-input {
+            border: 1px solid transparent;
+            padding: 4px 8px;
+            border-radius: 4px;
+            width: 80px;
+            transition: all 0.2s;
+        }
+
+            .excel-input:hover {
+                border-color: #cbd5e1;
+                background: white;
+            }
+
+            .excel-input:focus {
+                border-color: var(--primary);
+                background: white;
+                box-shadow: 0 0 0 3px rgba(14, 119, 119, 0.2);
+            }
+
+        /* Waive Switch (Better looking labels) */
+        .loan-box label {
+            background: #fff7ed;
+            color: #c2410c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            border: 1px solid #ffedd5;
+            transition: 0.2s;
+        }
+
+            .loan-box label:hover {
+                background: #ffedd5;
+            }
+
+        /* Footer Layout */
+        .modal-footer-custom {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Header styling */
+        .header-manual {
+            background-color: #fff7ed !important; /* Light Orange */
+            color: #9a3412 !important; /* Dark Brown/Orange text */
+            border-bottom: 2px solid #fdba74 !important;
+        }
+
+        /* Cell styling */
+        .cell-manual {
+            background-color: #fffbeb !important; /* Very light yellow */
+            color: #b45309 !important; /* Amber text */
+            font-weight: 600;
+        }
+
+        /* Optional: Highlight the text if it's an adjustment */
+        .manual-text {
+            border-bottom: 1px dashed #f59e0b;
+        }
+
+        .header-ctc {
+            background-color: #f1f5f9 !important;
+            color: #64748b !important;
+            border-left: 2px solid #cbd5e1 !important;
+        }
+
+        /* Base table */
+        #salaryTable {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+            /* All headers */
+            #salaryTable thead th {
+                position: sticky;
+                top: 0;
+                background: #f8fafc;
+                z-index: 10; /* baseline */
+            }
+
+            #salaryTable thead {
+                position: sticky !important;
+                top: 0;
+                z-index: 5;
+            }
+
+
+        /* Sticky Employee column */
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 30; /* highest */
+            background: #ffffff;
+        }
+
+        /* Sticky Paid Days column */
+        .sticky-col-2 {
+            position: sticky;
+            left: 120px; /* adjust to actual width */
+            z-index: 25;
+            background: #ffffff;
+        }
+
+        /* Net Salary header */
+        .header-net {
+            background: #dcfce7;
+            font-weight: 700;
+            z-index: 12;
+        }
+
+        /* Monthly CTC header */
+        .header-ctc {
+            background: #e0f2fe;
+            font-weight: 700;
+            z-index: 12;
+        }
+
+        /* Deduction header */
+        .header-deduction {
+            background: #fee2e2;
+        }
+
+        /* Manual header */
+        .header-manual {
+            background: #fef3c7;
+        }
+
+        .manual-input {
+            width: 80px;
+            text-align: right;
+            padding: 3px 6px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+            .manual-input:focus {
+                outline: none;
+                border-color: #0E7777;
+                background-color: #f0fdfa;
+            }
+
+        /**/
+        /* --- DATA TABLE HEADER STYLES --- */
+        .dt-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            border-bottom: none; /* Table header will provide bottom border */
+            border-radius: 6px 6px 0 0;
+            margin-bottom: 0;
+        }
+
+        .dt-filters-left {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .dt-search-right {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Force DataTable Search input styling */
+        .dataTables_filter {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            float: none !important;
+        }
+
+            .dataTables_filter input {
+                height: 34px;
+                padding: 4px 10px;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                font-size: 13px;
+                outline: none;
+            }
+
+                .dataTables_filter input:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 2px var(--focus-ring);
+                }
+
+        /* Hide the internal filter inputs initially */
+        #hidden-filter-source {
+            display: none;
+        }
+    </style>
+    <style>
+        /* --- CORE STYLES --- */
+        #salary-process-wrapper {
+            font-family: 'Inter', sans-serif;
+            color: #2c3e50;
+            font-size: 13px;
+        }
+
+        :root {
+            --primary: #0E7777;
+            --primary-light: #e0f2f2;
+            --text: #2c3e50;
+            --border: #e0e0e0;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --focus-ring: rgba(14, 119, 119, 0.15);
+        }
+        /*    body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            color: var(--primary);
+            transform: scale(0.9);
+            transform-origin: top left;
+            width: 111.11%;
+        } */
+        .custom-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+
+            .custom-page-header h1 {
+                margin: 0;
+                font-size: 18px;
+                color: var(--primary);
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+        /* Buttons */
+        .btn-create, .btn-outline, .btn-reject, .btn-approve, .btn-export, .btn-upload {
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            padding: 6px 14px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .btn-create {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+            .btn-create:hover {
+                background: #095555;
+            }
+
+        .btn-outline {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            color: var(--text);
+        }
+
+            .btn-outline:hover {
+                background: #f8fafc;
+                border-color: #94a3b8;
+            }
+
+        .btn-reject {
+            background: #fff;
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: white;
+            border: none;
+        }
+
+        .btn-export {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #64748b;
+        }
+
+        .btn-upload {
+            background: #f0f9ff;
+            border: 1px dashed #0284c7;
+            color: #0284c7;
+        }
+
+            .btn-upload:hover {
+                background: #e0f2fe;
+            }
+
+        /* Toggle & Filter */
+        .view-toggle-container {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .view-toggle-btn {
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .view-toggle-btn.active {
+                background: #fff;
+                color: var(--primary);
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                font-weight: 700;
+            }
+
+        .filter-select {
+            padding: 6px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 12px;
+            outline: none;
+            min-width: 160px;
+            background-color: #fff;
+        }
+
+        /* Batch Grid */
+        .batch-card {
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            min-height: 200px;
+        }
+
+        .batch-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+            .batch-table th {
+                background: #f8fafc;
+                padding: 10px 15px;
+                text-align: left;
+                border-bottom: 1px solid var(--border);
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+            }
+
+            .batch-table td {
+                padding: 10px 15px;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+            }
+
+        .comp-col {
+            background-color: #fffbeb;
+            border-left: 1px solid #fef3c7;
+            color: #92400e;
+        }
+
+        /* Modals Common */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 9999;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-box {
+            background: #fff;
+            margin: 2vh auto;
+            border-radius: 8px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.25s ease;
+        }
+
+        @@keyframes slideUp {
+            from {
+                transform: translateY(15px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-lg {
+            width: 900px;
+            max-height: 85vh;
+            margin: 5vh auto;
+        }
+
+        .modal-xl {
+            width: 98%;
+            max-width: 1550px;
+            height: 94vh;
+        }
+
+        .modal-md {
+            width: 600px;
+        }
+
+        .modal-header-custom {
+            padding: 12px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 4px solid var(--primary);
+            border-radius: 6px 6px 0 0;
+        }
+
+        .modal-title-custom h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .modal-title-custom small {
+            display: block;
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .btn-close-custom {
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        .modal-footer-custom {
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            background: #f8fafc;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-radius: 0 0 6px 6px;
+        }
+
+        /* Detail Modal & Grids */
+        .emp-link {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+            .emp-link:hover {
+                text-decoration: underline;
+            }
+
+        .grid-container {
+            flex: 1;
+            overflow: hidden;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+
+        table.dataTable {
+            margin: 0 !important;
+            width: 100%;
+            border-collapse: collapse !important;
+        }
+
+            table.dataTable thead th {
+                background: #f1f5f9;
+                color: #475569;
+                font-size: 11px;
+                text-transform: uppercase;
+                font-weight: 700;
+                padding: 10px 8px;
+                border-bottom: 1px solid #cbd5e1;
+                white-space: nowrap;
+            }
+
+            table.dataTable tbody td {
+                font-size: 12px;
+                padding: 4px 8px;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+                height: 32px;
+            }
+
+        .dt-money {
+            text-align: right;
+            font-family: 'Consolas', monospace;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .dt-net {
+            background-color: #f0fdfa !important;
+            font-weight: 700;
+            color: #0f766e;
+            border-left: 2px solid #ccfbf1;
+        }
+
+        .grid-input {
+            width: 100%;
+            border: 1px solid transparent;
+            background: transparent;
+            text-align: right;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            padding: 2px 4px;
+            height: 26px;
+            border-radius: 3px;
+        }
+
+            .grid-input:focus {
+                border-color: var(--primary);
+                background: #fff;
+                box-shadow: 0 0 0 2px var(--focus-ring);
+                outline: none;
+            }
+
+        .is-changed {
+            background-color: #fffbeb !important;
+        }
+
+        /* Loan Widget */
+        .loan-cell-content {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .loan-link {
+            color: #d97706;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 1px dashed #d97706;
+            font-size: 11px;
+        }
+
+        .waive-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            background: #f8fafc;
+            padding: 1px 4px;
+            border-radius: 3px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .is-waived .loan-link {
+            text-decoration: line-through;
+            color: #cbd5e1;
+            border-color: transparent;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 2px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            height: 40px;
+        }
+
+        .stats-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            white-space: nowrap;
+        }
+
+        .stats-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            font-weight: 400;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .val-earn {
+            color: var(--success);
+        }
+
+        .val-ded {
+            color: var(--danger);
+        }
+
+        .val-net {
+            color: var(--primary);
+        }
+
+        .divider {
+            width: 1px;
+            height: 18px;
+            background: #e5e7eb;
+        }
+
+        /* Gen Modal Styles */
+        .form-control-custom {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        .form-group-custom {
+            margin-bottom: 15px;
+        }
+
+        .form-label-custom {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .selection-container {
+            display: flex;
+            height: 350px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .selection-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+        }
+
+        .col-header {
+            padding: 8px 12px;
+            background: #f8fafc;
+            font-weight: 700;
+            font-size: 11px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .emp-list-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+            max-height: 100%;
+        }
+
+        .emp-item {
+            padding: 6px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Loan Cards & History */
+        .loan-card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .loan-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .loan-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .loan-val {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .hist-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+            .hist-table th {
+                background: #334155;
+                color: #fff;
+                padding: 8px 10px;
+                text-align: left;
+            }
+
+            .hist-table td {
+                padding: 8px 10px;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+        /* --- EDIT SALARY MODAL (Industry Standard) --- */
+        .edit-modal-layout {
+            display: flex;
+            height: 480px;
+        }
+        /* Increased Height for new fields */
+        .edit-sidebar {
+            width: 260px;
+            background: #f8fafc;
+            border-right: 1px solid #e2e8f0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .edit-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .input-group-custom label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .input-field-styled {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: #334155;
+        }
+
+            .input-field-styled:focus {
+                border-color: var(--primary);
+                outline: none;
+            }
+
+        .salary-slip-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .slip-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .slip-header {
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+            .slip-header.earn {
+                background: #f0fdf4;
+                color: #166534;
+            }
+
+            .slip-header.ded {
+                background: #fef2f2;
+                color: #991b1b;
+            }
+
+        .slip-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+
+            .slip-table td {
+                padding: 6px 12px;
+                border-bottom: 1px solid #f1f5f9;
+            }
+
+        .slip-amt {
+            text-align: right;
+            font-family: 'Consolas', monospace;
+            font-weight: 600;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 16px;
+                width: 16px;
+                left: 2px;
+                bottom: 2px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+            input:checked + .slider:before {
+                transform: translateX(20px);
+            }
+
+        .net-pay-banner {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .net-pay-val {
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Consolas', monospace;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center !important;
+        }
+
+        .text-right {
+            text-align: right !important;
+        }
+
+        .accordion-section {
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .accordion-header {
+            padding: 12px 20px;
+            background: #f8fafc;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-body {
+            padding: 0;
+        }
+
+        .acc-icon {
+            transition: transform 0.2s;
+        }
+
+        .acc-open {
+            transform: rotate(180deg);
+        }
+        /* ===== EXCEL WRAPPER ===== */
+        .excel-wrapper {
+            max-height: 58vh;
+            overflow: auto;
+            background: #fff;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* ===== TABLE ===== */
+        .excel-table {
+            border-collapse: collapse;
+            width: max-content;
+            min-width: 100%;
+            font-size: 12px;
+        }
+
+            /* ===== HEADER ===== */
+            .excel-table thead th {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background: #f8fafc;
+                color: #0f172a;
+                font-weight: 600;
+                border: 1px solid #e5e7eb;
+                padding: 8px;
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            /* ===== FREEZE FIRST 2 COLS ===== */
+            .excel-table th.sticky-col,
+            .excel-table td.sticky-col {
+                position: sticky;
+                left: 0;
+                z-index: 8;
+                background: #ffffff;
+            }
+
+            .excel-table th.sticky-col-2,
+            .excel-table td.sticky-col-2 {
+                position: sticky;
+                left: 80px;
+                z-index: 8;
+                background: #ffffff;
+            }
+
+            /* ===== CELLS ===== */
+            .excel-table td {
+                border: 1px solid #e5e7eb;
+                padding: 6px 8px;
+                text-align: right;
+                white-space: nowrap;
+                background: #ffffff;
+            }
+
+            /* ===== ROW HOVER ===== */
+            .excel-table tbody tr:hover td {
+                background: #f1f5f9;
+            }
+
+            /* ===== TEXT ALIGN ===== */
+            .excel-table td.left {
+                text-align: left;
+            }
+
+        /* ===== INPUT CELL ===== */
+        .excel-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: right;
+            font-size: 12px;
+            outline: none;
+        }
+
+            .excel-input:focus {
+                background: #ecfeff;
+                box-shadow: inset 0 0 0 1px #0E7777;
+            }
+
+        /* ===== COLORS ===== */
+        .cell-earn {
+            color: #065f46;
+            font-weight: 600;
+        }
+
+        .cell-ded {
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        .cell-net {
+            font-weight: 700;
+            background: #f0fdfa;
+        }
+
+        /* ===== LOAN ===== */
+        .loan-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .loan-box label {
+                font-size: 10px;
+                font-weight: 700;
+                color: #b45309;
+                cursor: pointer;
+            }
+
+        /* ===== WAIVED ===== */
+        .is-waived {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+        /* --- PREMIUM DETAIL MODAL OVERHAUL --- */
+        #detailModal .modal-xl {
+            background: #f1f5f9; /* Subtle grey background for the container */
+            border-top: 5px solid var(--primary);
+        }
+
+        #detailModal .stats-bar {
+            background: white;
+            padding: 4px 3px;
+            height: auto;
+            border-bottom: 2px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 18px; /* Larger, more readable values */
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+        }
+
+        /* --- THE EXCEL GRID OVERHAUL --- */
+        .excel-wrapper {
+            /*margin: 15px;*/
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            background: white;
+        }
+
+        .excel-table {
+            border-spacing: 0;
+        }
+
+            .excel-table thead th {
+                background: #f8fafc;
+                color: #475569;
+                font-weight: 700;
+                font-size: 11px;
+                text-transform: uppercase;
+                padding: 12px 10px;
+                border-bottom: 2px solid #cbd5e1;
+                border-right: 1px solid #e2e8f0;
+            }
+
+            /* Frozen Column Effect */
+            .excel-table .sticky-col,
+            .excel-table .sticky-col-2 {
+                background: #fdfdfd !important;
+                border-right: 2px solid #e2e8f0 !important;
+            }
+
+            .excel-table tbody td {
+                padding: 8px 12px;
+                border-bottom: 1px solid #f1f5f9;
+                border-right: 1px solid #f1f5f9;
+                font-family: 'Inter', sans-serif;
+                color: #334155;
+                transition: background 0.2s;
+            }
+
+            .excel-table tbody tr:hover td {
+                background-color: #f0f9ff !important; /* Soft blue highlight */
+            }
+
+        /* Net Pay Column - High Highlight */
+        .cell-net {
+            background: #f0fdfa !important;
+            color: #0d9488 !important;
+            font-weight: 800 !important;
+            border-left: 2px solid #5eead4 !important;
+            font-size: 13px;
+        }
+
+        /* Input Styling inside Excel */
+        .excel-input {
+            border: 1px solid transparent;
+            padding: 4px 8px;
+            border-radius: 4px;
+            width: 80px;
+            transition: all 0.2s;
+        }
+
+            .excel-input:hover {
+                border-color: #cbd5e1;
+                background: white;
+            }
+
+            .excel-input:focus {
+                border-color: var(--primary);
+                background: white;
+                box-shadow: 0 0 0 3px rgba(14, 119, 119, 0.2);
+            }
+
+        /* Waive Switch (Better looking labels) */
+        .loan-box label {
+            background: #fff7ed;
+            color: #c2410c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            border: 1px solid #ffedd5;
+            transition: 0.2s;
+        }
+
+            .loan-box label:hover {
+                background: #ffedd5;
+            }
+
+        /* Footer Layout */
+        .modal-footer-custom {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Header styling */
+        .header-manual {
+            background-color: #fff7ed !important; /* Light Orange */
+            color: #9a3412 !important; /* Dark Brown/Orange text */
+            border-bottom: 2px solid #fdba74 !important;
+        }
+
+        /* Cell styling */
+        .cell-manual {
+            background-color: #fffbeb !important; /* Very light yellow */
+            color: #b45309 !important; /* Amber text */
+            font-weight: 600;
+        }
+
+        /* Optional: Highlight the text if it's an adjustment */
+        .manual-text {
+            border-bottom: 1px dashed #f59e0b;
+        }
+
+        .header-ctc {
+            background-color: #f1f5f9 !important;
+            color: #64748b !important;
+            border-left: 2px solid #cbd5e1 !important;
+        }
+
+        /* Base table */
+        #salaryTable {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+            /* All headers */
+            #salaryTable thead th {
+                position: sticky;
+                top: 0;
+                background: #f8fafc;
+                z-index: 10; /* baseline */
+            }
+
+            #salaryTable thead {
+                position: sticky !important;
+                top: 0;
+                z-index: 5;
+            }
+
+
+        /* Sticky Employee column */
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 30; /* highest */
+            background: #ffffff;
+        }
+
+        /* Sticky Paid Days column */
+        .sticky-col-2 {
+            position: sticky;
+            left: 120px; /* adjust to actual width */
+            z-index: 25;
+            background: #ffffff;
+        }
+
+        /* Net Salary header */
+        .header-net {
+            background: #dcfce7;
+            font-weight: 700;
+            z-index: 12;
+        }
+
+        /* Monthly CTC header */
+        .header-ctc {
+            background: #e0f2fe;
+            font-weight: 700;
+            z-index: 12;
+        }
+
+        /* Deduction header */
+        .header-deduction {
+            background: #fee2e2;
+        }
+
+        /* Manual header */
+        .header-manual {
+            background: #fef3c7;
+        }
+
+        .manual-input {
+            width: 80px;
+            text-align: right;
+            padding: 3px 6px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+            .manual-input:focus {
+                outline: none;
+                border-color: #0E7777;
+                background-color: #f0fdfa;
+            }
+
+        /**/
+        /* --- DATA TABLE HEADER STYLES --- */
+        .dt-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            border-bottom: none; /* Table header will provide bottom border */
+            border-radius: 6px 6px 0 0;
+            margin-bottom: 0;
+        }
+
+        .dt-filters-left {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .dt-search-right {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Force DataTable Search input styling */
+        .dataTables_filter {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            float: none !important;
+        }
+
+            .dataTables_filter input {
+                height: 34px;
+                padding: 4px 10px;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                font-size: 13px;
+                outline: none;
+            }
+
+                .dataTables_filter input:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 2px var(--focus-ring);
+                }
+
+        /* Hide the internal filter inputs initially */
+        #hidden-filter-source {
+            display: none;
+        }
+
+        /* FULL SCREEN LOCK */
+        .payroll-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+        }
+
+        /* DARK BACKDROP */
+        .payroll-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65); /* slate */
+            pointer-events: all;
+        }
+
+        /* CENTER BOX */
+        .payroll-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            padding: 28px 38px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 18px 40px rgba(0,0,0,.35);
+        }
+
+            /* ICON */
+            .payroll-box i {
+                font-size: 44px;
+                color: #0E7777;
+                margin-bottom: 12px;
+            }
+
+        /* TEXT */
+        .payroll-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        /**/
+        .dt-top-row {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .dt-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .dt-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 12px;
+        }
+
+        .btn-export {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+            .btn-export i {
+                font-size: 18px;
+                color: #16a34a;
+            }
+
+            .btn-export:hover i {
+                color: #15803d;
+            }
+        .row-rejected {
+            background-color: #fff5f5 !important; /* Very light red */
+        }
+
+            .row-rejected:hover {
+                background-color: #fed7d7 !important; /* Slightly darker red on hover */
+            }
+
+        /* 1. Hide the up/down arrows (spinners) in all browsers */
+        #attTableBody input::-webkit-outer-spin-button,
+        #attTableBody input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        #attTableBody input[type=number] {
+            -moz-appearance: textfield; /* For Firefox */
+        }
+        /* 2. Add a 20px gap to the last column of your table */
+        #attTableHead th:last-child,
+        #attTableBody td:last-child {
+            padding-right: 20px !important;
+            text-align: right;
+        }
+        /* 3. Style the scrollbar so it is easy to see */
+        .modal-body::-webkit-scrollbar {
+            width: 10px; /* Wider for easier clicking */
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f8fafc; /* Light gray background so the track is visible */
+            border-left: 1px solid #e2e8f0;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #94a3b8; /* Darker gray handle so it stands out */
+            border-radius: 5px;
+            border: 2px solid #f8fafc; /* Adds a small margin inside the bar */
+        }
+    </style>*@
 <style>
     /* --- CORE STYLES --- */
     #salary-process-wrapper {
@@ -772,71 +3223,6 @@
     .acc-open {
         transform: rotate(180deg);
     }
-    /* ===== EXCEL WRAPPER ===== */
-    .excel-wrapper {
-        max-height: 58vh;
-        overflow: auto;
-        background: #fff;
-        border-top: 1px solid #e5e7eb;
-    }
-
-    /* ===== TABLE ===== */
-    .excel-table {
-        border-collapse: collapse;
-        width: max-content;
-        min-width: 100%;
-        font-size: 12px;
-    }
-
-        /* ===== HEADER ===== */
-        .excel-table thead th {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #f8fafc;
-            color: #0f172a;
-            font-weight: 600;
-            border: 1px solid #e5e7eb;
-            padding: 8px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        /* ===== FREEZE FIRST 2 COLS ===== */
-        .excel-table th.sticky-col,
-        .excel-table td.sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 8;
-            background: #ffffff;
-        }
-
-        .excel-table th.sticky-col-2,
-        .excel-table td.sticky-col-2 {
-            position: sticky;
-            left: 80px;
-            z-index: 8;
-            background: #ffffff;
-        }
-
-        /* ===== CELLS ===== */
-        .excel-table td {
-            border: 1px solid #e5e7eb;
-            padding: 6px 8px;
-            text-align: right;
-            white-space: nowrap;
-            background: #ffffff;
-        }
-
-        /* ===== ROW HOVER ===== */
-        .excel-table tbody tr:hover td {
-            background: #f1f5f9;
-        }
-
-        /* ===== TEXT ALIGN ===== */
-        .excel-table td.left {
-            text-align: left;
-        }
 
     /* ===== INPUT CELL ===== */
     .excel-input {
@@ -919,50 +3305,6 @@
         font-size: 18px; /* Larger, more readable values */
         font-family: 'JetBrains Mono', 'Consolas', monospace;
     }
-
-    /* --- THE EXCEL GRID OVERHAUL --- */
-    .excel-wrapper {
-        /*margin: 15px;*/
-        border-radius: 8px;
-        border: 1px solid #cbd5e1;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        background: white;
-    }
-
-    .excel-table {
-        border-spacing: 0;
-    }
-
-        .excel-table thead th {
-            background: #f8fafc;
-            color: #475569;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            padding: 12px 10px;
-            border-bottom: 2px solid #cbd5e1;
-            border-right: 1px solid #e2e8f0;
-        }
-
-        /* Frozen Column Effect */
-        .excel-table .sticky-col,
-        .excel-table .sticky-col-2 {
-            background: #fdfdfd !important;
-            border-right: 2px solid #e2e8f0 !important;
-        }
-
-        .excel-table tbody td {
-            padding: 8px 12px;
-            border-bottom: 1px solid #f1f5f9;
-            border-right: 1px solid #f1f5f9;
-            font-family: 'Inter', sans-serif;
-            color: #334155;
-            transition: background 0.2s;
-        }
-
-        .excel-table tbody tr:hover td {
-            background-color: #f0f9ff !important; /* Soft blue highlight */
-        }
 
     /* Net Pay Column - High Highlight */
     .cell-net {
@@ -1047,12 +3389,12 @@
     }
 
         /* All headers */
-        #salaryTable thead th {
+        /*#salaryTable thead th {
             position: sticky;
             top: 0;
             background: #f8fafc;
-            z-index: 10; /* baseline */
-        }
+            z-index: 10;*/ /* baseline */
+        /*}*/
 
         #salaryTable thead {
             position: sticky !important;
@@ -1061,21 +3403,7 @@
         }
 
 
-    /* Sticky Employee column */
-    .sticky-col {
-        position: sticky;
-        left: 0;
-        z-index: 30; /* highest */
-        background: #ffffff;
-    }
-
-    /* Sticky Paid Days column */
-    .sticky-col-2 {
-        position: sticky;
-        left: 120px; /* adjust to actual width */
-        z-index: 25;
-        background: #ffffff;
-    }
+   
 
     /* Net Salary header */
     .header-net {
@@ -1939,71 +4267,7 @@
     .acc-open {
         transform: rotate(180deg);
     }
-    /* ===== EXCEL WRAPPER ===== */
-    .excel-wrapper {
-        max-height: 58vh;
-        overflow: auto;
-        background: #fff;
-        border-top: 1px solid #e5e7eb;
-    }
 
-    /* ===== TABLE ===== */
-    .excel-table {
-        border-collapse: collapse;
-        width: max-content;
-        min-width: 100%;
-        font-size: 12px;
-    }
-
-        /* ===== HEADER ===== */
-        .excel-table thead th {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #f8fafc;
-            color: #0f172a;
-            font-weight: 600;
-            border: 1px solid #e5e7eb;
-            padding: 8px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        /* ===== FREEZE FIRST 2 COLS ===== */
-        .excel-table th.sticky-col,
-        .excel-table td.sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 8;
-            background: #ffffff;
-        }
-
-        .excel-table th.sticky-col-2,
-        .excel-table td.sticky-col-2 {
-            position: sticky;
-            left: 80px;
-            z-index: 8;
-            background: #ffffff;
-        }
-
-        /* ===== CELLS ===== */
-        .excel-table td {
-            border: 1px solid #e5e7eb;
-            padding: 6px 8px;
-            text-align: right;
-            white-space: nowrap;
-            background: #ffffff;
-        }
-
-        /* ===== ROW HOVER ===== */
-        .excel-table tbody tr:hover td {
-            background: #f1f5f9;
-        }
-
-        /* ===== TEXT ALIGN ===== */
-        .excel-table td.left {
-            text-align: left;
-        }
 
     /* ===== INPUT CELL ===== */
     .excel-input {
@@ -2087,49 +4351,6 @@
         font-family: 'JetBrains Mono', 'Consolas', monospace;
     }
 
-    /* --- THE EXCEL GRID OVERHAUL --- */
-    .excel-wrapper {
-        /*margin: 15px;*/
-        border-radius: 8px;
-        border: 1px solid #cbd5e1;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        background: white;
-    }
-
-    .excel-table {
-        border-spacing: 0;
-    }
-
-        .excel-table thead th {
-            background: #f8fafc;
-            color: #475569;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            padding: 12px 10px;
-            border-bottom: 2px solid #cbd5e1;
-            border-right: 1px solid #e2e8f0;
-        }
-
-        /* Frozen Column Effect */
-        .excel-table .sticky-col,
-        .excel-table .sticky-col-2 {
-            background: #fdfdfd !important;
-            border-right: 2px solid #e2e8f0 !important;
-        }
-
-        .excel-table tbody td {
-            padding: 8px 12px;
-            border-bottom: 1px solid #f1f5f9;
-            border-right: 1px solid #f1f5f9;
-            font-family: 'Inter', sans-serif;
-            color: #334155;
-            transition: background 0.2s;
-        }
-
-        .excel-table tbody tr:hover td {
-            background-color: #f0f9ff !important; /* Soft blue highlight */
-        }
 
     /* Net Pay Column - High Highlight */
     .cell-net {
@@ -2214,12 +4435,12 @@
     }
 
         /* All headers */
-        #salaryTable thead th {
+        /*#salaryTable thead th {
             position: sticky;
             top: 0;
             background: #f8fafc;
-            z-index: 10; /* baseline */
-        }
+            z-index: 10;*/ /* baseline */
+        /*}*/
 
         #salaryTable thead {
             position: sticky !important;
@@ -2228,21 +4449,7 @@
         }
 
 
-    /* Sticky Employee column */
-    .sticky-col {
-        position: sticky;
-        left: 0;
-        z-index: 30; /* highest */
-        background: #ffffff;
-    }
-
-    /* Sticky Paid Days column */
-    .sticky-col-2 {
-        position: sticky;
-        left: 120px; /* adjust to actual width */
-        z-index: 25;
-        background: #ffffff;
-    }
+  
 
     /* Net Salary header */
     .header-net {
@@ -2419,6 +4626,7 @@
         .btn-export:hover i {
             color: #15803d;
         }
+
     .row-rejected {
         background-color: #fff5f5 !important; /* Very light red */
     }
@@ -2426,8 +4634,127 @@
         .row-rejected:hover {
             background-color: #fed7d7 !important; /* Slightly darker red on hover */
         }
-</style>
 
+    /* 1. Hide the up/down arrows (spinners) in all browsers */
+    #attTableBody input::-webkit-outer-spin-button,
+    #attTableBody input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    #attTableBody input[type=number] {
+        -moz-appearance: textfield; /* For Firefox */
+    }
+    /* 2. Add a 20px gap to the last column of your table */
+    #attTableHead th:last-child,
+    #attTableBody td:last-child {
+        padding-right: 20px !important;
+        text-align: right;
+    }
+    /* 3. Style the scrollbar so it is easy to see */
+    .modal-body::-webkit-scrollbar {
+        width: 10px; /* Wider for easier clicking */
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+        background: #f8fafc; /* Light gray background so the track is visible */
+        border-left: 1px solid #e2e8f0;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+        background: #94a3b8; /* Darker gray handle so it stands out */
+        border-radius: 5px;
+        border: 2px solid #f8fafc; /* Adds a small margin inside the bar */
+    }
+</style>
+<style>
+    /* Scrollable wrapper */
+    .excel-wrapper {
+        flex: 1;
+        /*min-height: 450px;*/
+        max-height: 58vh;
+        overflow: auto;
+        background: #fff;
+        position: relative;
+        border-top: 1px solid #e5e7eb;
+    }
+    /* Table styling */
+    .excel-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: max-content;
+        min-width: 100%;
+        font-size: 12px;
+        background: white;
+    }
+        /* ===== STICKY HEADER (freeze on vertical scroll) ===== */
+        .excel-table thead tr th {
+            position: sticky;
+            top: 0;
+          /*  z-index: 30 !important;*/
+            background-color: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 10px 12px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            box-shadow: inset 0 -1px 0 #e2e8f0;
+        }
+
+            .excel-table thead tr th:first-child,
+            .excel-table thead tr th:nth-child(2) {
+                z-index: 20 !important;
+                background-color: #e9ecef;
+            }
+        /* ===== FREEZE FIRST COLUMN (Employee) using :first-child ===== */
+        .excel-table th:first-child,
+        .excel-table td:first-child {
+            position: sticky;
+            left: 0;
+           /* z-index: 20 !important;*/
+            background-color: #ffffff;
+            border-right: 2px solid #e2e8f0;
+            min-width: 180px;
+        }
+        .excel-table thead th:first-child {
+            /*z-index: 50;*/ /* highest */
+            background: #e9ecef;
+        }
+
+        .excel-table thead th:nth-child(2) {
+            z-index: 45;
+            background: #e9ecef;
+        }
+        /* ===== FREEZE SECOND COLUMN (Paid Days) using :nth-child(2) ===== */
+        .excel-table th:nth-child(2),
+        .excel-table td:nth-child(2) {
+            position: sticky;
+            left: 180px; /* Width of first column (~180px) */
+           /* z-index: 21 !important;*/
+            background-color: #ffffff;
+            border-right: 2px solid #e2e8f0;
+            min-width: 100px;
+        }
+        /* Ensure proper background on hover/selection */
+        .excel-table tbody tr:hover td:first-child,
+        .excel-table tbody tr:hover td:nth-child(2) {
+            background-color: #f8fafc;
+        }
+        /* General cell styling */
+        .excel-table td {
+            border: 1px solid #f1f5f9;
+            padding: 8px 12px;
+            white-space: nowrap;
+            background: #fff;
+        }
+
+        .excel-table th {
+            white-space: nowrap;
+        }
+        
+    /* CTC */
+</style>
 <section role="main" class="content-body">
     <header class="page-header"><h2>Salary Process</h2></header>
     <input type="hidden" id="hdnPreviewBatchId" value="0" />
@@ -2642,7 +4969,6 @@
         </div>
     </div>
 
-
     <div id="attModal" class="modal-overlay">
         <div class="modal-box modal-lg">
 
@@ -2654,9 +4980,8 @@
                 </div>
                 <button class="btn-close-custom" onclick="closeModal('attModal')">&times;</button>
             </div>
-
             <!-- BODY -->
-            <div class="modal-body" style="padding:0; max-height:70vh; overflow-y:auto;">
+            <div class="modal-body" style="padding:0; max-height:70vh; overflow-y:scroll;">
 
                 <!-- ACCORDION 1 : FILE UPLOAD -->
                 <div class="accordion-section">
@@ -2796,7 +5121,7 @@
             </div>
 
             <div style="padding:20px;">
-                
+
                 <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white;">
                     <div style="background: #f8fafc; padding: 10px 15px; border-bottom: 1px solid #e2e8f0; font-size: 11px; font-weight: 700; color: #475569; display: flex; justify-content: space-between;">
                         <span>SALARY HISTORY</span>
@@ -3165,50 +5490,50 @@
                     //if (!res || res.length === 0) {
                     //    tbody.append('<tr><td colspan="12" class="text-center">No employee records found.</td></tr>');
                     //} else {
-                        res.forEach(r => {
-                            let statusBadge = '';
-                            let rowClass = '';
-                            let rowTooltip = '';
+                    res.forEach(r => {
+                        let statusBadge = '';
+                        let rowClass = '';
+                        let rowTooltip = '';
 
-                            // Define Tooltip and Status Logic
-                            if (r.Status === 3) {
-                                rowClass = 'row-rejected';
+                        // Define Tooltip and Status Logic
+                        if (r.Status === 3) {
+                            rowClass = 'row-rejected';
 
-                                statusBadge =
-                                    '<span class="label label-danger animated pulse" ' +
-                                    'title="' + ((r.RejectionReason && r.RejectionReason.trim() !== "")
-                                        ? r.RejectionReason
-                                        : 'Needs correction and resubmission') + '">' +
-                                    '<i class="fa fa-undo"></i> Rejected' +
-                                    '</span>';
+                            statusBadge =
+                                '<span class="label label-danger animated pulse" ' +
+                                'title="' + ((r.RejectionReason && r.RejectionReason.trim() !== "")
+                                    ? r.RejectionReason
+                                    : 'Needs correction and resubmission') + '">' +
+                                '<i class="fa fa-undo"></i> Rejected' +
+                                '</span>';
 
-                                // Tooltip text (for row-level tooltip if needed elsewhere)
-                                rowTooltip = (r.RejectionReason && r.RejectionReason.trim() !== "")
-                                    ? "REASON: " + r.RejectionReason
-                                    : "Sent back – needs correction";
+                            // Tooltip text (for row-level tooltip if needed elsewhere)
+                            rowTooltip = (r.RejectionReason && r.RejectionReason.trim() !== "")
+                                ? "REASON: " + r.RejectionReason
+                                : "Sent back – needs correction";
 
-                            }
-                            else if (r.Status === 2) {
-                                statusBadge =
-                                    '<span class="label label-success">' +
-                                    '<i class="fa fa-check-circle"></i> Approved' +
-                                    '</span>';
-                            }
-                            else {
-                                statusBadge =
-                                    '<span class="label label-warning">' +
-                                    '<i class="fa fa-pencil"></i> Draft' +
-                                    '</span>';
-                            }
+                        }
+                        else if (r.Status === 2) {
+                            statusBadge =
+                                '<span class="label label-success">' +
+                                '<i class="fa fa-check-circle"></i> Approved' +
+                                '</span>';
+                        }
+                        else {
+                            statusBadge =
+                                '<span class="label label-warning">' +
+                                '<i class="fa fa-pencil"></i> Draft' +
+                                '</span>';
+                        }
 
 
-                            const actionIcon = (r.Status === 2) ? 'fa-eye' : 'fa-pencil';
-                            const actionBtnClass = (r.Status === 3) ? 'btn-danger' : 'btn-default';
+                        const actionIcon = (r.Status === 2) ? 'fa-eye' : 'fa-pencil';
+                        const actionBtnClass = (r.Status === 3) ? 'btn-danger' : 'btn-default';
 
-                            // Create the Tooltip attribute - Using data-original-title to avoid browser conflicts
-                            const tooltipAttr = rowTooltip ? `data-toggle="tooltip" data-original-title="${escapeHtml(rowTooltip)}"` : '';
+                        // Create the Tooltip attribute - Using data-original-title to avoid browser conflicts
+                        const tooltipAttr = rowTooltip ? `data-toggle="tooltip" data-original-title="${escapeHtml(rowTooltip)}"` : '';
 
-                            tbody.append(`
+                        tbody.append(`
                             <tr class="${rowClass}" ${tooltipAttr} style="${r.Status === 3 ? 'cursor:help;' : ''}">
                                 <td style="width:250px;">
                                     <div style="font-weight:600; color:#333;">${escapeHtml(r.EmployeeName)}</div>
@@ -3223,8 +5548,8 @@
                                 <td class="text-right text-primary" style="font-weight:bold;">${Number(r.NetPay || 0).toLocaleString('en-IN')}</td>
                                 <td class="text-center">${statusBadge}</td>
                                 <td class="text-right">
-                                    <button class="btn btn-xs ${actionBtnClass} btn-outline" 
-                                            onclick="openEditSalaryModal(${r.PreviewBatchID}, ${r.PayrollProcessEmployeeID}, ${r.EmployeeId}, ${r.Status})" 
+                                    <button class="btn btn-xs ${actionBtnClass} btn-outline"
+                                            onclick="openEditSalaryModal(${r.PreviewBatchID}, ${r.PayrollProcessEmployeeID}, ${r.EmployeeId}, ${r.Status})"
                                             title="${r.Status === 2 ? 'View Details' : 'Edit Salary'}">
                                         <i class="fa ${actionIcon}"></i>
                                     </button>
@@ -3235,7 +5560,7 @@
                                 <td class="hidden">${r.Status}</td>
                             </tr>
                         `);
-                        });
+                    });
                     //}
 
                     // 4. Initialize DataTable
@@ -3478,7 +5803,7 @@
             let tr = `<tr data-employeeid="${r.EmployeeId}" data-name="${r.EmployeeName}">`;
             columns.forEach(col => {
 
-                if (col === "PaidUnits"|| col==="PaidDays") {
+                if (col === "PaidUnits" || col === "PaidDays") {
                     tr += `
                     <td class="text-right">
                         <input type="number"
@@ -3687,7 +6012,7 @@
         document.getElementById('txtFromDate').valueAsDate = fromDate;
         document.getElementById('txtToDate').valueAsDate = toDate;
     }
-    
+
     function setCurrentMonthYear() {
         const now = new Date();          // Jan 2026
         now.setMonth(now.getMonth() - 1); // Dec 2025
@@ -3713,7 +6038,7 @@
         });
         //handleCompanyChange();
     }
-    
+
     function handleMonthYearBlur() {
         const val = document.getElementById('txtMonthYear').value;
 
@@ -4104,7 +6429,7 @@
         ) || null;
     }
 
-    
+
     function openDetailModal(isViewMode, serverResult, batchStatus) {
         if (!serverResult || !serverResult.Rows || !serverResult.Columns) {
             console.error("Invalid server result", serverResult);
@@ -4143,7 +6468,7 @@
                 if (approvedCount > 0) {
                     // Batch is "On Processing"
                     discardBtnHtml = `
-                    <button class="btn-reject" style="background-color: #94a3b8; cursor: not-allowed; border-color: #94a3b8;" 
+                    <button class="btn-reject" style="background-color: #94a3b8; cursor: not-allowed; border-color: #94a3b8;"
                             onclick="toastr.warning('Cannot discard batch: ${approvedCount} employees are already finalized.')">
                         <i class="fas fa-lock"></i> Batch In-Process
                     </button>`;
@@ -4250,7 +6575,7 @@
                      title="Click to view last 3 months salary"
                      onclick="openSalaryHistoryModal(${row.EmployeeId}, '${row.EmployeeName.replace(/'/g, "\\'")}', ${procMonth}, ${procYear})">
                     ${row.EmployeeName}
-                </div> 
+                </div>
             </td>
             <td class="sticky-col-2 text-center">${row.PaidDays}</td>`;
 
@@ -4258,7 +6583,7 @@
 
                 const cell = row.Cells.find(x => x.PayConfigId === col.PayConfigId);
                 const amount = cell ? cell.Amount : 0;
-                const type = (col.PayType || '').toUpperCase(); 
+                const type = (col.PayType || '').toUpperCase();
                 // ===== Loan logic updated with Ledger link =====
                 if (col.IsOther && col.OtherType === "LOANRECOVERY") {
 
@@ -4278,23 +6603,23 @@
                                         gap:12px;
                                         white-space:nowrap;
                                     ">
-                                        <span class="loan-link" 
+                                        <span class="loan-link"
                                               style="font-weight:700; color:#d97706; cursor:pointer; border-bottom:1px dashed #d97706;"
                                               data-ref-ids="${loanRefIds}" title="Click to view last 3 months Loan Details"
-                                               onclick="openLoanLedger(${row.EmployeeId}, '${row.EmployeeName.replace(/'/g, "\\'")}', ${cell.OriginalAmount}, ${col.PayConfigId}, ${procMonth}, ${procYear}, '${loanRefIds}')"> 
+                                               onclick="openLoanLedger(${row.EmployeeId}, '${row.EmployeeName.replace(/'/g, "\\'")}', ${cell.OriginalAmount}, ${col.PayConfigId}, ${procMonth}, ${procYear}, '${loanRefIds}')">
                                             ${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                                         </span>
 
                                         ${cell.IsWaivable && Number(window.currentBatchStatus) === 1
-                                                ? `<label style="font-size:10px; cursor:pointer; display:flex; align-items:center; gap:3px; background:#fff7ed; padding:2px 5px; border-radius:4px; border:1px solid #ffedd5;">
+                                ? `<label style="font-size:10px; cursor:pointer; display:flex; align-items:center; gap:3px; background:#fff7ed; padding:2px 5px; border-radius:4px; border:1px solid #ffedd5;">
                                                     <input type="checkbox"
                                                     data-ref-ids="${loanRefIds}"
                                                            ${cell.IsWaived ? 'checked' : ''}
                                                            onchange="toggleLoanWaiver(${row.EmployeeId}, ${col.PayConfigId})">
                                                     <span style="color:#9a3412; font-weight:700;">SKIP</span>
                                                </label>`
-                                                : ``
-                                            }
+                                : ``
+                            }
                                     </div>
                                 </td>`;
                     }
@@ -4799,7 +7124,7 @@
         for (let y = yearNow - 5; y <= yearNow + 1; y++) {
             yddl.append(`<option value="${y}">${y}</option>`);
         }
-    } 
+    }
     function loadPayrollBatchGrid() {
         $.ajax({
             url: '/bulkSalaryProcess/GetPayrollDashboard',
@@ -5291,7 +7616,7 @@
 
                 // 5. OPEN MODAL (Set display to flex for overlay)
                 $("#editSalaryModal").css("display", "flex").addClass("active");
-                  
+
             },
             error: function () {
                 toastr.error("Failed to load details.");
@@ -5358,10 +7683,10 @@
                     return;
                 }
 
-                // 🔑 THE MANUAL RESET: 
+                // 🔑 THE MANUAL RESET:
                 // Because the server returned a calculated amount (Manual Paid),
                 // we must uncheck the waiver toggle visually.
-                $("#chkWaiveLoan").prop('checked',res.Header.LoanWaivedYN);
+                $("#chkWaiveLoan").prop('checked', res.Header.LoanWaivedYN);
 
                 // 2. Re-bind the Header and Component tables
                 bindHeader(res.Header);
@@ -5390,7 +7715,7 @@
     let currentHeader = {};
     let currentDetails = [];
 
-    function bindHeader(h) { 
+    function bindHeader(h) {
         // Combine Name and EmpNo (e.g., "John Doe (EMP001)")
         const displayName = h.EmployeeName
             ? `${h.EmployeeName} (${h.Empno || 'N/A'})`
@@ -5399,8 +7724,8 @@
         $("#editModalEmpName").text(displayName);
         $("#txtEditDays").val(h.PaidDays);
         $("#txtManualAdd").val(h.ManualAddition || 0);
-        $("#txtManualDed").val(h.ManualDeduction || 0); 
-        // 🔑 Save the limit from the server! 
+        $("#txtManualDed").val(h.ManualDeduction || 0);
+        // 🔑 Save the limit from the server!
         // This handles 28, 29, 30, or 31 correctly based on the DB month.
         window.currentMonthMaxDays = h.TotalMonthDays;
         // Convert boolean/number to checkbox state
@@ -5416,7 +7741,7 @@
         }
         // Condition B: Loan is External -> Lock ONLY the Loan Checkbox
         else if (h.IsLoanExternal === true || h.IsLoanExternal === 1) {
-            
+
             $("#chkWaiveLoan").prop("disabled", true);
             $("#chkWaiveLoan").closest('label').css("color", "#94a3b8"); // Gray out the text
             $("#chkWaiveLoan").parent().attr("title", "Loan payment managed externally.");
@@ -5517,7 +7842,7 @@
                         }
 
                         $toggle.prop('checked', isCurrentlyWaived);
-                        $("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 })); 
+                        $("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
                     }
                 }
                 //// 🔑 1. Detect Loan Recovery using OtherType
@@ -5652,7 +7977,7 @@
             $(".summary-banner").css("grid-template-columns", "1fr 1fr");
         }
     }
-    
+
     /**
     * Visual correction: Changes "ADD" (Green) to "DEDUCT" (Red)
     */
@@ -5953,7 +8278,7 @@
                         closeModal('editSalaryModal');
 
                         // 2. Refresh Grids
-                        // Tip: If loadPayrollBatchGrid also calls an AJAX, 
+                        // Tip: If loadPayrollBatchGrid also calls an AJAX,
                         //// ensure they don't both try to show/hide the same loader.
                         //if (typeof loadPayrollBatchGrid === "function") loadPayrollBatchGrid();
                         if (typeof loadEmployeeWiseBatchGrid === "function") loadEmployeeWiseBatchGrid();

@@ -1,97 +1,102 @@
-﻿```cshtml
 @model MendinePayroll.Models.EmployeeSalaryModel
 @{
     ViewBag.Title = "Loan Register Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<link href="~/plugins/bootstrap-multiselect/bootstrap-multiselect.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <section role="main" class="content-body">
 
     <header class="page-header">
         <h2>Loan Register Report</h2>
     </header>
 
+
     <style>
 
-.subtotal-row{
-    font-weight:600;
-    background:#f7f7f7;
-}
+        .subtotal-row {
+            font-weight: 600;
+            background: #f7f7f7;
+        }
 
-.grandtotal-row{
-    font-weight:700;
-    background:#ffeeba;
-}
+        .grandtotal-row {
+            font-weight: 700;
+            background: #ffeeba;
+        }
 
-.filter-item{
-    display:flex;
-    flex-direction:column;
-}
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+        }
 
-.filter-item label{
-    font-size:11px;
-    font-weight:600;
-    margin-bottom:3px;
-}
+            .filter-item label {
+                font-size: 11px;
+                font-weight: 600;
+                margin-bottom: 3px;
+            }
 
-#loanRegister{
-    font-size:12px;
-    width:100%;
-}
+        #loanRegister {
+            font-size: 12px;
+            width: 100%;
+        }
 
-#loanRegister th,#loanRegister td{
-    padding:4px 6px;
-    text-align:center;
-    white-space:nowrap;
-}
+            #loanRegister th, #loanRegister td {
+                padding: 4px 6px;
+                text-align: center;
+                white-space: nowrap;
+            }
 
-#loanRegister thead th{
-    background:#0d6efd;
-    color:#fff;
-}
+            #loanRegister thead th {
+                background: #0d6efd;
+                color: #fff;
+            }
 
-#pagination li a{
-    color:#007bff;
-}
+        #pagination li a {
+            color: #007bff;
+        }
 
-#pagination li.active a{
-    background:#007bff;
-    color:#fff;
-}
+        #pagination li.active a {
+            background: #007bff;
+            color: #fff;
+        }
 
-#pageLoader{
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(255,255,255,.8);
-    z-index:9999;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-}
+        #pageLoader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
 
-.loader-spinner{
-    border:6px solid #f3f3f3;
-    border-top:6px solid #0E7777;
-    border-radius:50%;
-    width:60px;
-    height:60px;
-    animation:spin 1s linear infinite;
-}
+        .loader-spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #0E7777;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
 
-.loader-text{
-    margin-top:10px;
-    font-weight:600;
-}
+        .loader-text {
+            margin-top: 10px;
+            font-weight: 600;
+        }
 
-@@keyframes spin{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
-}
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
 
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 
     <section class="panel">
@@ -116,10 +121,10 @@
                     <label>Financial Year</label>
 
                     @Html.DropDownListFor(
-                    m => m.Year,
-                    Model.YearList,
-                    new { @class = "form-control", @id = "ddlyear" }
-                    )
+                         m => m.Year,
+                         Model.YearList,
+                         new { @class = "form-control", @id = "ddlyear" }
+                         )
 
                 </div>
 
@@ -153,7 +158,7 @@
                 <div class="col-md-2 filter-item">
                     <label>&nbsp;</label>
                     <button onclick="exportLoanRegisterToCSV()" class="btn btn-primary btn-block">
-                        Export CSV
+                        <i class="fa fa-file-excel"></i> Export Excel
                     </button>
                 </div>
 
@@ -222,6 +227,7 @@
 
 
 
+<script src="~/plugins/bootstrap-multiselect/bootstrap-multiselect.js"></script>
 <script src="~/plugins/cdnjs/jquery.twbsPagination.min.js"></script>
 
 <script>
@@ -232,9 +238,9 @@
 
     $(document).ready(function () {
 
-        initMultiSelects();
-
         loadFilters();
+
+        initMultiSelects();
 
         reloadLoanRegister(1);
 
@@ -242,15 +248,19 @@
             reloadLoanRegister(1);
         });
 
+        $("#ddlyear").on('change', function () {
+            reloadLoanRegister(1);
+        });
+
         $("#btnClearFilters").click(function (e) {
 
             e.preventDefault();
 
-            $('#ddlCompany').multiselect('deselectAll', false).multiselect('updateButtonText');
+            $('#ddlCompany').val([]).multiselect('refresh');
 
-            $('#ddlDepartment').multiselect('deselectAll', false).multiselect('updateButtonText');
+            $('#ddlDepartment').val([]).multiselect('refresh');
 
-            $('#ddlEmployee').multiselect('deselectAll', false).multiselect('updateButtonText');
+            $('#ddlEmployee').val([]).multiselect('refresh');
 
             reloadLoanRegister(1);
 
@@ -262,7 +272,7 @@
 
     function initMultiSelects() {
 
-        $('.multi-select').multiselect({
+        $('#ddlCompany, #ddlDepartment').multiselect({
             includeSelectAllOption: true,
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
@@ -270,7 +280,39 @@
             maxHeight: 220,
             nonSelectedText: 'All',
             numberDisplayed: 1,
-            buttonClass: 'btn btn-default btn-sm'
+            buttonClass: 'btn btn-default btn-sm',
+            onChange: function () {
+                loadEmployeeByFilters();
+                reloadLoanRegister(1);
+            },
+            onSelectAll: function () {
+                loadEmployeeByFilters();
+                reloadLoanRegister(1);
+            },
+            onDeselectAll: function () {
+                loadEmployeeByFilters();
+                reloadLoanRegister(1);
+            }
+        });
+
+        $('#ddlEmployee').multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            buttonWidth: '100%',
+            maxHeight: 220,
+            nonSelectedText: 'All',
+            numberDisplayed: 1,
+            buttonClass: 'btn btn-default btn-sm',
+            onChange: function () {
+                reloadLoanRegister(1);
+            },
+            onSelectAll: function () {
+                reloadLoanRegister(1);
+            },
+            onDeselectAll: function () {
+                reloadLoanRegister(1);
+            }
         });
 
     }
@@ -350,7 +392,9 @@
 
         var year = $("#ddlyear option:selected").text();
 
-        var empIds = $("#ddlEmployee").val() || [];
+        const empIds = $("#ddlEmployee").val() || [];
+        const companyIds = $('#ddlCompany').val() || [];
+        const deptIds = $('#ddlDepartment').val() || [];
 
         var rows = $("#Pagrow").val();
 
@@ -358,20 +402,17 @@
 
 
         $.ajax({
-
             type: "POST",
-
             url: '/PayrollReports/GetAllEmployeeLoanRegister',
-
             traditional: true,
-
             data: {
                 FinancialYear: year,
+                companyIds: companyIds,
+                deptIds: deptIds,
                 empIds: empIds,
                 numberofRow: rows,
                 pagenumber: pagnumber
             },
-
             beforeSend: function () {
 
                 $("#pageLoader").css("display", "flex");
@@ -391,6 +432,11 @@
                 if (!data || data.length == 0) {
 
                     $("#Showing_no_Row").text("No Records Found");
+
+                    if (isPaginationInitialized) {
+                        $pagination.twbsPagination('destroy');
+                        isPaginationInitialized = false;
+                    }
 
                     return;
 
@@ -489,6 +535,26 @@
 
                 $("#Showing_no_Row").text("Total Records : " + totalCount);
 
+                // --- PAGINATION ---
+                if (isPaginationInitialized) {
+                    $pagination.twbsPagination('destroy');
+                    isPaginationInitialized = false;
+                }
+
+                if (totalCount > 0) {
+                    var totalPages = Math.ceil(totalCount / rows);
+                    $pagination.twbsPagination({
+                        totalPages: totalPages,
+                        visiblePages: 5,
+                        startPage: page,
+                        initiateStartPageClick: false,
+                        onPageClick: function (event, page) {
+                            reloadLoanRegister(page);
+                        }
+                    });
+                    isPaginationInitialized = true;
+                }
+
             }
 
         });
@@ -501,7 +567,9 @@
 
         var year = $("#ddlyear option:selected").text();
 
-        var empIds = $("#ddlEmployee").val() || [];
+        const empIds = $("#ddlEmployee").val() || [];
+        const companyIds = $('#ddlCompany').val() || [];
+        const deptIds = $('#ddlDepartment').val() || [];
 
         $("#pageLoader").css("display", "flex");
 
@@ -513,7 +581,12 @@
 
             traditional: true,
 
-            data: { FinancialYear: year, empIds: empIds },
+            data: {
+                FinancialYear: year,
+                companyIds: companyIds,
+                deptIds: deptIds,
+                empIds: empIds
+            },
 
             success: function (fileName) {
 
@@ -539,6 +612,8 @@
 
 
 
+
+
     function BacktoEmpList() {
 
         window.location.href = "/Dashboard";
@@ -546,4 +621,3 @@
     }
 
 </script>
-```

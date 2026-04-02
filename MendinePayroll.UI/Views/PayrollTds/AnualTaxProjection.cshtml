@@ -273,8 +273,7 @@
             <div class="filter-item">
                 <label>FY Year</label>
                 <select id="ddlFY" class="form-control">
-                    <option value="2026">2026-2027</option>
-                    <option value="2025">2025-2026</option>
+                     
                 </select>
             </div>
 
@@ -630,20 +629,30 @@
         });
 
         loadInitialFilters();
-
+        loadFY();
         $('#ddlCompany, #ddlDepartment').on('change', function () {
             loadEmployeeByFilters();
         });
     });
+    function loadFY() {
+        const url = "/PayrollTds/GetFinancialYears";  // ❌ con → ✅ const
 
+        $.getJSON(url, function (res) {
+            const $ddl = $('#ddlFY').empty();  // ❌ missing quotes → ✅ '#ddlFY'
+
+            res.forEach(x =>
+                $ddl.append(`<option value="${x.value}">${x.text}</option>`) // ❌ x[value] → ✅ x.value
+            ); 
+        });
+    }
     function loadInitialFilters() {
         loadDropdown('/SalaryCTC/GetCompanyList', '#ddlCompany', 'CompanyId', 'CompanyName');
-        loadDropdown('/SalaryCTC/GetDepartmentList', '#ddlDepartment', 'DepartmentID', 'DepartmentName');
+        loadDropdown('/SalaryCTC/GetDepartmentList', '#ddlDepartment', 'DepartmentID', 'DepartmentName'); 
     }
 
     function loadDropdown(url, ddl, id, text) {
         $.getJSON(url, function (res) {
-            const $ddl = $(ddl).empty();
+            const $ddl = $(ddl).empty(); 
             res.forEach(x => $ddl.append(`<option value="${x[id]}">${x[text]}</option>`));
             $ddl.multiselect('rebuild');
         });

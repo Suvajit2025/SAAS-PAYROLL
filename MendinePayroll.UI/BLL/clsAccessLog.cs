@@ -31,11 +31,30 @@ namespace UI.BLL
                 return context.Session["username"].ToString();
             }
         }
+        private static string TenantID
+        {
+            get
+            {
+                var context = HttpContext.Current;
 
+                if (context == null || context.Session == null || context.Session["TenantId"] == null)
+                {
+                    context?.Response?.Redirect(
+                        "https://iehrms.iecsl.in/Account/ChoosePortal.aspx",
+                        true   // endResponse = true
+                    );
+
+                    // Safety fallback (won't execute after redirect)
+                    return string.Empty;
+                }
+
+                return context.Session["TenantId"].ToString();
+            }
+        }
 
         public static string AccessLog_Save(clsAccessLogInfo info)
         {
-            return clsDatabase.fnDBOperation("PRC_Payroll_Access_Log",username,info.AccessType);
+            return clsDatabase.fnDBOperation("PRC_Payroll_Access_Log",username,info.AccessType, TenantID);
         }
     }
 }

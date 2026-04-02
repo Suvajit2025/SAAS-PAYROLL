@@ -79,5 +79,26 @@ namespace MendinePayroll.Models
         public string CalculationFormula { get; set; }
         }
 
+    public class TaxMasterSaveModel
+    {
+        public string FinancialYear { get; set; }
+        public int RegimeId { get; set; }
 
+        // Constants
+        public decimal StandardDeduction { get; set; }
+        public decimal RebateLimit87A { get; set; }
+        public decimal RebateIncomeThreshold { get; set; }
+        public decimal HealthEduCessRate { get; set; }
+
+        // Slabs
+        public List<TaxSlabItem> Slabs { get; set; }
+    }
+
+    public class TaxSlabItem
+    {
+        public decimal FromAmount { get; set; }
+        public decimal? ToAmount { get; set; } // Nullable for the 'Above' bracket
+        public decimal TaxRate { get; set; }
+        public string Description { get; set; }
+    }
 }

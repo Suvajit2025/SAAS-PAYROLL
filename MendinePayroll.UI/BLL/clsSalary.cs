@@ -265,10 +265,10 @@ namespace MendinePayroll.UI.BLL
             return mlist;
         }
 
-        public static List<clsEmployeeInfo> EmployeeListCompanyWise(String CompanyCode )
+        public static List<clsEmployeeInfo> EmployeeListCompanyWise(String CompanyCode,string TenantId )
         {
             List<clsEmployeeInfo> mlist = new List<clsEmployeeInfo>();
-            DataTable DT = clsDatabase.fnDataTable("PRC_Employee_List_Company_Wise", CompanyCode);
+            DataTable DT = clsDatabase.fnDataTable("PRC_Employee_List_Company_Wise", CompanyCode,TenantId);
             foreach (DataRow DR in DT.Rows)
             {
                 mlist.Add(new clsEmployeeInfo()
@@ -367,8 +367,7 @@ namespace MendinePayroll.UI.BLL
             // Case 1 : Entirely old
             if (endDate <= cutOff)
             {
-                result = clsDatabase.fnDataTable("PRC_Salary_Register",
-                    IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
+                result = clsDatabase.fnDataTable("PRC_Salary_Register",IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
             }
 
             // Case 2 : Entirely new
@@ -452,10 +451,10 @@ namespace MendinePayroll.UI.BLL
         {
             return clsDatabase.fnDataTable("Payroll_Annexure1_Register", Month, Year, IDEmployee, CompanyCode);
         }
-        public static List<clsCompanyInfo> CompanyList()
+        public static List<clsCompanyInfo> CompanyList(string TenantId)
         {
             List<clsCompanyInfo> mlist = new List<clsCompanyInfo>();
-            DataTable dt = clsDatabase.fnDataTable("PRC_Company_List");
+            DataTable dt = clsDatabase.fnDataTable("PRC_Company_List",TenantId);
             foreach(DataRow dr in dt.Rows)
             {
                 clsCompanyInfo obj = new clsCompanyInfo();

@@ -289,7 +289,7 @@ namespace MendinePayroll.UI.Controllers
                     case "PF_EE":
                     case "PF_ER":
                         x.MonthlyAmount = ApplyRounding(
-                            Math.Min(basic, x.MaxLimit) * x.ManualRate / 100,
+                            (x.MaxLimit > 0 ? Math.Min(basic, x.MaxLimit) : basic) * x.ManualRate / 100,
                             x.RoundingType
                         );
                         break;

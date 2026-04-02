@@ -1,0 +1,2254 @@
+﻿@{
+    ViewBag.Title = "Employee Salary Structure";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css" />
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<style>
+    /* --- GLOBAL VARIABLES --- */
+    :root {
+        --primary: #0E7777;
+        --primary-light: #e0f2f2;
+        --text-dark: #2c3e50;
+        --bg-gray: #f4f7f6;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-gray);
+    }
+
+    /* --- CARD STYLES --- */
+    .saas-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        border: 1px solid #e1e5ea;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .page-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0;
+    }
+
+    /* --- BUTTONS --- */
+    .btn-saas {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .btn-saas:hover {
+            background: #095555;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(14,119,119,0.2);
+        }
+
+    .btn-link-saas {
+        color: var(--primary);
+        background: none;
+        border: none;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    /* --- FILTERS --- */
+    .filter-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #6c757d;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    /* --- DATATABLE CUSTOMIZATION --- */
+    table.dataTable {
+        border-collapse: collapse !important;
+        width: 100% !important;
+    }
+
+        /* Header Styling */
+        table.dataTable thead th {
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 12px 15px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        /* Row Styling */
+        table.dataTable tbody td {
+            padding: 12px 15px;
+            font-size: 13px;
+            color: #333;
+            border-bottom: 1px solid #f1f1f1;
+            vertical-align: middle;
+        }
+
+        /* --- STICKY COLUMNS (Fix Name & Code) --- */
+        table.dataTable tbody tr {
+            background-color: white;
+        }
+
+        /* Fix 1st Column (SL) */
+        table.dataTable thead th:first-child, table.dataTable tbody td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background-color: inherit;
+        }
+        /* Fix 2nd Column (Name) */
+        table.dataTable thead th:nth-child(2), table.dataTable tbody td:nth-child(2) {
+            position: sticky;
+            left: 50px;
+            z-index: 2;
+            background-color: inherit;
+            box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1); /* Shadow separator */
+        }
+
+    .header-close {
+        display: flex;
+        justify-content: flex-end;
+        column-gap: 10px;
+        align-items: center;
+    }
+    /* Badges */
+    .badge-saas {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .badge-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-done {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    /* --- MODAL STYLES (From Previous Design) --- */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 9999;
+        backdrop-filter: blur(2px);
+    }
+
+    .modal-box {
+        background: white;
+        width: 95%;
+        max-width: 1200px;
+        margin: 30px auto;
+        border-radius: 8px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+        animation: slideUp 0.3s ease;
+    }
+
+    @@keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+
+
+    .header-group {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .header-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+    .form-control-saas {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 13px;
+        height: 35px;
+    }
+
+    .input-gross {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        text-align: right;
+        border: 2px solid var(--primary);
+        width: 160px;
+        padding: 5px;
+        border-radius: 4px;
+    }
+
+    .modal-body {
+        padding: 0;
+        flex: 1;
+        overflow-y: auto;
+        background: #f8f9fa;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Input Panel */
+    .input-panel {
+        background: white;
+        padding: 15px 20px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        gap: 20px;
+        align-items: flex-end;
+    }
+
+    .dynamic-input-group label {
+        font-size: 12px;
+        font-weight: bold;
+        color: #555;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .dynamic-input {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        text-align: right;
+        border: 2px solid #ccc;
+        width: 150px;
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+        .dynamic-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #f0fffd;
+        }
+
+    /* Split Layout */
+    .split-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .panel {
+        background: white;
+        border: 1px solid #e1e5ea;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .panel-header {
+        background: #f1f5f9;
+        padding: 10px 15px;
+        font-weight: 600;
+        font-size: 13px;
+        color: #475569;
+        border-bottom: 1px solid #e1e5ea;
+    }
+
+    .calc-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+        .calc-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .calc-table input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: right;
+        }
+
+    .inp-manual {
+        border: 1px solid #ddd !important;
+        background: #fff !important;
+        border-radius: 3px;
+        padding: 4px;
+        font-weight: bold;
+    }
+
+    .modal-footer {
+        padding: 15px 25px;
+        background: #2c3e50;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .summary-val {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .summary-highlight {
+        font-size: 24px;
+        color: #ffd700;
+        font-weight: bold;
+    }
+
+    .btn-close {
+        background: transparent;
+        border: 1px solid #aaa;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        color: #555;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: all 0.2s;
+        margin-left: auto;
+    }
+
+        .btn-close:hover {
+            background: #fff;
+            color: red;
+            border-color: red;
+        }
+
+    .badge-tag {
+        display: inline-block;
+        padding: 2px 6px;
+        font-size: 10px;
+        border-radius: 4px;
+        font-weight: 600;
+        margin-left: 4px;
+    }
+
+    .badge-basic {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+    /* Green */
+    .badge-gross {
+        background: #cff4fc;
+        color: #055160;
+    }
+    /* Cyan */
+    .badge-logic {
+        background: #f8d7da;
+        color: #842029;
+    }
+    /* Red */
+    /* --- SPLIT LAYOUT --- */
+    .split-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        padding: 16px;
+    }
+
+    /* --- PANEL STYLE --- */
+    .panel {
+        background: white;
+        border: 1px solid #e0e5eb;
+        border-radius: 6px;
+        overflow: hidden;
+        transition: box-shadow 0.3s ease;
+    }
+
+        .panel:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+    .panel-header {
+        padding: 8px 12px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #fff;
+        letter-spacing: 0.4px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* --- SPLIT LAYOUT --- */
+    .split-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        padding: 16px;
+    }
+
+    /* --- PANEL STYLE --- */
+    .panel {
+        background: white;
+        border: 1px solid #e0e5eb;
+        border-radius: 6px;
+        overflow: hidden;
+        transition: box-shadow 0.3s ease;
+    }
+
+        .panel:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+    .panel-header {
+        padding: 8px 12px;
+        font-weight: 700;
+        font-size: 12px;
+        color: #fff;
+        letter-spacing: 0.4px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .bg-gradient-earn {
+        background: linear-gradient(135deg, #0E7777, #159d9d);
+    }
+
+    .bg-gradient-ded {
+        background: linear-gradient(135deg, #0E3A66, #156777);
+    }
+
+    .row-class-new {
+        display: flex;
+        justify-content: flex-start;
+    }
+    /* --- TABLES --- */
+    .calc-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        table-layout: fixed; /* ensures width control */
+    }
+
+        .calc-table th, .calc-table td {
+            padding: 7px 8px;
+            border-bottom: 1px solid #f1f1f1;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+            /* --- COLUMN WIDTHS --- */
+            .calc-table th:nth-child(1),
+            .calc-table td:nth-child(1) {
+                width: 40%; /* Component - moderate */
+                text-align: left;
+            }
+
+            .calc-table th:nth-child(2),
+            .calc-table td:nth-child(2) {
+                width: 30%; /* Formula - tighter */
+                text-align: left;
+                font-family: monospace;
+                font-size: 11px;
+                color: #666;
+            }
+
+            .calc-table th:nth-child(3),
+            .calc-table td:nth-child(3) {
+                width: 15%; /* Monthly - wider than before */
+                text-align: center !important;
+            }
+
+            .calc-table th:nth-child(4),
+            .calc-table td:nth-child(4) {
+                width: 15%; /* Yearly - aligned right */
+                text-align: right !important;
+            }
+
+        /* --- HEADERS --- */
+        .calc-table th {
+            background: #f8f9fa;
+            font-size: 11px;
+            font-weight: 600;
+            color: #495057;
+            text-transform: uppercase;
+        }
+
+        /* --- INPUTS --- */
+        .calc-table input {
+            font-size: 12px;
+            height: 26px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+            .calc-table input:focus {
+                border-color: #0E7777;
+                outline: none;
+                box-shadow: 0 0 2px rgba(14,119,119,0.3);
+            }
+
+    /* Zebra striping */
+    .table-striped-modern tbody tr:nth-child(odd) {
+        background-color: #fbfbfb;
+    }
+
+    .table-striped-modern tbody tr:hover {
+        background-color: #f2fdfc;
+    }
+
+    /* Totals */
+    .footer-row td {
+        font-weight: bold;
+        font-size: 12px;
+        border-top: 2px solid #e1e1e1;
+        padding: 8px 8px;
+    }
+
+    .total-earn {
+        background: #eaf8f8;
+        color: #0E7777;
+    }
+
+    .total-ded {
+        background: #fff9e6;
+        color: #856404;
+    }
+
+    .total-cont {
+        background: #e8f5e9;
+        color: #1b5e20;
+    }
+
+
+    /* --- SUBHEADER --- */
+    .subheader {
+        padding: 6px 12px;
+        background: #f1f5f9;
+        font-size: 11px;
+        font-weight: 600;
+        color: #82806eff;
+        border-top: 1px solid #eee;
+        text-transform: uppercase;
+    }
+    /* --- TOTAL FOOTER ROWS --- */
+    .footer-row td {
+        font-weight: bold;
+        font-size: 12px;
+        border-top: 2px solid #e1e1e1;
+        padding: 8px 8px;
+    }
+
+        /* Keep footer column widths in sync with body */
+        .footer-row td:nth-child(1) {
+            width: 40%;
+            text-align: left;
+        }
+
+        .footer-row td:nth-child(2) {
+            width: 30%;
+            text-align: left;
+        }
+
+        .footer-row td:nth-child(3) {
+            width: 15%;
+            text-align: center; /* ✅ aligns under Monthly */
+        }
+
+        .footer-row td:nth-child(4) {
+            width: 15%;
+            text-align: right; /* ✅ aligns under Yearly */
+        }
+
+    /* --- COLOR THEMES FOR FOOTER ROWS --- */
+    .total-earn {
+        background: #eaf8f8;
+        color: #0E7777;
+    }
+
+    .total-ded {
+        background: #fff9e6;
+        color: #856404;
+    }
+
+    .total-cont {
+        background: #e8f5e9;
+        color: #1b5e20;
+    }
+
+
+    .modal-header {
+        padding: 15px 25px;
+        background: var(--primary-light);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .header-inline {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .toggle-box {
+        background: white;
+        padding: 6px 14px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        display: flex;
+        gap: 18px;
+    }
+
+        .toggle-box label {
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+    .btn-close {
+        width: 1rem;
+        height: 1rem;
+        opacity: 0.7;
+        font-size: 22px;
+        line-height: 1;
+        color: #333;
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #666;
+    }
+
+        .btn-close::after {
+            content: "×";
+            font-weight: bold;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+            color: #000;
+        }
+
+
+    .input-panel {
+        padding: 10px;
+    }
+
+    .header-left01 {
+        display: flex;
+        column-gap: 21px;
+        align-items: center;
+    }
+
+    .header-right1 {
+        display: flex;
+        column-gap: 21px;
+        align-items: center;
+    }
+
+    /*    //*/
+
+    .saas-filter-bar {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .filter-item {
+        min-width: 180px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .filter-item label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .filter-item select {
+            height: 31px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 2px;
+        }
+
+    .filter-btn {
+        min-width: 120px;
+    }
+
+    /*.btn-saas {
+        height: 34px;
+        background: #0E7777;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        width: 100%;
+    }*/
+    /* Universal compact text for tables */
+    .tbl-text {
+        font-size: 10px;
+        font-weight: 600; /* bold */
+        color: #1f2937;
+        line-height: 1.2;
+    }
+
+    /* Optional secondary (lighter) text */
+    .tbl-text-muted {
+        font-size: 9px;
+        font-weight: 400;
+        color: #6b7280;
+    }
+
+    /*New*/
+
+
+    /* --- SINGLE LINE MODERN HEADER --- */
+    .modal-header-saas {
+        background: #ffffff;
+        padding: 12px 20px;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        background: #eee;
+        color: white;
+    }
+
+    .header-left-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 250px;
+    }
+
+    .emp-icon-circle {
+        width: 32px;
+        height: 32px;
+        background: #f0fdfa;
+        color: #0E7777;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        border: 1px solid #ccf2f2;
+    }
+
+    .header-controls-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-grow: 1;
+    }
+
+    /* Compact group for label + input */
+    .input-inline-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8fafc;
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+    }
+
+        .input-inline-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+    .form-select-clean, .form-date-clean {
+        border: none;
+        background: transparent;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1e293b;
+        padding: 0;
+        cursor: pointer;
+        outline: none;
+    }
+
+    /* Checkbox Pill Style */
+    .tax-toggle-pill {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+        cursor: pointer;
+        padding: 2px 8px;
+        border-radius: 4px;
+        transition: 0.2s;
+    }
+
+        .tax-toggle-pill:hover {
+            background: #f1f5f9;
+        }
+
+        .tax-toggle-pill input {
+            accent-color: #0E7777;
+            margin: 0;
+        }
+
+    .btn-close-saas {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #94a3b8;
+        cursor: pointer;
+        transition: 0.2s;
+        line-height: 1;
+    }
+
+        .btn-close-saas:hover {
+            color: #ef4444;
+        }
+
+    /* Container for the statutory group */
+    .statutory-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff; /* White background to pop against header gray */
+        padding: 2px 10px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .statutory-label {
+        font-size: 10px;
+        font-weight: 800;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-right: 1px solid #e2e8f0;
+        padding-right: 10px;
+        margin-right: 2px;
+    }
+
+    /* Enhanced Pill Styling */
+    .tax-toggle-pill {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+        .tax-toggle-pill:hover {
+            background: #f1f5f9;
+        }
+
+        .tax-toggle-pill input[type="checkbox"] {
+            accent-color: #0E7777;
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            cursor: pointer;
+        }
+    /* --- MODERN FOOTER ACTIONS --- */
+    .modal-footer {
+        padding: 12px 25px;
+        background: #1e293b; /* Dark Slate for a professional 'Summary' feel */
+        border-top: 1px solid #334155;
+        color: white;
+    }
+
+    .footer-action-zone {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Secondary/Cancel Button */
+    .btn-saas-secondary {
+        background: transparent;
+        color: #cbd5e1;
+        border: 1px solid #475569;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .btn-saas-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-color: #94a3b8;
+        }
+
+    /* Primary/Save Button */
+    .btn-saas-primary {
+        background: #0E7777;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(14, 119, 119, 0.3);
+        transition: all 0.2s;
+    }
+
+        .btn-saas-primary:hover {
+            background: #119393;
+            transform: translateY(-1px);
+        }
+
+/* --- TABLE SPECIFIC LOADER --- */
+.table-container {
+    position: relative;
+    min-height: 300px; /* Prevents layout jump */
+}
+
+.table-loader-overlay {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+}
+
+.spinner-ring {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Skeleton Effect for Rows (Optional but looks great) */
+.loading-row {
+    height: 40px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+@@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+/* --- MODAL SPECIFIC LOADER --- */
+.modal-body {
+    position: relative; /* Essential for absolute positioning of loader */
+}
+
+.modal-loader-overlay {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 100;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+}
+
+.modal-spinner {
+    width: 45px;
+    height: 45px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin-modal 1s linear infinite;
+}
+
+@@keyframes spin-modal {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<section role="main" class="content-body">
+    <header class="page-header">
+        <h2>Employee CTC </h2>
+    </header>
+
+    <div class="saas-filter-bar">
+        <div class="filter-item">
+            <label>Company</label>
+            <select id="ddlCompany" multiple></select>
+        </div>
+
+        <div class="filter-item">
+            <label>Department</label>
+            <select id="ddlDepartment" multiple></select>
+        </div>
+
+        <div class="filter-item">
+            <label>Employment Type</label>
+            <select id="ddlCategory" multiple></select>
+        </div>
+
+        <div class="filter-item">
+            <label>Status</label>
+            <select id="ddlstatus" class="py-0">
+                <option value="ACTIVE" selected>Active</option>
+                <option value="INACTIVE">Inactive</option>
+                <option value="All">All</option>
+            </select>
+        </div>
+        <div class="filter-item">
+            <label>Pay Group</label>
+            <select id="ddlpaygroup" multiple></select>
+        </div>
+
+    </div>
+
+    <div class="saas-card" style="padding:0; overflow:hidden;">
+        <div style="padding:20px;" class="table-container">
+
+            <div id="tableLoader" class="table-loader-overlay">
+                <div class="spinner-ring"></div>
+                <div style="margin-top: 10px; font-size: 12px; font-weight: 600; color: var(--primary);">Fetching Employees...</div>
+            </div>
+
+            <table id="emptable" class="display table table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>SL</th>
+                        <th>Employee Info</th>
+                        <th>Designation & Post</th>
+                        <th>Department</th>
+                        <th>Pay Group</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- MODAL WRAPPER -->
+<div id="ctcModal" class="modal-overlay">
+    <div class="modal-box">
+
+        <!-- ======================= HEADER ======================= -->
+        <div class="modal-header-saas">
+
+            <div class="header-left-info">
+                <div class="emp-icon-circle">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <div style="font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; line-height: 1;">Employee Structure</div>
+                    <div id="modalEmpName" style="font-size: 14px; font-weight: 700; color: #1e293b;">--</div>
+                </div>
+            </div>
+
+            <div class="header-controls-wrapper">
+
+                <div class="input-inline-group">
+                    <label>Pay Group</label>
+                    <select id="ddlgroup" class="form-select-clean" onchange="renderTemplate()">
+                    </select>
+                </div>
+
+                <div class="input-inline-group">
+                    <label>Effective From</label>
+                    <input type="date" id="txtEffectiveFrom" class="form-date-clean" />
+                </div>
+
+                <div class="statutory-group ms-2">
+                    <span class="statutory-label">Statutory</span>
+
+                    <label class="tax-toggle-pill">
+                        <input type="checkbox" id="chkPF" checked> PF
+                    </label>
+
+                    <label class="tax-toggle-pill">
+                        <input type="checkbox" id="chkESIC" checked> ESIC
+                    </label>
+
+                    <label class="tax-toggle-pill">
+                        <input type="checkbox" id="chkPTAX" checked> PTAX
+                    </label>
+                </div>
+
+            </div>
+
+             
+
+        </div>
+         
+        <!-- ======================= INPUT PANEL ======================= -->
+        <div id="inputPanel" class="input-panel p-3 border-bottom bg-light">
+            <small class="text-muted">Select a template to load inputs...</small>
+        </div>
+
+        <!-- ======================= BODY ======================= -->
+        <div class="modal-body">
+            <div id="modalLoader" class="modal-loader-overlay">
+                <div class="modal-spinner"></div>
+                <div style="margin-top: 12px; font-weight: 600; color: var(--primary); font-size: 13px;">
+                    Processing Salary...
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row g-4">
+
+                    <!-- HIDDEN FIELDS -->
+                    <input type="hidden" id="hdnSelectedEmpId" value="0" />
+                    <input type="hidden" id="hdnEmpSalaryConfigID" value="0" />
+
+                    <!-- ========== LEFT PANEL – EARNINGS ========== -->
+                    <div class="col-md-6">
+                        <div class="panel shadow-sm">
+
+                            <div class="panel-header bg-gradient-earn text-white p-2">
+                                <i class="fa-solid fa-arrow-trend-up me-1"></i>
+                                A. Earnings
+                            </div>
+
+                            <table class="calc-table table-striped-modern w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Component</th>
+                                        <th>Formula</th>
+                                        <th class="text-center">Monthly</th>
+                                        <th class="text-end">Yearly</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody_earnings"></tbody>
+                                <tfoot>
+                                    <tr class="footer-row total-earn">
+                                        <td colspan="2">Total Gross</td>
+                                        <td class="text-end" id="lblTotalGross">0</td>
+                                        <td class="text-end" id="lblTotalGrossYear">0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    <!-- ========== RIGHT PANEL – DEDUCTIONS & CONTRIBUTIONS ========== -->
+                    <div class="col-md-6">
+                        <div class="panel shadow-sm">
+
+                            <div class="panel-header bg-gradient-ded text-white p-2">
+                                <i class="fa-solid fa-wallet me-1"></i>
+                                B. Deductions & Contributions
+                            </div>
+
+                            <!-- 1. Employee Deductions -->
+                            <div class="subheader px-2 py-1 fw-bold">
+                                1. Employee Deduction
+                            </div>
+
+                            <table class="calc-table table-striped-modern w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Component</th>
+                                        <th>Formula</th>
+                                        <th class="text-center">Monthly</th>
+                                        <th class="text-end">Yearly</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody_deductions"></tbody>
+                                <tfoot>
+                                    <tr class="footer-row total-ded">
+                                        <td colspan="2">Total Deductions</td>
+                                        <td class="text-end" id="lblTotalDed">0</td>
+                                        <td class="text-end" id="lblTotalDedYear">0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                            <!-- 2. Employer Contribution -->
+                            <div class="subheader px-2 py-1 fw-bold">
+                                2. Employer Contributions
+                            </div>
+
+                            <table class="calc-table table-striped-modern w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Component</th>
+                                        <th>Formula</th>
+                                        <th class="text-center">Monthly</th>
+                                        <th class="text-end">Yearly</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody_contribution"></tbody>
+                                <tfoot>
+                                    <tr class="footer-row total-cont">
+                                        <td colspan="2">Total Contribution</td>
+                                        <td class="text-end" id="lblTotalContrib">0</td>
+                                        <td class="text-end" id="lblTotalContribYear">0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ======================= FOOTER ======================= -->
+        <div class="modal-footer">
+
+            <div>
+                <div style="font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Net Pay (In-Hand)</div>
+                <span class="summary-val" id="lblNetPay" style="color: #38bdf8;">₹ 0</span>
+            </div>
+
+            <div class="text-end ms-auto me-4">
+                <div style="font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Monthly CTC</div>
+                <span class="summary-val" id="lblCTCMonth" style="color: #f1f5f9;">₹ 0</span>
+            </div>
+
+            <div class="text-end pe-4 border-end" style="border-color: #334155 !important;">
+                <div style="font-size: 10px; color: #fbbf24; font-weight: 700; text-transform: uppercase;">Annual CTC</div>
+                <span class="summary-highlight" id="lblCTCYear">₹ 0</span>
+            </div>
+
+            <div class="footer-action-zone ms-3">
+                
+                <button type="button" class="btn-saas-primary" onclick="saveData()">
+                    <i class="fa-solid fa-cloud-arrow-up me-2"></i>Save Structure
+                </button>
+
+                <button type="button" class="btn-saas-secondary" onclick="closeModal()">
+                    Cancel
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+ 
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    let allEmployees = [];   // 🔐 master copy (never mutate)
+    let dt = null;
+    let lastCalculatedData = null;
+    let curConfig = []; 
+
+    $(document).ready(function () {
+
+        // 1. Init Multiselects
+        $('#ddlCompany, #ddlDepartment, #ddlCategory ,#ddlpaygroup').multiselect({
+
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            filterPlaceholder: 'Search here...',
+            nonSelectedText: 'Select Options',
+            buttonWidth: '100%',
+            buttonClass: 'btn btn-default btn-sm dropdown-toggle',
+            maxHeight: 300,
+            selectAllText: 'Select All',
+            allSelectedText: 'All Selected',
+            nSelectedText: 'Selected',
+            numberDisplayed: 2,
+            templates: {
+                ul: '<ul class="multiselect-container dropdown-menu" style="min-width:250px; max-height:300px; overflow:auto;"></ul>'
+            }
+        });
+
+        // 2. Load All FIlters
+        loadFilters();
+        // 🔑 force default
+        $('#ddlstatus').val('ACTIVE');
+        loadEmployees();
+        //$('#btnFilter').on('click', applyFilters);
+        $('#ddlCompany, #ddlDepartment, #ddlCategory, #ddlstatus ,#ddlpaygroup')
+            .on('change', applyFilters);
+        $('#chkPF, #chkESIC, #chkPTAX').on('change', function () {
+            callBackendCalculation();
+        });
+    });
+    // ===================== AJAX LOAD DROPDOWNS =====================
+    function loadFilters() {
+
+        // ----------- LOAD COMPANY -----------
+        $.ajax({
+            url: '/SalaryCTC/GetCompanyList',
+            type: 'GET',
+            success: function (res) {
+                $('#ddlCompany').empty();
+                res.forEach(x => {
+                    $('#ddlCompany').append(`<option value="${x.CompanyId}">${x.CompanyName}</option>`);
+                });
+
+                $('#ddlCompany').multiselect('rebuild'); // refresh
+            }
+        });
+
+        // ----------- LOAD DEPARTMENT -----------
+        $.ajax({
+            url: '/SalaryCTC/GetDepartmentList',
+            type: 'GET',
+            success: function (res) {
+                $('#ddlDepartment').empty();
+                res.forEach(x => {
+                    $('#ddlDepartment').append(`<option value="${x.DepartmentID}">${x.DepartmentName}</option>`);
+                });
+
+                $('#ddlDepartment').multiselect('rebuild');
+            }
+        });
+
+        // ----------- LOAD CATEGORY -----------
+        $.ajax({
+            url: '/SalaryCTC/GetCategoryList',
+            type: 'GET',
+            success: function (res) {
+                $('#ddlCategory').empty();
+                res.forEach(x => {
+                    $('#ddlCategory').append(`<option value="${x.CategoryID}">${x.CategoryName}</option>`);
+                });
+
+                $('#ddlCategory').multiselect('rebuild');
+            }
+        });
+        // ----------- LOAD PAY GROUP -----------
+        $.ajax({
+            url: '/SalaryCTC/GetPayGroupList',
+            type: 'GET',
+            success: function (res) {
+                $("#ddlpaygroup").empty();
+
+                res.forEach(x => {
+                    $('#ddlpaygroup').append(
+                        `<option value="${x.PayGroupID}">${x.PayGroupName}</option>`
+                    );
+                });
+
+                // 🔑 THIS WAS MISSING
+                $('#ddlpaygroup').multiselect('rebuild');
+            }
+        });
+        // ----------- LOAD PAY GROUP category wise-----------
+        $.ajax({
+            url: '/SalaryCTC/GetPayGroupListConfigWise',
+            type: 'GET',
+            success: function (res) {
+                $("#ddlgroup").empty();
+                $("#ddlgroup").append('<option value="">--Select PayGroup--</option>');
+                res.forEach(x => {
+                    $('#ddlgroup').append(
+                        `<option value="${x.PayGroupID}">${x.PayGroupName}</option>`
+                    );
+                });
+
+            }
+        });
+
+    }
+    /* ===============================
+       LOAD DATA FROM SERVER (ONCE)
+    ================================ */
+    function loadEmployees() {
+        // 1. Show the table loader
+        $('#tableLoader').css('display', 'flex').fadeIn(100);
+
+        // 2. Clear current table data to show it's refreshing
+        if (dt) {
+            dt.clear().draw();
+        }
+        var companyIds = $('#ddlCompany').val() || [];
+        var deptIds = $('#ddlDepartment').val() || [];
+        var categoryIds = $('#ddlCategory').val() || [];
+
+        $.ajax({
+            url: '/SalaryCTC/GetEmployeeList',
+            type: 'GET',
+            traditional: true,
+            data: {
+                companyIds: companyIds,
+                deptIds: deptIds,
+                categoryIds: categoryIds
+            },
+            success: function (data) {
+                allEmployees = data || [];
+                applyFilters();   // 🔑 client-side filter
+            },
+            error: function () {
+                toastr.error("Failed to load employee data.");
+            },
+            complete: function () {
+                // 3. Hide the table loader
+                $('#tableLoader').fadeOut(200);
+            }
+        });
+    }
+    /* ===============================
+       APPLY CLIENT-SIDE FILTERS
+    ================================ */
+    function applyFilters() {
+
+        let companyIds = ($('#ddlCompany').val() || []).map(v => String(v));
+        let deptIds = ($('#ddlDepartment').val() || []).map(v => String(v));
+        let categoryIds = ($('#ddlCategory').val() || []).map(v => String(v));
+        let paygroupIds = ($('#ddlpaygroup').val() || []).map(v => String(v));
+        let status = $('#ddlstatus').val() || 'ACTIVE';
+
+        let filtered = allEmployees.filter(emp => {
+
+            const empStatus = String(emp.Empstatus ?? '');
+            const empCompany = String(emp.CompanyID ?? '');
+            const empDept = String(emp.DepartmentID ?? '');
+            const empCategory = String(emp.CategoryID ?? '');
+            const empPayGroup = String(emp.PayGroupID ?? '');
+
+            // Status
+            if (status !== 'All' && empStatus !== status)
+                return false;
+
+            // Company
+            if (companyIds.length && !companyIds.includes(empCompany))
+                return false;
+
+            // Department
+            if (deptIds.length && !deptIds.includes(empDept))
+                return false;
+
+            // Category
+            if (categoryIds.length && !categoryIds.includes(empCategory))
+                return false;
+
+            // Pay Group
+            if (paygroupIds.length && !paygroupIds.includes(empPayGroup))
+                return false;
+
+            return true;
+        });
+
+        renderTable(filtered);
+    }
+    /* ===============================
+       RENDER DATATABLE
+    ================================ */
+    function renderTable(data) {
+
+        if (dt) {
+            dt.destroy();
+            dt = null;
+        }
+
+        let tbody = $('#emptable tbody');
+        tbody.empty();
+
+        data.forEach((emp, index) => {
+
+            let badgeClass =
+                emp.Status === "Configured" ? "badge-done" : "badge-pending";
+
+            tbody.append(`
+        <tr>
+            <td>${index + 1}</td>
+            <td>
+                <div class="tbl-text">${escapeHtml(emp.EmpName)}</div>
+                <div class="tbl-text-muted">${escapeHtml(emp.EmpCode)}</div>
+            </td>
+
+            <td>
+                <div class="tbl-text">${escapeHtml(emp.Designation)}</div>
+                <div class="tbl-text-muted">${escapeHtml(emp.Post)}</div>
+            </td>
+            <td>
+            <div class="tbl-text">${escapeHtml(emp.Department)}</div> 
+            </td>
+            <td>
+            <div class="tbl-text">${escapeHtml(emp.PayGroupName ?? '-')}</div>
+            </td>
+            <td>
+                <span class="badge-saas ${badgeClass}">
+                    ${escapeHtml(emp.Status)}
+                </span>
+            </td>
+            <td>
+                <button class="btn-link-saas"
+                    onclick="openModal('${escapeHtml(emp.EmpName)}','${emp.EmpID}','${emp.EmpSalaryConfigID}')">
+                    <i class="fas fa-cog"></i> Configure
+                </button>
+            </td>
+        </tr>
+    `);
+        });
+
+        dt = $('#emptable').DataTable({
+            pageLength: 10,
+            searching: true,
+            lengthChange: false,
+
+            ordering: true,   // keep ordering ON globally
+
+            columnDefs: [
+                {
+                    targets: '_all',
+                    orderable: false   // ❌ disable sorting for all columns
+                },
+                {
+                    targets: 0,
+                    orderable: true    // ✅ enable sorting ONLY for SL column
+                }
+            ],
+
+            language: {
+                search: "",
+                searchPlaceholder: "Search employee..."
+            }
+        });
+
+    }
+
+    /* ===============================
+       SAFE HTML ESCAPE
+    ================================ */
+    function escapeHtml(text) {
+        return String(text ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    // ================= OPEN MODAL =================
+    function openModal(empName, empId, empSalaryConfigID) {
+
+        $('#modalEmpName').text(empName);
+        $('#hdnSelectedEmpId').val(empId);
+        $('#hdnEmpSalaryConfigID').val(empSalaryConfigID || 0);
+
+        let d = new Date();
+        d.setMonth(d.getMonth() - 1);
+        d.setDate(1);
+
+        $('#txtEffectiveFrom').val(d.toISOString().split('T')[0]);
+
+        $('#ctcModal').show();
+
+        // Reset UI
+        $('#inputPanel').html('<small>Select PayGroup to start...</small>');
+        $('#tbody_earnings, #tbody_deductions, #tbody_contribution').empty();
+
+        //$('#lblTotalGross, #lblTotalGrossYear').text(0);
+        //$('#lblTotalDed, #lblTotalDedYear').text(0);
+        //$('#lblTotalContrib, #lblTotalContribYear').text(0);
+        //$('#lblNetPay, #lblCTCMonth, #lblCTCYear').text("₹ 0");
+
+        loadEmployeeSalary(empSalaryConfigID, empId);
+        //lastCalculatedData = null;
+    }
+    //==================LOAD SALARY=============
+    function loadEmployeeSalary(empSalaryConfigID, empId) {
+        //$('#modalLoader').css('display', 'flex').fadeIn(100);
+        $.ajax({
+            url: '/SalaryCTC/GetEmployeeSalaryConfig',
+            type: 'GET',
+            data: {
+                empSalaryConfigID: empSalaryConfigID || 0,
+                EmployeeID: empId
+            },
+
+            success: function (res) {
+
+                // ❌ No data → open blank template
+                if (!res.Success) {
+                    renderTemplate(); // existing method
+                    return;
+                }
+
+                let data = res.Data;
+
+                // 🔥 SET PAYGROUP
+                $('#ddlgroup').val(data.Header.PayGroupID);
+
+                // 🔥 SET CHECKBOX
+                $('#chkPF').prop('checked', data.Header.IsPF_Applicable);
+                $('#chkESIC').prop('checked', data.Header.IsESIC_Applicable);
+                $('#chkPTAX').prop('checked', data.Header.IsPTAX_Applicable);
+
+                // 🔥 BUILD curConfig from TEMPLATE
+                curConfig = data.Template.map(x => ({
+                    id: x.PayConfigId,
+                    name: x.PayConfigName,
+                    type: x.PayType === "Allowances" ? "Add"
+                        : x.PayType === "Deduction" ? "Ded"
+                            : "Cont",
+
+                    isInput: x.PayType === "Manual" || x.IsGrossComponent,
+                    isManual: x.LogicType === "FIXED" && !x.IsStatutory,
+                    isStatutory: x.IsStatutory,
+
+                    isBasic: x.IsBasicComponent,
+                    isGross: x.IsGrossComponent,
+
+                    formula: x.CalculationFormula,
+                    logic: x.LogicType,
+                    rate: x.ManualRate
+                }));
+
+                // 🔥 DRAW TEMPLATE
+                drawTemplate(true);
+
+                // 🔥 FILL VALUES AFTER DRAW
+                requestAnimationFrame(() => {
+                    bindExistingValues(data.DetailList, data.Header);
+                });
+                //setTimeout(() => {
+                //    bindExistingValues(data.DetailList, data.Header);
+                //}, 200);
+            },
+
+            error: function () {
+                toastr.error("Failed to load salary");
+                renderTemplate();
+            },
+            complete: function () {
+                // Hide Modal Loader
+                $('#modalLoader').fadeOut(300);
+            }
+        });
+    }
+    //=================VALUE BINDING============
+    function bindExistingValues(details, header) {
+        console.log(details);
+        if (!details || !details.length) return;
+
+        details.forEach(x => {
+
+            let input = document.getElementById(x.PayConfigId);
+            let manual = document.getElementById("val_" + x.PayConfigId);
+
+            // 🔥 INPUT PANEL (GROSS etc)
+            if (input) {
+                input.value = x.MonthlyAmount;
+            }
+
+            // 🔥 GRID MANUAL (FIXED fields)
+            if (manual && manual.classList.contains('inp-manual')) {
+                manual.value = x.MonthlyAmount;
+            }
+
+            // 🔥 GRID CALCULATED
+            let calcBox = document.getElementById("val_" + x.PayConfigId);
+            if (calcBox && !calcBox.classList.contains('inp-manual')) {
+                calcBox.value = x.MonthlyAmount;
+            }
+
+            // 🔥 YEAR
+            let yr = document.getElementById("yr_" + x.PayConfigId);
+            if (yr) {
+                yr.innerText = x.YearlyAmount;
+            }
+        });
+
+        // HEADER
+        $('#lblTotalGross').text(header.MonthlyGross);
+        $('#lblTotalGrossYear').text(header.MonthlyGross * 12);
+
+        $('#lblTotalDed').text(header.TotalDeduction);
+        $('#lblTotalDedYear').text(header.TotalDeduction * 12);
+
+        $('#lblTotalContrib').text(header.TotalContribution);
+        $('#lblTotalContribYear').text(header.TotalContribution * 12);
+
+        $('#lblNetPay').text("₹ " + header.NetPay);
+        $('#lblCTCMonth').text("₹ " + header.MonthlyCTC);
+        $('#lblCTCYear').text("₹ " + header.AnnualCTC);
+
+        lastCalculatedData = {
+            Header: header,
+            DetailList: details
+        };
+    }
+    // ================= CLOSE =================
+    function closeModal() {
+
+        $('#ctcModal').fadeOut(200, function () {
+
+            // =========================
+            // 1) CLEAR ENTIRE MODAL
+            // =========================
+
+            // Inputs & tables
+            $('#inputPanel').empty().hide();
+            $('#tbody_earnings').empty();
+            $('#tbody_deductions').empty();
+            $('#tbody_contribution').empty();
+
+            // Hidden fields
+            $('#hdnSelectedEmpId').val("0");
+            $('#hdnEmpSalaryConfigID').val("0");
+
+            // Dropdowns
+            $("#ddlgroup").val("");
+
+            // Header name
+            $("#modalEmpName").text("--");
+
+            // Totals
+            $('#lblTotalGross').text("0");
+            $('#lblTotalGrossYear').text("0");
+
+            $('#lblTotalDed').text("0");
+            $('#lblTotalDedYear').text("0");
+
+            $('#lblTotalContrib').text("0");
+            $('#lblTotalContribYear').text("0");
+
+            $('#lblNetPay').text("₹ 0");
+            $('#lblCTCMonth').text("₹ 0");
+            $('#lblCTCYear').text("₹ 0");
+
+            // Checkboxes
+            $('#chkPF').prop('checked', true);
+            $('#chkESIC').prop('checked', true);
+            $('#chkPTAX').prop('checked', true);
+
+            // Global JS cache
+            curConfig = [];
+
+            // =========================
+            // OPTIONAL: Reload employee list
+            // =========================
+            //loadEmployees();
+        });
+    }
+
+    // ================= TEMPLATE LOAD =================
+    function renderTemplate() {
+
+        let payGroupId = $('#ddlgroup').val();
+        if (!payGroupId) return;
+
+        $.ajax({
+            url: '/SalaryCTC/GetSalaryConfigByPayGroup',
+            type: 'GET',
+            data: { payGroupId: payGroupId },
+            success: function (res) {
+
+                curConfig = res.map(x => ({
+                    id: x.PayConfigId,
+                    name: x.PayConfigName,
+                    type: x.PayType === "Allowances" ? "Add"
+                        : x.PayType === "Deduction" ? "Ded"
+                            : x.PayType === "CC" ? "Cont"
+                                : "Manual",
+
+                    isInput: x.PayType === "Manual" || x.IsGrossComponent,
+                    isManual: x.LogicType === "FIXED" && x.PayType !== "Manual" && !x.IsStatutory,
+                    isBasic: x.IsBasicComponent,
+                    isGross: x.IsGrossComponent,
+
+                    formula: x.CalculationFormula,
+                    logic: x.LogicType,
+                    rate: x.ManualRate
+                }));
+
+                drawTemplate(false);
+            }
+        });
+    }
+
+    //=============== TEMPLATE DRAW =====================
+    function drawTemplate(isEditMode = false) {
+
+        let inputsHtml = "";
+        let hasInputs = false;
+
+        curConfig.filter(x => x.isInput).forEach(x => {
+
+            hasInputs = true;
+
+            inputsHtml += `
+        <div class="col-md-12 mb-3">
+            <label style="font-size:12px; font-weight:600; color:#0E7777;">
+                ${x.name}
+            </label>
+
+            <input type="number"
+                   id="${x.id}"
+                   class="form-control input-gross"
+                   data-payconfigid="${x.id}"
+                   data-payconfigname="${x.name}"
+                   data-logic="${x.logic}"
+                   value=""
+                   oninput="handleInputChange(this)" />
+        </div>`;
+        });
+
+        if (hasInputs)
+            $('#inputPanel').html(`<div class="row-class-new border-bottom">${inputsHtml}</div>`).show();
+        else
+            $('#inputPanel').hide();
+
+        // ===== TABLE =====
+        $('#tbody_earnings, #tbody_deductions, #tbody_contribution').empty();
+
+        curConfig.filter(x => !x.isInput).forEach(x => {
+
+            let inp = "";
+
+            if (x.isManual || x.logic === "EXCEL_UPLOAD") {
+                inp = `<input type="text"
+                          id="val_${x.id}"
+                          class="inp-manual form-control text-end"
+                          data-payconfigid="${x.id}"
+                          data-payconfigname="${x.name}"
+                          data-logic="${x.logic}"
+                          value="${x.rate || 0}"
+                          oninput="handleInputChange(this)" />`;
+            } else {
+                inp = `<input type="text"
+                          id="val_${x.id}"
+                          class="form-control-plaintext text-end"
+                          value="" readonly />`;
+            }
+
+            let row = `
+        <tr>
+            <td>${x.name}</td>
+            <td>${x.formula || ''}</td>
+            <td>${inp}</td>
+            <td id="yr_${x.id}" class="text-end">0</td>
+        </tr>`;
+
+            if (x.type === "Add") $('#tbody_earnings').append(row);
+            if (x.type === "Ded") $('#tbody_deductions').append(row);
+            if (x.type === "Cont") $('#tbody_contribution').append(row);
+        });
+
+        // 🔥 FIRST CALCULATION
+        if (!isEditMode) {
+            setTimeout(() => {
+                callBackendCalculation();
+            }, 200);
+        }
+    }
+
+    //==================INPUT HANDLER===================
+    let calcTimer;
+
+    function handleInputChange(el) {
+
+        let val = parseFloat($(el).val()) || 0;
+        $(el).val(val);
+
+        clearTimeout(calcTimer);
+
+        calcTimer = setTimeout(() => {
+            callBackendCalculation();
+        }, 300);
+    }
+    // ================= CALL BACKEND =================
+    function callBackendCalculation() {
+
+        let inputs = [];
+
+        // Top input panel values
+        $('#inputPanel input').each(function () {
+            inputs.push({
+                PayConfigId: parseInt($(this).data('payconfigid') || 0),
+                PayConfigName: $(this).data('payconfigname') || "",
+                logic: $(this).data('logic') || "",
+                MonthlyAmount: parseFloat($(this).val()) || 0
+            });
+        });
+
+        // Manual grid values
+        $('.inp-manual').each(function () {
+            inputs.push({
+                PayConfigId: parseInt($(this).data('payconfigid') || 0),
+                PayConfigName: $(this).data('payconfigname') || "",
+                logic: $(this).data('logic') || "",
+                MonthlyAmount: parseFloat($(this).val()) || 0
+            });
+        });
+
+        let payload = {
+            EmployeeID: parseInt($('#hdnSelectedEmpId').val() || 0),
+            PayGroupID: parseInt($('#ddlgroup').val() || 0),
+            EmpSalaryConfigID: parseInt($('#hdnEmpSalaryConfigID').val() || 0),
+
+            IsPF: $('#chkPF').is(':checked'),
+            IsESIC: $('#chkESIC').is(':checked'),
+            IsPTAX: $('#chkPTAX').is(':checked'),
+
+            Inputs: inputs
+        };
+
+        if (!payload.EmployeeID || !payload.PayGroupID) return;
+
+        $.ajax({
+            url: '/EmployeeCTC/CalculateEmployeeCTC',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (res) {
+                if (!res.Success) {
+                    toastr.error(res.Message || "Calculation failed");
+                    return;
+                }
+
+                bindCalculationResult(res.Data);
+            },
+            error: function () {
+                toastr.error("Server error while calculating.");
+            }
+        });
+    }
+
+    // ================= BIND RESULT =================
+    //function bindCalculationResult(data) {
+
+    //    if (!data) return; 
+    //    // Update monthly + yearly values row by row
+    //    (data.DetailList || []).forEach(x => {  
+    //        let monthlyBox = $(`#val_${x.PayConfigId}`);
+    //        let yearlyBox = $(`#yr_${x.PayConfigId}`);
+    //        // 🔥 Get logic from DOM (NOT curConfig)
+    //        let logic = (monthlyBox.data('logic') || "").toString().toUpperCase();
+             
+    //        //if (monthlyBox.length) {
+    //        //    if (!monthlyBox.hasClass('inp-manual') && logic === "EXCEL_UPLOAD") {
+    //        //        monthlyBox.val(x.MonthlyAmount);
+    //        //    }
+    //        //}
+    //        if (monthlyBox.length) {
+    //            let currentVal = monthlyBox.val();
+    //            // ✅ EXCEL_UPLOAD → ALWAYS bind
+    //            if (logic === "EXCEL_UPLOAD") {
+    //                if (currentVal === "" || currentVal === "0") {
+    //                    monthlyBox.val(x.MonthlyAmount);
+    //                }
+    //            }
+    //            // ✅ Other calculated fields
+    //            else if (!monthlyBox.hasClass('inp-manual')) {
+    //                monthlyBox.val(x.MonthlyAmount);
+    //            }
+    //        }
+    //        if (yearlyBox.length) {
+    //            yearlyBox.text(x.YearlyAmount);
+    //        }
+             
+    //    });
+
+    //    // Header totals
+    //    $('#lblTotalGross').text(data.Header.MonthlyGross);
+    //    $('#lblTotalGrossYear').text((data.Header.MonthlyGross * 12));
+
+    //    $('#lblTotalDed').text(data.Header.TotalDeduction);
+    //    $('#lblTotalDedYear').text((data.Header.TotalDeduction * 12));
+
+    //    $('#lblTotalContrib').text(data.Header.TotalContribution);
+    //    $('#lblTotalContribYear').text((data.Header.TotalContribution * 12));
+
+    //    $('#lblNetPay').text("₹ " + data.Header.NetPay);
+    //    $('#lblCTCMonth').text("₹ " + data.Header.MonthlyCTC);
+    //    $('#lblCTCYear').text("₹ " + data.Header.AnnualCTC);
+
+    //    lastCalculatedData = data;
+    //}
+    function bindCalculationResult(data) {
+
+        if (!data) {
+            console.warn("bindCalculationResult: data is null/undefined");
+            return;
+        }
+
+        console.log("=== BIND START ===");
+        console.log("DetailList:", data.DetailList);
+        console.log("Header:", data.Header);
+
+        (data.DetailList || []).forEach(x => {
+
+            let monthlyBox = $(`#val_${x.PayConfigId}`);
+            let yearlyBox = $(`#yr_${x.PayConfigId}`);
+
+            // 🔥 Get logic from DOM
+            let logic = (monthlyBox.data('logic') || "").toString().toUpperCase();
+
+            // 🔍 DOM checks
+            let domVal = monthlyBox.length ? monthlyBox.val() : undefined;
+
+            console.group(`PayConfigId: ${x.PayConfigId}`);
+            console.log("Backend -> Monthly:", x.MonthlyAmount, "Yearly:", x.YearlyAmount);
+            console.log("DOM -> Exists:", monthlyBox.length > 0, "Current Val:", domVal);
+            console.log("Logic (DOM):", logic);
+
+            // ================= MONTHLY =================
+            if (monthlyBox.length) {
+
+                let currentVal = monthlyBox.val();
+
+                if (logic === "EXCEL_UPLOAD") {
+
+                    console.log("Branch: EXCEL_UPLOAD");
+
+                    if (currentVal === "" || currentVal === "0") {
+                        console.log("Setting Monthly from backend:", x.MonthlyAmount);
+                        monthlyBox.val(x.MonthlyAmount);
+                    } else {
+                        console.log("Skipping overwrite (user value kept):", currentVal);
+                    }
+                }
+                else if (!monthlyBox.hasClass('inp-manual')) {
+
+                    console.log("Branch: Calculated field -> set Monthly:", x.MonthlyAmount);
+                    monthlyBox.val(x.MonthlyAmount);
+                }
+                else {
+                    console.log("Branch: Manual FIXED -> skip overwrite");
+                }
+            } else {
+                console.warn("Monthly input NOT FOUND for:", x.PayConfigId);
+            }
+
+            // ================= YEARLY =================
+            if (yearlyBox.length) {
+
+                let yearly = x.YearlyAmount;
+
+                if (logic === "EXCEL_UPLOAD") {
+
+                    // 🔥 take value from input (NOT backend)
+                    let domVal = parseFloat(monthlyBox.val()) || 0;
+                    yearly = domVal * 12;
+
+                    console.log("EXCEL_UPLOAD Yearly from DOM:", yearly);
+                }
+                else {
+                    if (!yearly || yearly === 0) {
+                        yearly = (x.MonthlyAmount || 0) * 12;
+                        console.log("Yearly fallback used:", yearly);
+                    } else {
+                        console.log("Yearly from backend:", yearly);
+                    }
+                }
+
+                yearlyBox.text(yearly);
+            }
+
+            console.groupEnd();
+        });
+
+        // ================= HEADER =================
+        console.log("Header Bind:");
+        console.log("Gross:", data.Header.MonthlyGross);
+        console.log("Deduction:", data.Header.TotalDeduction);
+        console.log("Contribution:", data.Header.TotalContribution);
+        console.log("Net:", data.Header.NetPay);
+
+        $('#lblTotalGross').text(data.Header.MonthlyGross);
+        $('#lblTotalGrossYear').text(data.Header.MonthlyGross * 12);
+
+        $('#lblTotalDed').text(data.Header.TotalDeduction);
+        $('#lblTotalDedYear').text(data.Header.TotalDeduction * 12);
+
+        $('#lblTotalContrib').text(data.Header.TotalContribution);
+        $('#lblTotalContribYear').text(data.Header.TotalContribution * 12);
+
+        $('#lblNetPay').text("₹ " + data.Header.NetPay);
+        $('#lblCTCMonth').text("₹ " + data.Header.MonthlyCTC);
+        $('#lblCTCYear').text("₹ " + data.Header.AnnualCTC);
+
+        lastCalculatedData = data;
+
+        console.log("=== BIND END ===");
+    }
+    // ================= SAVE =================
+    function saveData() {
+
+        if (!lastCalculatedData) {
+            toastr.error("Please calculate first");
+            return;
+        }
+        let finalDetails = (lastCalculatedData.DetailList || []).map(item => {
+
+            let inputBox = $(`#val_${item.PayConfigId}`);
+            let logic = (inputBox.data('logic') || "").toString().toUpperCase();
+
+            // 🔥 If EXCEL_UPLOAD → take from UI
+            if (logic === "EXCEL_UPLOAD" && inputBox.length) {
+
+                let domVal = parseFloat(inputBox.val()) || 0;
+
+                return {
+                    ...item,
+                    MonthlyAmount: domVal,
+                    YearlyAmount: domVal * 12
+                };
+            }
+
+            return item;
+        });
+        let payload = {
+            EmployeeID: parseInt($('#hdnSelectedEmpId').val() || 0),
+            PayGroupID: parseInt($('#ddlgroup').val() || 0),
+            EmpSalaryConfigID: parseInt($('#hdnEmpSalaryConfigID').val() || 0),
+
+            // ✅ IMPORTANT
+            EffectiveFrom: $('#txtEffectiveFrom').val(),
+
+            IsPF: $('#chkPF').is(':checked'),
+            IsESIC: $('#chkESIC').is(':checked'),
+            IsPTAX: $('#chkPTAX').is(':checked'),
+
+            // ✅ FROM BACKEND CALCULATION
+            MonthlyGross: lastCalculatedData.Header.MonthlyGross,
+            TotalAllowance: lastCalculatedData.Header.MonthlyGross,
+            TotalDeduction: lastCalculatedData.Header.TotalDeduction,
+            TotalContribution: lastCalculatedData.Header.TotalContribution,
+            NetPay: lastCalculatedData.Header.NetPay,
+            MonthlyCTC: lastCalculatedData.Header.MonthlyCTC,
+            AnnualCTC: lastCalculatedData.Header.AnnualCTC,
+
+            DetailList: finalDetails
+            //DetailList: lastCalculatedData.DetailList
+        };
+
+        $.ajax({
+            url: '/EmployeeCTC/SaveEmployeeSalaryRevision',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+
+            success: function (res) {
+
+                if (res.Success) {
+                    toastr.success(res.Message || "Saved successfully");
+
+                    // 🔥 UPDATE GRID WITHOUT RELOAD
+                    updateEmployeeRow(payload);
+
+                    // 🔥 CLOSE MODAL
+                    closeModal();
+                } else {
+                    toastr.error(res.Message || "Save failed");
+                }
+            },
+            error: function () {
+                toastr.error("Server error during save");
+            }
+        });
+    }
+
+    function updateEmployeeRow(payload) {
+
+        let row = $(`#row_${payload.EmployeeID}`);
+
+        if (!row.length) return;
+
+        // Example columns (adjust as per your table)
+        row.find('.col-gross').text(payload.MonthlyGross);
+        row.find('.col-net').text(payload.NetPay);
+        row.find('.col-ctc').text(payload.MonthlyCTC);
+
+        // optional: highlight updated row
+        row.addClass('updated-row');
+
+        setTimeout(() => {
+            row.removeClass('updated-row');
+        }, 1500);
+    }
+</script>

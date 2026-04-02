@@ -217,14 +217,19 @@ namespace MendinePayroll.UI.Controllers
             return View(employeeSalaryModel);
         }
         [HttpPost]
-        public JsonResult GetAllEmployeeLoanRegister(string FinancialYear, int? empParam, int numberofRow, int pagenumber)
+        public JsonResult GetAllEmployeeLoanRegister(string FinancialYear, List<string> companyIds, List<string> deptIds, List<string> categoryIds, List<string> empIds, int numberofRow, int pagenumber)
         {
             try
             {
-                int? IDEmployee = (empParam == 0 ? (int?)null : empParam);
 
-                // 1. Fetch full SP result
-                DataTable dt = clsDatabase.fnDataTable("PRC_Loan_Ledger_ByFY", TenantId, FinancialYear, IDEmployee, numberofRow, pagenumber);
+                string companyFilter = NormalizeMultiSelect(companyIds);
+                string deptFilter = NormalizeMultiSelect(deptIds);
+                string empidsFilter = NormalizeMultiSelect(empIds);
+                string categoryFilter = NormalizeMultiSelect(categoryIds);
+
+
+                // 1. Fetch full SP result 
+                DataTable dt = clsDatabase.fnDataTable("PRC_Loan_Ledger_ByFY", TenantId, FinancialYear, companyFilter, deptFilter, empidsFilter, numberofRow, pagenumber);
 
                 if (dt == null || dt.Rows.Count == 0)
                     return Json(new List<object>(), JsonRequestBehavior.AllowGet);
@@ -315,22 +320,44 @@ namespace MendinePayroll.UI.Controllers
             }
         }
 
+
+        private string NormalizeMultiSelect(List<string> items)
+        {
+            if (items == null || items.Count == 0)
+                return "";
+
+            // Remove "multiselect-all"
+            items = items
+                .Where(x => !x.Equals("multiselect-all", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            // If after removing "multiselect-all" nothing left → treat as All selected
+            if (items.Count == 0)
+                return "";
+
+            return string.Join(",", items);
+        }
         private bool IsNumericType(Type t)
         {
             return t == typeof(decimal) || t == typeof(double) || t == typeof(float) ||
                    t == typeof(int) || t == typeof(long) || t == typeof(short);
         }
         [HttpPost]
-        public JsonResult ExportLoanRegisterToCSV(string Year, int? empParam)
+        public JsonResult ExportLoanRegisterToCSV(string FinancialYear, List<string> companyIds, List<string> deptIds, List<string> categoryIds, List<string> empIds)
         {
             try
             {
-                int? IDEmployee = (empParam == 0 ? (int?)null : empParam);
+                string companyFilter = NormalizeMultiSelect(companyIds);
+                string deptFilter = NormalizeMultiSelect(deptIds);
+                string empidsFilter = NormalizeMultiSelect(empIds);
+                string categoryFilter = NormalizeMultiSelect(categoryIds);
+
                 int numberofRow = 9999; // fetch all rows
                 int pagenumber = 1;
 
-                // 1. Get data from SP
-                DataTable dt = clsDatabase.fnDataTable("PRC_Loan_Ledger_ByFY", Year, IDEmployee, numberofRow, pagenumber);
+                // 1. Get data from SP 
+                DataTable dt = clsDatabase.fnDataTable("PRC_Loan_Ledger_ByFY", TenantId, FinancialYear, companyFilter, deptFilter, empidsFilter, numberofRow, pagenumber);
+
                 if (dt == null || dt.Rows.Count == 0)
                     return Json("NODATA", JsonRequestBehavior.AllowGet);
                 // Remove TotalCount column if exists
@@ -359,7 +386,7 @@ namespace MendinePayroll.UI.Controllers
 
                     subtotal["Department"] = group.Key;
                     subtotal["Employee Name"] = "Subtotal";
-                    subtotal["Financial Year"] = Year;
+                    subtotal["Financial Year"] = FinancialYear;
 
                     // Sum numeric columns
                     foreach (DataColumn col in grouped.Columns)
@@ -386,7 +413,7 @@ namespace MendinePayroll.UI.Controllers
                         grand[col.ColumnName] = "";
 
                 grand["Department"] = "Grand Total";
-                grand["Financial Year"] = Year;
+                grand["Financial Year"] = FinancialYear;
 
                 foreach (DataColumn col in grouped.Columns)
                 {
@@ -433,7 +460,7 @@ namespace MendinePayroll.UI.Controllers
                 }
 
                 // 5. Save file (same as ESIC)
-                string fileName = $"LoanRegister_{Year}_{DateTime.Now:yyyyMMddHHmmss}.csv";
+                string fileName = $"LoanRegister_{FinancialYear}_{DateTime.Now:yyyyMMddHHmmss}.csv";
                 string folderPath = Server.MapPath("~/Downloads/");
                 if (!Directory.Exists(folderPath))
                     Directory.CreateDirectory(folderPath);

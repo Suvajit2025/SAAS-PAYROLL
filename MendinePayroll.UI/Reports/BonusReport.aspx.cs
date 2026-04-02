@@ -14,6 +14,27 @@ namespace MendinePayroll.UI.Reports
 {
     public partial class BonusReport : System.Web.UI.Page
     {
+        private string TenantId
+        {
+            get
+            {
+                try
+                {
+                    if (Session["TenantID"] == null)
+                    {
+                        // Redirect to login or handle gracefully
+                        throw new Exception("Session expired. Please log in again.");
+                    }
+                    return Session["TenantID"].ToString();
+                }
+                catch (Exception ex)
+                {
+                    // Log the error (you can use your existing logging mechanism)
+                    System.Diagnostics.Debug.WriteLine("TenantID retrieval error: " + ex.Message);
+                    throw; // Let it bubble to global error handler if configured
+                }
+            }
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             SessionOut();
@@ -64,7 +85,7 @@ namespace MendinePayroll.UI.Reports
             ddlLocation.Items.Insert(0, "Select");
 
             // Company
-            ddlCompany.DataSource = clsSalary.CompanyList();
+            ddlCompany.DataSource = clsSalary.CompanyList(TenantId);
             ddlCompany.DataTextField = "Name";
             ddlCompany.DataValueField = "Code";
             ddlCompany.DataBind();

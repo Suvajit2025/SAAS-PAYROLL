@@ -402,7 +402,7 @@ namespace MendinePayroll.UI.Controllers
             }
 
 
-            return Json(new { Code = 0, Message = "No response from SP" });
+            return Json(new { Code = 0, Message = "Please enter Component Name" });
         }
 
         [HttpPost]
@@ -432,40 +432,84 @@ namespace MendinePayroll.UI.Controllers
         public JsonResult GetAllPayConfig()
         {
             try
-            { 
+            {
                 DataTable dt = clsDatabase.fnDataTable("SP_GetAllPayConfig", TenantId);
 
                 var list = dt.AsEnumerable().Select(row => new
                 {
-                    PayConfigId = row.Field<int>("PayConfigId"),
-                    PayConfigName = row.Field<string>("PayConfigName"),
-                    PayConfigType = row.Field<string>("PayConfigType"),
+                    PayConfigId = GetInt(row["PayConfigId"]),
+                    PayConfigName = GetString(row["PayConfigName"]),
+                    PayConfigType = GetString(row["PayConfigType"]),
 
-                    // Nullable Boolean Conversion
-                    IScalculative = row.Field<bool?>("IScalculative") ?? false,
-                    IsStatutory = row.Field<bool?>("IsStatutory"),
-                    IsGrossComponent = row.Field<bool?>("IsGrossComponent") ?? false,
-                    IsBasicComponent = row.Field<bool?>("IsBasicComponent") ?? false,
-                    IsVariableAmt = row.Field<bool?>("IsVariableAmt") ?? false,
-                    IsLoanComponent = row.Field<bool?>("IsLoanComponent") ?? false,
+                    // ✅ SAFE BOOLEAN HANDLING (string/int/bit সব support করবে)
+                    IScalculative = GetBool(row["IScalculative"]),
+                    IsStatutory = GetNullableBool(row["IsStatutory"]),
+                    IsGrossComponent = GetBool(row["IsGrossComponent"]),
+                    IsBasicComponent = GetBool(row["IsBasicComponent"]),
+                    IsVariableAmt = GetBool(row["IsVariableAmt"]),
+                    IsLoanComponent = GetBool(row["IsLoanComponent"]),
 
-                    StatutoryType = row["StatutoryType"]?.ToString(),
-                    SortOrder = row.Field<int?>("SortOrder") ?? 0,
+                    StatutoryType = GetString(row["StatutoryType"]),
+                    SortOrder = GetInt(row["SortOrder"]),
 
-                    OtherType = row["OtherType"]?.ToString(),
-                    IsOther = row.Field<bool?>("IsOther"),
+                    OtherType = GetString(row["OtherType"]),
+                    IsOther = GetNullableBool(row["IsOther"]),
 
-                    EntryType = row.Field<string>("EntryType"),
+                    EntryType = GetString(row["EntryType"]),
 
-                    PayConfigList = new List<object>()  // same as JSON structure
+                    PayConfigList = new List<object>() // future use
                 }).ToList();
 
                 return Json(list, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+                return Json(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
             }
+        }
+        public static string GetString(object value)
+        {
+            return value == DBNull.Value || value == null ? null : value.ToString();
+        }
+
+        public static int GetInt(object value)
+        {
+            if (value == DBNull.Value || value == null)
+                return 0;
+
+            int.TryParse(value.ToString(), out int result);
+            return result;
+        }
+
+        public static bool GetBool(object value)
+        {
+            if (value == DBNull.Value || value == null)
+                return false;
+
+            var str = value.ToString().Trim().ToLower();
+
+            // supports: true/false, 1/0, yes/no
+            return str == "true" || str == "1" || str == "yes";
+        }
+
+        public static bool? GetNullableBool(object value)
+        {
+            if (value == DBNull.Value || value == null)
+                return null;
+
+            var str = value.ToString().Trim().ToLower();
+
+            if (str == "true" || str == "1" || str == "yes")
+                return true;
+
+            if (str == "false" || str == "0" || str == "no")
+                return false;
+
+            return null;
         }
         [HttpPost]
         public JsonResult SaveSalaryConfig(SalaryConfigModel model)

@@ -69,10 +69,11 @@ namespace MendinePayroll.UI.Controllers
             //Session["UserEmail"] = "demo@corporation.in";
             //Session["TenantID"] = "24A72122-DD46-4386-873D-758E450E252A";
 
-            //Production
+            //////Production
             //Session["RoleID"] = Request.QueryString["RoleID"];
             //Session["UserName"] = Request.QueryString["UserName"];
             //Session["UserId"] = Request.QueryString["UserID"];
+            //Session["EmployeeNo"] = Request.QueryString["EmployeeNo"];
             //Session["UserEmail"] = Request.QueryString["UserEmail"];
             //Session["TenantID"] = Request.QueryString["TenantID"];
 

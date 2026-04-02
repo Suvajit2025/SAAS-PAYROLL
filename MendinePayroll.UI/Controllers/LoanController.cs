@@ -532,6 +532,8 @@ namespace MendinePayroll.UI.Controllers
             try
             {
                 model.UserName = HttpContext.Session["username"]?.ToString() ?? "SystemUser";
+                // ✅ Dynamic Remarks
+                string remarks = $"Installment received for the month of: {model.Month} Year: {model.Year}";
 
                 // 2. Execute DB Operation
                 // Since the SP contains a "SELECT" statement at the end, fnDBOperation usually returns a DataTable.
@@ -542,7 +544,7 @@ namespace MendinePayroll.UI.Controllers
                     model.Month,
                     model.Year,
                     model.UserName,
-                    TenantId, "External", "Processed via Extrenal Bulk Process"
+                    TenantId, "External", remarks
                 );
 
                 // 3. Parse DB Response

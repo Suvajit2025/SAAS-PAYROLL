@@ -322,10 +322,7 @@
                     </button>*@
                     <button class="btn btn-default btn-sm"  onclick="exportExcel()">
                         <i class="fa fa-file-excel-o mr-xs" style="color:#16a34a;"></i> Export
-                    </button>
-                    <button class="btn btn-default btn-sm" onclick="refreshGrid()">
-                        <i class="fa fa-refresh"></i>
-                    </button>
+                    </button> 
                 </div>
             </div>
         </div>
@@ -394,7 +391,19 @@
 
         $('#searchInput').on('keyup', applyFilters);
         $('.multi-select').on('change', applyFilters);
-        $('#btnClearFilters').click(clearFilters);
+        $("#btnClearFilters").click(function (e) {
+
+            e.preventDefault();
+
+            $('#ddlCompany').val([]).multiselect('refresh');
+
+            $('#ddlDepartment').val([]).multiselect('refresh');
+
+            $('#ddlEmployee').val([]).multiselect('refresh');
+
+            loadCTCReport();
+
+        });
     });
 
     function initMultiSelects() {
@@ -662,7 +671,7 @@
         const ws = XLSX.utils.json_to_sheet(out);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Salary Register");
-        XLSX.writeFile(wb, "Salary_Register.xlsx");
+        XLSX.writeFile(wb, "Salary_Annexure.xlsx");
     }
 
     function escapeHtml(t) {

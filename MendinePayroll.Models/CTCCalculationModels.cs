@@ -295,6 +295,7 @@ namespace MendinePayroll.Models
     {
         public long EmployeeID { get; set; }
         public long PayGroupID { get; set; }
+        public DateTime EffectiveFrom {  get; set; }
         public long EmpSalaryConfigID { get; set; }
         public bool IsPF { get; set; }
         public bool IsESIC { get; set; }

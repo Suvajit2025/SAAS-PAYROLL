@@ -4,7 +4,7 @@ using DocumentFormat.OpenXml.Drawing.Charts;
 using MendinePayroll.Models;
 using MendinePayroll.UI.BLL;
 using MendinePayroll.UI.Models;
-using MendinePayroll.UI.Utility;
+using MendinePayroll.UI.Utility; 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Management;
 using System.Web.Mvc;
+using System.Web.Services.Description;
 using UI.BLL;
 using DataTable = System.Data.DataTable;
 using Formatting = Newtonsoft.Json.Formatting;
@@ -3192,7 +3193,11 @@ namespace MendinePayroll.UI.Controllers
             var data = dt.AsEnumerable().Select(x => new
             {
                 value = x["IdFinancialYear"]?.ToString(),
-                text = x["FinancialYearCode"]?.ToString()
+                text = x["FinancialYearCode"]?.ToString(),
+                ay = x["AssessmentYearCode"]?.ToString(),
+                start = Convert.ToDateTime(x["StartDate"]).ToString("dd-MMM-yyyy"),
+                end = Convert.ToDateTime(x["EndDate"]).ToString("dd-MMM-yyyy"),
+                isCurrent = x["FinancialYearCode"].ToString().Contains("(Current)") // Helper flag
             }).ToList();
 
             return Json(data, JsonRequestBehavior.AllowGet);
@@ -3205,9 +3210,9 @@ namespace MendinePayroll.UI.Controllers
 
             var data = dt.AsEnumerable().Select(x => new
             {
-                value = x["RegimeId"]?.ToString(),     // used in backend
-                code = x["RegimeCode"]?.ToString(),   // optional (future use)
-                text = x["RegimeName"]?.ToString()    // shown in dropdown
+                value = x["RegimeId"]?.ToString(),
+                text = x["RegimeCode"]?.ToString(), // Changed to Code to show "New (Default)" in dropdown
+                fullName = x["RegimeName"]?.ToString()
             }).ToList();
 
             return Json(data, JsonRequestBehavior.AllowGet);
@@ -3435,6 +3440,7 @@ namespace MendinePayroll.UI.Controllers
         }
 
         #endregion
+
         #region Annual TDS Projection
 
         public ActionResult AnualTaxProjection()
@@ -3457,13 +3463,13 @@ namespace MendinePayroll.UI.Controllers
                 string companyIds = filters.companyIds != null ? string.Join(",", filters.companyIds) : "";
                 string deptIds = filters.deptIds != null ? string.Join(",", filters.deptIds) : "";
                 string empIds = filters.empIds != null ? string.Join(",", filters.empIds) : "";
-                int year = filters.year;
+                int FYId = filters.year;
                 int regime = filters.regime;
                 int isRebateApplied = filters.isRebateApplied;
 
                 // 2. Execute Stored Procedure via your Database Utility
                 // Parameters: Year, CompanyList, DeptList, EmpList, TenantId
-                DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_TDS_PROJECTION_GET",year, companyIds, deptIds, empIds, isRebateApplied, TenantId);
+                DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_TDS_PROJECTION_GET", FYId, companyIds, deptIds, empIds, isRebateApplied, TenantId);
 
                 if (dt == null)
                     return Json(new { success = false, message = "Error executing Tax Engine." });
@@ -3586,6 +3592,41 @@ namespace MendinePayroll.UI.Controllers
             public bool RebateApplied { get; set; }
         }
         #endregion
+
+        #region TDS Configuration
+        public ActionResult TdsConfiguration()
+        {
+            if (Session["UserName"] == null)
+                return RedirectToAction("Index", "Login");
+            clsAccessLogInfo info = new clsAccessLogInfo { AccessType = "TDS-CONFIGURATION" };
+            clsAccessLog.AccessLog_Save(info); 
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult SaveFullTaxConfiguration(TaxMasterSaveModel model)
+        {
+            try
+            {
+                string SlabsJson = Newtonsoft.Json.JsonConvert.SerializeObject(model.Slabs);
+
+                var dt = clsDatabase.fnDataTable("SP_Payroll_SaveTaxConfiguration", model.FinancialYear, model.RegimeId,model.StandardDeduction,model.RebateLimit87A
+                   ,model.RebateIncomeThreshold,model.HealthEduCessRate, SlabsJson);
+
+                bool success = Convert.ToInt32(dt.Rows[0]["Success"]) == 1;
+                string message = dt.Rows[0]["Message"].ToString();
+
+                return Json(new { success, message });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+        #endregion
+
     }
 
 }
