@@ -1,4 +1,4 @@
-﻿/* ========================================================================
+/* ========================================================================
    ReportEngine.js - Global Engine for ieHRMS Reports
    Filters + Client Pagination + Search + Export
    ======================================================================== */
@@ -52,8 +52,8 @@ var ReportEngine = {
         self.populateYearMonth();
         self.loadStaticLookups();
 
-        $('#ddlCompany, #ddlDepartment, #ddlCategory, #ddlstatus')
-            .on('change', () => self.loadEmployees());
+        //$('#ddlCompany, #ddlDepartment, #ddlCategory, #ddlstatus')
+        //    .on('change', () => self.loadEmployees());
 
         $('.filter-trigger').on('change', () => self.loadData(self.currentUrl));
 
@@ -128,27 +128,59 @@ var ReportEngine = {
             $('#ddlpaygroup').empty();
             res.forEach(x => $('#ddlpaygroup').append(new Option(x.PayGroupName, x.PayGroupID)));
             $('#ddlpaygroup').multiselect('rebuild');
-            self.loadEmployees();
+        
         });
     },
 
     loadEmployees: function () {
-        $.get('/PayrollReports/GetEmployeeList', {
-            companyIds: ($('#ddlCompany').val() || []).join(','),
-            deptIds: ($('#ddlDepartment').val() || []).join(','),
-            categoryIds: ($('#ddlCategory').val() || []).join(','),
-            status: $('#ddlstatus').val()
-        }, res => {
-            const ddl = $('#ddlEmployee').empty();
-            res.forEach(x => ddl.append(new Option(x.EmployeeName, x.EmployeeID)));
-            ddl.multiselect('rebuild');
-        });
+        var empVal = $('#ddlEmployee').val();
+        if (!empVal || empVal.length === 0) {
+
+            $.ajax({
+                url: '/PayrollReports/GetEmployeeList',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    year: $('#ddlYear').val(),
+                    month: $('#ddlMonth').val(),
+                    companyIds: $('#ddlCompany').val() || [],
+                    deptIds: $('#ddlDepartment').val() || [],
+                    categoryIds: $('#ddlCategory').val() || [],
+                    paygroupIds: $('#ddlpaygroup').val() || [],
+                    empIds: $('#ddlEmployee').val() || [],
+                    status: $('#ddlstatus').val()
+                }),
+                success: function (res) {
+                    const ddl = $('#ddlEmployee').empty();
+                    res.forEach(x => ddl.append(new Option(x.EmployeeName, x.EmployeeID)));
+                    ddl.multiselect('rebuild');
+                }
+            });
+
+        }
+        //$.get('/PayrollReports/GetEmployeeList', {
+        //    year: $('#ddlYear').val(),
+        //    month: $('#ddlMonth').val(),
+        //    companyIds: $('#ddlCompany').val() || [],
+        //    deptIds: $('#ddlDepartment').val() || [],
+        //    categoryIds: $('#ddlCategory').val() || [],
+        //    paygroupIds: $('#ddlpaygroup').val() || [],
+        //    empIds: $('#ddlEmployee').val() || [],
+        //    status: $('#ddlstatus').val()
+        //}, res => {
+        //    const ddl = $('#ddlEmployee').empty();
+        //    res.forEach(x => ddl.append(new Option(x.EmployeeName, x.EmployeeID)));
+        //    ddl.multiselect('rebuild');
+        //});
     },
 
     /* ================= DATA ================= */
 
     loadData: function (url) {
         const self = this;
+        self.loadEmployees();
+
+        
 
         $('#gridBody').html(
             `<tr><td colspan="100" class="text-center" style="padding:40px;">

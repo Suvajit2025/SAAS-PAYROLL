@@ -1,4 +1,5 @@
 ﻿using Common.Utility;
+using DocumentFormat.OpenXml.EMMA;
 using MendinePayroll.Models;
 using MendinePayroll.UI.BLL;
 using MendinePayroll.UI.Models;
@@ -36,6 +37,24 @@ namespace MendinePayroll.UI.Controllers
                 throw new Exception("TenantID not found in Manual property, QueryString, or Session.");
             }
         }
+
+        private string UserId
+        {
+            get
+            {
+                
+                // 2️⃣ Web request via querystring
+                if (System.Web.HttpContext.Current?.Request?.QueryString["UserId"] != null)
+                    return System.Web.HttpContext.Current.Request.QueryString["UserId"];
+
+                // 3️⃣ Normal logged-in web session
+                if (System.Web.HttpContext.Current?.Session?["UserId"] != null)
+                    return System.Web.HttpContext.Current.Session["UserId"].ToString();
+
+                throw new Exception("User Id not found in Manual property, QueryString, or Session.");
+            }
+        }
+
         // GET: PayrollReports
         public ActionResult Index()
         {
@@ -83,7 +102,7 @@ namespace MendinePayroll.UI.Controllers
         public JsonResult GetPayGroupList()
         {
 
-            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_PAYGROUP", TenantId);
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_PAYGROUP", TenantId,UserId);
 
             var list = dt.AsEnumerable().Select(r => new
             {
@@ -94,12 +113,23 @@ namespace MendinePayroll.UI.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetEmployeeList(string companyIds, string deptIds, string categoryIds, string status)
+        [HttpPost]
+        public JsonResult GetEmployeeList(ReportFilterModel filters)
         {
+            string CompanyIds = filters.companyIds != null ? string.Join(",", filters.companyIds) : "";
+            string DeptIds = filters.deptIds != null ? string.Join(",", filters.deptIds) : "";
+            string CategoryIds = filters.categoryIds != null ? string.Join(",", filters.categoryIds) : "";
+            string PayGroupIds = filters.paygroupIds != null ? string.Join(",", filters.paygroupIds) : "";
+            string EmpIds = filters.empIds != null ? string.Join(",", filters.empIds) : "";
+            int Year = filters.year;
+            int Month = filters.month;
+            string Status = filters.status;
+
             // Note: If you pass multiple IDs, your SP should handle comma-separated strings
             // Or you can filter the DataTable in C# as shown below
-            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEES", companyIds, deptIds, categoryIds, status,TenantId);
-
+            //DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEES", companyIds, deptIds, categoryIds, status,TenantId);
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEES",
+                    Year, Month, CompanyIds, DeptIds, CategoryIds, PayGroupIds, EmpIds, Status, TenantId);
             var list = dt.AsEnumerable().Select(r => new
             {
                 EmployeeID = r["EmployeeID"].ToString(),

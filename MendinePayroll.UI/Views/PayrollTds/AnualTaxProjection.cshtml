@@ -6,97 +6,234 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <style>
-    .tax-card {
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        padding: 20px;
+    :root {
+        --proj-primary: #1e3a8a;
+        --proj-primary-soft: #dbeafe;
+        --proj-accent: #0f766e;
+        --proj-danger: #b91c1c;
+        --proj-text: #1f2937;
+        --proj-muted: #64748b;
+        --proj-border: #e2e8f0;
+        --proj-panel: #f8fafc;
+    }
+
+    .summary-card {
+        background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+        border-radius: 14px;
+        border: 1px solid var(--proj-border);
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        padding: 18px 20px;
         margin-bottom: 20px;
     }
 
-    .filter-container {
+    .summary-header {
         display: flex;
-        flex-wrap: wrap;
-        align-items: flex-end;
-        gap: 12px 10px;
-        background: #f8f9fb;
-        padding: 15px;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .summary-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--proj-text);
+        letter-spacing: 0.2px;
+    }
+
+    .btn-add-projection {
+        border: none;
         border-radius: 8px;
-        border: 1px solid #eef0f2;
+        padding: 8px 14px;
+        background: linear-gradient(135deg, var(--proj-primary) 0%, #1d4ed8 100%);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(30, 58, 138, 0.28);
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .btn-add-projection:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 15px rgba(30, 58, 138, 0.32);
+    }
+
+    .tax-card {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid var(--proj-border);
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+        padding: 16px;
+        margin-bottom: 0;
+    }
+
+    .filter-container {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 12px;
+        background: var(--proj-panel);
+        padding: 14px;
+        border-radius: 10px;
+        border: 1px solid var(--proj-border);
     }
 
     .filter-item {
-        flex: 1 1 180px;
-        min-width: 160px;
+        min-width: 0;
     }
 
         .filter-item label {
             display: block;
-            font-weight: bold;
-            font-size: 11px;
-            color: #64748b;
-            margin-bottom: 5px;
+            font-weight: 700;
+            font-size: 10px;
+            color: var(--proj-muted);
+            margin-bottom: 6px;
             text-transform: uppercase;
+            letter-spacing: .5px;
         }
 
-        .filter-item select, .btn-action {
-            height: 32px !important;
-            border-radius: 4px !important;
+    .filter-item select, .btn-action {
+            height: 34px !important;
+            border-radius: 7px !important;
             font-size: 13px;
+            border-color: #d6deeb;
         }
 
-    .filter-break {
-        flex-basis: 100%;
-        height: 0;
+    .filter-container .btn-group {
+        width: 100%;
+    }
+
+    .filter-container .btn-group > .multiselect {
+        height: 34px;
+        border-radius: 7px;
+        border: 1px solid #d6deeb;
+        background: #fff;
+        color: #334155;
+        text-align: left;
+    }
+
+    .filter-item-fy {
+        grid-column: 1 / span 3;
+        grid-row: 1;
+    }
+
+    .filter-item-regime {
+        grid-column: 4 / span 3;
+        grid-row: 1;
+    }
+
+    .filter-item-rebate {
+        grid-column: 7 / span 3;
+        grid-row: 1;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+    }
+
+    .filter-item-company {
+        grid-column: 1 / span 3;
+        grid-row: 2;
+    }
+
+    .filter-item-department {
+        grid-column: 4 / span 3;
+        grid-row: 2;
+    }
+
+    .filter-item-employee {
+        grid-column: 7 / span 3;
+        grid-row: 2;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .filter-actions {
+        grid-column: 10 / span 3;
+        grid-row: 1 / span 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: stretch;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .filter-actions-top,
+    .filter-actions-bottom {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .filter-actions .btn-action {
+        height: 34px !important;
+        min-width: 108px;
+        padding: 0 10px;
+        white-space: nowrap;
+        font-size: 12px;
+    }
+
+    .filter-item-employee .btn-group > .multiselect {
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .btn-generate {
-        background: #2e7d32;
+        background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
         color: white;
         border: none;
         padding: 0 15px;
-        font-weight: bold;
+        font-weight: 700;
         cursor: pointer;
         white-space: nowrap;
-        transition: 0.2s;
+        box-shadow: 0 4px 8px rgba(22, 163, 74, .22);
+        transition: .2s;
     }
 
         .btn-generate:hover {
-            background: #1b5e20;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            filter: brightness(.95);
         }
 
     .btn-reset {
         background: #fff;
-        color: #d32f2f;
-        border: 1px solid #d32f2f;
+        color: var(--proj-danger);
+        border: 1px solid #ef9a9a;
         padding: 0 12px;
         cursor: pointer;
-        transition: 0.2s;
+        transition: .2s;
     }
 
         .btn-reset:hover {
-            background: #ffebee;
+            background: #fff5f5;
         }
 
     .tax-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
+        margin-top: 12px;
     }
 
-        .tax-table th {
-            background: #1a237e;
+    .tax-table th {
+            background: linear-gradient(180deg, #1f3a8a 0%, #1e3a8a 100%);
             color: white;
-            padding: 10px;
+            padding: 10px 9px;
             font-size: 12px;
             text-align: left;
+            border-right: 1px solid rgba(255,255,255,.14);
         }
 
         .tax-table td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+            padding: 10px 9px;
+            border-bottom: 1px solid #edf2f7;
             font-size: 13px;
+            color: var(--proj-text);
+        }
+
+        .tax-table tbody tr:hover {
+            background: #f8fbff;
         }
 
     .text-right {
@@ -106,6 +243,12 @@
     .bold-blue {
         font-weight: bold;
         color: #1a237e;
+    }
+
+    .compact-table th,
+    .compact-table td {
+        padding: 8px;
+        font-size: 12px;
     }
 
     /* Modal */
@@ -130,6 +273,61 @@
         border-radius: 8px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         overflow: hidden;
+    }
+
+    .editor-modal-card {
+        position: relative;
+        background: #fff;
+        width: 1180px;
+        max-width: calc(100% - 40px);
+        margin: 24px auto;
+        border-radius: 14px;
+        border: 1px solid #dbe3f1;
+        box-shadow: 0 20px 48px rgba(2, 6, 23, .26);
+        overflow: hidden;
+    }
+
+    .editor-modal-header {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+        color: #fff;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .editor-modal-body {
+        padding: 14px;
+        background: radial-gradient(circle at top right, #eff6ff 0%, #f8fafc 35%, #f8fafc 100%);
+        max-height: calc(100vh - 120px);
+        overflow: auto;
+    }
+
+    .editor-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .editor-toolbar-search input {
+        width: 280px;
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    .editor-toolbar-page select {
+        width: 110px;
+        border-radius: 8px;
+    }
+
+    #btnFinalize {
+        background: linear-gradient(135deg, var(--proj-primary) 0%, #1d4ed8 100%);
+        border: none;
+        box-shadow: 0 4px 10px rgba(30, 64, 175, .26);
+        min-width: 128px;
     }
 
     .modal-header {
@@ -255,8 +453,48 @@
     }
 
     @@media(max-width: 767px) {
+        .summary-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .filter-item-fy,
+        .filter-item-regime,
+        .filter-item-rebate,
+        .filter-item-company,
+        .filter-item-department,
+        .filter-item-employee,
+        .filter-actions {
+            grid-column: 1 / -1;
+        }
+
+        .filter-actions {
+            justify-content: flex-start;
+            grid-row: auto;
+            gap: 6px;
+        }
+
+        .filter-actions-top,
+        .filter-actions-bottom {
+            justify-content: flex-start;
+        }
+
+        .editor-toolbar-search input {
+            width: 100%;
+        }
+
         .modal-body {
             grid-template-columns: 1fr;
+        }
+
+        .editor-modal-card {
+            max-width: calc(100% - 18px);
+            margin: 10px auto;
+        }
+
+        .editor-modal-body {
+            padding: 10px;
+            max-height: calc(100vh - 90px);
         }
     }
     .rebate-section {
@@ -268,118 +506,150 @@
 <section class="content-body">
     <header class="page-header"><h2>Annual Tax Projection</h2></header>
 
-    <div class="tax-card">
-        <div class="filter-container">
-            <div class="filter-item">
-                <label>FY Year</label>
-                <select id="ddlFY" class="form-control">
-                     
-                </select>
-            </div>
-
-            <div class="filter-item">
-                <label>Regime</label>
-                <select id="ddlRegime" class="form-control" disabled style="background-color: #f1f3f5;">
-                    <option value="2">New Tax Regime</option>
-                </select>
-            </div>
-
-            <!-- Global rebate toggle (projection run) -->
-            <input type="hidden" name="isRebateApplied" id="isRebateApplied" value="0" />
-
-            <div class="filter-item" style="flex:0 0 190px;">
-                <label>Section 87A Rebate</label>
-                <div class="rebate-toggle">
-                    <label class="switch">
-                        <input type="checkbox" id="chkRebate">
-                        <span class="slider"></span>
-                    </label>
-                    <span class="toggle-text" id="rebateText">Not Applied</span>
-                </div>
-            </div>
-
-            <div class="filter-break"></div>
-
-            <div class="filter-item">
-                <label>Company</label>
-                <select id="ddlCompany" class="form-control multi-select" multiple="multiple"></select>
-            </div>
-
-            <div class="filter-item">
-                <label>Department</label>
-                <select id="ddlDepartment" class="form-control multi-select" multiple="multiple"></select>
-            </div>
-
-            <div class="filter-item">
-                <label>Employee</label>
-                <select id="ddlEmployee" class="form-control multi-select" multiple="multiple"></select>
-            </div>
-
-            <div class="filter-item" style="flex: 0 0 auto; display: flex; gap: 5px;">
-                <button type="button" class="btn-reset btn-action" onclick="location.reload()" title="Reset Filters">
-                    <i class="fa fa-refresh"></i> Reset
-                </button>
-                <button type="button" class="btn-generate btn-action" onclick="calculateProjections()">
-                    <i class="fa fa-calculator"></i> Generate
-                </button>
-                <button type="button" class="btn btn-primary btn-action" onclick="finalizeProjection()">
-                    <i class="fa fa-save"></i> Finalize & Save
-                </button>
-            </div>
+    <div class="summary-card">
+        <div class="summary-header">
+            <div class="summary-title">Yearly Projection Summary</div>
+            <button type="button" class="btn-add-projection" onclick="openProjectionEditor()">
+                <i class="fa fa-plus"></i> Add Projection
+            </button>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; gap:10px; flex-wrap:wrap;">
-
-            <div>
-                <input type="text" id="txtSearch" class="form-control" placeholder="Search employee..." style="width:250px;">
-            </div>
-
-            <div>
-                <select id="ddlPageSize" class="form-control" style="width:100px;">
-                    <option value="5">5</option>
-                    <option value="10" selected>10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                </select>
-            </div>
-
-        </div>
-
-
-
         <div class="table-responsive">
-            <table class="tax-table" id="tblProjections">
+            <table class="tax-table compact-table" id="tblProjectionSummary">
                 <thead>
                     <tr>
-                        <th>Emp ID</th>
-                        <th>Name</th>
-                        <th class="text-right">Annual Gross</th>
-                        <th class="text-right">Net Taxable</th>
-                        <th class="text-right">Total Tax (Before Cess)</th>
-                        <th class="text-right">Cess Amount</th>
-                        <th class="text-right">Annual Tax</th>
-                        <th class="text-right">Monthly TDS</th>
-                        <th style="text-align:center">Audit</th>
+                        <th style="width: 25%;">Financial Year</th>
+                        <th style="width: 20%;" class="text-right">Employees</th>
+                        <th style="width: 30%;" class="text-right">Total TDS</th>
+                        <th style="width: 25%; text-align:center;">Action</th>
                     </tr>
                 </thead>
-                <tbody id="tbodyData">
-                    <tr><td colspan="9" class="text-center">Select filters and click Generate.</td></tr>
+                <tbody id="summaryBody">
+                    <tr id="summaryEmptyRow">
+                        <td colspan="4" class="text-center">No projection saved yet. Click Add Projection.</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; gap:10px; flex-wrap:wrap;"> 
-            <div id="recordInfo" style="font-size:12px; color:#64748b; margin-bottom:8px;"></div>
-            <div id="paginationContainer" style="text-align:center; margin-top:15px;"></div>
-        </div>
-        
     </div>
 </section>
+
+<div class="modal-overlay" id="projectionEditorModal">
+    <div class="editor-modal-card">
+        <div class="editor-modal-header">
+            <div>
+                <h4 style="margin:0; font-size:15px;">Projection Editor</h4>
+                <small style="opacity:0.9;">Add or edit yearly annual tax projection</small>
+            </div>
+            <button type="button" onclick="closeProjectionEditor()" style="background:none; border:none; color:#fff; font-size:22px; line-height:1; cursor:pointer;">&times;</button>
+        </div>
+        <div class="editor-modal-body">
+            <div class="tax-card">
+                <div class="filter-container">
+                    <div class="filter-item filter-item-fy">
+                        <label>FY Year</label>
+                        <select id="ddlFY" class="form-control"></select>
+                    </div>
+
+                    <div class="filter-item filter-item-regime">
+                        <label>Regime</label>
+                        <select id="ddlRegime" class="form-control" disabled style="background-color: #f1f3f5;">
+                            <option value="2">New Tax Regime</option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" name="isRebateApplied" id="isRebateApplied" value="0" />
+
+                    <div class="filter-item filter-item-rebate">
+                        <label>Section 87A Rebate</label>
+                        <div class="rebate-toggle">
+                            <label class="switch">
+                                <input type="checkbox" id="chkRebate">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="toggle-text" id="rebateText">Not Applied</span>
+                        </div>
+                    </div>
+
+                    <div class="filter-item filter-item-company">
+                        <label>Company</label>
+                        <select id="ddlCompany" class="form-control multi-select" multiple="multiple"></select>
+                    </div>
+
+                    <div class="filter-item filter-item-department">
+                        <label>Department</label>
+                        <select id="ddlDepartment" class="form-control multi-select" multiple="multiple"></select>
+                    </div>
+
+                    <div class="filter-item filter-item-employee">
+                        <label>Employee</label>
+                        <select id="ddlEmployee" class="form-control multi-select" multiple="multiple"></select>
+                    </div>
+
+                    <div class="filter-item filter-actions">
+                        <div class="filter-actions-top">
+                            <button type="button" class="btn-reset btn-action" onclick="location.reload()" title="Reset Filters">
+                                <i class="fa fa-refresh"></i> Reset
+                            </button>
+                        </div>
+                        <div class="filter-actions-bottom">
+                            <button type="button" class="btn-generate btn-action" onclick="calculateProjections()">
+                                <i class="fa fa-calculator"></i> Generate
+                            </button>
+                            <button type="button" class="btn btn-primary btn-action" id="btnFinalize" onclick="finalizeProjection()">
+                                <i class="fa fa-save"></i> Finalize & Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="editor-toolbar">
+                    <div class="editor-toolbar-search">
+                        <input type="text" id="txtSearch" class="form-control" placeholder="Search employee...">
+                    </div>
+                    <div class="editor-toolbar-page">
+                        <select id="ddlPageSize" class="form-control">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="tax-table compact-table" id="tblProjections">
+                        <thead>
+                            <tr>
+                                <th>Emp ID</th>
+                                <th>Name</th>
+                                <th class="text-right">Annual Gross</th>
+                                <th class="text-right">Net Taxable</th>
+                                <th class="text-right">Total Tax (Before Cess)</th>
+                                <th class="text-right">Cess Amount</th>
+                                <th class="text-right">Annual Tax</th>
+                                <th class="text-right">Monthly TDS</th>
+                                <th style="text-align:center">Audit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyData">
+                            <tr><td colspan="9" class="text-center">Select filters and click Generate.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; gap:10px; flex-wrap:wrap;">
+                    <div id="recordInfo" style="font-size:12px; color:#64748b; margin-bottom:8px;"></div>
+                    <div id="paginationContainer" style="text-align:center; margin-top:15px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal -->
 <div class="modal-overlay" id="tdsModal">
     <div class="modal-card">
         <div class="modal-header">
             <div>
-                <h3 style="margin:0">TDS Projection Detail</h3>
+                <h3 style="margin:0">TDS Projection Detail (New Tax Regime - Section 115BAC)</h3>
                 <small id="lblModalEmpName">Employee Detail</small>
             </div>
             <button onclick="closeModal()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
@@ -598,6 +868,68 @@
   <script>
     // ---------- State ----------
     let currentEmpId = 0;
+    const savedProjectionSummary = {};
+    let pendingEditYear = null;
+
+    function openProjectionEditor(finYear) {
+        pendingEditYear = finYear || null;
+        $('#projectionEditorModal').fadeIn(150);
+
+        if (pendingEditYear) {
+            setTimeout(function () {
+                $('#ddlFY').val(pendingEditYear).trigger('change');
+            }, 100);
+        }
+    }
+
+    function closeProjectionEditor() {
+        $('#projectionEditorModal').fadeOut(120);
+    }
+
+    function renderProjectionSummary() {
+        const keys = Object.keys(savedProjectionSummary).sort().reverse();
+        if (keys.length === 0) {
+            $('#summaryBody').html('<tr id="summaryEmptyRow"><td colspan="4" class="text-center">No projection saved yet. Click Add Projection.</td></tr>');
+            return;
+        }
+
+        let html = '';
+        keys.forEach(function (year) {
+            const row = savedProjectionSummary[year];
+            html += `<tr>
+                <td>${year}</td>
+                <td class="text-right">${row.EmployeeCount}</td>
+                <td class="text-right">${row.TotalTDS}</td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-xs btn-primary" onclick="openProjectionEditor('${year}')">
+                        <i class="fa fa-pencil"></i> Edit
+                    </button>
+                </td>
+            </tr>`;
+        });
+        $('#summaryBody').html(html);
+    }
+
+    function updateSummaryForCurrentGrid() {
+        const year = $('#ddlFY').val();
+        if (!year) return;
+
+        const rows = $('#tbodyData tr[data-empid]');
+        const employeeCount = rows.length;
+        let totalTds = 0;
+
+        rows.each(function () {
+            const val = ($(this).find('.annualTax').text() || '0').replace(/₹/g, '').replace(/,/g, '').trim();
+            totalTds += parseFloat(val) || 0;
+        });
+
+        savedProjectionSummary[year] = {
+            EmployeeCount: employeeCount,
+            TotalTDS: totalTds.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        };
+
+        renderProjectionSummary();
+    }
 
     // ---------- Global (Projection) rebate toggle ----------
     $(document).on('change', '#chkRebate', function () {
@@ -632,6 +964,13 @@
         loadFY();
         $('#ddlCompany, #ddlDepartment').on('change', function () {
             loadEmployeeByFilters();
+        });
+        renderProjectionSummary();
+
+        $('#projectionEditorModal').on('click', function (e) {
+            if (e.target.id === 'projectionEditorModal') {
+                closeProjectionEditor();
+            }
         });
     });
     function loadFY() {
@@ -953,13 +1292,18 @@
                 success: function (res) {
                     if (!res.success) {
                         alert(res.message);
+                        $('#btnFinalize').prop('disabled', false).html('<i class="fa fa-save"></i> Finalize & Save');
                         return;
                     }
+                    updateSummaryForCurrentGrid();
                     alert("Saved successfully");
+                    $('#btnFinalize').prop('disabled', false).html('<i class="fa fa-save"></i> Finalize & Save');
+                    closeProjectionEditor();
                 },
                 error: function (err) {
                     console.log(err);
                     alert("Server error");
+                    $('#btnFinalize').prop('disabled', false).html('<i class="fa fa-save"></i> Finalize & Save');
                 }
             });
         }

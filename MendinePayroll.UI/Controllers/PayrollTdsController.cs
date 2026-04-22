@@ -3266,10 +3266,123 @@ namespace MendinePayroll.UI.Controllers
             {
                 from = x["FromAmount"],
                 to = x["ToAmount"] == DBNull.Value ? null : x["ToAmount"],
-                rate = x["TaxRate"]
+                rate = x["TaxRate"],
+                desc = x["Description"]
             }).ToList();
 
             return Json(new { constant, slabs }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult GetTdsConfigurationRows()
+        {
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable("SP_Get_Payroll_SaaS_Tds_Configaration");
+
+                var data = dt.AsEnumerable().Select(x => new
+                {
+                    id = dt.Columns.Contains("TaxConfigurationId") ? x["TaxConfigurationId"]?.ToString()
+                        : dt.Columns.Contains("Id") ? x["Id"]?.ToString()
+                        : dt.Columns.Contains("TdsConfigurationId") ? x["TdsConfigurationId"]?.ToString()
+                        : "",
+                    fy = dt.Columns.Contains("FinancialYear") ? x["FinancialYear"]?.ToString()
+                        : dt.Columns.Contains("FinancialYearCode") ? x["FinancialYearCode"]?.ToString()
+                        : "",
+                    regimeId = dt.Columns.Contains("RegimeId") ? x["RegimeId"]?.ToString() : "",
+                    regime = dt.Columns.Contains("RegimeName") ? x["RegimeName"]?.ToString()
+                        : dt.Columns.Contains("RegimeCode") ? x["RegimeCode"]?.ToString()
+                        : "",
+                    cess = dt.Columns.Contains("HealthEduCessRate") ? x["HealthEduCessRate"]?.ToString()
+                        : dt.Columns.Contains("CessRate") ? x["CessRate"]?.ToString()
+                        : "0",
+                    rebate = dt.Columns.Contains("RebateLimit87A") ? x["RebateLimit87A"]?.ToString()
+                        : dt.Columns.Contains("RebateLimit") ? x["RebateLimit"]?.ToString()
+                        : "0",
+                    threshold = dt.Columns.Contains("RebateIncomeThreshold") ? x["RebateIncomeThreshold"]?.ToString()
+                        : dt.Columns.Contains("Threshold") ? x["Threshold"]?.ToString()
+                        : "0",
+                    std = dt.Columns.Contains("StandardDeduction") ? x["StandardDeduction"]?.ToString()
+                        : dt.Columns.Contains("StdDeduction") ? x["StdDeduction"]?.ToString()
+                        : "0",
+                    active = dt.Columns.Contains("IsActive") ? x["IsActive"]?.ToString()
+                        : dt.Columns.Contains("Active") ? x["Active"]?.ToString()
+                        : "1"
+                }).ToList();
+
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetTdsConfigurationById(string id)
+        {
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable("SP_Get_Payroll_SaaS_Tds_Configaration");
+
+                var row = dt.AsEnumerable().FirstOrDefault(x =>
+                    (dt.Columns.Contains("TaxConfigurationId") && Convert.ToString(x["TaxConfigurationId"]) == id) ||
+                    (dt.Columns.Contains("Id") && Convert.ToString(x["Id"]) == id) ||
+                    (dt.Columns.Contains("TdsConfigurationId") && Convert.ToString(x["TdsConfigurationId"]) == id));
+
+                if (row == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Configuration not found."
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                var data = new
+                {
+                    id = dt.Columns.Contains("TaxConfigurationId") ? row["TaxConfigurationId"]?.ToString()
+                        : dt.Columns.Contains("Id") ? row["Id"]?.ToString()
+                        : dt.Columns.Contains("TdsConfigurationId") ? row["TdsConfigurationId"]?.ToString()
+                        : "",
+                    fy = dt.Columns.Contains("FinancialYear") ? row["FinancialYear"]?.ToString()
+                        : dt.Columns.Contains("FinancialYearCode") ? row["FinancialYearCode"]?.ToString()
+                        : "",
+                    regimeId = dt.Columns.Contains("RegimeId") ? row["RegimeId"]?.ToString() : "",
+                    regime = dt.Columns.Contains("RegimeName") ? row["RegimeName"]?.ToString()
+                        : dt.Columns.Contains("RegimeCode") ? row["RegimeCode"]?.ToString()
+                        : "",
+                    cess = dt.Columns.Contains("HealthEduCessRate") ? row["HealthEduCessRate"]?.ToString()
+                        : dt.Columns.Contains("CessRate") ? row["CessRate"]?.ToString()
+                        : "0",
+                    rebate = dt.Columns.Contains("RebateLimit87A") ? row["RebateLimit87A"]?.ToString()
+                        : dt.Columns.Contains("RebateLimit") ? row["RebateLimit"]?.ToString()
+                        : "0",
+                    threshold = dt.Columns.Contains("RebateIncomeThreshold") ? row["RebateIncomeThreshold"]?.ToString()
+                        : dt.Columns.Contains("Threshold") ? row["Threshold"]?.ToString()
+                        : "0",
+                    std = dt.Columns.Contains("StandardDeduction") ? row["StandardDeduction"]?.ToString()
+                        : dt.Columns.Contains("StdDeduction") ? row["StdDeduction"]?.ToString()
+                        : "0",
+                    active = dt.Columns.Contains("IsActive") ? row["IsActive"]?.ToString()
+                        : dt.Columns.Contains("Active") ? row["Active"]?.ToString()
+                        : "1"
+                };
+
+                return Json(new { success = true, data }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
         [HttpGet]
         public ActionResult GetAllPayConfig()
