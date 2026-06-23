@@ -1,6 +1,5 @@
-﻿@model dynamic
+@inherits System.Web.Mvc.WebViewPage<dynamic>
 @{
-    ViewBag.Title = "Salary Process";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -8,2457 +7,7 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
 
-@*<style>
-        /* --- CORE STYLES --- */
-        #salary-process-wrapper {
-            font-family: 'Inter', sans-serif;
-            color: #2c3e50;
-            font-size: 13px;
-        }
 
-        :root {
-            --primary: #0E7777;
-            --primary-light: #e0f2f2;
-            --text: #2c3e50;
-            --border: #e0e0e0;
-            --danger: #dc2626;
-            --success: #16a34a;
-            --focus-ring: rgba(14, 119, 119, 0.15);
-        }
-
-        .custom-page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            padding: 12px 20px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            margin-bottom: 15px;
-        }
-
-            .custom-page-header h1 {
-                margin: 0;
-                font-size: 18px;
-                color: var(--primary);
-                font-weight: 700;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-        /* Buttons */
-        .btn-create, .btn-outline, .btn-reject, .btn-approve, .btn-export, .btn-upload {
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            padding: 6px 14px;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .btn-create {
-            background: var(--primary);
-            color: white;
-            border: none;
-        }
-
-            .btn-create:hover {
-                background: #095555;
-            }
-
-        .btn-outline {
-            background: #fff;
-            border: 1px solid #cbd5e1;
-            color: var(--text);
-        }
-
-            .btn-outline:hover {
-                background: #f8fafc;
-                border-color: #94a3b8;
-            }
-
-        .btn-reject {
-            background: #fff;
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-
-        .btn-approve {
-            background: var(--success);
-            color: white;
-            border: none;
-        }
-
-        .btn-export {
-            background: white;
-            border: 1px solid #cbd5e1;
-            color: #64748b;
-        }
-
-        .btn-upload {
-            background: #f0f9ff;
-            border: 1px dashed #0284c7;
-            color: #0284c7;
-        }
-
-            .btn-upload:hover {
-                background: #e0f2fe;
-            }
-
-        /* Toggle & Filter */
-        .view-toggle-container {
-            display: flex;
-            background: #f1f5f9;
-            padding: 4px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-        }
-
-        .view-toggle-btn {
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            border: none;
-            background: transparent;
-            color: #64748b;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-            .view-toggle-btn.active {
-                background: #fff;
-                color: var(--primary);
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                font-weight: 700;
-            }
-
-        .filter-select {
-            padding: 6px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 12px;
-            outline: none;
-            min-width: 160px;
-            background-color: #fff;
-        }
-
-        /* Batch Grid */
-        .batch-card {
-            background: #fff;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            min-height: 200px;
-        }
-
-        .batch-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-
-            .batch-table th {
-                background: #f8fafc;
-                padding: 10px 15px;
-                text-align: left;
-                border-bottom: 1px solid var(--border);
-                font-weight: 600;
-                color: #64748b;
-                text-transform: uppercase;
-            }
-
-            .batch-table td {
-                padding: 10px 15px;
-                border-bottom: 1px solid #f1f5f9;
-                vertical-align: middle;
-            }
-
-        .comp-col {
-            background-color: #fffbeb;
-            border-left: 1px solid #fef3c7;
-            color: #92400e;
-        }
-
-        /* Modals Common */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.4);
-            z-index: 9999;
-            backdrop-filter: blur(2px);
-        }
-
-        .modal-box {
-            background: #fff;
-            margin: 2vh auto;
-            border-radius: 8px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            animation: slideUp 0.25s ease;
-        }
-
-        @@keyframes slideUp {
-            from {
-                transform: translateY(15px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-lg {
-            width: 900px;
-            max-height: 85vh;
-            margin: 5vh auto;
-        }
-
-        .modal-xl {
-            width: 98%;
-            max-width: 1550px;
-            height: 94vh;
-        }
-
-        .modal-md {
-            width: 600px;
-        }
-
-        .modal-header-custom {
-            padding: 12px 20px;
-            background: #f8fafc;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 4px solid var(--primary);
-            border-radius: 6px 6px 0 0;
-        }
-
-        .modal-title-custom h3 {
-            margin: 0;
-            font-size: 15px;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .modal-title-custom small {
-            display: block;
-            font-size: 11px;
-            color: #64748b;
-            margin-top: 2px;
-        }
-
-        .btn-close-custom {
-            border: none;
-            background: transparent;
-            font-size: 18px;
-            color: #94a3b8;
-            cursor: pointer;
-        }
-
-        .modal-footer-custom {
-            padding: 15px;
-            border-top: 1px solid var(--border);
-            background: #f8fafc;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            border-radius: 0 0 6px 6px;
-        }
-
-        /* Detail Modal & Grids */
-        .emp-link {
-            color: var(--primary);
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-            .emp-link:hover {
-                text-decoration: underline;
-            }
-
-        .grid-container {
-            flex: 1;
-            overflow: hidden;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            background: #fff;
-        }
-
-        table.dataTable {
-            margin: 0 !important;
-            width: 100%;
-            border-collapse: collapse !important;
-        }
-
-            table.dataTable thead th {
-                background: #f1f5f9;
-                color: #475569;
-                font-size: 11px;
-                text-transform: uppercase;
-                font-weight: 700;
-                padding: 10px 8px;
-                border-bottom: 1px solid #cbd5e1;
-                white-space: nowrap;
-            }
-
-            table.dataTable tbody td {
-                font-size: 12px;
-                padding: 4px 8px;
-                border-bottom: 1px solid #f1f5f9;
-                vertical-align: middle;
-                height: 32px;
-            }
-
-        .dt-money {
-            text-align: right;
-            font-family: 'Consolas', monospace;
-            font-weight: 500;
-            color: #334155;
-        }
-
-        .dt-net {
-            background-color: #f0fdfa !important;
-            font-weight: 700;
-            color: #0f766e;
-            border-left: 2px solid #ccfbf1;
-        }
-
-        .grid-input {
-            width: 100%;
-            border: 1px solid transparent;
-            background: transparent;
-            text-align: right;
-            font-family: 'Consolas', monospace;
-            font-size: 12px;
-            padding: 2px 4px;
-            height: 26px;
-            border-radius: 3px;
-        }
-
-            .grid-input:focus {
-                border-color: var(--primary);
-                background: #fff;
-                box-shadow: 0 0 0 2px var(--focus-ring);
-                outline: none;
-            }
-
-        .is-changed {
-            background-color: #fffbeb !important;
-        }
-
-        /* Loan Widget */
-        .loan-cell-content {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 6px;
-        }
-
-        .loan-link {
-            color: #d97706;
-            font-weight: 600;
-            cursor: pointer;
-            border-bottom: 1px dashed #d97706;
-            font-size: 11px;
-        }
-
-        .waive-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            background: #f8fafc;
-            padding: 1px 4px;
-            border-radius: 3px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .is-waived .loan-link {
-            text-decoration: line-through;
-            color: #cbd5e1;
-            border-color: transparent;
-        }
-
-        /* Stats Bar */
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4px 2px;
-            background: #fff;
-            border-bottom: 1px solid var(--border);
-            height: 40px;
-        }
-
-        .stats-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            white-space: nowrap;
-        }
-
-        .stats-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .stat-label {
-            font-size: 10px;
-            font-weight: 400;
-            color: #64748b;
-            text-transform: uppercase;
-        }
-
-        .stat-value {
-            font-size: 14px;
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .val-earn {
-            color: var(--success);
-        }
-
-        .val-ded {
-            color: var(--danger);
-        }
-
-        .val-net {
-            color: var(--primary);
-        }
-
-        .divider {
-            width: 1px;
-            height: 18px;
-            background: #e5e7eb;
-        }
-
-        /* Gen Modal Styles */
-        .form-control-custom {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 13px;
-            box-sizing: border-box;
-        }
-
-        .form-group-custom {
-            margin-bottom: 15px;
-        }
-
-        .form-label-custom {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .selection-container {
-            display: flex;
-            height: 350px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .selection-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border);
-        }
-
-        .col-header {
-            padding: 8px 12px;
-            background: #f8fafc;
-            font-weight: 700;
-            font-size: 11px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .emp-list-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0;
-            max-height: 100%;
-        }
-
-        .emp-item {
-            padding: 6px 10px;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-        }
-
-        .status-badge {
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .badge-active {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-inactive {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* Loan Cards & History */
-        .loan-card-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            text-align: center;
-        }
-
-        .loan-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 15px;
-            border-radius: 4px;
-        }
-
-        .loan-title {
-            font-size: 10px;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        .loan-val {
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .hist-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-            .hist-table th {
-                background: #334155;
-                color: #fff;
-                padding: 8px 10px;
-                text-align: left;
-            }
-
-            .hist-table td {
-                padding: 8px 10px;
-                border-bottom: 1px solid #e2e8f0;
-            }
-
-        /* --- EDIT SALARY MODAL (Industry Standard) --- */
-        .edit-modal-layout {
-            display: flex;
-            height: 480px;
-        }
-        /* Increased Height for new fields */
-        .edit-sidebar {
-            width: 260px;
-            background: #f8fafc;
-            border-right: 1px solid #e2e8f0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
-        }
-
-        .edit-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .input-group-custom label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .input-field-styled {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            color: #334155;
-        }
-
-            .input-field-styled:focus {
-                border-color: var(--primary);
-                outline: none;
-            }
-
-        .salary-slip-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .slip-box {
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .slip-header {
-            padding: 8px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-            .slip-header.earn {
-                background: #f0fdf4;
-                color: #166534;
-            }
-
-            .slip-header.ded {
-                background: #fef2f2;
-                color: #991b1b;
-            }
-
-        .slip-table {
-            width: 100%;
-            font-size: 12px;
-            border-collapse: collapse;
-        }
-
-            .slip-table td {
-                padding: 6px 12px;
-                border-bottom: 1px solid #f1f5f9;
-            }
-
-        .slip-amt {
-            text-align: right;
-            font-family: 'Consolas', monospace;
-            font-weight: 600;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-        }
-
-            .toggle-switch input {
-                opacity: 0;
-                width: 0;
-                height: 0;
-            }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e1;
-            transition: .4s;
-            border-radius: 20px;
-        }
-
-            .slider:before {
-                position: absolute;
-                content: "";
-                height: 16px;
-                width: 16px;
-                left: 2px;
-                bottom: 2px;
-                background-color: white;
-                transition: .4s;
-                border-radius: 50%;
-            }
-
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-
-            input:checked + .slider:before {
-                transform: translateX(20px);
-            }
-
-        .net-pay-banner {
-            background: var(--primary);
-            color: white;
-            padding: 15px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .net-pay-val {
-            font-size: 20px;
-            font-weight: 700;
-            font-family: 'Consolas', monospace;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .text-center {
-            text-align: center !important;
-        }
-
-        .text-right {
-            text-align: right !important;
-        }
-
-        .accordion-section {
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .accordion-header {
-            padding: 12px 20px;
-            background: #f8fafc;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .accordion-body {
-            padding: 0;
-        }
-
-        .acc-icon {
-            transition: transform 0.2s;
-        }
-
-        .acc-open {
-            transform: rotate(180deg);
-        }
-        /* ===== EXCEL WRAPPER ===== */
-        .excel-wrapper {
-            max-height: 58vh;
-            overflow: auto;
-            background: #fff;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        /* ===== TABLE ===== */
-        .excel-table {
-            border-collapse: collapse;
-            width: max-content;
-            min-width: 100%;
-            font-size: 12px;
-        }
-
-            /* ===== HEADER ===== */
-            .excel-table thead th {
-                position: sticky;
-                top: 0;
-                z-index: 10;
-                background: #f8fafc;
-                color: #0f172a;
-                font-weight: 600;
-                border: 1px solid #e5e7eb;
-                padding: 8px;
-                text-align: center;
-                white-space: nowrap;
-            }
-
-            /* ===== FREEZE FIRST 2 COLS ===== */
-            .excel-table th.sticky-col,
-            .excel-table td.sticky-col {
-                position: sticky;
-                left: 0;
-                z-index: 8;
-                background: #ffffff;
-            }
-
-            .excel-table th.sticky-col-2,
-            .excel-table td.sticky-col-2 {
-                position: sticky;
-                left: 80px;
-                z-index: 8;
-                background: #ffffff;
-            }
-
-            /* ===== CELLS ===== */
-            .excel-table td {
-                border: 1px solid #e5e7eb;
-                padding: 6px 8px;
-                text-align: right;
-                white-space: nowrap;
-                background: #ffffff;
-            }
-
-            /* ===== ROW HOVER ===== */
-            .excel-table tbody tr:hover td {
-                background: #f1f5f9;
-            }
-
-            /* ===== TEXT ALIGN ===== */
-            .excel-table td.left {
-                text-align: left;
-            }
-
-        /* ===== INPUT CELL ===== */
-        .excel-input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            text-align: right;
-            font-size: 12px;
-            outline: none;
-        }
-
-            .excel-input:focus {
-                background: #ecfeff;
-                box-shadow: inset 0 0 0 1px #0E7777;
-            }
-
-        /* ===== COLORS ===== */
-        .cell-earn {
-            color: #065f46;
-            font-weight: 600;
-        }
-
-        .cell-ded {
-            color: #991b1b;
-            font-weight: 600;
-        }
-
-        .cell-net {
-            font-weight: 700;
-            background: #f0fdfa;
-        }
-
-        /* ===== LOAN ===== */
-        .loan-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 6px;
-        }
-
-            .loan-box label {
-                font-size: 10px;
-                font-weight: 700;
-                color: #b45309;
-                cursor: pointer;
-            }
-
-        /* ===== WAIVED ===== */
-        .is-waived {
-            opacity: 0.5;
-            text-decoration: line-through;
-        }
-        /* --- PREMIUM DETAIL MODAL OVERHAUL --- */
-        #detailModal .modal-xl {
-            background: #f1f5f9; /* Subtle grey background for the container */
-            border-top: 5px solid var(--primary);
-        }
-
-        #detailModal .stats-bar {
-            background: white;
-            padding: 4px 3px;
-            height: auto;
-            border-bottom: 2px solid #e2e8f0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
-        }
-
-        .stat-value {
-            font-size: 18px; /* Larger, more readable values */
-            font-family: 'JetBrains Mono', 'Consolas', monospace;
-        }
-
-        /* --- THE EXCEL GRID OVERHAUL --- */
-        .excel-wrapper {
-            /*margin: 15px;*/
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-            background: white;
-        }
-
-        .excel-table {
-            border-spacing: 0;
-        }
-
-            .excel-table thead th {
-                background: #f8fafc;
-                color: #475569;
-                font-weight: 700;
-                font-size: 11px;
-                text-transform: uppercase;
-                padding: 12px 10px;
-                border-bottom: 2px solid #cbd5e1;
-                border-right: 1px solid #e2e8f0;
-            }
-
-            /* Frozen Column Effect */
-            .excel-table .sticky-col,
-            .excel-table .sticky-col-2 {
-                background: #fdfdfd !important;
-                border-right: 2px solid #e2e8f0 !important;
-            }
-
-            .excel-table tbody td {
-                padding: 8px 12px;
-                border-bottom: 1px solid #f1f5f9;
-                border-right: 1px solid #f1f5f9;
-                font-family: 'Inter', sans-serif;
-                color: #334155;
-                transition: background 0.2s;
-            }
-
-            .excel-table tbody tr:hover td {
-                background-color: #f0f9ff !important; /* Soft blue highlight */
-            }
-
-        /* Net Pay Column - High Highlight */
-        .cell-net {
-            background: #f0fdfa !important;
-            color: #0d9488 !important;
-            font-weight: 800 !important;
-            border-left: 2px solid #5eead4 !important;
-            font-size: 13px;
-        }
-
-        /* Input Styling inside Excel */
-        .excel-input {
-            border: 1px solid transparent;
-            padding: 4px 8px;
-            border-radius: 4px;
-            width: 80px;
-            transition: all 0.2s;
-        }
-
-            .excel-input:hover {
-                border-color: #cbd5e1;
-                background: white;
-            }
-
-            .excel-input:focus {
-                border-color: var(--primary);
-                background: white;
-                box-shadow: 0 0 0 3px rgba(14, 119, 119, 0.2);
-            }
-
-        /* Waive Switch (Better looking labels) */
-        .loan-box label {
-            background: #fff7ed;
-            color: #c2410c;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 9px;
-            border: 1px solid #ffedd5;
-            transition: 0.2s;
-        }
-
-            .loan-box label:hover {
-                background: #ffedd5;
-            }
-
-        /* Footer Layout */
-        .modal-footer-custom {
-            padding: 20px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        /* Header styling */
-        .header-manual {
-            background-color: #fff7ed !important; /* Light Orange */
-            color: #9a3412 !important; /* Dark Brown/Orange text */
-            border-bottom: 2px solid #fdba74 !important;
-        }
-
-        /* Cell styling */
-        .cell-manual {
-            background-color: #fffbeb !important; /* Very light yellow */
-            color: #b45309 !important; /* Amber text */
-            font-weight: 600;
-        }
-
-        /* Optional: Highlight the text if it's an adjustment */
-        .manual-text {
-            border-bottom: 1px dashed #f59e0b;
-        }
-
-        .header-ctc {
-            background-color: #f1f5f9 !important;
-            color: #64748b !important;
-            border-left: 2px solid #cbd5e1 !important;
-        }
-
-        /* Base table */
-        #salaryTable {
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-            /* All headers */
-            #salaryTable thead th {
-                position: sticky;
-                top: 0;
-                background: #f8fafc;
-                z-index: 10; /* baseline */
-            }
-
-            #salaryTable thead {
-                position: sticky !important;
-                top: 0;
-                z-index: 5;
-            }
-
-
-        /* Sticky Employee column */
-        .sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 30; /* highest */
-            background: #ffffff;
-        }
-
-        /* Sticky Paid Days column */
-        .sticky-col-2 {
-            position: sticky;
-            left: 120px; /* adjust to actual width */
-            z-index: 25;
-            background: #ffffff;
-        }
-
-        /* Net Salary header */
-        .header-net {
-            background: #dcfce7;
-            font-weight: 700;
-            z-index: 12;
-        }
-
-        /* Monthly CTC header */
-        .header-ctc {
-            background: #e0f2fe;
-            font-weight: 700;
-            z-index: 12;
-        }
-
-        /* Deduction header */
-        .header-deduction {
-            background: #fee2e2;
-        }
-
-        /* Manual header */
-        .header-manual {
-            background: #fef3c7;
-        }
-
-        .manual-input {
-            width: 80px;
-            text-align: right;
-            padding: 3px 6px;
-            border: 1px solid #e5e7eb;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-            .manual-input:focus {
-                outline: none;
-                border-color: #0E7777;
-                background-color: #f0fdfa;
-            }
-
-        /**/
-        /* --- DATA TABLE HEADER STYLES --- */
-        .dt-top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            padding: 10px 15px;
-            border: 1px solid #e2e8f0;
-            border-bottom: none; /* Table header will provide bottom border */
-            border-radius: 6px 6px 0 0;
-            margin-bottom: 0;
-        }
-
-        .dt-filters-left {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .dt-search-right {
-            display: flex;
-            align-items: center;
-        }
-
-        /* Force DataTable Search input styling */
-        .dataTables_filter {
-            margin-top: 0 !important;
-            margin-bottom: 0 !important;
-            float: none !important;
-        }
-
-            .dataTables_filter input {
-                height: 34px;
-                padding: 4px 10px;
-                border: 1px solid #cbd5e1;
-                border-radius: 4px;
-                font-size: 13px;
-                outline: none;
-            }
-
-                .dataTables_filter input:focus {
-                    border-color: var(--primary);
-                    box-shadow: 0 0 0 2px var(--focus-ring);
-                }
-
-        /* Hide the internal filter inputs initially */
-        #hidden-filter-source {
-            display: none;
-        }
-    </style>
-    <style>
-        /* --- CORE STYLES --- */
-        #salary-process-wrapper {
-            font-family: 'Inter', sans-serif;
-            color: #2c3e50;
-            font-size: 13px;
-        }
-
-        :root {
-            --primary: #0E7777;
-            --primary-light: #e0f2f2;
-            --text: #2c3e50;
-            --border: #e0e0e0;
-            --danger: #dc2626;
-            --success: #16a34a;
-            --focus-ring: rgba(14, 119, 119, 0.15);
-        }
-        /*    body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-body);
-            color: var(--primary);
-            transform: scale(0.9);
-            transform-origin: top left;
-            width: 111.11%;
-        } */
-        .custom-page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            padding: 12px 20px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            margin-bottom: 15px;
-        }
-
-            .custom-page-header h1 {
-                margin: 0;
-                font-size: 18px;
-                color: var(--primary);
-                font-weight: 700;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-        /* Buttons */
-        .btn-create, .btn-outline, .btn-reject, .btn-approve, .btn-export, .btn-upload {
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            padding: 6px 14px;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .btn-create {
-            background: var(--primary);
-            color: white;
-            border: none;
-        }
-
-            .btn-create:hover {
-                background: #095555;
-            }
-
-        .btn-outline {
-            background: #fff;
-            border: 1px solid #cbd5e1;
-            color: var(--text);
-        }
-
-            .btn-outline:hover {
-                background: #f8fafc;
-                border-color: #94a3b8;
-            }
-
-        .btn-reject {
-            background: #fff;
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-
-        .btn-approve {
-            background: var(--success);
-            color: white;
-            border: none;
-        }
-
-        .btn-export {
-            background: white;
-            border: 1px solid #cbd5e1;
-            color: #64748b;
-        }
-
-        .btn-upload {
-            background: #f0f9ff;
-            border: 1px dashed #0284c7;
-            color: #0284c7;
-        }
-
-            .btn-upload:hover {
-                background: #e0f2fe;
-            }
-
-        /* Toggle & Filter */
-        .view-toggle-container {
-            display: flex;
-            background: #f1f5f9;
-            padding: 4px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-        }
-
-        .view-toggle-btn {
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            border: none;
-            background: transparent;
-            color: #64748b;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-            .view-toggle-btn.active {
-                background: #fff;
-                color: var(--primary);
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                font-weight: 700;
-            }
-
-        .filter-select {
-            padding: 6px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 12px;
-            outline: none;
-            min-width: 160px;
-            background-color: #fff;
-        }
-
-        /* Batch Grid */
-        .batch-card {
-            background: #fff;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            min-height: 200px;
-        }
-
-        .batch-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-
-            .batch-table th {
-                background: #f8fafc;
-                padding: 10px 15px;
-                text-align: left;
-                border-bottom: 1px solid var(--border);
-                font-weight: 600;
-                color: #64748b;
-                text-transform: uppercase;
-            }
-
-            .batch-table td {
-                padding: 10px 15px;
-                border-bottom: 1px solid #f1f5f9;
-                vertical-align: middle;
-            }
-
-        .comp-col {
-            background-color: #fffbeb;
-            border-left: 1px solid #fef3c7;
-            color: #92400e;
-        }
-
-        /* Modals Common */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.4);
-            z-index: 9999;
-            backdrop-filter: blur(2px);
-        }
-
-        .modal-box {
-            background: #fff;
-            margin: 2vh auto;
-            border-radius: 8px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            animation: slideUp 0.25s ease;
-        }
-
-        @@keyframes slideUp {
-            from {
-                transform: translateY(15px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-lg {
-            width: 900px;
-            max-height: 85vh;
-            margin: 5vh auto;
-        }
-
-        .modal-xl {
-            width: 98%;
-            max-width: 1550px;
-            height: 94vh;
-        }
-
-        .modal-md {
-            width: 600px;
-        }
-
-        .modal-header-custom {
-            padding: 12px 20px;
-            background: #f8fafc;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 4px solid var(--primary);
-            border-radius: 6px 6px 0 0;
-        }
-
-        .modal-title-custom h3 {
-            margin: 0;
-            font-size: 15px;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .modal-title-custom small {
-            display: block;
-            font-size: 11px;
-            color: #64748b;
-            margin-top: 2px;
-        }
-
-        .btn-close-custom {
-            border: none;
-            background: transparent;
-            font-size: 18px;
-            color: #94a3b8;
-            cursor: pointer;
-        }
-
-        .modal-footer-custom {
-            padding: 15px;
-            border-top: 1px solid var(--border);
-            background: #f8fafc;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            border-radius: 0 0 6px 6px;
-        }
-
-        /* Detail Modal & Grids */
-        .emp-link {
-            color: var(--primary);
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-            .emp-link:hover {
-                text-decoration: underline;
-            }
-
-        .grid-container {
-            flex: 1;
-            overflow: hidden;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            background: #fff;
-        }
-
-        table.dataTable {
-            margin: 0 !important;
-            width: 100%;
-            border-collapse: collapse !important;
-        }
-
-            table.dataTable thead th {
-                background: #f1f5f9;
-                color: #475569;
-                font-size: 11px;
-                text-transform: uppercase;
-                font-weight: 700;
-                padding: 10px 8px;
-                border-bottom: 1px solid #cbd5e1;
-                white-space: nowrap;
-            }
-
-            table.dataTable tbody td {
-                font-size: 12px;
-                padding: 4px 8px;
-                border-bottom: 1px solid #f1f5f9;
-                vertical-align: middle;
-                height: 32px;
-            }
-
-        .dt-money {
-            text-align: right;
-            font-family: 'Consolas', monospace;
-            font-weight: 500;
-            color: #334155;
-        }
-
-        .dt-net {
-            background-color: #f0fdfa !important;
-            font-weight: 700;
-            color: #0f766e;
-            border-left: 2px solid #ccfbf1;
-        }
-
-        .grid-input {
-            width: 100%;
-            border: 1px solid transparent;
-            background: transparent;
-            text-align: right;
-            font-family: 'Consolas', monospace;
-            font-size: 12px;
-            padding: 2px 4px;
-            height: 26px;
-            border-radius: 3px;
-        }
-
-            .grid-input:focus {
-                border-color: var(--primary);
-                background: #fff;
-                box-shadow: 0 0 0 2px var(--focus-ring);
-                outline: none;
-            }
-
-        .is-changed {
-            background-color: #fffbeb !important;
-        }
-
-        /* Loan Widget */
-        .loan-cell-content {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 6px;
-        }
-
-        .loan-link {
-            color: #d97706;
-            font-weight: 600;
-            cursor: pointer;
-            border-bottom: 1px dashed #d97706;
-            font-size: 11px;
-        }
-
-        .waive-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            background: #f8fafc;
-            padding: 1px 4px;
-            border-radius: 3px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .is-waived .loan-link {
-            text-decoration: line-through;
-            color: #cbd5e1;
-            border-color: transparent;
-        }
-
-        /* Stats Bar */
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4px 2px;
-            background: #fff;
-            border-bottom: 1px solid var(--border);
-            height: 40px;
-        }
-
-        .stats-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            white-space: nowrap;
-        }
-
-        .stats-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .stat-label {
-            font-size: 10px;
-            font-weight: 400;
-            color: #64748b;
-            text-transform: uppercase;
-        }
-
-        .stat-value {
-            font-size: 14px;
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .val-earn {
-            color: var(--success);
-        }
-
-        .val-ded {
-            color: var(--danger);
-        }
-
-        .val-net {
-            color: var(--primary);
-        }
-
-        .divider {
-            width: 1px;
-            height: 18px;
-            background: #e5e7eb;
-        }
-
-        /* Gen Modal Styles */
-        .form-control-custom {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 13px;
-            box-sizing: border-box;
-        }
-
-        .form-group-custom {
-            margin-bottom: 15px;
-        }
-
-        .form-label-custom {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .selection-container {
-            display: flex;
-            height: 350px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .selection-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border);
-        }
-
-        .col-header {
-            padding: 8px 12px;
-            background: #f8fafc;
-            font-weight: 700;
-            font-size: 11px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .emp-list-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0;
-            max-height: 100%;
-        }
-
-        .emp-item {
-            padding: 6px 10px;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-        }
-
-        .status-badge {
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .badge-active {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-inactive {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* Loan Cards & History */
-        .loan-card-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            text-align: center;
-        }
-
-        .loan-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 15px;
-            border-radius: 4px;
-        }
-
-        .loan-title {
-            font-size: 10px;
-            font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        .loan-val {
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .hist-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-            .hist-table th {
-                background: #334155;
-                color: #fff;
-                padding: 8px 10px;
-                text-align: left;
-            }
-
-            .hist-table td {
-                padding: 8px 10px;
-                border-bottom: 1px solid #e2e8f0;
-            }
-
-        /* --- EDIT SALARY MODAL (Industry Standard) --- */
-        .edit-modal-layout {
-            display: flex;
-            height: 480px;
-        }
-        /* Increased Height for new fields */
-        .edit-sidebar {
-            width: 260px;
-            background: #f8fafc;
-            border-right: 1px solid #e2e8f0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
-        }
-
-        .edit-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .input-group-custom label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .input-field-styled {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            color: #334155;
-        }
-
-            .input-field-styled:focus {
-                border-color: var(--primary);
-                outline: none;
-            }
-
-        .salary-slip-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .slip-box {
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .slip-header {
-            padding: 8px 12px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-            .slip-header.earn {
-                background: #f0fdf4;
-                color: #166534;
-            }
-
-            .slip-header.ded {
-                background: #fef2f2;
-                color: #991b1b;
-            }
-
-        .slip-table {
-            width: 100%;
-            font-size: 12px;
-            border-collapse: collapse;
-        }
-
-            .slip-table td {
-                padding: 6px 12px;
-                border-bottom: 1px solid #f1f5f9;
-            }
-
-        .slip-amt {
-            text-align: right;
-            font-family: 'Consolas', monospace;
-            font-weight: 600;
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-        }
-
-            .toggle-switch input {
-                opacity: 0;
-                width: 0;
-                height: 0;
-            }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #cbd5e1;
-            transition: .4s;
-            border-radius: 20px;
-        }
-
-            .slider:before {
-                position: absolute;
-                content: "";
-                height: 16px;
-                width: 16px;
-                left: 2px;
-                bottom: 2px;
-                background-color: white;
-                transition: .4s;
-                border-radius: 50%;
-            }
-
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-
-            input:checked + .slider:before {
-                transform: translateX(20px);
-            }
-
-        .net-pay-banner {
-            background: var(--primary);
-            color: white;
-            padding: 15px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .net-pay-val {
-            font-size: 20px;
-            font-weight: 700;
-            font-family: 'Consolas', monospace;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .text-center {
-            text-align: center !important;
-        }
-
-        .text-right {
-            text-align: right !important;
-        }
-
-        .accordion-section {
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .accordion-header {
-            padding: 12px 20px;
-            background: #f8fafc;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .accordion-body {
-            padding: 0;
-        }
-
-        .acc-icon {
-            transition: transform 0.2s;
-        }
-
-        .acc-open {
-            transform: rotate(180deg);
-        }
-        /* ===== EXCEL WRAPPER ===== */
-        .excel-wrapper {
-            max-height: 58vh;
-            overflow: auto;
-            background: #fff;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        /* ===== TABLE ===== */
-        .excel-table {
-            border-collapse: collapse;
-            width: max-content;
-            min-width: 100%;
-            font-size: 12px;
-        }
-
-            /* ===== HEADER ===== */
-            .excel-table thead th {
-                position: sticky;
-                top: 0;
-                z-index: 10;
-                background: #f8fafc;
-                color: #0f172a;
-                font-weight: 600;
-                border: 1px solid #e5e7eb;
-                padding: 8px;
-                text-align: center;
-                white-space: nowrap;
-            }
-
-            /* ===== FREEZE FIRST 2 COLS ===== */
-            .excel-table th.sticky-col,
-            .excel-table td.sticky-col {
-                position: sticky;
-                left: 0;
-                z-index: 8;
-                background: #ffffff;
-            }
-
-            .excel-table th.sticky-col-2,
-            .excel-table td.sticky-col-2 {
-                position: sticky;
-                left: 80px;
-                z-index: 8;
-                background: #ffffff;
-            }
-
-            /* ===== CELLS ===== */
-            .excel-table td {
-                border: 1px solid #e5e7eb;
-                padding: 6px 8px;
-                text-align: right;
-                white-space: nowrap;
-                background: #ffffff;
-            }
-
-            /* ===== ROW HOVER ===== */
-            .excel-table tbody tr:hover td {
-                background: #f1f5f9;
-            }
-
-            /* ===== TEXT ALIGN ===== */
-            .excel-table td.left {
-                text-align: left;
-            }
-
-        /* ===== INPUT CELL ===== */
-        .excel-input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            text-align: right;
-            font-size: 12px;
-            outline: none;
-        }
-
-            .excel-input:focus {
-                background: #ecfeff;
-                box-shadow: inset 0 0 0 1px #0E7777;
-            }
-
-        /* ===== COLORS ===== */
-        .cell-earn {
-            color: #065f46;
-            font-weight: 600;
-        }
-
-        .cell-ded {
-            color: #991b1b;
-            font-weight: 600;
-        }
-
-        .cell-net {
-            font-weight: 700;
-            background: #f0fdfa;
-        }
-
-        /* ===== LOAN ===== */
-        .loan-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 6px;
-        }
-
-            .loan-box label {
-                font-size: 10px;
-                font-weight: 700;
-                color: #b45309;
-                cursor: pointer;
-            }
-
-        /* ===== WAIVED ===== */
-        .is-waived {
-            opacity: 0.5;
-            text-decoration: line-through;
-        }
-        /* --- PREMIUM DETAIL MODAL OVERHAUL --- */
-        #detailModal .modal-xl {
-            background: #f1f5f9; /* Subtle grey background for the container */
-            border-top: 5px solid var(--primary);
-        }
-
-        #detailModal .stats-bar {
-            background: white;
-            padding: 4px 3px;
-            height: auto;
-            border-bottom: 2px solid #e2e8f0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
-        }
-
-        .stat-value {
-            font-size: 18px; /* Larger, more readable values */
-            font-family: 'JetBrains Mono', 'Consolas', monospace;
-        }
-
-        /* --- THE EXCEL GRID OVERHAUL --- */
-        .excel-wrapper {
-            /*margin: 15px;*/
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-            background: white;
-        }
-
-        .excel-table {
-            border-spacing: 0;
-        }
-
-            .excel-table thead th {
-                background: #f8fafc;
-                color: #475569;
-                font-weight: 700;
-                font-size: 11px;
-                text-transform: uppercase;
-                padding: 12px 10px;
-                border-bottom: 2px solid #cbd5e1;
-                border-right: 1px solid #e2e8f0;
-            }
-
-            /* Frozen Column Effect */
-            .excel-table .sticky-col,
-            .excel-table .sticky-col-2 {
-                background: #fdfdfd !important;
-                border-right: 2px solid #e2e8f0 !important;
-            }
-
-            .excel-table tbody td {
-                padding: 8px 12px;
-                border-bottom: 1px solid #f1f5f9;
-                border-right: 1px solid #f1f5f9;
-                font-family: 'Inter', sans-serif;
-                color: #334155;
-                transition: background 0.2s;
-            }
-
-            .excel-table tbody tr:hover td {
-                background-color: #f0f9ff !important; /* Soft blue highlight */
-            }
-
-        /* Net Pay Column - High Highlight */
-        .cell-net {
-            background: #f0fdfa !important;
-            color: #0d9488 !important;
-            font-weight: 800 !important;
-            border-left: 2px solid #5eead4 !important;
-            font-size: 13px;
-        }
-
-        /* Input Styling inside Excel */
-        .excel-input {
-            border: 1px solid transparent;
-            padding: 4px 8px;
-            border-radius: 4px;
-            width: 80px;
-            transition: all 0.2s;
-        }
-
-            .excel-input:hover {
-                border-color: #cbd5e1;
-                background: white;
-            }
-
-            .excel-input:focus {
-                border-color: var(--primary);
-                background: white;
-                box-shadow: 0 0 0 3px rgba(14, 119, 119, 0.2);
-            }
-
-        /* Waive Switch (Better looking labels) */
-        .loan-box label {
-            background: #fff7ed;
-            color: #c2410c;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 9px;
-            border: 1px solid #ffedd5;
-            transition: 0.2s;
-        }
-
-            .loan-box label:hover {
-                background: #ffedd5;
-            }
-
-        /* Footer Layout */
-        .modal-footer-custom {
-            padding: 20px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        /* Header styling */
-        .header-manual {
-            background-color: #fff7ed !important; /* Light Orange */
-            color: #9a3412 !important; /* Dark Brown/Orange text */
-            border-bottom: 2px solid #fdba74 !important;
-        }
-
-        /* Cell styling */
-        .cell-manual {
-            background-color: #fffbeb !important; /* Very light yellow */
-            color: #b45309 !important; /* Amber text */
-            font-weight: 600;
-        }
-
-        /* Optional: Highlight the text if it's an adjustment */
-        .manual-text {
-            border-bottom: 1px dashed #f59e0b;
-        }
-
-        .header-ctc {
-            background-color: #f1f5f9 !important;
-            color: #64748b !important;
-            border-left: 2px solid #cbd5e1 !important;
-        }
-
-        /* Base table */
-        #salaryTable {
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-            /* All headers */
-            #salaryTable thead th {
-                position: sticky;
-                top: 0;
-                background: #f8fafc;
-                z-index: 10; /* baseline */
-            }
-
-            #salaryTable thead {
-                position: sticky !important;
-                top: 0;
-                z-index: 5;
-            }
-
-
-        /* Sticky Employee column */
-        .sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 30; /* highest */
-            background: #ffffff;
-        }
-
-        /* Sticky Paid Days column */
-        .sticky-col-2 {
-            position: sticky;
-            left: 120px; /* adjust to actual width */
-            z-index: 25;
-            background: #ffffff;
-        }
-
-        /* Net Salary header */
-        .header-net {
-            background: #dcfce7;
-            font-weight: 700;
-            z-index: 12;
-        }
-
-        /* Monthly CTC header */
-        .header-ctc {
-            background: #e0f2fe;
-            font-weight: 700;
-            z-index: 12;
-        }
-
-        /* Deduction header */
-        .header-deduction {
-            background: #fee2e2;
-        }
-
-        /* Manual header */
-        .header-manual {
-            background: #fef3c7;
-        }
-
-        .manual-input {
-            width: 80px;
-            text-align: right;
-            padding: 3px 6px;
-            border: 1px solid #e5e7eb;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-            .manual-input:focus {
-                outline: none;
-                border-color: #0E7777;
-                background-color: #f0fdfa;
-            }
-
-        /**/
-        /* --- DATA TABLE HEADER STYLES --- */
-        .dt-top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            padding: 10px 15px;
-            border: 1px solid #e2e8f0;
-            border-bottom: none; /* Table header will provide bottom border */
-            border-radius: 6px 6px 0 0;
-            margin-bottom: 0;
-        }
-
-        .dt-filters-left {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .dt-search-right {
-            display: flex;
-            align-items: center;
-        }
-
-        /* Force DataTable Search input styling */
-        .dataTables_filter {
-            margin-top: 0 !important;
-            margin-bottom: 0 !important;
-            float: none !important;
-        }
-
-            .dataTables_filter input {
-                height: 34px;
-                padding: 4px 10px;
-                border: 1px solid #cbd5e1;
-                border-radius: 4px;
-                font-size: 13px;
-                outline: none;
-            }
-
-                .dataTables_filter input:focus {
-                    border-color: var(--primary);
-                    box-shadow: 0 0 0 2px var(--focus-ring);
-                }
-
-        /* Hide the internal filter inputs initially */
-        #hidden-filter-source {
-            display: none;
-        }
-
-        /* FULL SCREEN LOCK */
-        .payroll-loader {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            display: none;
-        }
-
-        /* DARK BACKDROP */
-        .payroll-backdrop {
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.65); /* slate */
-            pointer-events: all;
-        }
-
-        /* CENTER BOX */
-        .payroll-box {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #ffffff;
-            padding: 28px 38px;
-            border-radius: 14px;
-            text-align: center;
-            box-shadow: 0 18px 40px rgba(0,0,0,.35);
-        }
-
-            /* ICON */
-            .payroll-box i {
-                font-size: 44px;
-                color: #0E7777;
-                margin-bottom: 12px;
-            }
-
-        /* TEXT */
-        .payroll-text {
-            font-size: 14px;
-            font-weight: 600;
-            color: #334155;
-        }
-
-        /**/
-        .dt-top-row {
-            display: flex !important;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .dt-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-        }
-
-        .dt-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .filter-select {
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            font-size: 12px;
-        }
-
-        .btn-export {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-        }
-
-            .btn-export i {
-                font-size: 18px;
-                color: #16a34a;
-            }
-
-            .btn-export:hover i {
-                color: #15803d;
-            }
-        .row-rejected {
-            background-color: #fff5f5 !important; /* Very light red */
-        }
-
-            .row-rejected:hover {
-                background-color: #fed7d7 !important; /* Slightly darker red on hover */
-            }
-
-        /* 1. Hide the up/down arrows (spinners) in all browsers */
-        #attTableBody input::-webkit-outer-spin-button,
-        #attTableBody input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        #attTableBody input[type=number] {
-            -moz-appearance: textfield; /* For Firefox */
-        }
-        /* 2. Add a 20px gap to the last column of your table */
-        #attTableHead th:last-child,
-        #attTableBody td:last-child {
-            padding-right: 20px !important;
-            text-align: right;
-        }
-        /* 3. Style the scrollbar so it is easy to see */
-        .modal-body::-webkit-scrollbar {
-            width: 10px; /* Wider for easier clicking */
-        }
-
-        .modal-body::-webkit-scrollbar-track {
-            background: #f8fafc; /* Light gray background so the track is visible */
-            border-left: 1px solid #e2e8f0;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #94a3b8; /* Darker gray handle so it stands out */
-            border-radius: 5px;
-            border: 2px solid #f8fafc; /* Adds a small margin inside the bar */
-        }
-    </style>*@
 <style>
     /* --- CORE STYLES --- */
     #salary-process-wrapper {
@@ -2907,6 +456,38 @@
         border-radius: 4px;
         font-size: 13px;
         box-sizing: border-box;
+    }
+
+    #genModal .select2-container {
+        width: 100% !important;
+    }
+
+    #genModal .select2-container--default .select2-selection--single {
+        height: 36px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        background: #fff;
+        font-size: 13px;
+    }
+
+    #genModal .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 34px;
+        color: #334155;
+        padding-left: 10px;
+        padding-right: 30px;
+    }
+
+    #genModal .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #94a3b8;
+    }
+
+    #genModal .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 34px;
+        right: 6px;
+    }
+
+    .select2-container--open {
+        z-index: 100000;
     }
 
     .form-group-custom {
@@ -5063,9 +2644,9 @@
             </div>
             <!--<div class="stats-bar">
             <div class="stats-left">
-                <div class="stat-item"><span class="stat-label">Total Earnings :</span><span class="stat-value val-earn" id="lblEarn">₹ 0</span></div><div class="divider"></div>
-                <div class="stat-item"><span class="stat-label">Total Deductions :</span><span class="stat-value val-ded" id="lblDed">₹ 0</span></div><div class="divider"></div>
-                <div class="stat-item"><span class="stat-label">Total Net Pay :</span><span class="stat-value val-net" id="lblNet">₹ 0</span></div>
+                <div class="stat-item"><span class="stat-label">Total Earnings :</span><span class="stat-value val-earn" id="lblEarn">&#8377; 0</span></div><div class="divider"></div>
+                <div class="stat-item"><span class="stat-label">Total Deductions :</span><span class="stat-value val-ded" id="lblDed">&#8377; 0</span></div><div class="divider"></div>
+                <div class="stat-item"><span class="stat-label">Total Net Pay :</span><span class="stat-value val-net" id="lblNet">&#8377; 0</span></div>
             </div>-->
             @*<div class="stats-right">
                     <button class="btn-export" onclick="alert('Downloading Excel...')"><i class="fas fa-file-excel" style="color:#16a34a"></i> Excel</button>
@@ -5082,9 +2663,9 @@
                                onkeyup="filterSalaryTable(this.value)">
                     </div>
                     <div class="divider"></div>
-                    <div class="stat-item"><span class="stat-label">Earnings:</span> <span class="stat-value val-earn" id="lblEarn">₹ 0</span></div>
-                    <div class="stat-item"><span class="stat-label">Deductions:</span> <span class="stat-value val-ded" id="lblDed">₹ 0</span></div>
-                    <div class="stat-item"><span class="stat-label">Net Pay:</span> <span class="stat-value val-net" id="lblNet">₹ 0</span></div>
+                    <div class="stat-item"><span class="stat-label">Earnings:</span> <span class="stat-value val-earn" id="lblEarn">&#8377; 0</span></div>
+                    <div class="stat-item"><span class="stat-label">Deductions:</span> <span class="stat-value val-ded" id="lblDed">&#8377; 0</span></div>
+                    <div class="stat-item"><span class="stat-label">Net Pay:</span> <span class="stat-value val-net" id="lblNet">&#8377; 0</span></div>
                 </div>
 
                 <div class="stats-right">
@@ -5166,15 +2747,15 @@
                 <div class="loan-card-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
                     <div class="loan-box" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 8px; text-align: center;">
                         <div class="loan-title" style="font-size: 10px; font-weight: 700; color: #1e40af; text-transform: uppercase; margin-bottom: 4px;">Opening Balance</div>
-                        <div class="loan-val" id="valOpen" style="font-size: 17px; font-weight: 800; color: #1e40af; white-space: nowrap;">₹ 0</div>
+                        <div class="loan-val" id="valOpen" style="font-size: 17px; font-weight: 800; color: #1e40af; white-space: nowrap;">&#8377; 0</div>
                     </div>
                     <div class="loan-box" style="background: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 8px; text-align: center;">
                         <div class="loan-title" style="font-size: 10px; font-weight: 700; color: #991b1b; text-transform: uppercase; margin-bottom: 4px;">Current EMI</div>
-                        <div class="loan-val" id="valEmi" style="font-size: 17px; font-weight: 800; color: #991b1b; white-space: nowrap;">₹ 0</div>
+                        <div class="loan-val" id="valEmi" style="font-size: 17px; font-weight: 800; color: #991b1b; white-space: nowrap;">&#8377; 0</div>
                     </div>
                     <div class="loan-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; text-align: center;">
                         <div class="loan-title" style="font-size: 10px; font-weight: 700; color: #166534; text-transform: uppercase; margin-bottom: 4px;">Closing Balance</div>
-                        <div class="loan-val" id="valClose" style="font-size: 17px; font-weight: 800; color: #166534; white-space: nowrap;">₹ 0</div>
+                        <div class="loan-val" id="valClose" style="font-size: 17px; font-weight: 800; color: #166534; white-space: nowrap;">&#8377; 0</div>
                     </div>
                 </div>
 
@@ -5246,14 +2827,30 @@
                         <input type="number" id="txtFinalDays" class="input-field-styled" step="0.5" readonly style="background: #f0f9ff; border: 1px solid #0369a1; color: #0369a1; font-weight: 800;">
                     </div>
 
-                    <div class="input-group-custom">
-                        <label style="color:#166534;">Manual Addition</label>
-                        <input type="number" id="txtManualAdd" class="input-field-styled" placeholder="0.00" oninput="recalcNetUI()">
+                    <input type="hidden" id="txtManualAdd" value="0">
+                    <input type="hidden" id="txtManualDed" value="0">
+
+                    <div style="border-top:1px solid #e2e8f0; margin:8px 0 4px;"></div>
+
+                    <div class="salary-sidebar-section">
+                        <span class="section-label" style="font-size: 11px; font-weight: 800; color: #052450; text-transform: uppercase; margin-bottom: 10px; display: block;">Manual Components</span>
+                        <div id="editManualInputs"></div>
                     </div>
 
-                    <div class="input-group-custom">
-                        <label style="color:#991b1b;">Manual Deduction</label>
-                        <input type="number" id="txtManualDed" class="input-field-styled" placeholder="0.00" oninput="recalcNetUI()">
+                    <div class="salary-sidebar-section">
+                        <span class="section-label" style="font-size: 11px; font-weight: 800; color: #166534; text-transform: uppercase; margin-bottom: 10px; display: block;">Allowances</span>
+                        <div id="editAllowanceInputs"></div>
+                    </div>
+
+                    <div class="salary-sidebar-section">
+                        <span class="section-label" style="font-size: 11px; font-weight: 800; color: #991b1b; text-transform: uppercase; margin-bottom: 10px; display: block;">Deductions</span>
+                        <div id="editDeductionInputs"></div>
+                        <button type="button"
+                                class="btn-create"
+                                style="width:100%; margin-top:8px; padding:8px 10px; justify-content:center;"
+                                onclick="requestServerSalaryRecalc()">
+                            <i class="fas fa-sync-alt"></i> Update Salary
+                        </button>
                     </div>
 
                     <div style="border-top:1px solid #e2e8f0; margin:20px 0;"></div>
@@ -5261,9 +2858,9 @@
                     <span class="section-label" style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 15px; display: block;">Loan Management</span>
                     <div class="loan-box" style="background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
-                            <span style="font-size:12px; font-weight:700;" id="lblModalEMI">EMI: ₹ 0.00</span>
+                            <span style="font-size:12px; font-weight:700;" id="lblModalEMI">EMI: &#8377; 0.00</span>
                             <label class="toggle-switch">
-                                <input type="checkbox" id="chkWaiveLoan" onchange="recalcNetUI()">
+                                <input type="checkbox" id="chkWaiveLoan">
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -5277,17 +2874,17 @@
 
                         <div class="stat-card net" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 15px; border-radius: 8px; text-align: center;">
                             <small style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;">Total Take Home</small>
-                            <big id="lblModalNetPay" style="font-size: 22px; font-weight: 800;">₹ 0.00</big>
+                            <big id="lblModalNetPay" style="font-size: 22px; font-weight: 800;">&#8377; 0.00</big>
                         </div>
 
                         <div class="stat-card ctc" style="background: #f5f3ff; border: 1px solid #ddd6fe; color: #5b21b6; padding: 15px; border-radius: 8px; text-align: center;">
                             <small style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;">Monthly CTC</small>
-                            <big id="lblModalCTC" style="font-size: 22px; font-weight: 800;">₹ 0.00</big>
+                            <big id="lblModalCTC" style="font-size: 22px; font-weight: 800;">&#8377; 0.00</big>
                         </div>
 
                         <div id="adjustmentCard" class="stat-card adj" style="background: #fffbeb; border: 1px solid #fef3c7; color: #92400e; padding: 15px; border-radius: 8px; text-align: center; display: none;">
                             <small id="lblAdjTypeTag" style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;">Adjustment (+/-)</small>
-                            <big id="lblAdjAmount" style="font-size: 22px; font-weight: 800;">₹ 0.00</big>
+                            <big id="lblAdjAmount" style="font-size: 22px; font-weight: 800;">&#8377; 0.00</big>
                         </div>
                     </div>
                     <div class="grid-tables" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
@@ -5333,7 +2930,7 @@
     <div class="payroll-backdrop"></div>
     <div class="payroll-box">
         <i class="fas fa-cogs fa-spin"></i>
-        <div class="payroll-text">Processing Salary…</div>
+        <div class="payroll-text">Processing Salary</div>
     </div>
 </div>
 
@@ -6193,14 +3790,45 @@
         loadEmployeeList(); // Employees depend on PayGroup
         tryGenerateComments();
     }
+
+    function initPayGroupSelect2() {
+        const ddl = $("#ddlGroup");
+
+        if (!$.fn.select2 || !ddl.length) {
+            return;
+        }
+
+        if (ddl.data("select2")) {
+            ddl.select2("destroy");
+        }
+
+        ddl.select2({
+            width: "100%",
+            placeholder: "-- Select Pay Group --",
+            allowClear: true,
+            dropdownParent: $("#genModal")
+        });
+    }
+
     function loadPayGroups(type) {
-        const ddl = $("#ddlGroup").empty();
+        const ddl = $("#ddlGroup");
+
+        if ($.fn.select2 && ddl.data("select2")) {
+            ddl.select2("destroy");
+        }
+
+        ddl.empty();
 
         $.getJSON('/bulkSalaryProcess/GetPayGroups', { payrollType: type }, function (groups) {
             ddl.append(`<option value="">-- Select Group --</option>`);
             groups.forEach(g => {
                 ddl.append(`<option value="${g.value}">${g.text}</option>`);
             });
+
+            initPayGroupSelect2();
+            ddl.val("").trigger("change.select2");
+        }).fail(function () {
+            toastr.error("Failed to load pay groups.");
         });
     }
     /*====== Load Employee List =============== */
@@ -6209,7 +3837,10 @@
         const group = $("#ddlGroup").val();
         const type = $("#ddlType").val();
 
-        if (!group) return;
+        if (!group) {
+            clearEmployeeSelection();
+            return;
+        }
 
         let payload = {
             payGroup: group,
@@ -6254,6 +3885,8 @@
 
             $("#cntActive").text(active.length);
             $("#cntInactive").text(inactive.length);
+        }).fail(function (xhr) {
+            toastr.error(xhr.responseJSON?.error || "Failed to load employees for this pay group.");
         });
     }
 
@@ -6263,8 +3896,9 @@
 
         list.forEach(e => {
 
-            const disabled = e.isPaid || !e.isEligible;
-            const checked = isActive && !disabled;
+            const isFinalized = e.isFinalized === true || e.payrollStatus === 2;
+            const disabled = isFinalized || e.isSelectable === false || !e.isEligible;
+            const checked = isActive && !disabled && (e.isChecked === true || [0, 1, 3].includes(parseInt(e.payrollStatus || 0)));
 
             html += `
             <div class="emp-item ${disabled ? 'emp-disabled' : ''}">
@@ -6284,8 +3918,8 @@
                     ${e.status}
                 </span>
 
-                ${e.isPaid
-                    ? `<span class="paid-tag">PAID</span>`
+                ${isFinalized
+                    ? `<span class="paid-tag">FINALIZED</span>`
                     : (!e.isEligible
                         ? `<span class="hold-tag">BLOCKED</span>`
                         : ``)
@@ -6515,8 +4149,11 @@
         const procMonth = $("#hdnprocessMonth").val();
         const procYear = $("#hdnprocessYear").val();
         const rows = pivot.Rows;
-        const columns = pivot.Columns;
-        console.log(pivot);
+        //const columns = pivot.Columns;
+        const columns = pivot.Columns.filter(c =>
+            (c.PayType || '').toUpperCase() !== 'CC'
+        );
+        //console.log(pivot);
         // 🔹 Find indexes
         let lastAllowanceIndex = -1;
         let lastDeductionIndex = -1;
@@ -6547,15 +4184,8 @@
 
             html += `<th class="text-right ${cls}">${c.PayConfigName}</th>`;
 
-            // ➕ Manual Addition (after allowance, before gross)
-            if (idx === grossIndex - 1) {
-                html += `<th class="text-right header-manual">Manual Addition</th>`;
-            }
-
-
-            // ➕ Manual Deduction + Net (after deduction)
+            // Net after deduction
             if (idx === lastDeductionIndex) {
-                html += `<th class="text-right header-manual">Manual Deduction</th>`;
                 html += `<th class="text-right header-net">Net Salary</th>`;
             }
         });
@@ -6630,80 +4260,22 @@
                 </td>`;
                 }
 
-                // ➕ Manual Addition INPUT
-                if (idx === grossIndex - 1) {
-                    html += `<td class="text-right">
-                    <input type="number" class="manual-input"
-                           value="${row.ManualAddition}"
-                           ${!allowEdit ? 'disabled' : ''}
-                           onchange="onManualAddChange(${row.EmployeeId}, this.value)">
-                </td>`;
-                }
-
-
-                // ➕ Manual Deduction INPUT + Net
+                // Net after deduction
                 if (idx === lastDeductionIndex) {
-                    html += `<td class="text-right">
-                    <input type="number" class="manual-input"
-                           value="${row.ManualDeduction}"
-                           ${!allowEdit ? 'disabled' : ''}
-                           onchange="onManualDedChange(${row.EmployeeId}, this.value)">
-                </td>`;
-
                     html += `<td class="text-right cell-net">
-                    ₹ ${row.NetPay.toLocaleString()}
+                    &#8377; ${row.NetPay.toLocaleString()}
                 </td>`;
                 }
             });
 
             html += `<td class="text-right" style="font-weight:600;background:#f8fafc">
-            ₹ ${(row.MonthlyCTC || 0).toLocaleString()}
+            &#8377; ${(row.MonthlyCTC || 0).toLocaleString()}
         </td></tr>`;
         });
 
         html += "</tbody>";
         $("#salaryTable").html(html);
         updateStatsFromPivot(pivot.Rows);
-    }
-
-    function onManualAddChange(empId, val) {
-
-        const r = pivotData.Rows.find(x => x.EmployeeId === empId);
-        if (!r) return;
-
-        if (Number(window.currentBatchStatus) !== 1) return;
-
-        const newVal = Number(val) || 0;
-        const diff = newVal - (r.ManualAddition || 0);
-
-        // store manual addition
-        r.ManualAddition = newVal;
-
-        // ✅ DO NOT TOUCH GROSS / TotalEarnings
-        // 🔥 Manual Addition affects Net & CTC only
-        r.NetPay += diff;
-        r.MonthlyCTC += diff;
-
-        renderSalaryGrid(pivotData);
-    }
-
-    function onManualDedChange(empId, val) {
-        const r = pivotData.Rows.find(x => x.EmployeeId === empId);
-        if (!r) return;
-
-        if (Number(window.currentBatchStatus) !== 1) return;
-
-        const newVal = Number(val) || 0;
-        const diff = newVal - (r.ManualDeduction || 0);
-
-        // store
-        r.ManualDeduction = newVal;
-
-        // 🔥 Deduction affects Net & CTC ONLY
-        r.NetPay -= diff;
-        r.MonthlyCTC -= diff;
-
-        renderSalaryGrid(pivotData);
     }
 
     function toggleLoanWaiver(empId, payConfigId, element) { // 🔑 Added 'element'
@@ -6837,12 +4409,24 @@
             tNet += Number(r.NetPay || 0);
         });
 
-        $("#lblEarn").text("₹ " + tEarn.toLocaleString());
-        $("#lblDed").text("₹ " + tDed.toLocaleString());
-        $("#lblNet").text("₹ " + tNet.toLocaleString());
+        $("#lblEarn").html("&#8377; " + tEarn.toLocaleString());
+        $("#lblDed").html("&#8377; " + tDed.toLocaleString());
+        $("#lblNet").html("&#8377; " + tNet.toLocaleString());
     }
 
-    function updateStats() { let tEarn = 0, tDed = 0, tNet = 0; currentData.forEach(d => { tEarn += (d.Basic + d.Allow); tDed += (d.PF + d.Loan); tNet += d.Net; }); $("#lblEarn").text("₹ " + tEarn.toLocaleString()); $("#lblDed").text("₹ " + tDed.toLocaleString()); $("#lblNet").text("₹ " + tNet.toLocaleString()); }
+    function updateStats() {
+        let tEarn = 0, tDed = 0, tNet = 0;
+
+        currentData.forEach(d => {
+            tEarn += (d.Basic + d.Allow);
+            tDed += (d.PF + d.Loan);
+            tNet += d.Net;
+        });
+
+        $("#lblEarn").html("&#8377; " + tEarn.toLocaleString("en-IN"));
+        $("#lblDed").html("&#8377; " + tDed.toLocaleString("en-IN"));
+        $("#lblNet").html("&#8377; " + tNet.toLocaleString("en-IN"));
+    }
 
     // --- UTILS ---
     function rejectBatch() {
@@ -6898,7 +4482,7 @@
             });
         }
     }
-    //function openLoanModal(name, openBal, emi) { $("#loanEmpLabel").text(name); $("#valOpen").text("₹ " + openBal.toLocaleString()); $("#valEmi").text("₹ " + emi.toLocaleString()); $("#valClose").text("₹ " + (openBal - emi).toLocaleString()); $("#loanModal").fadeIn(200); }
+    //function openLoanModal(name, openBal, emi) { $("#loanEmpLabel").text(name); $("#valOpen").text("&#8377; " + openBal.toLocaleString()); $("#valEmi").text("&#8377; " + emi.toLocaleString()); $("#valClose").text("&#8377; " + (openBal - emi).toLocaleString()); $("#loanModal").fadeIn(200); }
     //function openHistory(name) { $("#histEmpName").text(name); $("#histBody").html(`<tr><td>Oct 2025</td><td>15,000</td><td>5,000</td><td>1,200</td><td><strong>18,800</strong></td></tr><tr><td>Sep 2025</td><td>15,000</td><td>5,000</td><td>1,200</td><td><strong>18,800</strong></td></tr>`); $("#historyModal").fadeIn(200); }
     function closeModal(id) {
 
@@ -7178,9 +4762,9 @@
                         <td>${r.PayGroupName ?? ''}</td>
                         <td>${r.PayrollTypeText ?? ''}</td>
                         <td class="text-center">${r.TotalEmployees ?? 0}</td>
-                        <td class="text-right">₹ ${Number(r.TotalCost ?? 0).toLocaleString('en-IN')}</td>
+                        <td class="text-right">&#8377; ${Number(r.TotalCost ?? 0).toLocaleString('en-IN')}</td>
                         <td class="text-right" style="font-weight:700;color:#0E7777">
-                            ₹ ${Number(r.NetPayout ?? 0).toLocaleString('en-IN')}
+                            &#8377; ${Number(r.NetPayout ?? 0).toLocaleString('en-IN')}
                         </td>
                         <td class="text-center">${statusBadge}</td>
                         <td class="text-right">
@@ -7602,8 +5186,8 @@
                 if (window.editSalaryCtx.status === 2) {
                     $(".btn-create").hide(); // Hide "Save Changes" button
 
-                    // Disable all inputs in the sidebar
-                    $(".edit-sidebar input").prop("disabled", true);
+                    // Disable all inputs in the modal
+                    $("#editSalaryModal input").prop("disabled", true);
                     $("#chkWaiveLoan").prop("disabled", true);
 
                     // Add lock icon notice to footer
@@ -7635,7 +5219,8 @@
         $("#txtEditDays, #txtDayAdjustment, #txtFinalDays").val("");
 
         // Reset Manual Fields
-        $("#txtManualAdd, #txtManualDed, #txtManualCompValue").val("");
+        $("#txtManualAdd, #txtManualDed").val(0);
+        $("#txtManualCompValue").val("");
         $("#ddlManualComponent").val("").trigger('change');
 
         // Force toggle to 'Checked' (Deduct)
@@ -7656,9 +5241,10 @@
         $("#tableEarningsBody").html(loadingRow);
         $("#tableDeductionsBody").html(loadingRow);
         $("#tableContribBody").html(loadingRow);
+        $("#editManualInputs, #editAllowanceInputs, #editDeductionInputs").empty();
 
         // Reset Summary Banners
-        $("#lblModalNetPay, #lblModalCTC").text("₹ 0.00");
+        $("#lblModalNetPay, #lblModalCTC").html("&#8377; 0.00");
         $("#slipTotalEarn, #slipTotalDed, #slipTotalContrib").text("0.00");
     }
 
@@ -7675,7 +5261,8 @@
                 PayrollProcessEmployeeID: window.editSalaryCtx.payrollProcessEmployeeId,
                 EmployeeID: window.editSalaryCtx.employeeId,
                 IsDaysChanged: true,
-                PaidDays: parseFloat(newDays)
+                PaidDays: parseFloat(newDays),
+                Status: window.editSalaryCtx.status
             }),
             success: function (res) {
                 if (!res.Success) {
@@ -7716,15 +5303,27 @@
     let currentDetails = [];
 
     function bindHeader(h) {
+        currentHeader = Object.assign({}, h || {});
+        const oldManualAdd = Number(currentHeader.ManualAddition || 0);
+        const oldManualDed = Number(currentHeader.ManualDeduction || 0);
+
+        if (oldManualAdd || oldManualDed) {
+            currentHeader.TotalGross = Number(currentHeader.TotalGross || 0) - oldManualAdd;
+            currentHeader.TotalDeduction = Number(currentHeader.TotalDeduction || 0) - oldManualDed;
+            currentHeader.TotalTakeHome = Number(currentHeader.TotalTakeHome || 0) - oldManualAdd + oldManualDed;
+            currentHeader.MonthlyCTC = Number(currentHeader.MonthlyCTC || 0) - oldManualAdd;
+            currentHeader.ManualAddition = 0;
+            currentHeader.ManualDeduction = 0;
+        }
+        h = currentHeader;
         // Combine Name and EmpNo (e.g., "John Doe (EMP001)")
         const displayName = h.EmployeeName
             ? `${h.EmployeeName} (${h.Empno || 'N/A'})`
             : "Modify Salary";
-        console.log(h);
         $("#editModalEmpName").text(displayName);
         $("#txtEditDays").val(h.PaidDays);
-        $("#txtManualAdd").val(h.ManualAddition || 0);
-        $("#txtManualDed").val(h.ManualDeduction || 0);
+        $("#txtManualAdd").val(0);
+        $("#txtManualDed").val(0);
         // 🔑 Save the limit from the server!
         // This handles 28, 29, 30, or 31 correctly based on the DB month.
         window.currentMonthMaxDays = h.TotalMonthDays;
@@ -7736,7 +5335,7 @@
 
         // Condition A: Batch is Finalized (Status 2) -> Lock EVERYTHING
         if (window.editSalaryCtx.status === 2) {
-            $("#txtEditDays, #txtManualAdd, #txtManualDeduction, #chkWaiveLoan").prop("disabled", true);
+            $("#txtEditDays, #chkWaiveLoan").prop("disabled", true);
             $("#chkWaiveLoan").parent().attr("title", "Batch is finalized and locked.");
         }
         // Condition B: Loan is External -> Lock ONLY the Loan Checkbox
@@ -7747,20 +5346,24 @@
             $("#chkWaiveLoan").parent().attr("title", "Loan payment managed externally.");
 
             // Keep other fields enabled since batch is not status 2
-            $("#txtEditDays, #txtManualAdd, #txtManualDeduction").prop("disabled", false);
+            $("#txtEditDays, .modal-component-input").prop("disabled", false);
         }
         // Condition C: Normal Draft -> Everything enabled
         else {
-            $("#txtEditDays, #txtManualAdd, #txtManualDeduction, #chkWaiveLoan").prop("disabled", false);
+            $("#txtEditDays, .modal-component-input, #chkWaiveLoan").prop("disabled", false);
             $("#chkWaiveLoan").closest('label').css("color", "");
             $("#chkWaiveLoan").parent().removeAttr("title");
         }
     }
 
     function bindComponents(details) {
+        currentDetails = details || [];
         let earnHtml = "";
         let dedHtml = "";
         let contribHtml = "";
+        let manualInputHtml = "";
+        let allowanceInputHtml = "";
+        let deductionInputHtml = "";
 
         let totalGross = 0;
         let totalDed = 0;
@@ -7769,24 +5372,54 @@
         // 🔑 Global variables for Loan logic
         let loanEmiToDisplay = 0;
         let isCurrentlyWaived = false;
-
         details.forEach(c => {
             let val = Number(c.Amount || 0);
             let origVal = Number(c.OriginalAmount || 0); // 👈 From our C# logic
             let type = (c.PayType || "").trim();
             let name = (c.PayConfigName || "").trim();
             let otherType = (c.OtherType || "").trim();
-
-            if (name === "GROSS AMOUNT") return;
+            let logicType = (c.LogicType || "").trim().toUpperCase();
+            let statutoryType = (c.StatutoryType || "").trim().toUpperCase();
+            let normalizedName = name.replace(/[\s.]/g, '').toUpperCase();
 
             // Determine if this specific row is a Loan
             const isLoan = otherType === "LOANRECOVERY";
+            const isGrossAmount = normalizedName === "GROSSAMOUNT";
+            const isPTax = statutoryType === "PTAX" || normalizedName === "PTAX" || normalizedName === "PTAXAMOUNT";
+            const isEditableFixed = (logicType === "FIXED") &&
+                (type === "Manual" || type === "Allowances" || type === "Deduction") &&
+                !isLoan &&
+                !isPTax;
             // 🔑 Added 'loan-row' class here
             let rowClass = isLoan ? "loan-row" : "";
+            const amountCell = val.toLocaleString('en-IN', { minimumFractionDigits: 2 });
 
-            let row = `<tr class="${rowClass}" data-config-id="${c.PayConfigId}">
+            if (isEditableFixed) {
+                const inputHtml = `
+                    <div class="input-group-custom modal-component-group" style="margin-bottom:10px;">
+                        <label title="${name}">${name}</label>
+                        <input type="number"
+                               class="input-field-styled modal-component-input"
+                               data-config-id="${c.PayConfigId}"
+                               data-ref-ids="${c.ReferenceIds || ''}"
+                               value="${val}"
+                               step="0.01">
+                    </div>`;
+
+                if (type === "Manual") {
+                    manualInputHtml += inputHtml;
+                } else if (type === "Allowances") {
+                    allowanceInputHtml += inputHtml;
+                } else {
+                    deductionInputHtml += inputHtml;
+                }
+            }
+
+            if (isGrossAmount) return;
+
+            let row = `<tr class="${rowClass}" data-config-id="${c.PayConfigId}" data-ref-ids="${c.ReferenceIds || ''}">
                     <td>${name}</td>
-                    <td class="slip-amt">${val.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    <td class="slip-amt">${amountCell}</td>
                    </tr>`;
 
             if (type === "Allowances") {
@@ -7819,7 +5452,7 @@
                         $loanBox.css({ "opacity": "0.5", "cursor": "not-allowed" })
                             .attr("title", "No active loan record linked to this component");
 
-                        $("#lblModalEMI").text("EMI: ₹ 0.00");
+                        $("#lblModalEMI").html("EMI: &#8377; 0.00");
                         $("#lblLoanStatus").text("NO LOAN").css("color", "#94a3b8");
                     } else {
                         // ✅ ENABLE TOGGLE: Valid loan reference found
@@ -7827,7 +5460,7 @@
                         //$toggle.prop('checked', isCurrentlyWaived);
                         //$loanBox.css({ "opacity": "1", "cursor": "default" }).removeAttr("title");
 
-                        //$("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                        //$("#lblModalEMI").html("EMI: &#8377; " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
                         // ✅ VALID LOAN REFERENCE FOUND
                         // 🔑 ADD THIS CHECK HERE:
                         if (window.isLoanExternal || window.editSalaryCtx.status === 2) {
@@ -7842,7 +5475,7 @@
                         }
 
                         $toggle.prop('checked', isCurrentlyWaived);
-                        $("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                        $("#lblModalEMI").html("EMI: &#8377; " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
                     }
                 }
                 //// 🔑 1. Detect Loan Recovery using OtherType
@@ -7867,6 +5500,9 @@
         $("#tableEarningsBody").html(earnHtml || "<tr><td colspan='2'>No Allowances</td></tr>");
         $("#tableDeductionsBody").html(dedHtml || "<tr><td colspan='2'>No Deductions</td></tr>");
         $("#tableContribBody").html(contribHtml || "<tr><td colspan='2'>No Contributions</td></tr>");
+        $("#editManualInputs").html(manualInputHtml || "<div style='font-size:11px; color:#94a3b8; margin-bottom:8px;'>No fixed manual components</div>");
+        $("#editAllowanceInputs").html(allowanceInputHtml || "<div style='font-size:11px; color:#94a3b8; margin-bottom:8px;'>No fixed allowances</div>");
+        $("#editDeductionInputs").html(deductionInputHtml || "<div style='font-size:11px; color:#94a3b8; margin-bottom:8px;'>No fixed deductions</div>");
 
         // Update the Bold Totals in Table Footers
         $("#slipTotalEarn").text(totalGross.toFixed(2));
@@ -7877,7 +5513,7 @@
         window.currentLoanEMI = loanEmiToDisplay;
 
         // Update the EMI display (Always show the real EMI)
-        $("#lblModalEMI").text("EMI: ₹ " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+        $("#lblModalEMI").html("EMI: &#8377; " + loanEmiToDisplay.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
 
         // Set the Checkbox state based on whether it was already waived
         // Assuming you have a checkbox with ID 'chkLoanSkip'
@@ -7889,93 +5525,202 @@
             $("#lblLoanStatus").text("DEDUCTING").removeClass("text-danger").addClass("text-success");
         }
 
-        // Trigger the Net Take Home and CTC banner calculations
+        if (window.editSalaryCtx && window.editSalaryCtx.status === 2) {
+            $(".modal-component-input").prop("disabled", true);
+        }
+
+        // Refresh banners using totals supplied by the controller.
         recalcNetUI();
     }
+
+    function getSlipRowAmount($row) {
+        return parseFloat($row.find(".slip-amt").text().replace(/₹|&#8377;|,|\+|-/g, '').trim()) || 0;
+    }
+
+    let salaryRecalcTimer = null;
+    let salaryRecalcRequest = null;
+    let isSalaryServerBinding = false;
+
     function recalcNetUI() {
-        // 1. Get Base Totals from the component table footers
-        let gross = parseFloat($("#slipTotalEarn").text()) || 0;
-        let ded = parseFloat($("#slipTotalDed").text()) || 0;
-        let contrib = parseFloat($("#slipTotalContrib").text()) || 0;
-
-        // 2. Get Input States from Sidebar
-        let mAdd = parseFloat($("#txtManualAdd").val()) || 0;
-        let mDed = parseFloat($("#txtManualDed").val()) || 0;
-        let isWaived = $("#chkWaiveLoan").is(":checked");
-
-        // 3. Handle Loan Row UI & Deduction Logic
-        const loanRow = $(".loan-row");
-        const masterEMI = window.currentLoanEMI || 0;
-
-        // Check what the Loan row CURRENTLY shows in the UI
-        let uiLoanAmt = parseFloat(loanRow.find(".slip-amt").text().replace(/,/g, '')) || 0;
-        let activeDeduction = ded;
-
-        if (isWaived) {
-            // Visual: Strike-through and "SKIPPED" badge
-            loanRow.css({ "text-decoration": "line-through", "opacity": "0.5", "color": "#991b1b" });
-            if (loanRow.find(".waive-tag").length === 0) {
-                loanRow.find("td:first-child").append(' <span class="badge badge-danger waive-tag" style="font-size:9px;">SKIPPED</span>');
-            }
-
-            // 🔑 UI CORRECTION: Set the row value to 0.00
-            loanRow.find(".slip-amt").text("0.00");
-
-            // Math: If the total 'ded' was including the EMI, subtract it
-            if (uiLoanAmt > 0) {
-                activeDeduction = ded - uiLoanAmt;
-            }
-        } else {
-            // Visual: Reset row
-            loanRow.css({ "text-decoration": "none", "opacity": "1", "color": "inherit" });
-            $(".waive-tag").remove();
-
-            // 🔑 UI CORRECTION: Restore the Master EMI value to the table cell
-            loanRow.find(".slip-amt").text(masterEMI.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
-
-            // Math: If the total 'ded' was showing 0 for loan, add the EMI back
-            if (uiLoanAmt === 0) {
-                activeDeduction = ded + masterEMI;
-            }
-        }
-
-        // 4. 🔑 UI CORRECTION: Update the "TOTAL DEDUCTION" footer in the table
-        // This ensures the Deduction box total matches the rows above it
-        $("#slipTotalDed").text(activeDeduction.toFixed(2));
-
-        // 5. Calculate Final Banners
-        let finalGross = gross + mAdd;
-        let finalDeduction = activeDeduction + mDed;
-        let finalTakeHome = finalGross - finalDeduction;
-        let finalCTC = finalGross + contrib;
-
-        // 6. Update Dynamic Manual Rows
         $(".manual-adj-row").remove();
-        if (mAdd > 0) {
-            $("#tableEarningsBody").append(`<tr class="manual-adj-row" style="background:#f0fdf4; color:#166534; font-weight:600;"><td>Manual Addition</td><td class="slip-amt">+${mAdd.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td></tr>`);
-        }
-        if (mDed > 0) {
-            $("#tableDeductionsBody").append(`<tr class="manual-adj-row" style="background:#fef2f2; color:#991b1b; font-weight:600;"><td>Manual Deduction</td><td class="slip-amt">-${mDed.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td></tr>`);
-        }
 
-        // 7. Update Primary Banners
-        $("#lblModalNetPay").text("₹ " + finalTakeHome.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
-        $("#lblModalCTC").text("₹ " + finalCTC.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+        const h = currentHeader || {};
+        const totalGross = Number(h.TotalGross || $("#slipTotalEarn").text() || 0);
+        const totalDeduction = Number(h.TotalDeduction || $("#slipTotalDed").text() || 0);
+        const totalTakeHome = Number(h.TotalTakeHome || 0);
+        const contribution = Number(h.TotalContribution || $("#slipTotalContrib").text() || 0);
+        const monthlyCtc = Number(h.MonthlyCTC || (totalGross + contribution));
 
-        // 8. Extra Pay Card Logic
-        let diff = finalTakeHome - window.originalTakeHome;
+        $("#slipTotalEarn").text(totalGross.toFixed(2));
+        $("#slipTotalDed").text(totalDeduction.toFixed(2));
+        $("#slipTotalContrib").text(contribution.toFixed(2));
+        $("#lblModalNetPay").html("&#8377; " + totalTakeHome.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+        $("#lblModalCTC").html("&#8377; " + monthlyCtc.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+
+        let diff = totalTakeHome - window.originalTakeHome;
         let absDiff = Math.abs(diff);
         const card = $("#adjustmentCard");
 
         if (absDiff > 0.1) {
             card.show();
             $(".summary-banner").css("grid-template-columns", "1fr 1fr 1fr");
-            $("#lblAdjAmount").text("₹ " + absDiff.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+            $("#lblAdjAmount").html("&#8377; " + absDiff.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
             $("#lblAdjTypeTag").text(diff > 0 ? "Extra Pay" : "Deduction Adjustment");
         } else {
             card.hide();
             $(".summary-banner").css("grid-template-columns", "1fr 1fr");
         }
+    }
+
+    //function collectEditSalaryComponents() {
+    //    const componentEdits = [];
+    //    const isLoanWaived = $("#chkWaiveLoan").is(":checked");
+
+    //    (currentDetails || []).forEach(function (c) {
+    //        const configId = c.PayConfigId;
+    //        const name = (c.PayConfigName || "").trim();
+    //        if (!configId) return;
+
+    //        const otherType = (c.OtherType || "").trim();
+    //        const isLoanRow = otherType === "LOANRECOVERY";
+    //        const $sidebarInput = $(`.modal-component-input[data-config-id="${configId}"]`);
+    //        const amount = $sidebarInput.length
+    //            ? (parseFloat($sidebarInput.val()) || 0)
+    //            : (parseFloat(c.Amount) || 0);
+
+    //        componentEdits.push({
+    //            PayConfigId: parseInt(configId),
+    //            Amount: amount,
+    //            IsWaived: isLoanRow ? isLoanWaived : false,
+    //            ReferenceIds: isLoanRow ? (window.currentModalLoanRefIds || c.ReferenceIds || "") : (c.ReferenceIds || "")
+    //        });
+    //    });
+
+    //    return componentEdits;
+
+    //}
+    function collectEditSalaryComponents() {
+        const componentEdits = [];
+        const isLoanWaived = $("#chkWaiveLoan").is(":checked");
+
+        //console.log("Current Details:", currentDetails);
+
+        (currentDetails || []).forEach(function (c) {
+
+            const configId = c.PayConfigId;
+            if (!configId) return;
+
+            const type = (c.PayType || "").trim();
+            const typeKey = type.toUpperCase();
+            const logicType = (c.LogicType || "").trim().toUpperCase();
+            const otherType = (c.OtherType || "").trim();
+            const statutoryType = (c.StatutoryType || "").trim().toUpperCase();
+            const name = (c.PayConfigName || "").trim();
+
+            const normalizedName = name.replace(/[\s.]/g, '').toUpperCase();
+
+            const isLoan = otherType === "LOANRECOVERY";
+            const isPTax =
+                statutoryType === "PTAX" ||
+                normalizedName === "PTAX" ||
+                normalizedName === "PTAXAMOUNT";
+
+            // Same logic used while rendering editable controls
+            const isEditableFixed =
+                logicType === "FIXED" &&
+                (typeKey === "MANUAL" || typeKey === "ALLOWANCES" || typeKey === "DEDUCTION") &&
+                !isLoan &&
+                !isPTax;
+
+            //console.log("Checking Component:", {
+            //    PayConfigId: configId,
+            //    Name: name,
+            //    PayType: type,
+            //    LogicType: logicType,
+            //    IsEditable: isEditableFixed
+            //});
+
+            if (!isEditableFixed) {
+                return;
+            }
+
+            const $sidebarInput = $(`.modal-component-input[data-config-id="${configId}"]`);
+
+            const amount = $sidebarInput.length
+                ? (parseFloat($sidebarInput.val()) || 0)
+                : (parseFloat(c.Amount) || 0);
+
+            const component = {
+                PayConfigId: parseInt(configId),
+                Amount: amount,
+                IsWaived: false,
+                ReferenceIds: c.ReferenceIds || ""
+            };
+
+            //console.log("Added Component:", component);
+
+            componentEdits.push(component);
+        });
+
+        //console.log("Final ComponentEdits:", componentEdits);
+
+        return componentEdits;
+    }
+    function buildEditSalaryPayload() {
+        return {
+            PreviewBatchId: window.editSalaryCtx.previewBatchId,
+            PayrollProcessEmployeeID: window.editSalaryCtx.payrollProcessEmployeeId,
+            EmployeeId: window.editSalaryCtx.employeeId,
+            Status: window.editSalaryCtx.status,
+            PaidDays: parseFloat($("#txtFinalDays").val()) || lockOriginalPaidDays,
+            ManualAddition: 0,
+            ManualDeduction: 0,
+            LoanWaivedYN: $("#chkWaiveLoan").is(":checked"),
+            Components: collectEditSalaryComponents()
+        };
+    }
+
+    function queueServerSalaryRecalc() {
+        if (isSalaryServerBinding || !window.editSalaryCtx || window.editSalaryCtx.status === 2) return;
+
+        clearTimeout(salaryRecalcTimer);
+        salaryRecalcTimer = setTimeout(requestServerSalaryRecalc, 350);
+    }
+
+    function requestServerSalaryRecalc() {
+        if (!window.editSalaryCtx) return;
+
+        if (salaryRecalcRequest && salaryRecalcRequest.readyState !== 4) {
+            salaryRecalcRequest.abort();
+        }
+
+        $("#recalcSpinner").show();
+        salaryRecalcRequest = $.ajax({
+            url: "/bulkSalaryProcess/RecalculateEmployeeSalaryForEdit",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(buildEditSalaryPayload()),
+            success: function (res) {
+                if (!res.Success) {
+                    toastr.error(res.Message || "Failed to recalculate salary.");
+                    return;
+                }
+
+                isSalaryServerBinding = true;
+                bindHeader(res.Header);
+                bindComponents(res.Details);
+                window.baseNetPay = res.Header.TotalTakeHome;
+                isSalaryServerBinding = false;
+            },
+            error: function (xhr, status) {
+                if (status !== "abort") {
+                    toastr.error("Failed to recalculate salary.");
+                }
+            },
+            complete: function () {
+                $("#recalcSpinner").hide();
+            }
+        });
     }
 
     /**
@@ -8049,7 +5794,7 @@
         const impactAmount = perDayRate * adjDays;
 
         // UI Updates
-        $("#lblAdjAmount").text("₹ " + impactAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+        $("#lblAdjAmount").html("&#8377; " + impactAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
         $("#lblAdjTypeTag").text(isDeduct ? "Deduction Impact" : "Addition Impact");
 
         // Store data for saving
@@ -8083,9 +5828,9 @@
             success: function (res) {
                 if (res.Success) {
                     // 1. Update the 3 Top Summary Cards
-                    $("#valOpen").text("₹ " + res.OpeningBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
-                    $("#valEmi").text("₹ " + res.CurrentEMI.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
-                    $("#valClose").text("₹ " + res.ClosingBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                        $("#valOpen").html("&#8377; " + res.OpeningBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                        $("#valEmi").html("&#8377; " + res.CurrentEMI.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+                        $("#valClose").html("&#8377; " + res.ClosingBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 }));
 
                     // 2. Render the Filtered Schedule (Last 3 Months)
                     let html = "";
@@ -8105,9 +5850,9 @@
                                 ${s.Period}
                                 ${s.IsCurrent ? '<span style="font-size:8px; background:#f59e0b; color:#fff; padding:1px 3px; border-radius:2px; margin-left:4px; vertical-align:middle;">CURR</span>' : ''}
                             </td>
-                            <td style="padding:10px; text-align:right; font-family:monospace;">₹${s.Opening.toLocaleString('en-IN')}</td>
-                            <td style="padding:10px; text-align:right; font-family:monospace; color:#16a34a; font-weight:600;">₹${s.Principal.toLocaleString('en-IN')}</td>
-                            <td style="padding:10px; text-align:right; font-family:monospace;">₹${s.Closing.toLocaleString('en-IN')}</td>
+                            <td style="padding:10px; text-align:right; font-family:monospace;">&#8377;${s.Opening.toLocaleString('en-IN')}</td>
+                            <td style="padding:10px; text-align:right; font-family:monospace; color:#16a34a; font-weight:600;">&#8377;${s.Principal.toLocaleString('en-IN')}</td>
+                            <td style="padding:10px; text-align:right; font-family:monospace;">&#8377;${s.Closing.toLocaleString('en-IN')}</td>
                             <td style="padding:10px; text-align:center;">
                                 <span class="status-badge ${statusClass}" style="font-size:10px; padding:2px 6px;">${s.Status}</span>
                             </td>
@@ -8164,23 +5909,23 @@
                         <td style="padding:10px;">${row.processYear}</td>
                         <td style="padding:10px;">${row.paidDays}</td>
                         <td style="padding:10px;text-align:right;font-family:monospace;">
-                            ₹${(row.basic || 0).toLocaleString('en-IN')}
+                            &#8377;${(row.basic || 0).toLocaleString('en-IN')}
                         </td>
 
                         <td style="padding:10px;text-align:right;font-family:monospace;">
-                            ₹${(row.totalAllowances || 0).toLocaleString('en-IN')}
+                            &#8377;${(row.totalAllowances || 0).toLocaleString('en-IN')}
                         </td>
 
                         <td style="padding:10px;text-align:right;font-family:monospace;">
-                            ₹${(row.gross || 0).toLocaleString('en-IN')}
+                            &#8377;${(row.gross || 0).toLocaleString('en-IN')}
                         </td>
 
                         <td style="padding:10px;text-align:right;font-family:monospace;color:#dc2626;">
-                            ₹${(row.totalDeduction || 0).toLocaleString('en-IN')}
+                            &#8377;${(row.totalDeduction || 0).toLocaleString('en-IN')}
                         </td>
 
                         <td style="padding:10px;text-align:right;font-family:monospace;font-weight:700;color:#0E7777;">
-                            ₹${(row.netPay || 0).toLocaleString('en-IN')}
+                            &#8377;${(row.netPay || 0).toLocaleString('en-IN')}
                         </td>
 
                         <td style="text-align:center;">
@@ -8225,62 +5970,67 @@
         window.open(url, '_blank');
     }
     function saveModalSalary() {
-        const empId = window.editSalaryCtx.employeeId;
-        const batchId = window.editSalaryCtx.previewBatchId;
-
-        const manualAdd = parseFloat($("#txtManualAdd").val()) || 0;
-        const manualDed = parseFloat($("#txtManualDed").val()) || 0;
-        const finalPaidDays = parseFloat($("#txtFinalDays").val()) || lockOriginalPaidDays;
-        const isLoanWaived = $("#chkWaiveLoan").is(":checked");
-
-        const componentEdits = [];
-
-        $("#tableEarningsBody tr, #tableDeductionsBody tr, #tableContribBody tr").each(function () {
-            const $row = $(this);
-            const configId = $row.data("config-id");
-
-            if (configId) {
-                const isLoanRow = $row.hasClass("loan-row");
-                const amount = parseFloat($row.find(".slip-amt").text().replace(/[₹,]/g, '')) || 0;
-
-                componentEdits.push({
-                    PayConfigId: parseInt(configId),
-                    Amount: amount,
-                    IsWaived: isLoanRow ? isLoanWaived : false,
-                    ReferenceIds: isLoanRow ? (window.currentModalLoanRefIds || "") : ""
-                });
-            }
-        });
-
-        const payload = {
-            PreviewBatchId: batchId,
-            EmployeeId: empId,
-            PaidDays: finalPaidDays,
-            ManualAddition: manualAdd,
-            ManualDeduction: manualDed,
-            Components: componentEdits
-        };
+        if (!window.editSalaryCtx) return;
 
         showPayrollLoader();
 
+        $.ajax({
+            url: "/bulkSalaryProcess/RecalculateEmployeeSalaryForEdit",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(buildEditSalaryPayload()),
+            success: function (res) {
+                if (!res.Success) {
+                    toastr.error(res.Message || "Failed to recalculate salary.");
+                    hidePayrollLoader();
+                    return;
+                }
+
+                isSalaryServerBinding = true;
+                bindHeader(res.Header);
+                bindComponents(res.Details);
+                window.baseNetPay = res.Header.TotalTakeHome;
+                isSalaryServerBinding = false;
+
+                submitModalSalaryUpdate({
+                    PreviewBatchId: window.editSalaryCtx.previewBatchId,
+                    EmployeeId: window.editSalaryCtx.employeeId,
+                    PaidDays: parseFloat(res.Header.PaidDays) || lockOriginalPaidDays,
+                    ManualAddition: 0,
+                    ManualDeduction: 0,
+                    Components: (res.Details || []).map(function (c) {
+                        const isLoanWaived = (c.OtherType || "") === "LOANRECOVERY"
+                            && Number(c.Amount || 0) === 0
+                            && Number(c.OriginalAmount || 0) > 0;
+
+                        return {
+                            PayConfigId: c.PayConfigId,
+                            Amount: Number(c.Amount || 0),
+                            IsWaived: isLoanWaived,
+                            ReferenceIds: c.ReferenceIds || ""
+                        };
+                    })
+                });
+            },
+            error: function (xhr) {
+                toastr.error("Server connection error: " + xhr.statusText);
+                hidePayrollLoader();
+            }
+        });
+    }
+
+    function submitModalSalaryUpdate(payload) {
         $.ajax({
             url: '/bulkSalaryProcess/SubmitFullPreviewUpdate',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(payload),
             success: function (res) {
-                // 🛡️ Wrapping in try-catch ensures any UI error doesn't freeze the loader
                 try {
                     if (res.success) {
                         toastr.success("Salary details updated successfully");
-
-                        // 1. Close modal first
                         closeModal('editSalaryModal');
 
-                        // 2. Refresh Grids
-                        // Tip: If loadPayrollBatchGrid also calls an AJAX,
-                        //// ensure they don't both try to show/hide the same loader.
-                        //if (typeof loadPayrollBatchGrid === "function") loadPayrollBatchGrid();
                         if (typeof loadEmployeeWiseBatchGrid === "function") loadEmployeeWiseBatchGrid();
                     } else {
                         toastr.error(res.message || "Failed to update salary");
@@ -8293,8 +6043,6 @@
                 toastr.error("Server connection error: " + xhr.statusText);
             },
             complete: function () {
-                // 🚀 FORCE HIDE
-                // Sometimes a small delay is needed if the grid is also trying to show a loader
                 setTimeout(function () {
                     hidePayrollLoader();
                 }, 300);

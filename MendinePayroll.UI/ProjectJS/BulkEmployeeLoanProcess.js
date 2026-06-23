@@ -60,48 +60,130 @@
     }
 
     // ---------- SHOW DATA ----------
+    //$("#btnShow").on('click', function () {
+
+    //    if (!Validation()) return;
+
+    //    let empList = $("#ddlEmployee").val() || [];
+    //    if (empList.length === 0) {
+    //        toastr.warning("Please select at least one employee", "Validation");
+    //        return;
+    //    }
+
+    //    $("#LoanProcessBody").empty();
+    //    let allRows = "";
+
+    //    let joinedIds = empList.join(',');
+
+    //    $.get("/Loan/BulkLoanProcessData", {
+    //        EmpIds: joinedIds,
+    //        Month: $("#ddlMonth").val(),
+    //        Year: $("#ddlYear").val()
+    //    }, function (data) {
+
+    //        let newdata = JSON.parse(data);
+
+    //        if (!newdata.length) {
+    //            $("#LoanProcessBody").html('<tr><td colspan="10" class="text-center text-muted">No records found</td></tr>');
+    //            return;
+    //        }
+
+    //        newdata.forEach(function (obj) {
+
+    //            allRows += `
+    //                <tr>
+    //                    <td><input type="checkbox" class="chkProcess" value="${obj.IDLoan}"></td>
+    //                    <td>${obj.EmployeeCode}</td>
+    //                    <td>${obj.EmployeeName}</td>
+    //                    <td>${obj.LoanDate}</td>
+    //                    <td>${obj.LoanNo}</td>
+    //                    <td>${obj.InstallmentMonthName}</td>
+    //                    <td>${obj.InstallmentYear}</td>
+    //                    <td class="text-centre">${parseFloat(obj.PrincipalComponent).toFixed(2)}</td>
+    //                    <td class="text-centre">${parseFloat(obj.InterestComponent).toFixed(2)}</td>
+    //                    <td class="text-centre text-primary"><strong>${parseFloat(obj.AmountToBePaid).toFixed(2)}</strong></td>
+
+    //                    <input type="hidden" class="hdIDLoan" value="${obj.IDLoan}">
+    //                    <input type="hidden" class="hdEmployeeId" value="${obj.IDEmployee}">
+    //                    <input type="hidden" class="hdMonth" value="${obj.InstallmentMonth}">
+    //                    <input type="hidden" class="hdYear" value="${obj.InstallmentYear}">
+    //                    <input type="hidden" class="hdBalanceBefore" value="${obj.BalanceBefore}">
+    //                    <input type="hidden" class="hdBalanceAfter" value="${obj.BalanceAfter}">
+    //                    <input type="hidden" class="hdPrincipal" value="${obj.PrincipalComponent}">
+    //                    <input type="hidden" class="hdInterest" value="${obj.InterestComponent}">
+    //                    <input type="hidden" class="hdWaiverAmount" value="${obj.WaiverAmount}">
+    //                    <input type="hidden" class="hdWaiverType" value="${obj.WaiverType}">
+    //                </tr>`;
+    //        });
+
+    //        $("#LoanProcessBody").html(allRows);
+    //    });
+    //});
     $("#btnShow").on('click', function () {
 
         if (!Validation()) return;
 
         let empList = $("#ddlEmployee").val() || [];
+
         if (empList.length === 0) {
             toastr.warning("Please select at least one employee", "Validation");
             return;
         }
-
+        
         $("#LoanProcessBody").empty();
+
         let allRows = "";
 
-        let joinedIds = empList.join(',');
+        $.ajax({
+            url: "/Loan/BulkLoanProcessData",
+            type: "POST",
+            traditional: true,
+            data: {
+                EmpIds: empList,
+                Month: $("#ddlMonth").val(),
+                Year: $("#ddlYear").val()
+            },
+            success: function (data) {
 
-        $.get("/Loan/BulkLoanProcessData", {
-            EmpIds: joinedIds,
-            Month: $("#ddlMonth").val(),
-            Year: $("#ddlYear").val()
-        }, function (data) {
+                let newdata = typeof data === "string" ? JSON.parse(data) : data;
 
-            let newdata = JSON.parse(data);
+                if (!newdata.length) {
 
-            if (!newdata.length) {
-                $("#LoanProcessBody").html('<tr><td colspan="10" class="text-center text-muted">No records found</td></tr>');
-                return;
-            }
+                    $("#LoanProcessBody").html(
+                        '<tr><td colspan="10" class="text-center text-muted">No records found</td></tr>'
+                    );
 
-            newdata.forEach(function (obj) {
+                    return;
+                }
 
-                allRows += `
+                newdata.forEach(function (obj) {
+
+                    allRows += `
                     <tr>
-                        <td><input type="checkbox" class="chkProcess" value="${obj.IDLoan}"></td>
+                        <td>
+                            <input type="checkbox" class="chkProcess" value="${obj.IDLoan}">
+                        </td>
+
                         <td>${obj.EmployeeCode}</td>
                         <td>${obj.EmployeeName}</td>
                         <td>${obj.LoanDate}</td>
                         <td>${obj.LoanNo}</td>
                         <td>${obj.InstallmentMonthName}</td>
                         <td>${obj.InstallmentYear}</td>
-                        <td class="text-centre">${parseFloat(obj.PrincipalComponent).toFixed(2)}</td>
-                        <td class="text-centre">${parseFloat(obj.InterestComponent).toFixed(2)}</td>
-                        <td class="text-centre text-primary"><strong>${parseFloat(obj.AmountToBePaid).toFixed(2)}</strong></td>
+
+                        <td class="text-centre">
+                            ${parseFloat(obj.PrincipalComponent).toFixed(2)}
+                        </td>
+
+                        <td class="text-centre">
+                            ${parseFloat(obj.InterestComponent).toFixed(2)}
+                        </td>
+
+                        <td class="text-centre text-primary">
+                            <strong>
+                                ${parseFloat(obj.AmountToBePaid).toFixed(2)}
+                            </strong>
+                        </td>
 
                         <input type="hidden" class="hdIDLoan" value="${obj.IDLoan}">
                         <input type="hidden" class="hdEmployeeId" value="${obj.IDEmployee}">
@@ -114,12 +196,16 @@
                         <input type="hidden" class="hdWaiverAmount" value="${obj.WaiverAmount}">
                         <input type="hidden" class="hdWaiverType" value="${obj.WaiverType}">
                     </tr>`;
-            });
+                });
 
-            $("#LoanProcessBody").html(allRows);
+                $("#LoanProcessBody").html(allRows);
+            },
+            error: function (xhr) {
+                toastr.error("Error while loading data");
+                console.log(xhr.responseText);
+            }
         });
     });
-
     // ---------- CHECK ALL ----------
     $("#chkAll").on('change', function () {
         $(".chkProcess").prop('checked', this.checked);

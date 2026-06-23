@@ -333,6 +333,13 @@ namespace MendinePayroll.UI.Models
         public List<ComponentUpdateDto> Components { get; set; }
     }
 
+    public class EditSalaryRecalculateRequest : FullUpdateDto
+    {
+        public long PayrollProcessEmployeeID { get; set; }
+        public int Status { get; set; }
+        public bool LoanWaivedYN { get; set; }
+    }
+
     public class ComponentUpdateDto
     {
         public int PayConfigId { get; set; }

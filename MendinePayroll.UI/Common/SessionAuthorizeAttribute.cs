@@ -1,4 +1,3 @@
-﻿using Microsoft.Reporting.Map.WebForms.BingMaps;
 using System.Web;
 using System.Web.Mvc;
 
@@ -22,6 +21,6 @@ public class SessionAuthorizeAttribute : AuthorizeAttribute
         filterContext.HttpContext.Session.Clear();
         filterContext.HttpContext.Session.Abandon();
 
-        filterContext.Result = new RedirectResult("https://iehrms.iecsl.in/Account/ChoosePortal.aspx"); 
+        filterContext.Result = new RedirectResult("https://iehrms.iecsl.in/Account/ChoosePortal.aspx");
     }
 }

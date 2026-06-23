@@ -1,4 +1,5 @@
 ﻿using Common.Utility;
+using System;
 using System.Data;
 using System.Web;
 using System.Web.Mvc;
@@ -11,37 +12,57 @@ namespace MendinePayroll.UI.Utility
         {
             var routeData = filterContext.RouteData.Values;
             string controller = routeData["controller"].ToString().ToLower();
-            string action = routeData["action"].ToString().ToLower();
 
-            // ✅ 1. ALLOW: Skip check for the Login page so it can set the Session
             if (controller == "login")
-            {
                 return;
-            }
 
-            // ✅ 2. SESSION CHECK: Check if the user is logged in
             var session = filterContext.HttpContext.Session;
+            var request = filterContext.HttpContext.Request;
+            var response = filterContext.HttpContext.Response;
+
+
             string tenantId = session["TenantID"]?.ToString();
             string empId = session["EmployeeNo"]?.ToString();
 
             if (string.IsNullOrEmpty(tenantId) || string.IsNullOrEmpty(empId))
             {
-                filterContext.Result = new RedirectResult("https://iehrms.iecsl.in/Account/ChoosePortal.aspx");
-                return;
+                var parts = PayrollSessionCookie.Read(request);
+                if (parts != null && parts.Length == 6)
+                {
+                    // Restore all session keys
+                    session["RoleID"] = parts[0];
+                    session["UserName"] = parts[1];
+                    session["UserId"] = parts[2];
+                    session["EmployeeNo"] = parts[3];
+                    session["UserEmail"] = parts[4];
+                    session["TenantID"] = parts[5];
+                    session["ModuleURL"] =
+                        System.Configuration.ConfigurationManager
+                            .AppSettings["ModuleURL"]?.ToString();
+
+                    // Refresh the cookie expiry (sliding expiry)
+                    PayrollSessionCookie.Write(response,
+                        parts[0], parts[1], parts[2],
+                        parts[3], parts[4], parts[5]);
+
+                    tenantId = parts[5];
+                    empId = parts[3];
+                }
+                else
+                {
+                    // Cookie also missing/expired — send back to portal
+                    filterContext.Result = new RedirectResult(
+                        "https://iehrms.iecsl.in/Account/ChoosePortal.aspx");
+                    return;
+                }
             }
 
-            // ✅ 3. AUTHORIZATION: Check Payroll access via SP
-            // Using your existing Database utility
             DataTable dt = clsDatabase.fnDataTable("SP_SAAS_VALIDATE_PayrollEmployeeAccess", tenantId, empId);
 
             if (dt == null || dt.Rows.Count == 0)
             {
-                // Return the professional Card-style unauthorized View
-                // Note: Ensure the view is in Views/Shared
-                filterContext.Result = new ViewResult
-                {
-                    ViewName = "_UnauthorizedPayroll"
-                };
+                filterContext.Result = new ViewResult { ViewName = "_UnauthorizedPayroll" };
+                return; // ✅ also return here so base isn't called on unauthorized
             }
 
             base.OnActionExecuting(filterContext);

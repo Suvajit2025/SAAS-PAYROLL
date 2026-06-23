@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Common.Utility;
 using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Wordprocessing;
 using MendinePayroll.Models;
 using MendinePayroll.UI.BLL;
 using MendinePayroll.UI.Models;
@@ -91,7 +92,7 @@ namespace MendinePayroll.UI.Controllers
             if (pageNumber < 1) pageNumber = 1;
             if (pageSize < 1) pageSize = 10;
 
-            DataSet ds = clsDatabase.fnDataSet( "SP_Payroll_SalaryRegister_Grid",TenantId, month, year, companyId, payGroupId, search, status,  pageNumber, pageSize);
+            DataSet ds = clsDatabase.fnDataSet( "SP_Payroll_SalaryRegister_Grid",TenantId, month, year, companyId, payGroupId, search, status,  pageNumber, pageSize, UserId);
 
             int totalRows = ds.Tables[0].Rows.Count > 0 ? Convert.ToInt32(ds.Tables[0].Rows[0]["TotalRows"]) : 0;
 
@@ -127,6 +128,9 @@ namespace MendinePayroll.UI.Controllers
 
                 if (string.IsNullOrWhiteSpace(userName))
                     return Json(new { success = false, message = "No Valid User." });
+
+                var tenantId = TenantId;
+                var applicationBaseUrl = GetApplicationBaseUrl();
                 if (string.IsNullOrWhiteSpace(payrollProcessEmployeeIds))
                     return Json(new { success = false, message = "No employees selected." });
 
@@ -172,7 +176,7 @@ namespace MendinePayroll.UI.Controllers
                    2. EXECUTE MARK PAID PROCESS
                 ========================================================= */
                 DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_MarkPaid",
-                                                    TenantId, month, year, paidDt.Date, userName, finalizedIds);
+                                                    tenantId, month, year, paidDt.Date, userName, finalizedIds);
 
                 if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
                     return Json(new { success = false, message = "No response from payment process." });
@@ -201,8 +205,12 @@ namespace MendinePayroll.UI.Controllers
 
                 if(totalEmployees > 0)
                 {
+                    LogBulkPayslipDebug(
+                        "BulkPayslipQueued",
+                        $"Ids={finalizedIds}; Month={month}; Year={year}; TenantId={tenantId}; BaseUrl={applicationBaseUrl}");
+
                     System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(ct =>
-                        SendBulkPayslips(finalizedIds, month, year, TenantId)
+                        SendBulkPayslips(finalizedIds, month, year, tenantId, applicationBaseUrl)
                     );
                 }
                 return Json(new
@@ -270,10 +278,14 @@ namespace MendinePayroll.UI.Controllers
         }
 
         
-        [HttpGet]
-        public ActionResult ExportExcel(int month, int year, string payrollProcessEmployeeIds)
+        [HttpPost]
+        public ActionResult ExportExcel(int month, int year, List<long> payrollProcessEmployeeIds)
         {
-            DataTable dt = clsDatabase.fnDataTable("SP_Payroll_SalaryReport_Export", TenantId, month, year, payrollProcessEmployeeIds);
+            if (payrollProcessEmployeeIds == null || payrollProcessEmployeeIds.Count == 0)
+                return Content("No employees selected.");
+
+            string selectedIds = string.Join(",", payrollProcessEmployeeIds);
+            DataTable dt = clsDatabase.fnDataTable("SP_Payroll_SalaryReport_Export", TenantId, month, year, selectedIds);
             if (dt == null || dt.Rows.Count == 0) return Content("No data found.");
 
             using (var wb = new ClosedXML.Excel.XLWorkbook())
@@ -396,7 +408,8 @@ namespace MendinePayroll.UI.Controllers
         [HttpGet]
         public JsonResult GetCTCReport()
         {
-            DataTable dt = clsDatabase.fnDataTable("PRC_SaaS_Employee_CTC_REPORT",TenantId);
+            string UserId = Session["UserId"].ToString();
+            DataTable dt = clsDatabase.fnDataTable("PRC_SaaS_Employee_CTC_REPORT",TenantId, UserId);
 
             var columns = dt.Columns.Cast<DataColumn>()
                             .Select(c => c.ColumnName)
@@ -412,11 +425,7 @@ namespace MendinePayroll.UI.Controllers
                 rows.Add(row);
             }
 
-            return Json(new
-            {
-                columns,
-                rows
-            }, JsonRequestBehavior.AllowGet);
+            return Json(new {columns,rows}, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
         public JsonResult BulkApprove(int month, int year, string payrollProcessEmployeeIds)
@@ -508,6 +517,9 @@ namespace MendinePayroll.UI.Controllers
 
                                 bool isWaived = Convert.ToBoolean(r["LoanWaivedYN"]);
                                 decimal previewPayValue = Convert.ToDecimal(r["PayValue"]);
+                                if (isWaived || previewPayValue <= 0)
+                                    continue;
+
                                 //var prevDate = new DateTime(currentYear, currentMonth, 1).AddMonths(-1);
                                 loanJsonList.Add(new
                                 {
@@ -655,9 +667,11 @@ namespace MendinePayroll.UI.Controllers
             {
                 // 1. We call the same Grid SP but pass 1 for pageNumber and 999999 for pageSize 
                 // to retrieve every single ID matching the filters at once.
-                DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_Grid",
-                                                    TenantId, month, year, companyId, payGroupId, search, status, 1, 999999);
+                string UserId = Session["UserId"].ToString(); 
 
+                DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_Grid", TenantId, month, year, companyId, payGroupId, search, status, 1, 999999, UserId);
+
+                 
                 if (ds == null || ds.Tables.Count < 2)
                     return Json(new { success = false, message = "No data found" }, JsonRequestBehavior.AllowGet);
 
@@ -674,20 +688,104 @@ namespace MendinePayroll.UI.Controllers
             }
         }
         
-        private void SendBulkPayslips(string payrollProcessEmployeeIds,int month,int year,string tenantId)
+        private string GetApplicationBaseUrl()
+        {
+            var configuredUrl = ConfigurationManager.AppSettings["ApiUrl"];
+            if (!string.IsNullOrWhiteSpace(configuredUrl))
+            {
+                configuredUrl = configuredUrl.Trim();
+                return configuredUrl.EndsWith("/") ? configuredUrl : configuredUrl + "/";
+            }
+
+            var request = System.Web.HttpContext.Current?.Request;
+            if (request?.Url == null)
+                return "https://liliospayroll.iecsl.in/";
+
+            var appPath = request.ApplicationPath;
+            if (string.IsNullOrWhiteSpace(appPath) || appPath == "/")
+                appPath = string.Empty;
+
+            return request.Url.GetLeftPart(UriPartial.Authority) + appPath + "/";
+        }
+
+        private void LogBulkPayslipDebug(string step, string message)
         {
             try
             {
+                clsDatabase.fnErrorLog(step, message);
+                System.Diagnostics.Debug.WriteLine($"{step}: {message}");
+            }
+            catch
+            {
+                // Do not allow debug logging to stop payslip processing.
+            }
+        }
+
+        private string GetPayslipMailSubject(PayslipViewModel model, string firstName, string email, string monthName, int year)
+        {
+            var template = ConfigurationManager.AppSettings["PayslipMailSubject"];
+            if (string.IsNullOrWhiteSpace(template))
+                template = "Payslip for {MonthName} {Year}";
+
+            return RenderPayslipMailTemplate(template, model, firstName, email, monthName, year);
+        }
+
+        private string GetPayslipMailBody(PayslipViewModel model, string firstName, string email, string monthName, int year)
+        {
+            var template = ConfigurationManager.AppSettings["PayslipMailBodyHtml"];
+            if (string.IsNullOrWhiteSpace(template))
+            {
+                template =
+                    "Dear {FirstName},<br/><br/>" +
+                    "Please find your payslip for <b>{MonthName} {Year}</b> attached.<br/><br/>" +
+                    "Regards,<br/>Payroll Team";
+            }
+
+            return RenderPayslipMailTemplate(template, model, firstName, email, monthName, year);
+        }
+
+        private string RenderPayslipMailTemplate(string template, PayslipViewModel model, string firstName, string email, string monthName, int year)
+        {
+            if (template == null)
+                template = string.Empty;
+
+            string employeeName = model?.EmpName ?? firstName ?? string.Empty;
+            string employeeCode = model?.EmpCode ?? string.Empty;
+            string displayFirstName = string.IsNullOrWhiteSpace(firstName) ? employeeName : firstName;
+
+            return template
+                .Replace("{FirstName}", displayFirstName)
+                .Replace("{EmployeeName}", employeeName)
+                .Replace("{EmployeeCode}", employeeCode)
+                .Replace("{Email}", email ?? string.Empty)
+                .Replace("{MonthName}", monthName ?? string.Empty)
+                .Replace("{Year}", year.ToString(CultureInfo.InvariantCulture))
+                .Replace("{MonthYear}", $"{monthName} {year}");
+        }
+
+        private void SendBulkPayslips(string payrollProcessEmployeeIds,int month,int year,string tenantId,string applicationBaseUrl)
+        {
+            try
+            {
+                LogBulkPayslipDebug(
+                    "BulkPayslipStarted",
+                    $"Ids={payrollProcessEmployeeIds}; Month={month}; Year={year}; TenantId={tenantId}; BaseUrl={applicationBaseUrl}");
+
                 DataTable dtValidation =clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation",payrollProcessEmployeeIds);
 
                 if (dtValidation == null || dtValidation.Rows.Count == 0)
+                {
+                    LogBulkPayslipDebug(
+                        "BulkPayslipNoRows",
+                        $"No employees returned by SP_Payroll_GetEmployeeStatusesForValidation. Ids={payrollProcessEmployeeIds}");
                     return;
+                }
 
                 string monthName =
                     CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
 
-                // 🔥 Create FULL HttpContext (REQUIRED for Rotativa)
-                var request = new HttpRequest("", "https://liliospayroll.iecsl.in/", "");
+                // Create a request context for Rotativa while running outside the original request.
+                var request = new HttpRequest("", applicationBaseUrl, "");
                 var response = new HttpResponse(new StringWriter());
                 var httpContext = new HttpContext(request, response);
 
@@ -711,6 +809,9 @@ namespace MendinePayroll.UI.Controllers
                 // 2️⃣ Final guard (VERY IMPORTANT)
                 if (string.IsNullOrWhiteSpace(resolvedTenantId))
                 {
+                    LogBulkPayslipDebug(
+                        "BulkPayslipTenantMissing",
+                        $"Ids={payrollProcessEmployeeIds}; Month={month}; Year={year}");
                     throw new Exception("TenantId not available for payslip generation.");
                 }
 
@@ -747,7 +848,12 @@ namespace MendinePayroll.UI.Controllers
                         string firstName = dr["empfirstname"]?.ToString();
 
                         if (string.IsNullOrWhiteSpace(email))
+                        {
+                            LogBulkPayslipDebug(
+                                "BulkPayslipSkippedNoEmail",
+                                $"EmployeeId={empId}; Month={monthName}; Year={year}");
                             continue;
+                        }
 
                         // 1️⃣ Get payslip data
                         var model = payslipCtrl.GetPayslipData(
@@ -757,7 +863,12 @@ namespace MendinePayroll.UI.Controllers
                             true);
 
                         if (model == null)
+                        {
+                            LogBulkPayslipDebug(
+                                "BulkPayslipSkippedNoModel",
+                                $"EmployeeId={empId}; Email={email}; Month={monthName}; Year={year}");
                             continue;
+                        }
 
                         // 2️⃣ Generate PDF
                         var pdf = new Rotativa.ViewAsPdf(
@@ -773,30 +884,30 @@ namespace MendinePayroll.UI.Controllers
                         if (pdfBytes == null || pdfBytes.Length == 0)
                             throw new Exception("Rotativa generated empty PDF.");
 
+                        string subject = GetPayslipMailSubject(model, firstName, email, monthName, year);
+                        string bodyHtml = GetPayslipMailBody(model, firstName, email, monthName, year);
+
                         // 3️⃣ Send mail
-                        //mailService.SendMails(
-                        //    toEmail: email,
-                        //    fromEmail: "",
-                        //    bodyHtml:
-                        //        $"Dear {firstName},<br/><br/>" +
-                        //        $"Please find your payslip for {monthName} {year} attached.<br/><br/>" +
-                        //        $"Regards,<br/>Payroll Team",
-                        //    subject: $"Payslip for {monthName} {year}",
-                        //    attachmentBytes: pdfBytes,
-                        //    fileNameWithoutExt: $"Payslip_{monthName}_{year}"
-                        //);
-                        mailService.SendMails(
+                        bool sent = mailService.SendMails(
                             toEmail: email,
                             fromEmail: "",
-                            bodyHtml:
-                                $"<b style='color:red;'>*** THIS IS A TESTING MAIL – PLEASE IGNORE ***</b><br/><br/>" +
-                                $"Dear {firstName},<br/><br/>" +
-                                $"Please find your payslip for <b>{monthName} {year}</b> attached.<br/><br/>" +
-                                $"Regards,<br/>Payroll Team",
-                            subject: $"[TEST MAIL – PLEASE IGNORE] Payslip for {monthName} {year}",
+                            bodyHtml: bodyHtml,
+                            subject: subject,
                             attachmentBytes: pdfBytes,
                             fileNameWithoutExt: $"Payslip_{monthName}_{year}"
                         );
+
+                        if (!sent)
+                        {
+                            LogBulkPayslipDebug(
+                                "BulkPayslipMailFailed",
+                                $"EmployeeId={empId}; Email={email}; Subject={subject}; PdfBytes={pdfBytes.Length}");
+                            continue;
+                        }
+
+                        LogBulkPayslipDebug(
+                            "BulkPayslipMailSent",
+                            $"EmployeeId={empId}; Email={email}; Subject={subject}; PdfBytes={pdfBytes.Length}");
                     }
                     catch (Exception ex)
                     {

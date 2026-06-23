@@ -18,21 +18,25 @@ namespace MendinePayroll.UI.Report.Loan
         {
             get
             {
-                if (Session["TenantID"] == null || string.IsNullOrWhiteSpace(Session["TenantID"].ToString()))
-                {
-                    // Centralized session expiry handling
-                    Response.Redirect(
-                        ConfigurationManager.AppSettings["PayrollLogout"].ToString(),
-                        true
-                    );
-                }
+                EnsurePayrollSession();
 
                 return Session["TenantID"].ToString();
             }
         }
+        private string UserId
+        {
+            get
+            {
+                EnsurePayrollSession();
+
+                return Session["UserID"].ToString();
+            }
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
-            SessionOut();
+            EnsurePayrollSession();
+            RegisterPayrollSessionStorageScript();
+
             if (!IsPostBack)
             {
                 Default();
@@ -48,11 +52,57 @@ namespace MendinePayroll.UI.Report.Loan
         }
         public void SessionOut()
         {
-            if (Session["UserName"] == null)
+            EnsurePayrollSession();
+        }
+
+        private void EnsurePayrollSession()
+        {
+            if (Session["UserName"] == null ||
+                Session["EmployeeNo"] == null ||
+                Session["TenantID"] == null ||
+                Session["UserID"] == null ||
+                string.IsNullOrWhiteSpace(Session["UserName"].ToString()) ||
+                string.IsNullOrWhiteSpace(Session["EmployeeNo"].ToString()) ||
+                string.IsNullOrWhiteSpace(Session["TenantID"].ToString()) ||
+                string.IsNullOrWhiteSpace(Session["UserID"].ToString()))
             {
-                Response.Redirect(ConfigurationManager.AppSettings["PayrollLogout"].ToString());
+                string restoreUrl = ResolveUrl("~/Login/RestoreSession") + "?returnUrl=" + Server.UrlEncode(Request.RawUrl);
+                Response.Redirect(restoreUrl, true);
             }
         }
+
+        private void RegisterPayrollSessionStorageScript()
+        {
+            if (ClientScript.IsStartupScriptRegistered("PayrollSessionStorage"))
+            {
+                return;
+            }
+
+            string script = string.Format(@"
+                (function () {{
+                    var sessionData = {{
+                        RoleID: '{0}',
+                        UserName: '{1}',
+                        UserID: '{2}',
+                        EmployeeNo: '{3}',
+                        UserEmail: '{4}',
+                        TenantID: '{5}'
+                    }};
+
+                    if (sessionData.UserName && sessionData.EmployeeNo && sessionData.TenantID) {{
+                        localStorage.setItem('PayrollSession', JSON.stringify(sessionData));
+                    }}
+                }})();",
+                HttpUtility.JavaScriptStringEncode(Convert.ToString(Session["RoleID"])),
+                HttpUtility.JavaScriptStringEncode(Convert.ToString(Session["UserName"])),
+                HttpUtility.JavaScriptStringEncode(Convert.ToString(Session["UserId"])),
+                HttpUtility.JavaScriptStringEncode(Convert.ToString(Session["EmployeeNo"])),
+                HttpUtility.JavaScriptStringEncode(Convert.ToString(Session["UserEmail"])),
+                HttpUtility.JavaScriptStringEncode(Convert.ToString(Session["TenantID"])));
+
+            ClientScript.RegisterStartupScript(GetType(), "PayrollSessionStorage", script, true);
+        }
+
         private void ShowDetails()
         {
             string IDEmp = ddlEmployee.SelectedValue;

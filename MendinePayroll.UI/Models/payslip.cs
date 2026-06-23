@@ -67,6 +67,8 @@ namespace MendinePayroll.UI.Models
         public decimal LoanInstallment { get; set; }
         public string NetPayWords { get; set; }
         public bool isPdf { get; set; }
+        public bool ShowNetPay { get; set; }
+        public string UnavailableMessage { get; set; }
         public PayslipViewModel()
         {
             LeaveBalances = new List<LeaveBalance>();

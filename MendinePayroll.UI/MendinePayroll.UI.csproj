@@ -553,6 +553,7 @@
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Utility\ApiCommon.cs" />
     <Compile Include="Utility\DataEncryption.cs" />
+    <Compile Include="Utility\PayrollSessionCookie.cs" />
     <Compile Include="Utility\SessionAuthorizeAttribute.cs" />
     <Compile Include="Web References\LoginWebService\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -2512,7 +2513,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\EmployeeList\ViewAllEmployeeStatutoryReport.cshtml" />
-    <Content Include="Views\Dashboard\Index.cshtml" />
+    <Content Include="Views\Dashboard\Index-old.cshtml" />
     <Content Include="Views\PTaxSlab\Index.cshtml" />
     <Content Include="Scripts\jQueryUI\package.json" />
     <Content Include="Views\EmployeeLoanList\Index.cshtml" />
@@ -2573,6 +2574,7 @@
     <Content Include="Views\PayrollTds\TdsConfiguration.cshtml" />
     <Content Include="Views\EmployeeCTC\Index.cshtml" />
     <Content Include="Views\PayrollReports\LoanRegister.cshtml" />
+    <Content Include="Views\Dashboard\Index.cshtml" />
     <None Include="Web References\LoginWebService\logincontrol.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

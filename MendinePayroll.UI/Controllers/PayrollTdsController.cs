@@ -3598,7 +3598,8 @@ namespace MendinePayroll.UI.Controllers
                     TotalTaxBeforeCess=Convert.ToDecimal(row["TotalTaxBeforeCess"]).ToString("N2"),
                     CessAmount = Convert.ToDecimal(row["CessAmount"]).ToString("N2"),
                     AnnualTax = Convert.ToDecimal(row["AnnualTaxLiability"]).ToString("N2"),
-                    MonthlyTDS = Convert.ToDecimal(row["MonthlyTDS"]).ToString("N2")
+                    MonthlyTDS = Convert.ToDecimal(row["MonthlyTDS"]).ToString("N2"),
+                    RebateApplied = isRebateApplied
                 }).ToList();
 
                 return Json(new { success = true, Data = dataList });
@@ -3607,6 +3608,99 @@ namespace MendinePayroll.UI.Controllers
             {
                 // Log the exception here
                 return Json(new { success = false, message = "Server Error: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetAnnualTdsProjectionSummary()
+        {
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_SAAS_TDS_PROJECTION_SUMMARY_GET", TenantId);
+
+                if (dt == null)
+                    return Json(new { success = false, message = "No projection summary data returned." }, JsonRequestBehavior.AllowGet);
+
+                var rows = dt.AsEnumerable().Select(row => new
+                {
+                    FinancialYearCode = GetDataRowString(row, "FinancialYearCode"),
+                    FinancialYear = GetDataRowString(row, "FinancialYear", "FYId", "FY", "Year"),
+                    FinancialYearId = GetDataRowInt(row, "FinancialYearId", "IDFinancialYear", "IdFinancialYear"),
+                    RegimeId = GetDataRowInt(row, "RegimeId", "TaxRegimeId"),
+                    RegimeName = GetDataRowString(row, "RegimeName", "TaxRegimeName", "Regime"),
+                    EmployeeCount = GetDataRowInt(row, "EmployeeCount", "TotalEmployees", "Employees"),
+                    TotalTaxBeforeCess = GetDataRowDecimal(row, "TotalTaxBeforeCess", "TaxBeforeCessTotal", "TotalTax").ToString("N2"),
+                    TotalCessAmount = GetDataRowDecimal(row, "TotalCessAmount", "CessTotal", "CessAmount").ToString("N2"),
+                    TotalTDS = GetDataRowDecimal(row, "TotalTDS", "AnnualTax", "TotalAnnualTax", "AnnualTaxLiability").ToString("N2"),
+                    FinalizedBy = GetDataRowString(row, "FinalizedBy", "CreatedBy", "EntryUser"),
+                    FinalizedOn = GetDataRowDateString(row, "FinalizedOn", "FinalizedDate", "CreatedOn", "EntryDate"),
+                    Status = GetDataRowString(row, "Status", "ProjectionStatus", "IsFinalized")
+                }).ToList();
+
+                return Json(new { success = true, Data = rows }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Server Error: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult FinalizeAnnualTdsProjectionSummary(string FinancialYear, int RegimeId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(FinancialYear))
+                    return Json(new { success = false, message = "Financial year is required." });
+
+                string finalizedBy = Session["UserName"]?.ToString() ?? "system";
+                DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_SAAS_TDS_PROJECTION_MARK_FINALIZE", TenantId, FinancialYear, RegimeId, finalizedBy);
+
+                string message = "Projection finalized successfully.";
+                if (dt != null && dt.Rows.Count > 0 && dt.Columns.Contains("Message"))
+                    message = Convert.ToString(dt.Rows[0]["Message"]);
+
+                return Json(new { success = true, message = message });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Server Error: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetAnnualTdsProjectionDetails(string FinancialYear, int RegimeId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(FinancialYear))
+                    return Json(new { success = false, message = "Financial year is required." }, JsonRequestBehavior.AllowGet);
+
+                DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_SAAS_TDS_PROJECTION_DETAIL_GET", TenantId, FinancialYear, RegimeId);
+
+                if (dt == null)
+                    return Json(new { success = false, message = "No projection detail data returned." }, JsonRequestBehavior.AllowGet);
+
+                var rows = dt.AsEnumerable().Select(row => new
+                {
+                    ProjectionId = GetDataRowInt(row, "ProjectionId"),
+                    EmployeeID = GetDataRowString(row, "EmployeeID", "EmployeeId"),
+                    EmployeeName = GetDataRowString(row, "EmployeeName", "EmpName", "Employee"),
+                    AnnualGross = GetDataRowDecimal(row, "AnnualGross").ToString("N2"),
+                    NetTaxable = GetDataRowDecimal(row, "NetTaxable").ToString("N2"),
+                    TotalTaxBeforeCess = GetDataRowDecimal(row, "TotalTaxBeforeCess").ToString("N2"),
+                    CessAmount = GetDataRowDecimal(row, "CessAmount").ToString("N2"),
+                    AnnualTax = GetDataRowDecimal(row, "AnnualTax", "AnnualTaxLiability").ToString("N2"),
+                    MonthlyTDS = GetDataRowDecimal(row, "MonthlyTDS").ToString("N2"),
+                    RebateApplied = GetDataRowInt(row, "RebateApplied"),
+                    Status = GetDataRowString(row, "Status", "ProjectionStatus", "IsFinalized")
+                }).ToList();
+
+                return Json(new { success = true, Data = rows }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Server Error: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -3641,6 +3735,9 @@ namespace MendinePayroll.UI.Controllers
 
                 // Result Set 3 : Summary
                 var summaryRow = ds.Tables[2].Rows[0];
+                decimal totalTaxBeforeCess = Convert.ToDecimal(summaryRow["TotalTaxBeforeCess"]);
+                decimal cessAmount = Convert.ToDecimal(summaryRow["CessAmount"]);
+                decimal annualTaxLiability = totalTaxBeforeCess + cessAmount;
 
                 var summary = new
                 {
@@ -3648,8 +3745,11 @@ namespace MendinePayroll.UI.Controllers
                     AnnualGross = Convert.ToDecimal(summaryRow["AnnualGross"]).ToString("N2"),
                     StandardDeduction = Convert.ToDecimal(summaryRow["StandardDeduction"]).ToString("N2"),
                     NetTaxable = Convert.ToDecimal(summaryRow["NetTaxableIncome"]).ToString("N2"),
-                    TotalTaxBeforeCess = Convert.ToDecimal(summaryRow["TotalTaxBeforeCess"]).ToString("N2"),
-                    CessAmount = Convert.ToDecimal(summaryRow["CessAmount"]).ToString("N2"),
+                    TotalTaxBeforeCess = totalTaxBeforeCess.ToString("N2"),
+                    CessAmount = cessAmount.ToString("N2"),
+                    AnnualTax = annualTaxLiability.ToString("N2"),
+                    AnnualTaxLiability = annualTaxLiability.ToString("N2"),
+                    TotalTaxPayable = annualTaxLiability.ToString("N2"),
                     MonthlyTDS = Convert.ToDecimal(summaryRow["MonthlyTDS"]).ToString("N2"),
                     TotalBaseTax = Convert.ToDecimal(summaryRow["ActualTotalTaxBeforeCess"]).ToString("N2"),
                     RebateApplied = isRebateApplied,
@@ -3686,8 +3786,16 @@ namespace MendinePayroll.UI.Controllers
             if (data == null || data.Count == 0)
                 return Json(new { success = false, message = "Invalid data." });
 
+            data = data
+                .Where(x => x.AnnualTax != 0 || x.MonthlyTDS != 0)
+                .ToList();
 
-            DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_SAAS_TDS_PROJECTION_FINALIZE_SAVE_JSON",TenantId,FinancialYear,RegimeId,FinalizedBy, DataJson);
+            if (data.Count == 0)
+                return Json(new { success = false, message = "No taxable projection data to save." });
+
+            string filteredDataJson = JsonConvert.SerializeObject(data);
+
+            DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_SAAS_TDS_PROJECTION_FINALIZE_SAVE_JSON",TenantId,FinancialYear,RegimeId,FinalizedBy, filteredDataJson);
   
             return Json(new { success = true, message = "Saved successfully" });
         }
@@ -3703,6 +3811,38 @@ namespace MendinePayroll.UI.Controllers
             public decimal AnnualTax { get; set; }
             public decimal MonthlyTDS { get; set; }
             public bool RebateApplied { get; set; }
+        }
+
+        private static string GetDataRowString(DataRow row, params string[] columnNames)
+        {
+            foreach (string columnName in columnNames)
+            {
+                if (row.Table.Columns.Contains(columnName) && row[columnName] != DBNull.Value)
+                    return Convert.ToString(row[columnName]);
+            }
+
+            return string.Empty;
+        }
+
+        private static int GetDataRowInt(DataRow row, params string[] columnNames)
+        {
+            int value;
+            string text = GetDataRowString(row, columnNames);
+            return int.TryParse(text, out value) ? value : 0;
+        }
+
+        private static decimal GetDataRowDecimal(DataRow row, params string[] columnNames)
+        {
+            decimal value;
+            string text = GetDataRowString(row, columnNames);
+            return decimal.TryParse(text, out value) ? value : 0m;
+        }
+
+        private static string GetDataRowDateString(DataRow row, params string[] columnNames)
+        {
+            DateTime value;
+            string text = GetDataRowString(row, columnNames);
+            return DateTime.TryParse(text, out value) ? value.ToString("dd-MMM-yyyy") : text;
         }
         #endregion
 

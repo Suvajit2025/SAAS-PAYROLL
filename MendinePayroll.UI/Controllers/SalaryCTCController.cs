@@ -246,7 +246,7 @@ namespace MendinePayroll.UI.Controllers
                     IsPF_Applicable = Convert.ToBoolean(h["IsPF"]),
                     IsESIC_Applicable = Convert.ToBoolean(h["IsESIC"]),
                     IsPTAX_Applicable = Convert.ToBoolean(h["IsPTAX"]),
-
+                    EffectiveFrom = Convert.ToDateTime(h["EffectiveDate"]),
                     MonthlyGross = Convert.ToDecimal(h["MonthlyGross"]),
                     TotalAllowance = Convert.ToDecimal(h["TotalAllowance"]),
                     TotalDeduction = Convert.ToDecimal(h["TotalDeduction"]),

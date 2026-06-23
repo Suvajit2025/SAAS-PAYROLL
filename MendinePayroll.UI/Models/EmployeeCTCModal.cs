@@ -8,6 +8,25 @@ namespace MendinePayroll.UI.Models
     public class EmployeeCTCModal
     {
     }
+
+    public class SalaryDetailsComponentSaveRequest
+    {
+        public long EmployeeID { get; set; }
+        public long PayGroupID { get; set; }
+        public long EmpSalaryConfigID { get; set; }
+        public DateTime? EffectiveFrom { get; set; }
+        public bool? IsPF { get; set; }
+        public bool? IsESIC { get; set; }
+        public bool? IsPTAX { get; set; }
+        public List<SalaryDetailsAllowanceValue> Allowances { get; set; } = new List<SalaryDetailsAllowanceValue>();
+    }
+
+    public class SalaryDetailsAllowanceValue
+    {
+        public long AllowanceId { get; set; }
+        public decimal Value { get; set; }
+    }
+
     public class EmployeeCTCCalculateRequest
     {
         public long EmployeeID { get; set; }

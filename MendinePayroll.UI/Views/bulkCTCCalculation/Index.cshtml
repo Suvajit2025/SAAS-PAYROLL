@@ -1,4 +1,5 @@
-﻿@{
+@inherits System.Web.Mvc.WebViewPage
+@{
     ViewBag.Title = "Bulk Salary Auto Calculation";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -85,7 +86,7 @@
             Bulk Salary Auto Calculation
         </div>
         <div class="card-body">
-            <label class="fw-bold">Employee IDs (comma / line separated)</label>
+            <label class="fw-bold">SaaS Employee IDs (comma / line separated)</label>
             <textarea id="txtEmpIds" rows="10" class="form-control"
                       placeholder="471,476,480..."></textarea>
 

@@ -20,6 +20,7 @@ namespace MendinePayroll.UI.Controllers
     public class LoginController : Controller
     {
         ApiCommon ObjAPI = new ApiCommon();
+        private const string DefaultPortalUrl = "https://iehrms.iecsl.in/Account/ChoosePortal.aspx";
         // OLD  Login 
         // GET: Login
         //public ActionResult Index()
@@ -48,42 +49,68 @@ namespace MendinePayroll.UI.Controllers
             //Session["UserId"] = "3299";
             //Session["UserEmail"] = "suvajit.das@iecsl.co.in";
 
-            // Development 
-            Session["RoleID"] = "10195";
-            Session["UserName"] = "suvajit.das@iecsl.co.in";
-            Session["UserId"] = "476";
-            Session["EmployeeNo"] = "101450";
-            Session["UserEmail"] = "suvajit.das@iecsl.co.in";
-            Session["TenantID"] = "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14";
+            if (!string.IsNullOrWhiteSpace(Request.QueryString["TenantID"]))
+            {
+                SetPayrollSession(
+                    Request.QueryString["RoleID"],
+                    Request.QueryString["UserName"],
+                    Request.QueryString["UserID"],
+                    Request.QueryString["EmployeeNo"],
+                    Request.QueryString["UserEmail"],
+                    Request.QueryString["TenantID"]);
+            }
+            else
+            {
+                //return Redirect("https://iehrms.iecsl.in/Account/ChoosePortal.aspx");
+                //Development
+                SetPayrollSession(
+                    "10195",
+                    "suvajit.das@iecsl.co.in",
+                    "476",
+                    "101450",
+                    "suvajit.das@iecsl.co.in",
+                    "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14");
+
+                //SetPayrollSession(
+                //    "10198",
+                //    "saikat.manna@mendine.com",
+                //    "968",
+                //    "101007",
+                //    "saikat.manna@mendine.com",
+                //    "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14");
+            }
 
 
-            //Session["RoleID"] = "10152";
-            //Session["UserName"] = "christopher.fernandes@mega.com";
-            //Session["UserId"] = "3";
-            //Session["UserEmail"] = "christopher.fernandes@mega.com";
-            //Session["TenantID"] = "9CBC5D8B-589C-4144-8AE9-1937A39FC89D";
-
-            //Session["RoleID"] = "10152";
-            //Session["UserName"] = "demo@corporation.in";
-            //Session["UserId"] = "348";
-            //Session["UserEmail"] = "demo@corporation.in";
-            //Session["TenantID"] = "24A72122-DD46-4386-873D-758E450E252A";
-
-            //////Production
-            //Session["RoleID"] = Request.QueryString["RoleID"];
-            //Session["UserName"] = Request.QueryString["UserName"];
-            //Session["UserId"] = Request.QueryString["UserID"];
-            //Session["EmployeeNo"] = Request.QueryString["EmployeeNo"];
-            //Session["UserEmail"] = Request.QueryString["UserEmail"];
-            //Session["TenantID"] = Request.QueryString["TenantID"];
-
-            Session["ModuleURL"] = ConfigurationManager.AppSettings["ModuleURL"].ToString();
+           
             // Access Log Data Insert 
             clsAccessLogInfo info = new clsAccessLogInfo();
             info.AccessType = "PAYROLL-LOGIN";
             clsAccessLog.AccessLog_Save(info);
             return RedirectToAction("Index", "Dashboard");
         }
+
+        public ActionResult GenerateMachineKeys()
+        {
+            using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            {
+                byte[] validationKey = new byte[64];
+                byte[] decryptionKey = new byte[24];
+                rng.GetBytes(validationKey);
+                rng.GetBytes(decryptionKey);
+
+                string vKey = BitConverter.ToString(validationKey).Replace("-", "");
+                string dKey = BitConverter.ToString(decryptionKey).Replace("-", "");
+
+                string result = $@"<machineKey 
+                    validationKey=""{vKey}"" 
+                    decryptionKey=""{dKey}"" 
+                    validation=""SHA1"" 
+                    decryption=""AES"" />";
+
+                return Content(result, "text/plain");
+            }
+        }
+
         public JsonResult EmployeeLogin(string Email,string Password)
         {
             LoginWebService.logincontrol obj = new LoginWebService.logincontrol();
@@ -124,13 +151,35 @@ namespace MendinePayroll.UI.Controllers
 
         public ActionResult LogOut()
         {
+            PayrollSessionCookie.Clear(Response); // ✅ clear cookie
             HttpContext.Session.RemoveAll();
             FormsAuthentication.SignOut();
             Session.Abandon();
 
             // return RedirectToAction("Index", "Login");
-            String logoutUrl=ConfigurationManager.AppSettings["PayrollLogout"].ToString();
-            return Redirect(logoutUrl);
+            return Redirect(GetPortalUrl());
+        }
+
+        private void SetPayrollSession(string roleId, string userName, string userId, string employeeNo, string userEmail, string tenantId)
+        {
+            Session["RoleID"] = roleId;
+            Session["UserName"] = userName;
+            Session["UserId"] = userId;
+            Session["EmployeeNo"] = employeeNo;
+            Session["UserEmail"] = userEmail;
+            Session["TenantID"] = tenantId;
+            Session["ModuleURL"] = ConfigurationManager.AppSettings["ModuleURL"].ToString();
+
+            // ✅ Persist to cookie so session can be restored after expiry
+            PayrollSessionCookie.Write(Response, roleId, userName, userId,
+                employeeNo, userEmail, tenantId);
+        }
+
+        private string GetPortalUrl()
+        {
+            string logoutUrl = ConfigurationManager.AppSettings["PayrollLogout"];
+            return string.IsNullOrWhiteSpace(logoutUrl) ? DefaultPortalUrl : logoutUrl;
         }
     }
+
 }

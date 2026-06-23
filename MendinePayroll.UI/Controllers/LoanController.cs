@@ -473,54 +473,24 @@ namespace MendinePayroll.UI.Controllers
             info.AccessType = "LOAN-PROCESS-ENTRY";
             clsAccessLog.AccessLog_Save(info);
             return View();
-        }
-
-        [HttpGet]
-        public JsonResult BulkLoanProcessData(string EmpIds, string Month, string Year)
+        } 
+        [HttpPost]
+        public JsonResult BulkLoanProcessData(List<string> EmpIds, string Month, string Year)
         {
-            if (string.IsNullOrWhiteSpace(EmpIds))
-                return Json("[]", JsonRequestBehavior.AllowGet);
-            // Clean multiselect prefix if exists (Select2 adds "multiselect-all" sometimes)
-            EmpIds = EmpIds.Replace("multiselect-all,", "").Trim(',');
-            DataSet ds = new DataSet();
-            ds = clsDatabase.fnDataSet("PRC_Bulk_EmployeeLoan_PendingList", EmpIds, Month, Year,TenantId);
+            if (EmpIds == null || !EmpIds.Any())
+                return Json("[]");
+
+            // Remove multiselect-all if exists
+            EmpIds = EmpIds.Where(x => x != "multiselect-all").ToList();
+
+            string EmployeeIds = string.Join(",", EmpIds);
+
+            DataSet ds = clsDatabase.fnDataSet("PRC_Bulk_EmployeeLoan_PendingList",EmployeeIds,Month,Year,TenantId);
 
             string json = JsonConvert.SerializeObject(ds.Tables[0]);
-            return Json(json, JsonRequestBehavior.AllowGet);
-        }
 
-
-        //[HttpPost]
-        //public JsonResult ProcessBulkLoans(ProcessBulkLoanModel model)
-        //{
-        //    if (model == null || string.IsNullOrWhiteSpace(model.JsonData))
-        //        return Json(new { Result = "Invalid input data." }, JsonRequestBehavior.AllowGet);
-
-        //    try
-        //    {
-        //        model.UserName = HttpContext.Session["username"]?.ToString() ?? "SystemUser";
-
-        //        // Call stored procedure
-        //        var result = clsDatabase.fnDBOperation(
-        //            "PRC_Bulk_EmployeeLoan_Process",
-        //            model.JsonData,
-        //            model.Month,
-        //            model.Year,
-        //            model.UserName,
-        //            TenantId
-        //        );
-
-        //        // Interpret result
-        //        if (string.Equals(result, "Success", StringComparison.OrdinalIgnoreCase))
-        //            return Json(new { Result = "Success" }, JsonRequestBehavior.AllowGet);
-        //        else
-        //            return Json(new { Result = result }, JsonRequestBehavior.AllowGet);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { Result = "Error: " + ex.Message }, JsonRequestBehavior.AllowGet);
-        //    }
-        //}
+            return Json(json);
+        } 
         public JsonResult ProcessBulkLoans(ProcessBulkLoanModel model)
         {
             // 1. Basic Validation

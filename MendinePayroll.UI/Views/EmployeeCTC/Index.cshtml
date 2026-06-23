@@ -79,6 +79,27 @@
         text-decoration: underline;
     }
 
+    .btn-details-saas {
+        color: #0f766e;
+        background: #ecfdf5;
+        border: 1px solid #99f6e4;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+
+        .btn-details-saas:hover {
+            background: #ccfbf1;
+            border-color: #5eead4;
+        }
+
     /* --- FILTERS --- */
     .filter-label {
         font-size: 11px;
@@ -1045,11 +1066,263 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+    .salary-detail-box {
+        max-width: 1200px;
+        height: auto;
+        max-height: 88vh;
+        overflow: hidden;
+    }
+
+    .salary-detail-header {
+        padding: 14px 18px;
+        border-bottom: 1px solid #e2e8f0;
+        display: grid;
+        grid-template-columns: 250px minmax(260px, 1fr) minmax(230px, 0.8fr) minmax(290px, 1fr) 38px;
+        gap: 16px;
+        align-items: center;
+        background: #f3f6fb;
+    }
+
+    .salary-employee-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .salary-employee-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #e8fbfa;
+        border: 1px solid #b7eeee;
+        color: #0e7777;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    .salary-header-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 800;
+        color: #7083a5;
+        text-transform: uppercase;
+        letter-spacing: .2px;
+        margin-bottom: 3px;
+    }
+
+    .salary-header-name {
+        font-size: 15px;
+        font-weight: 900;
+        color: #0f1f3d;
+        line-height: 1.15;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .salary-header-control {
+        min-height: 54px;
+        background: #fff;
+        border: 1px solid #dce4f0;
+        border-radius: 6px;
+        padding: 9px 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .salary-header-control .salary-header-label {
+            margin: 0;
+            flex: 0 0 auto;
+        }
+
+    .salary-header-select,
+    .salary-header-date {
+        width: 100%;
+        border: 0;
+        outline: none;
+        font-size: 14px;
+        font-weight: 800;
+        color: #0f1f3d;
+        background: transparent;
+        min-width: 0;
+    }
+
+    .salary-header-statutory {
+        justify-content: space-between;
+    }
+
+    .salary-header-check {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin: 0;
+        font-size: 12px;
+        font-weight: 800;
+        color: #0f1f3d;
+        white-space: nowrap;
+    }
+
+        .salary-header-check input {
+            width: 15px;
+            height: 15px;
+            accent-color: #0e7777;
+            margin: 0;
+        }
+
+    .salary-detail-close {
+        justify-self: end;
+    }
+
+    .salary-detail-body {
+        padding: 20px 22px 22px;
+        overflow-y: auto;
+        background: #f8fafc;
+    }
+
+    .salary-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .salary-detail-field {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 12px;
+    }
+
+    .salary-detail-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 800;
+        color: #94a3b8;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+
+    .salary-detail-value {
+        font-size: 14px;
+        font-weight: 800;
+        color: #1e293b;
+        word-break: break-word;
+    }
+
+    .salary-statutory-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+
+    .salary-statutory-check {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 9px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 800;
+        color: #334155;
+    }
+
+        .salary-statutory-check input {
+            width: 15px;
+            height: 15px;
+            accent-color: #0E7777;
+        }
+
+    .salary-allowance-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+
+    .salary-allowance-head {
+        padding: 12px 14px;
+        background: #0f766e;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .salary-head-manual {
+        background: #334155;
+    }
+
+    .salary-head-deduction {
+        background: #9f1239;
+    }
+
+    .salary-detail-split {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .salary-allowance-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .salary-allowance-table th,
+        .salary-allowance-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        .salary-allowance-table th {
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 10px;
+        }
+
+        .salary-allowance-table td:last-child,
+        .salary-allowance-table th:last-child {
+            text-align: right;
+            font-weight: 800;
+        }
+
+    .salary-detail-empty {
+        padding: 24px;
+        text-align: center;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 768px) {
+        .salary-detail-header,
+        .salary-detail-grid,
+        .salary-detail-split {
+            grid-template-columns: 1fr;
+        }
+
+        .salary-detail-header {
+            align-items: flex-start;
+        }
+    }
 </style>
 
 <section role="main" class="content-body">
     <header class="page-header">
-        <h2>Employee CTC </h2>
+        <h2>Employee Salary Structure </h2>
     </header>
 
     <div class="saas-filter-bar">
@@ -1081,6 +1354,13 @@
             <select id="ddlpaygroup" multiple></select>
         </div>
 
+        <div class="filter-item filter-btn">
+            <label>&nbsp;</label>
+            <button type="button" class="btn-saas" onclick="exportEmployeeCTCExcel()">
+                <i class="fa fa-file-excel"></i> Export Excel
+            </button>
+        </div>
+
     </div>
 
     <div class="saas-card" style="padding:0; overflow:hidden;">
@@ -1100,7 +1380,7 @@
                         <th>Department</th>
                         <th>Pay Group</th>
                         <th>Status</th>
-                        <th>Action</th>
+                        <th>Salary Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1314,6 +1594,132 @@
     </div>
 </div>
 
+<!-- SALARY DETAILS MODAL -->
+<div id="salaryDetailsModal" class="modal-overlay">
+    <div class="modal-box salary-detail-box">
+        <div class="salary-detail-header">
+            <div class="salary-employee-block">
+                <div class="salary-employee-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div style="min-width:0;">
+                    <span class="salary-header-label">Employee Structure</span>
+                    <div id="detailEmpName" class="salary-header-name">--</div>
+                </div>
+            </div>
+
+            <div class="salary-header-control">
+                <span class="salary-header-label">Pay Group</span>
+                <select id="detailPayGroupSelect" class="salary-header-select" onchange="handleSalaryDetailPayGroupChange()"></select>
+            </div>
+
+            <div class="salary-header-control">
+                <span class="salary-header-label">Effective From</span>
+                <input type="date" id="detailEffectiveFromInput" class="salary-header-date" />
+            </div>
+
+            <div class="salary-header-control salary-header-statutory">
+                <span class="salary-header-label">Statutory</span>
+                <label class="salary-header-check">
+                    <input type="checkbox" id="detailPF" />
+                    PF
+                </label>
+                <label class="salary-header-check">
+                    <input type="checkbox" id="detailESIC" />
+                    ESIC
+                </label>
+                <label class="salary-header-check">
+                    <input type="checkbox" id="detailPTAX" />
+                    PTAX
+                </label>
+            </div>
+
+            @*<button type="button" class="btn-close salary-detail-close" onclick="closeSalaryDetailsModal()" aria-label="Close salary details">
+            <i class="fa-solid fa-xmark"></i>
+        </button>*@
+        <button type="button" class="salary-detail-close border-0 bg-transparent"
+                onclick="closeSalaryDetailsModal()"
+                aria-label="Close salary details">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        </div>
+
+        <div class="salary-detail-body">
+            <div id="salaryDetailsLoader" class="salary-detail-empty">Loading salary details...</div>
+
+            <div id="salaryDetailsContent" style="display:none;">
+                <div class="salary-allowance-card">
+                    <div class="salary-allowance-head salary-head-manual">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        Manual Components
+                    </div>
+                    <table class="salary-allowance-table">
+                        <thead>
+                            <tr>
+                                <th>Component Name</th>
+                                <th>Monthly Value</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salaryManualBody"></tbody>
+                    </table>
+                    <div id="salaryNoManual" class="salary-detail-empty" style="display:none;">
+                        No fixed manual components found for this employee.
+                    </div>
+                </div>
+
+                <div class="salary-detail-split">
+                    <div class="salary-allowance-card">
+                        <div class="salary-allowance-head">
+                            <i class="fa-solid fa-wallet"></i>
+                            Allowances
+                        </div>
+                        <table class="salary-allowance-table">
+                            <thead>
+                                <tr>
+                                    <th>Component Name</th>
+                                    <th>Monthly Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salaryAllowanceBody"></tbody>
+                        </table>
+                        <div id="salaryNoAllowance" class="salary-detail-empty" style="display:none;">
+                            No fixed allowance components found for this employee.
+                        </div>
+                    </div>
+
+                    <div class="salary-allowance-card">
+                        <div class="salary-allowance-head salary-head-deduction">
+                            <i class="fa-solid fa-circle-minus"></i>
+                            Deductions
+                        </div>
+                        <table class="salary-allowance-table">
+                            <thead>
+                                <tr>
+                                    <th>Component Name</th>
+                                    <th>Monthly Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salaryDeductionBody"></tbody>
+                        </table>
+                        <div id="salaryNoDeduction" class="salary-detail-empty" style="display:none;">
+                            No fixed deduction components found for this employee.
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+                    <button type="button" class="btn-saas-secondary" style="color:#475569; border-color:#cbd5e1;" onclick="closeSalaryDetailsModal()">
+                        Close
+                    </button>
+                    <button type="button" class="btn-saas-primary" onclick="saveSalaryDetailsModal()">
+                        <i class="fa-solid fa-cloud-arrow-up me-2"></i>Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
  
 
 
@@ -1327,7 +1733,16 @@
     let allEmployees = [];   // 🔐 master copy (never mutate)
     let dt = null;
     let lastCalculatedData = null;
-    let curConfig = []; 
+    let curConfig = [];
+    let salaryDetailState = {
+        empId: 0,
+        empSalaryConfigID: 0,
+        empName: "",
+        payGroupId: "",
+        payGroupName: "",
+        currentConfig: [],
+        componentValuesById: {}
+    };
 
     $(document).ready(function () {
 
@@ -1522,6 +1937,19 @@
 
         renderTable(filtered);
     }
+
+    function exportEmployeeCTCExcel() {
+        const params = new URLSearchParams();
+
+        ($('#ddlCompany').val() || []).forEach(x => params.append('companyIds', x));
+        ($('#ddlDepartment').val() || []).forEach(x => params.append('deptIds', x));
+        ($('#ddlCategory').val() || []).forEach(x => params.append('categoryIds', x));
+        ($('#ddlpaygroup').val() || []).forEach(x => params.append('payGroupIds', x));
+        params.append('status', $('#ddlstatus').val() || 'ACTIVE');
+
+        window.location.href = `/EmployeeCTC/ExportEmployeeCTCExcel?${params.toString()}`;
+    }
+
     /* ===============================
        RENDER DATATABLE
     ================================ */
@@ -1564,9 +1992,15 @@
                 </span>
             </td>
             <td>
-                <button class="btn-link-saas"
-                    onclick="openModal('${escapeHtml(emp.EmpName)}','${emp.EmpID}','${emp.EmpSalaryConfigID}')">
-                    <i class="fas fa-cog"></i> Configure
+                <button type="button"
+                    class="btn-details-saas"
+                    data-empid="${escapeHtml(emp.EmpID)}"
+                    data-empsalaryconfigid="${escapeHtml(emp.EmpSalaryConfigID || 0)}"
+                    data-empname="${escapeHtml(emp.EmpName)}"
+                    data-paygroupid="${escapeHtml(emp.PayGroupID || '')}"
+                    data-paygroupname="${escapeHtml(emp.PayGroupName || '-')}"
+                    onclick="openSalaryDetailsModal(this)">
+                    <i class="fa-solid fa-list-check"></i> View
                 </button>
             </td>
         </tr>
@@ -1609,6 +2043,333 @@
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;")
             .replaceAll("'", "&#039;");
+    }
+
+    function formatDateForInput(value) {
+        if (!value) return "";
+
+        let date;
+        let match = /\/Date\((\d+)\)\//.exec(String(value));
+
+        if (match) {
+            date = new Date(parseInt(match[1], 10));
+        } else {
+            date = new Date(value);
+        }
+
+        if (isNaN(date.getTime())) return "";
+
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function getCurrentMonthStartDate() {
+        const date = new Date();
+        date.setDate(1);
+
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        return `${yyyy}-${mm}-01`;
+    }
+
+    function openSalaryDetailsModal(button) {
+        const $button = $(button);
+        const empId = $button.data('empid');
+        const empSalaryConfigID = $button.data('empsalaryconfigid') || 0;
+        const empName = $button.data('empname') || "--";
+        const payGroupId = $button.data('paygroupid') || "";
+        const payGroupName = $button.data('paygroupname') || "--";
+
+        salaryDetailState = {
+            empId: empId,
+            empSalaryConfigID: empSalaryConfigID,
+            empName: empName,
+            payGroupId: payGroupId,
+            payGroupName: payGroupName,
+            currentConfig: [],
+            componentValuesById: {}
+        };
+
+        resetSalaryDetailsModal(empName, payGroupId, payGroupName);
+        $('#salaryDetailsModal').show();
+
+        if (!empSalaryConfigID || empSalaryConfigID === "0") {
+            $('#salaryDetailsLoader').hide();
+            $('#salaryDetailsContent').show();
+            loadSalaryDetailPayGroupComponents(payGroupId);
+            return;
+        }
+
+        $.ajax({
+            url: '/SalaryCTC/GetEmployeeSalaryConfig',
+            type: 'GET',
+            data: {
+                empSalaryConfigID: empSalaryConfigID,
+                EmployeeID: empId
+            },
+            success: function (res) {
+                if (!res || !res.Success || !res.Data) {
+                    $('#salaryDetailsLoader').text(res && res.Message ? res.Message : 'Salary details are not available.');
+                    return;
+                }
+
+                bindSalaryDetails(res.Data, empName, payGroupId, payGroupName);
+            },
+            error: function () {
+                $('#salaryDetailsLoader').text('Failed to load salary details.');
+            }
+        });
+    }
+
+    function resetSalaryDetailsModal(empName, payGroupId, payGroupName) {
+        $('#salaryDetailsLoader').text('Loading salary details...').show();
+        $('#salaryDetailsContent').hide();
+        $('#detailEmpName').text(empName || "--");
+        buildSalaryDetailPayGroupOptions(payGroupId, payGroupName);
+        $('#detailEffectiveFromInput').val(getCurrentMonthStartDate());
+        $('#detailPF, #detailESIC, #detailPTAX').prop('checked', false);
+        $('#salaryManualBody, #salaryAllowanceBody, #salaryDeductionBody').empty();
+        $('#salaryNoManual, #salaryNoAllowance, #salaryNoDeduction').hide();
+    }
+
+    function buildSalaryDetailPayGroupOptions(payGroupId, payGroupName) {
+        const $select = $('#detailPayGroupSelect');
+        $select.empty();
+
+        $('#ddlgroup option').each(function () {
+            const value = $(this).attr('value') || "";
+            const text = $(this).text();
+            if (value) {
+                $select.append(`<option value="${escapeHtml(value)}">${escapeHtml(text)}</option>`);
+            }
+        });
+
+        if (payGroupId && !$select.find(`option[value="${payGroupId}"]`).length) {
+            $select.append(`<option value="${escapeHtml(payGroupId)}">${escapeHtml(payGroupName || payGroupId)}</option>`);
+        }
+
+        $select.val(payGroupId || "");
+    }
+
+    function bindSalaryDetails(data, empName, payGroupId, payGroupName) {
+        const header = data.Header || {};
+        const detailList = data.DetailList || [];
+        const selectedPayGroupId = String(header.PayGroupID || payGroupId || "");
+
+        $('#detailEmpName').text(empName || "--");
+        buildSalaryDetailPayGroupOptions(selectedPayGroupId, payGroupName);
+        $('#detailEffectiveFromInput').val(getCurrentMonthStartDate());
+
+        $('#detailPF').prop('checked', !!header.IsPF_Applicable);
+        $('#detailESIC').prop('checked', !!header.IsESIC_Applicable);
+        $('#detailPTAX').prop('checked', !!header.IsPTAX_Applicable);
+
+        salaryDetailState.currentConfig = data.Template || detailList || [];
+        cacheSalaryDetailComponentValues(detailList);
+        renderSalaryDetailComponents(getExistingSalaryDetailComponents(detailList));
+
+        $('#salaryDetailsLoader').hide();
+        $('#salaryDetailsContent').show();
+    }
+
+    function normalizePayType(value) {
+        return String(value || '').trim().toLowerCase();
+    }
+
+    function normalizeLogicType(value) {
+        return String(value || '').trim().toUpperCase();
+    }
+
+    function normalizeStatutoryType(value) {
+        return String(value || '').trim().toUpperCase();
+    }
+
+    function isSalaryDetailComponent(item) {
+        const payType = normalizePayType(item.PayType);
+        const logicType = normalizeLogicType(item.LogicType);
+        const statutoryType = normalizeStatutoryType(item.StatutoryType);
+
+        if (payType === "deduction" && statutoryType === "PTAX") {
+            return false;
+        }
+
+        return (payType === "manual" || payType === "allowances" || payType === "deduction") && logicType === "FIXED";
+    }
+
+    function getExistingSalaryDetailComponents(detailList) {
+        return (detailList || []).filter(x => {
+            return isSalaryDetailComponent(x);
+        });
+    }
+
+    function cacheSalaryDetailComponentValues(detailList) {
+        (detailList || []).filter(isSalaryDetailComponent).forEach(item => {
+            const amount = parseFloat(item.MonthlyAmount || 0);
+            const id = String(item.PayConfigId || "");
+
+            if (id) salaryDetailState.componentValuesById[id] = amount;
+        });
+    }
+
+    function renderSalaryDetailComponents(components) {
+        const groups = {
+            manual: [],
+            allowances: [],
+            deduction: []
+        };
+
+        (components || []).forEach(item => {
+            const payType = normalizePayType(item.PayType);
+            if (groups[payType]) {
+                groups[payType].push(item);
+            }
+        });
+
+        renderSalaryDetailTable('#salaryManualBody', '#salaryNoManual', groups.manual);
+        renderSalaryDetailTable('#salaryAllowanceBody', '#salaryNoAllowance', groups.allowances);
+        renderSalaryDetailTable('#salaryDeductionBody', '#salaryNoDeduction', groups.deduction);
+    }
+
+    function renderSalaryDetailTable(bodySelector, emptySelector, components) {
+        const $tbody = $(bodySelector);
+        $tbody.empty();
+
+        (components || []).forEach(item => {
+            const amount = getSalaryDetailAmount(item);
+            $tbody.append(`
+                <tr>
+                    <td>${escapeHtml(item.PayConfigName)}</td>
+                    <td>
+                        <input type="number"
+                            class="form-control-saas salary-detail-allowance-input"
+                            style="width:130px; text-align:right;"
+                            data-payconfigid="${escapeHtml(item.PayConfigId)}"
+                            data-payconfigname="${escapeHtml(item.PayConfigName)}"
+                            value="${amount}"
+                            oninput="captureSalaryDetailAllowanceInputs()" />
+                    </td>
+                </tr>
+            `);
+        });
+
+        $(emptySelector).toggle(!components || components.length === 0);
+        $tbody.closest('table').toggle(!!components && components.length > 0);
+    }
+
+    function getSalaryDetailAmount(item) {
+        const id = String(item.PayConfigId || "");
+
+        if (id && salaryDetailState.componentValuesById[id] !== undefined) {
+            return salaryDetailState.componentValuesById[id];
+        }
+
+        return parseFloat(item.MonthlyAmount || 0);
+    }
+
+    function captureSalaryDetailAllowanceInputs() {
+        $('.salary-detail-allowance-input').each(function () {
+            const id = String($(this).data('payconfigid') || "");
+            const amount = parseFloat($(this).val() || 0);
+
+            if (id) salaryDetailState.componentValuesById[id] = amount;
+        });
+    }
+
+    function handleSalaryDetailPayGroupChange() {
+        captureSalaryDetailAllowanceInputs();
+        const payGroupId = $('#detailPayGroupSelect').val();
+        salaryDetailState.payGroupId = payGroupId;
+        loadSalaryDetailPayGroupComponents(payGroupId);
+    }
+
+    function loadSalaryDetailPayGroupComponents(payGroupId) {
+        if (!payGroupId) {
+            renderSalaryDetailComponents([]);
+            return;
+        }
+
+        $('#salaryDetailsLoader').text('Loading paygroup components...').show();
+
+        $.ajax({
+            url: '/SalaryCTC/GetSalaryConfigByPayGroup',
+            type: 'GET',
+            data: { payGroupId: payGroupId },
+            success: function (res) {
+                salaryDetailState.currentConfig = res || [];
+                const components = (res || []).filter(isSalaryDetailComponent);
+                renderSalaryDetailComponents(components);
+            },
+            error: function () {
+                renderSalaryDetailComponents([]);
+                toastr.error("Failed to load paygroup components.");
+            },
+            complete: function () {
+                $('#salaryDetailsLoader').hide();
+                $('#salaryDetailsContent').show();
+            }
+        });
+    }
+
+    function getSalaryDetailPayloadValues() {
+        captureSalaryDetailAllowanceInputs();
+
+        return $('.salary-detail-allowance-input').map(function () {
+            return {
+                AllowanceId: parseInt($(this).data('payconfigid') || 0),
+                Value: parseFloat($(this).val() || 0)
+            };
+        }).get().filter(x => x.AllowanceId > 0);
+    }
+
+    function saveSalaryDetailsModal() {
+        const payload = {
+            EmployeeID: parseInt(salaryDetailState.empId || 0),
+            PayGroupID: parseInt($('#detailPayGroupSelect').val() || 0),
+            EmpSalaryConfigID: parseInt(salaryDetailState.empSalaryConfigID || 0),
+            EffectiveFrom: $('#detailEffectiveFromInput').val(),
+            IsPF: $('#detailPF').is(':checked'),
+            IsESIC: $('#detailESIC').is(':checked'),
+            IsPTAX: $('#detailPTAX').is(':checked'),
+            Allowances: getSalaryDetailPayloadValues()
+        };
+
+        if (!payload.EmployeeID || !payload.PayGroupID) {
+            toastr.error("Employee and PayGroup are required.");
+            return;
+        }
+
+        $('#salaryDetailsLoader').text('Sending salary details...').show();
+
+        $.ajax({
+            url: '/EmployeeCTC/SaveSalaryDetailsComponents',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (res) {
+                if (res && res.Success) {
+                    toastr.success(res.Message || "Salary details sent successfully.");
+                    salaryDetailState.empSalaryConfigID = res.EmpSalaryConfigID || salaryDetailState.empSalaryConfigID;
+                    closeSalaryDetailsModal();
+                    loadEmployees();
+                } else {
+                    toastr.error(res && res.Message ? res.Message : "Unable to send salary details.");
+                }
+            },
+            error: function () {
+                toastr.error("Server error while sending salary details.");
+            },
+            complete: function () {
+                $('#salaryDetailsLoader').hide();
+            }
+        });
+    }
+
+
+    function closeSalaryDetailsModal() {
+        captureSalaryDetailAllowanceInputs();
+        $('#salaryDetailsModal').fadeOut(200);
     }
 
     // ================= OPEN MODAL =================

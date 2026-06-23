@@ -45,9 +45,20 @@ namespace MendinePayroll.UI.Controllers
 
         // GET: Payslip
         public ActionResult Index(int empId, string month, int year)
-        { 
-            var model = GetPayslipData(empId, month, year,false); 
+        {
+            //if (!IsPayslipPaid(empId, month, year))
+            //{
+            //    return View(CreateUnavailablePayslipModel(month, year, false, "No payslip generated for Month of " + month + "-" + year));
+            //}
+
+            var model = GetPayslipData(empId, month, year, false, 0);
             return View(model);
+        }
+
+        public ActionResult HrPreview(int empId, string month, int year)
+        {
+            var model = GetPayslipData(empId, month, year, true, 1);
+            return View("Index", model);
         }
  
         public static string NumberToWords(long number)
@@ -108,8 +119,15 @@ namespace MendinePayroll.UI.Controllers
     public ActionResult Download(int empId, string month, int year)
         {
             // reuse your Index logic
-
-            var model = GetPayslipData(empId, month, year,true);
+            //if (!IsPayslipPaid(empId, month, year))
+            //{
+            //    return Content("Payslip is available after salary is marked as paid.");
+            //}
+            //if (!IsPayslipPaid(empId, month, year))
+            //{
+            //    return Content( "No payslip generated for Month of " + month + "-" + year);
+            //}
+            var model = GetPayslipData(empId, month, year, true, 1);
 
            
             var pdfService = new PayslipPdfService();
@@ -134,6 +152,43 @@ namespace MendinePayroll.UI.Controllers
 
             return new EmptyResult();
             //return File(pdfBytes, "application/pdf");
+        }
+
+        private PayslipViewModel CreateUnavailablePayslipModel(string month, int year, bool isPdf, string message)
+        {
+            return new PayslipViewModel
+            {
+                Month = month,
+                Year = year,
+                isPdf = isPdf,
+                UnavailableMessage = message
+            };
+        }
+
+        private bool IsPayslipPaid(int empId, string month, int year)
+        {
+            int monthNumber = GetMonthNumber(month);
+            DataTable dt = clsDatabase.fnDataTable(
+                "SP_Payslip_CheckPaidStatus",
+                TenantId,
+                empId,
+                monthNumber,
+                year
+            );
+
+            if (dt == null || dt.Rows.Count == 0 || !dt.Columns.Contains("PaidStatus"))
+                return false;
+
+            object paidStatus = dt.Rows[0]["PaidStatus"];
+            return paidStatus != DBNull.Value && Convert.ToInt32(paidStatus) == 1;
+        }
+
+        private int GetMonthNumber(string month)
+        {
+            if (int.TryParse(month, out int monthNumber))
+                return monthNumber;
+
+            return DateTime.ParseExact(month, "MMMM", CultureInfo.InvariantCulture).Month;
         }
     //internal PayslipViewModel GetPayslipData(int EmpId, string Month, int Year,bool ispdf)
         //{
@@ -594,26 +649,41 @@ namespace MendinePayroll.UI.Controllers
 
         //    return model;
         //}
-    internal PayslipViewModel GetPayslipData(int EmpId, string Month, int Year, bool ispdf)
+        private static DataTable FindTableWithColumn(DataSet dataSet, string columnName, int startIndex)
+        {
+            if (dataSet == null || dataSet.Tables.Count <= startIndex)
+                return null;
+
+            for (int i = startIndex; i < dataSet.Tables.Count; i++)
+            {
+                if (dataSet.Tables[i].Columns.Contains(columnName))
+                    return dataSet.Tables[i];
+            }
+
+            return null;
+        }
+
+    internal PayslipViewModel GetPayslipData(int EmpId, string Month, int Year, bool ispdf, int hrTag = 0)
     {
-        var model = new PayslipViewModel
-        {
-            Month = Month,
-            Year = Year,
-            isPdf = ispdf
-        };
+            var model = new PayslipViewModel
+            {
+                Month = Month,
+                Year = Year,
+                isPdf = ispdf
+            };
 
-        int monthNum = DateTime.ParseExact(
-            Month,
-            "MMMM",
-            System.Globalization.CultureInfo.InvariantCulture
-        ).Month;
+            int monthNum = DateTime.ParseExact(
+                Month,
+                "MMMM",
+                System.Globalization.CultureInfo.InvariantCulture
+            ).Month;
 
-        //-------------------------------------------------------
-        // OLD ENGINE (UP TO DECEMBER 2025)
-        //-------------------------------------------------------
-        if (Year <= 2025)
-        {
+            //-------------------------------------------------------
+            // OLD ENGINE (UP TO DECEMBER 2025)
+            //-------------------------------------------------------
+            if (Convert.ToInt32(Year) < 2026 ||
+                    (Convert.ToInt32(Year) == 2026 && monthNum < 4))
+            {
             DataSet ds1 = clsDatabase.fnDataSet(
                 "Essp.dbo.PRC_Get_PayslipFullData",
                 EmpId, Month, Year, TenantId);
@@ -817,7 +887,11 @@ namespace MendinePayroll.UI.Controllers
             if (ds1.Tables.Count > 5 && ds1.Tables[6].Rows.Count > 0)
             {
                 var row = ds1.Tables[6].Rows[0];
-                model.NetPay = Convert.ToDecimal(row["NetPay"]);
+                if (row.Table.Columns.Contains("NetPay"))
+                {
+                    model.NetPay = Convert.ToDecimal(row["NetPay"]);
+                    model.ShowNetPay = true;
+                }
             }
             //7. Loan 
             // 7. Loan (only if SP returned a loan dataset with values)
@@ -851,7 +925,7 @@ namespace MendinePayroll.UI.Controllers
         {
             DataSet ds = clsDatabase.fnDataSet(
                 "PRC_Get_PayslipFullData",
-                EmpId, Month, Year, TenantId);
+                EmpId, Month, Year, TenantId, hrTag);
 
             if (ds == null || ds.Tables.Count == 0)
                 return model;
@@ -1030,18 +1104,21 @@ namespace MendinePayroll.UI.Controllers
                 }
             }
 
-            //7. Net Pay 
-            if (ds.Tables.Count > 5 && ds.Tables[6].Rows.Count > 0)
+            //7. Net Pay is optional. HRTag = 0 may intentionally skip this resultset.
+            var netPayTable = FindTableWithColumn(ds, "NetPay", 6);
+            if (netPayTable != null && netPayTable.Rows.Count > 0)
             {
-                var row = ds.Tables[6].Rows[0];
+                var row = netPayTable.Rows[0];
                 model.NetPay = Convert.ToDecimal(row["NetPay"]);
+                model.ShowNetPay = true;
             }
             //7. Loan 
             // 7. Loan (only if SP returned a loan dataset with values)
-            if (ds.Tables.Count > 7 && ds.Tables[7]?.Rows.Count > 0)
+            var loanTable = FindTableWithColumn(ds, "EMIAmount", 6);
+            if (loanTable != null && loanTable.Rows.Count > 0)
             {
-                var row = ds.Tables[7].Rows[0];
-                var cols = ds.Tables[7].Columns;
+                var row = loanTable.Rows[0];
+                var cols = loanTable.Columns;
 
                 // Helper function to safely parse and round decimals
                 decimal GetSafeDecimal(DataRow r, string colName)
@@ -1086,7 +1163,7 @@ namespace MendinePayroll.UI.Controllers
                 {
                     foreach (int empId in empList)
                     {
-                        var model = GetPayslipData(empId, month, year,true);
+                        var model = GetPayslipData(empId, month, year, true, 1);
                         if (model == null) continue;
 
                         var pdfResult = new ViewAsPdf("Index", model)

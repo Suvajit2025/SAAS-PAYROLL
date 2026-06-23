@@ -1,4 +1,4 @@
-﻿@model MendinePayroll.UI.Models.PayslipViewModel
+﻿@inherits System.Web.Mvc.WebViewPage<MendinePayroll.UI.Models.PayslipViewModel>
 @{
     Layout = null;
 
@@ -143,10 +143,12 @@
     </style>
 </head>
 <body>
-    @if (Model.NetPay == 0)
+    @if (Model.EmpId == 0)
     {
         <div class="nopayslip">
-            No payslip generated for @Model.Month @Model.Year
+            @(string.IsNullOrWhiteSpace(Model.UnavailableMessage)
+                ? "No payslip generated for " + Model.Month + " " + Model.Year
+                : Model.UnavailableMessage)
         </div>
     }
     else
@@ -230,9 +232,9 @@
                 <th>Closing Loan Balance</th>
             </tr>
             <tr>
-                <td>₹ @Model.OpeningLoan.ToString("N2")</td>
-                <td>₹ @Model.LoanInstallment.ToString("N2")</td>
-                <td>₹ @Model.ClosingLoan.ToString("N2")</td>
+                <td>&#8377; @Model.OpeningLoan.ToString("N2")</td>
+                <td>&#8377; @Model.LoanInstallment.ToString("N2")</td>
+                <td>&#8377; @Model.ClosingLoan.ToString("N2")</td>
             </tr>
         </table>
     }
@@ -240,7 +242,7 @@
     <!-- Salary -->
     <h3>Salary Details</h3>
     <table>
-        <tr><th>Earnings</th><th>Amount (₹)</th><th>Deductions</th><th>Amount (₹)</th></tr>
+        <tr><th>Earnings</th><th>Amount (&#8377;)</th><th>Deductions</th><th>Amount (&#8377;)</th></tr>
         @{
             int rows = Math.Max(Model.Earnings.Count, Model.Deductions.Count);
             for (int i = 0; i < rows; i++)
@@ -261,13 +263,16 @@
         </tr>
     </table>
 
-    <!-- Net -->
-    <h3>Net Salary</h3>
-    <table class="summary">
-        <tr><td class="netpay">Net Pay (Take Home)</td><td class="netpay">₹ @Model.NetPay.ToString("N2")</td></tr>
-        <tr><td>Amount in Words</td><td>@($"{Model.NetPayWords} Only")</td></tr>
-        <!--<tr><td>Salary Credited To</td><td>@Model.BankName (****@Model.BankAccount.Substring(Math.Max(0, Model.BankAccount.Length - 4)))</td></tr>-->
-    </table>
+    @if (Model.ShowNetPay)
+    {
+        <!-- Net -->
+        <h3>Net Salary</h3>
+        <table class="summary">
+            <tr><td class="netpay">Net Pay (Take Home)</td><td class="netpay">&#8377; @Model.NetPay.ToString("N2")</td></tr>
+            <tr><td>Amount in Words</td><td>@($"{Model.NetPayWords} Only")</td></tr>
+            <!--<tr><td>Salary Credited To</td><td>@Model.BankName (****@Model.BankAccount.Substring(Math.Max(0, Model.BankAccount.Length - 4)))</td></tr>-->
+        </table>
+    }
     
 
 
@@ -279,7 +284,7 @@
         @if (!Model.isPdf)
         {
             <div class="noprint" style="margin-top:15px;">
-                <a href="@Url.Action("Download", "Payslip", new { empId = Model.EmpId, month = Model.Month, year = Model.Year })"
+                <a href="@((Request.ApplicationPath == "/" ? "" : Request.ApplicationPath.TrimEnd('/')) + "/Payslip/Download?empId=" + Model.EmpId + "&month=" + System.Web.HttpUtility.UrlEncode(Model.Month) + "&year=" + Model.Year)"
                    style="padding:8px 16px; background:#167d80; color:#fff; text-decoration:none; border-radius:5px;">
                     Download as PDF
                 </a>

@@ -1,4 +1,5 @@
-﻿@{
+@inherits System.Web.Mvc.WebViewPage
+@{
     ViewBag.Title = "Annual Tax Projection";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -7,23 +8,182 @@
 
 <style>
     :root {
-        --proj-primary: #1e3a8a;
-        --proj-primary-soft: #dbeafe;
-        --proj-accent: #0f766e;
-        --proj-danger: #b91c1c;
-        --proj-text: #1f2937;
-        --proj-muted: #64748b;
-        --proj-border: #e2e8f0;
-        --proj-panel: #f8fafc;
+        --bg: #f4f5f7;
+        --surface: #ffffff;
+        --surface2: #f8f9fb;
+        --border: #e4e7ec;
+        --border2: #d0d5dd;
+        --text: #101828;
+        --text2: #475467;
+        --text3: #98a2b3;
+        --accent: #1d4ed8;
+        --accent-light: #eff4ff;
+        --accent-text: #1e40af;
+        --green: #039855;
+        --green-bg: #ecfdf3;
+        --green-text: #027a48;
+        --red: #d92d20;
+        --red-bg: #fff1f0;
+        --red-text: #b42318;
+        --radius: 10px;
+        --radius-sm: 6px;
+        --shadow: 0 1px 2px rgba(16,24,40,.05), 0 0 0 1px rgba(16,24,40,.06);
+        --shadow-modal: 0 8px 32px rgba(16,24,40,.18), 0 0 0 1px rgba(16,24,40,.06);
+        --proj-primary: var(--accent);
+        --proj-primary-soft: var(--accent-light);
+        --proj-accent: var(--green);
+        --proj-danger: var(--red);
+        --proj-text: var(--text);
+        --proj-muted: var(--text2);
+        --proj-border: var(--border);
+        --proj-panel: var(--surface2);
     }
 
-    .summary-card {
-        background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-        border-radius: 14px;
-        border: 1px solid var(--proj-border);
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
-        padding: 18px 20px;
+    body {
+        background: var(--bg);
+        color: var(--text);
+    }
+
+    .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 22px;
+        gap: 16px;
+    }
+
+        .page-header h2 {
+            color: var(--text);
+            font-weight: 700;
+            margin: 0;
+        }
+
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
         margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        gap: 12px;
+    }
+
+    .card-head-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-head-icon {
+        width: 34px;
+        height: 34px;
+        background: var(--accent-light);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent);
+        flex-shrink: 0;
+    }
+
+    .card-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .card-sub {
+        font-size: 12px;
+        color: var(--text2);
+        margin-top: 1px;
+    }
+
+    .stat-bar {
+        display: flex;
+        gap: 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .stat-item {
+        padding: 14px 20px;
+        border-right: 1px solid var(--border);
+        flex: 1;
+    }
+
+        .stat-item:last-child {
+            border-right: none;
+        }
+
+    .stat-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--text3);
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+
+    .stat-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .tbl-wrap {
+        overflow-x: auto;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .btn-primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+    }
+
+        .btn-primary:hover {
+            background: #1740c4;
+            border-color: #1740c4;
+        }
+
+    .btn-outline,
+    .btn-light,
+    .btn-outline-primary {
+        background: #fff;
+        color: var(--text);
+        border: 1px solid var(--border2);
+    }
+
+        .btn-outline:hover,
+        .btn-light:hover,
+        .btn-outline-primary:hover {
+            background: var(--bg);
+            color: var(--accent-text);
+        }
+
+    .summary-card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        margin-bottom: 20px;
+        overflow: hidden;
     }
 
     .summary-header {
@@ -31,38 +191,38 @@
         justify-content: space-between;
         align-items: center;
         gap: 10px;
-        margin-bottom: 12px;
+        padding: 16px 20px;
+        margin-bottom: 0;
+        border-bottom: 1px solid var(--border);
     }
 
     .summary-title {
-        font-size: 17px;
-        font-weight: 700;
-        color: var(--proj-text);
-        letter-spacing: 0.2px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
     }
 
     .btn-add-projection {
-        border: none;
-        border-radius: 8px;
+        border: 1px solid var(--accent);
+        border-radius: var(--radius-sm);
         padding: 8px 14px;
-        background: linear-gradient(135deg, var(--proj-primary) 0%, #1d4ed8 100%);
+        background: var(--accent);
         color: #fff;
-        font-size: 12px;
-        font-weight: 600;
-        box-shadow: 0 4px 10px rgba(30, 58, 138, 0.28);
-        transition: transform .15s ease, box-shadow .15s ease;
+        font-size: 13px;
+        font-weight: 500;
+        transition: background .15s, border-color .15s;
     }
 
     .btn-add-projection:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 8px 15px rgba(30, 58, 138, 0.32);
+        background: #1740c4;
+        border-color: #1740c4;
     }
 
     .tax-card {
         background: #fff;
-        border-radius: 12px;
-        border: 1px solid var(--proj-border);
-        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
         padding: 16px;
         margin-bottom: 0;
     }
@@ -95,7 +255,7 @@
             height: 34px !important;
             border-radius: 7px !important;
             font-size: 13px;
-            border-color: #d6deeb;
+            border-color: var(--border2);
         }
 
     .filter-container .btn-group {
@@ -104,8 +264,8 @@
 
     .filter-container .btn-group > .multiselect {
         height: 34px;
-        border-radius: 7px;
-        border: 1px solid #d6deeb;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border2);
         background: #fff;
         color: #334155;
         text-align: left;
@@ -182,14 +342,14 @@
     }
 
     .btn-generate {
-        background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+        background: var(--green);
         color: white;
         border: none;
         padding: 0 15px;
         font-weight: 700;
         cursor: pointer;
         white-space: nowrap;
-        box-shadow: 0 4px 8px rgba(22, 163, 74, .22);
+        box-shadow: none;
         transition: .2s;
     }
 
@@ -199,41 +359,46 @@
 
     .btn-reset {
         background: #fff;
-        color: var(--proj-danger);
-        border: 1px solid #ef9a9a;
+        color: var(--red-text);
+        border: 1px solid var(--border2);
         padding: 0 12px;
         cursor: pointer;
         transition: .2s;
     }
 
         .btn-reset:hover {
-            background: #fff5f5;
+            background: var(--red-bg);
         }
 
     .tax-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 12px;
+        min-width: 800px;
     }
 
     .tax-table th {
-            background: linear-gradient(180deg, #1f3a8a 0%, #1e3a8a 100%);
-            color: white;
-            padding: 10px 9px;
-            font-size: 12px;
+            background: var(--surface2);
+            color: var(--text2);
+            padding: 10px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .04em;
             text-align: left;
-            border-right: 1px solid rgba(255,255,255,.14);
+            border-bottom: 1px solid var(--border);
+            border-right: none;
+            white-space: nowrap;
         }
 
         .tax-table td {
-            padding: 10px 9px;
-            border-bottom: 1px solid #edf2f7;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
             font-size: 13px;
-            color: var(--proj-text);
+            color: var(--text);
         }
 
         .tax-table tbody tr:hover {
-            background: #f8fbff;
+            background: var(--surface2);
         }
 
     .text-right {
@@ -242,13 +407,47 @@
 
     .bold-blue {
         font-weight: bold;
-        color: #1a237e;
+        color: var(--accent-text);
     }
 
     .compact-table th,
     .compact-table td {
         padding: 8px;
         font-size: 12px;
+    }
+
+    #tblProjectionSummary th,
+    #tblProjectionSummary td {
+        vertical-align: middle;
+    }
+
+    #tblProjectionSummary th:nth-child(3),
+    #tblProjectionSummary td:nth-child(3),
+    #tblProjectionSummary th:nth-child(4),
+    #tblProjectionSummary td:nth-child(4),
+    #tblProjectionSummary th:nth-child(5),
+    #tblProjectionSummary td:nth-child(5),
+    #tblProjectionSummary th:nth-child(6),
+    #tblProjectionSummary td:nth-child(6) {
+        text-align: right;
+    }
+
+    #tblProjectionSummary th:last-child,
+    #tblProjectionSummary td:last-child {
+        text-align: center;
+        width: 170px;
+    }
+
+    #tblProjectionSummary .summary-actions {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    #tblProjectionSummary .summary-actions .btn[disabled] {
+        opacity: .55;
+        cursor: not-allowed;
     }
 
     /* Modal */
@@ -259,47 +458,59 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        background: rgba(16, 24, 40, 0.55);
         z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
         backdrop-filter: blur(2px);
     }
 
+    .modal-overlay.open {
+        display: flex !important;
+    }
+
     .modal-card {
-        position: relative;
-        background: white;
+        background: var(--surface);
         width: 900px;
         max-width: calc(100% - 30px);
-        margin: 50px auto;
-        border-radius: 8px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        border-radius: 14px;
+        box-shadow: var(--shadow-modal);
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh;
     }
 
     .editor-modal-card {
-        position: relative;
-        background: #fff;
+        background: var(--surface);
         width: 1180px;
         max-width: calc(100% - 40px);
-        margin: 24px auto;
         border-radius: 14px;
-        border: 1px solid #dbe3f1;
-        box-shadow: 0 20px 48px rgba(2, 6, 23, .26);
+        box-shadow: var(--shadow-modal);
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh;
     }
 
     .editor-modal-header {
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-        color: #fff;
-        padding: 14px 16px;
+        background: var(--surface);
+        color: var(--text);
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
+        .editor-modal-header small {
+            color: var(--text2);
+        }
+
     .editor-modal-body {
-        padding: 14px;
-        background: radial-gradient(circle at top right, #eff6ff 0%, #f8fafc 35%, #f8fafc 100%);
-        max-height: calc(100vh - 120px);
+        padding: 22px;
+        background: var(--surface);
         overflow: auto;
     }
 
@@ -324,23 +535,48 @@
     }
 
     #btnFinalize {
-        background: linear-gradient(135deg, var(--proj-primary) 0%, #1d4ed8 100%);
+        background: var(--accent);
         border: none;
-        box-shadow: 0 4px 10px rgba(30, 64, 175, .26);
+        box-shadow: none;
         min-width: 128px;
     }
 
     .modal-header {
-        background: #1a237e;
-        color: white;
-        padding: 15px 20px;
+        background: var(--surface);
+        color: var(--text);
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
+    .modal-header small {
+        color: var(--text2);
+    }
+
+    .btn-close {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text2);
+        font-size: 18px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+        .btn-close:hover {
+            background: var(--bg);
+        }
+
     .modal-body {
-        padding: 20px;
+        padding: 22px;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 30px;
@@ -350,10 +586,10 @@
 
     .section-title {
         font-weight: bold;
-        color: #1a237e;
-        border-bottom: 2px solid #e2e8f0;
-        padding-bottom: 5px;
-        margin-bottom: 15px;
+        color: var(--text2);
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 10px;
+        margin-bottom: 16px;
         text-transform: uppercase;
         font-size: 12px;
     }
@@ -377,8 +613,8 @@
     }
 
     .tax-result-box {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: var(--surface2);
+        border: 1px solid var(--border);
         padding: 15px;
         border-radius: 8px;
         text-align: center;
@@ -388,7 +624,7 @@
     .monthly-val {
         font-size: 24px;
         font-weight: 800;
-        color: #1a237e;
+        color: var(--accent-text);
         margin: 5px 0;
     }
 
@@ -504,28 +740,50 @@
 </style>
 
 <section class="content-body">
-    <header class="page-header"><h2>Annual Tax Projection</h2></header>
+    <header class="page-header">
+        <h2>Annual Tax Projection</h2>
+    </header>
 
-    <div class="summary-card">
-        <div class="summary-header">
-            <div class="summary-title">Yearly Projection Summary</div>
+    <div class="card summary-card">
+        <div class="card-head">
+            <div class="card-head-left">
+                <div class="card-head-icon">
+                    <i class="fa fa-line-chart"></i>
+                </div>
+                <div>
+                    <div class="card-title">Yearly Projection Summary</div>
+                    <div class="card-sub">Generate, review, audit, and finalize employee TDS projections</div>
+                </div>
+            </div>
             <button type="button" class="btn-add-projection" onclick="openProjectionEditor()">
                 <i class="fa fa-plus"></i> Add Projection
             </button>
         </div>
-        <div class="table-responsive">
+
+        <div class="stat-bar" id="projectionStatBar">
+            <div class="stat-item"><div class="stat-label">Projection Years</div><div class="stat-value" id="statProjectionYears">0</div></div>
+            <div class="stat-item"><div class="stat-label">Employees</div><div class="stat-value" id="statProjectionEmployees">0</div></div>
+            <div class="stat-item"><div class="stat-label">Total TDS</div><div class="stat-value" id="statProjectionTds">0.00</div></div>
+            <div class="stat-item"><div class="stat-label">Status</div><div class="stat-value" id="statProjectionStatus">Draft</div></div>
+        </div>
+
+        <div class="tbl-wrap">
             <table class="tax-table compact-table" id="tblProjectionSummary">
                 <thead>
                     <tr>
-                        <th style="width: 25%;">Financial Year</th>
-                        <th style="width: 20%;" class="text-right">Employees</th>
-                        <th style="width: 30%;" class="text-right">Total TDS</th>
-                        <th style="width: 25%; text-align:center;">Action</th>
+                        <th>Financial Year</th>
+                        <th>Regime Name</th>
+                        <th class="text-right">Employees</th>
+                        <th class="text-right">Tax Before Cess (Total)</th>
+                        <th class="text-right">Cess (Total)</th>
+                        <th class="text-right">Total TDS</th>
+                        <th>Status</th>
+                        <th style="text-align:center;">Action</th>
                     </tr>
                 </thead>
                 <tbody id="summaryBody">
                     <tr id="summaryEmptyRow">
-                        <td colspan="4" class="text-center">No projection saved yet. Click Add Projection.</td>
+                        <td colspan="8" class="text-center">No projection saved yet. Click Add Projection.</td>
                     </tr>
                 </tbody>
             </table>
@@ -540,7 +798,7 @@
                 <h4 style="margin:0; font-size:15px;">Projection Editor</h4>
                 <small style="opacity:0.9;">Add or edit yearly annual tax projection</small>
             </div>
-            <button type="button" onclick="closeProjectionEditor()" style="background:none; border:none; color:#fff; font-size:22px; line-height:1; cursor:pointer;">&times;</button>
+            <button type="button" class="btn-close" onclick="closeProjectionEditor()">&times;</button>
         </div>
         <div class="editor-modal-body">
             <div class="tax-card">
@@ -615,7 +873,7 @@
                     </div>
                 </div>
 
-                <div class="table-responsive">
+                <div class="tbl-wrap">
                     <table class="tax-table compact-table" id="tblProjections">
                         <thead>
                             <tr>
@@ -652,7 +910,7 @@
                 <h3 style="margin:0">TDS Projection Detail (New Tax Regime - Section 115BAC)</h3>
                 <small id="lblModalEmpName">Employee Detail</small>
             </div>
-            <button onclick="closeModal()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">&times;</button>
+            <button class="btn-close" onclick="closeModal()">&times;</button>
         </div>
 
         <div class="modal-body">
@@ -772,7 +1030,7 @@
             });
             // 🔹 Record count text
             $('#recordInfo').text(
-                `Showing ${start + 1}–${end} of ${totalRows} rows`
+                `Showing ${start + 1}-${Math.min(end, totalRows)} of ${totalRows} rows`
             );
 
             renderPaginationControls(totalPages);
@@ -870,44 +1128,372 @@
     let currentEmpId = 0;
     const savedProjectionSummary = {};
     let pendingEditYear = null;
+    let projectionRequestToken = 0;
+    let rebateRefreshToken = 0;
+    let activeProjectionRequest = null;
+    let activeRebateRequests = [];
 
-    function openProjectionEditor(finYear) {
-        pendingEditYear = finYear || null;
-        $('#projectionEditorModal').fadeIn(150);
+    function openProjectionEditor(finYearId, regimeId, loadSavedData, financialYearCode) {
+        pendingEditYear = financialYearCode || finYearId || null;
+
+        if (!pendingEditYear && !loadSavedData) {
+            resetProjectionEditor();
+        }
+
+        $('#projectionEditorModal').addClass('open').hide().fadeIn(150);
+        $('#ddlFY').data('financial-year-id', finYearId || '').data('financial-year-code', financialYearCode || '');
 
         if (pendingEditYear) {
-            setTimeout(function () {
-                $('#ddlFY').val(pendingEditYear).trigger('change');
-            }, 100);
+            loadFY(function () {
+                selectFinancialYear(finYearId, financialYearCode || pendingEditYear);
+
+                if (regimeId) {
+                    if ($('#ddlRegime option[value="' + regimeId + '"]').length === 0) {
+                        $('#ddlRegime').append(`<option value="${regimeId}">Regime ${regimeId}</option>`);
+                    }
+                    $('#ddlRegime').val(regimeId);
+                }
+                if (loadSavedData) {
+                    loadSavedProjectionDetails(financialYearCode || pendingEditYear, regimeId || $('#ddlRegime').val());
+                }
+            });
+            return;
+        }
+
+        loadFY(function () {
+            selectCurrentFinancialYear();
+        });
+    }
+
+    function resetProjectionEditor() {
+        pendingEditYear = null;
+        currentPage = 1;
+        allRows = [];
+        filteredRows = [];
+
+        $('#ddlFY').val('').removeData('financial-year-id').removeData('financial-year-code');
+        $('#ddlRegime').val('2');
+        $('#chkRebate').prop('checked', false).prop('disabled', false);
+        $('#isRebateApplied').val(0);
+        $('#rebateText').text('Not Applied');
+        $('#txtSearch').val('');
+        $('#recordInfo').text('');
+        $('#paginationContainer').html('');
+        $('#tbodyData').html('<tr><td colspan="9" class="text-center">Select filters and click Generate to create projection.</td></tr>');
+        $('#btnFinalize').prop('disabled', false).html('<i class="fa fa-save"></i> Finalize & Save');
+        $('#projectionEditorModal').find('.projection-finalized-message').remove();
+
+        resetMultiselect('#ddlCompany');
+        resetMultiselect('#ddlDepartment');
+        resetMultiselect('#ddlEmployee', true);
+    }
+
+    function resetMultiselect(selector, clearOptions) {
+        const $ddl = $(selector);
+        if (clearOptions) {
+            $ddl.empty();
+        }
+        $ddl.val([]);
+        const multiselect = $ddl.data('multiselect');
+        if (multiselect && typeof multiselect === 'object') {
+            if (typeof multiselect.deselectAll === 'function') {
+                multiselect.deselectAll(false);
+            }
+            if (typeof multiselect.rebuild === 'function') {
+                multiselect.rebuild();
+            }
+            if (typeof multiselect.enable === 'function') {
+                multiselect.enable();
+            }
         }
     }
 
     function closeProjectionEditor() {
-        $('#projectionEditorModal').fadeOut(120);
+        $('#projectionEditorModal').fadeOut(120, function () {
+            $(this).removeClass('open');
+        });
+    }
+
+    function loadSavedProjectionDetails(financialYear, regimeId) {
+        if (!financialYear || !regimeId) return;
+
+        $('#tbodyData').html('<tr><td colspan="9" class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading saved projection...</td></tr>');
+        $('#recordInfo').text('');
+        $('#paginationContainer').html('');
+
+        $.getJSON('@Url.Action("GetAnnualTdsProjectionDetails", "PayrollTds")',
+            { FinancialYear: financialYear, RegimeId: regimeId },
+            function (res) {
+                if (!res || !res.success) {
+                    $('#tbodyData').html(`<tr><td colspan="9" class="text-center text-danger">${(res && res.message) ? res.message : 'Unable to load saved projection.'}</td></tr>`);
+                    return;
+                }
+
+                renderProjectionRows(res.Data || []);
+            }
+        ).fail(function () {
+            $('#tbodyData').html('<tr><td colspan="9" class="text-center text-danger">Error loading saved projection.</td></tr>');
+        });
+    }
+
+    function renderProjectionRows(rows) {
+        let html = '';
+
+        if (!rows || rows.length === 0) {
+            html = '<tr><td colspan="9" class="text-center">No projection rows found.</td></tr>';
+        } else {
+            rows.forEach(function (row, index) {
+                html += `<tr data-empid="${row.EmployeeID}">
+                    <td class="text-center">${index + 1}</td>
+                    <td>${row.EmployeeName || row.EmployeeID}</td>
+                    <td class="text-right annualgross">${row.AnnualGross}</td>
+                    <td class="text-right nettaxable">${row.NetTaxable}</td>
+                    <td class="text-right totalBaseTax">${row.TotalTaxBeforeCess}</td>
+                    <td class="text-right cessAmount">${row.CessAmount}</td>
+                    <td class="text-right annualTax">${row.AnnualTax}</td>
+                    <td class="text-right monthlyTds bold-blue">${row.MonthlyTDS}</td>
+                    <input type="hidden" class="rebateApplied" value="${row.RebateApplied || 0}" />
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewDetails('${row.EmployeeID}')">
+                            <i class="fa fa-list-alt"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        $('#tbodyData').html(html);
+        setupPagination();
+    }
+
+    function getSelectedFinancialYearId() {
+        return $('#ddlFY').val() || $('#ddlFY').data('financial-year-id');
+    }
+
+    function updateProjectionRowFromSummary(empId, summary) {
+        const $row = $('#tbodyData tr[data-empid="' + empId + '"]');
+        if (!$row.length || !summary) return;
+
+        const rebateFlag = summary.RebateApplied ? 1 : 0;
+        const annualTax = summary.TotalTaxPayable
+            || summary.AnnualTaxLiability
+            || summary.AnnualTax
+            || formatNumber(cleanNumber(summary.TotalTaxBeforeCess) + cleanNumber(summary.CessAmount));
+
+        $row.find('.annualgross').text(summary.AnnualGross || '0.00');
+        $row.find('.nettaxable').text(summary.NetTaxable || '0.00');
+        $row.find('.totalBaseTax').text(summary.TotalTaxBeforeCess || '0.00');
+        $row.find('.cessAmount').text(summary.CessAmount || '0.00');
+        $row.find('.annualTax').text(annualTax || '0.00');
+        $row.find('.monthlyTds').text(summary.MonthlyTDS || '0.00');
+        $row.find('.rebateApplied').val(rebateFlag);
+
+        if (rebateFlag === 1) {
+            $row.addClass('table-success');
+        } else {
+            $row.removeClass('table-success');
+        }
+    }
+
+    function refreshProjectionGridForRebate(isRebateApplied) {
+        const activeToken = ++rebateRefreshToken;
+        const year = getSelectedFinancialYearId();
+        const rows = $('#tbodyData tr[data-empid]').toArray();
+
+        if (!year || rows.length === 0) return;
+
+        const previousInfo = $('#recordInfo').text();
+        $('#recordInfo').html('<i class="fa fa-spinner fa-spin"></i> Updating rebate calculation...');
+        $('#chkRebate').prop('disabled', true);
+
+        let completed = 0;
+        let failed = false;
+
+        rows.forEach(function (row) {
+            const empId = $(row).data('empid');
+
+            const request = $.post("@Url.Action("GetTdsAudit", "PayrollTds")",
+                { empId: empId, year: year, isRebateApplied: isRebateApplied },
+                function (res) {
+                    if (activeToken !== rebateRefreshToken) return;
+
+                    if (!res || !res.success) {
+                        failed = true;
+                        return;
+                    }
+
+                    updateProjectionRowFromSummary(empId, res.Summary);
+                }
+            ).fail(function () {
+                failed = true;
+            }).always(function () {
+                activeRebateRequests = activeRebateRequests.filter(function (xhr) {
+                    return xhr !== request;
+                });
+
+                if (activeToken !== rebateRefreshToken) return;
+
+                completed++;
+                if (completed === rows.length) {
+                    $('#chkRebate').prop('disabled', false);
+                    renderTable();
+
+                    if (failed) {
+                        alert('Some employee rows could not be recalculated.');
+                    } else if (previousInfo) {
+                        $('#recordInfo').text(previousInfo);
+                    }
+                }
+            });
+
+            activeRebateRequests.push(request);
+        });
+    }
+
+    function cancelRebateRefresh() {
+        rebateRefreshToken++;
+
+        activeRebateRequests.forEach(function (request) {
+            if (request && request.readyState !== 4) {
+                request.abort();
+            }
+        });
+
+        activeRebateRequests = [];
+        $('#chkRebate').prop('disabled', false);
+    }
+
+    function updateProjectionStats(keys) {
+        let employeeCount = 0;
+        let totalTds = 0;
+
+        keys.forEach(function (year) {
+            const row = savedProjectionSummary[year];
+            employeeCount += parseInt(row.EmployeeCount || 0, 10);
+            totalTds += parseFloat((row.TotalTDS || '0').toString().replace(/,/g, '')) || 0;
+        });
+
+        $('#statProjectionYears').text(keys.length);
+        $('#statProjectionEmployees').text(employeeCount);
+        $('#statProjectionTds').text(totalTds.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $('#statProjectionStatus').text(keys.length ? 'Ready' : 'Draft');
     }
 
     function renderProjectionSummary() {
-        const keys = Object.keys(savedProjectionSummary).sort().reverse();
+        const keys = Object.keys(savedProjectionSummary).sort(function (a, b) {
+            const left = savedProjectionSummary[a];
+            const right = savedProjectionSummary[b];
+            const yearCompare = (right.FinancialYear || '').toString().localeCompare((left.FinancialYear || '').toString());
+            return yearCompare !== 0 ? yearCompare : (left.RegimeId || 0) - (right.RegimeId || 0);
+        });
+        updateProjectionStats(keys);
         if (keys.length === 0) {
-            $('#summaryBody').html('<tr id="summaryEmptyRow"><td colspan="4" class="text-center">No projection saved yet. Click Add Projection.</td></tr>');
+            $('#summaryBody').html('<tr id="summaryEmptyRow"><td colspan="8" class="text-center">No projection saved yet. Click Add Projection.</td></tr>');
             return;
         }
 
         let html = '';
         keys.forEach(function (year) {
             const row = savedProjectionSummary[year];
+            const isFinalized = (row.Status || '').toString().toLowerCase() === 'finalized';
+            const displayFinancialYear = row.FinancialYearCode || row.FinancialYear || '';
             html += `<tr>
-                <td>${year}</td>
+                <td>${displayFinancialYear}</td>
+                <td>${row.RegimeName || ''}</td>
                 <td class="text-right">${row.EmployeeCount}</td>
+                <td class="text-right">${row.TotalTaxBeforeCess || '0.00'}</td>
+                <td class="text-right">${row.TotalCessAmount || '0.00'}</td>
                 <td class="text-right">${row.TotalTDS}</td>
+                <td>${row.Status || 'Draft'}</td>
                 <td class="text-center">
-                    <button type="button" class="btn btn-xs btn-primary" onclick="openProjectionEditor('${year}')">
-                        <i class="fa fa-pencil"></i> Edit
-                    </button>
+                    <div class="summary-actions">
+                        <button type="button" class="btn btn-xs btn-primary" onclick="openProjectionEditor('${row.FinancialYearId || row.FinancialYear || ''}', ${row.RegimeId || 0}, true, '${row.FinancialYear || ''}')">
+                            <i class="fa fa-pencil"></i> Edit
+                        </button>
+                        <button type="button" class="btn btn-xs btn-generate" ${isFinalized ? 'disabled' : ''} onclick="finalizeSummaryProjection('${row.FinancialYear || ''}', ${row.RegimeId || 0}, this)">
+                            <i class="fa fa-check"></i> Finalize
+                        </button>
+                    </div>
                 </td>
             </tr>`;
         });
         $('#summaryBody').html(html);
+    }
+
+    function finalizeSummaryProjection(financialYear, regimeId, button) {
+        if (!financialYear || !regimeId) {
+            alert('Unable to finalize: financial year or regime is missing.');
+            return;
+        }
+
+        if (!confirm('Are you sure you want to finalize this projection?')) {
+            return;
+        }
+
+        const $btn = $(button);
+        $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Finalizing...');
+
+        $.ajax({
+            url: '@Url.Action("FinalizeAnnualTdsProjectionSummary", "PayrollTds")',
+            type: 'POST',
+            data: { FinancialYear: financialYear, RegimeId: regimeId },
+            success: function (res) {
+                if (!res || !res.success) {
+                    alert((res && res.message) ? res.message : 'Unable to finalize projection.');
+                    $btn.prop('disabled', false).html('<i class="fa fa-check"></i> Finalize');
+                    return;
+                }
+
+                alert(res.message || 'Projection finalized successfully.');
+                loadProjectionSummaryRows();
+            },
+            error: function () {
+                alert('Server error while finalizing projection.');
+                $btn.prop('disabled', false).html('<i class="fa fa-check"></i> Finalize');
+            }
+        });
+    }
+
+    function loadProjectionSummaryRows() {
+        $('#summaryBody').html('<tr><td colspan="8" class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading projections...</td></tr>');
+
+        $.getJSON('@Url.Action("GetAnnualTdsProjectionSummary", "PayrollTds")', function (res) {
+            Object.keys(savedProjectionSummary).forEach(function (key) {
+                delete savedProjectionSummary[key];
+            });
+
+            if (!res || !res.success) {
+                $('#summaryBody').html(`<tr><td colspan="8" class="text-center text-danger">${(res && res.message) ? res.message : 'Unable to load projection summary.'}</td></tr>`);
+                updateProjectionStats([]);
+                return;
+            }
+
+            (res.Data || []).forEach(function (row) {
+                const year = row.FinancialYear;
+                if (!year) return;
+                const key = `${year}_${row.RegimeId || 0}`;
+
+                savedProjectionSummary[key] = {
+                    FinancialYear: year,
+                    FinancialYearCode: row.FinancialYearCode || row.FYCode || row.FinYearCode || year,
+                    FinancialYearId: row.FinancialYearId || 0,
+                    EmployeeCount: row.EmployeeCount || 0,
+                    TotalTaxBeforeCess: row.TotalTaxBeforeCess || '0.00',
+                    TotalCessAmount: row.TotalCessAmount || '0.00',
+                    TotalTDS: row.TotalTDS || '0.00',
+                    RegimeId: row.RegimeId || 0,
+                    RegimeName: row.RegimeName || '',
+                    FinalizedBy: row.FinalizedBy || '',
+                    FinalizedOn: row.FinalizedOn || '',
+                    Status: row.Status || ''
+                };
+            });
+
+            renderProjectionSummary();
+        }).fail(function () {
+            $('#summaryBody').html('<tr><td colspan="8" class="text-center text-danger">Error loading projection summary.</td></tr>');
+            updateProjectionStats([]);
+        });
     }
 
     function updateSummaryForCurrentGrid() {
@@ -916,19 +1502,39 @@
 
         const rows = $('#tbodyData tr[data-empid]');
         const employeeCount = rows.length;
+        let totalTaxBeforeCess = 0;
+        let totalCess = 0;
         let totalTds = 0;
 
         rows.each(function () {
-            const val = ($(this).find('.annualTax').text() || '0').replace(/₹/g, '').replace(/,/g, '').trim();
-            totalTds += parseFloat(val) || 0;
+            totalTaxBeforeCess += cleanNumber($(this).find('.totalBaseTax').text());
+            totalCess += cleanNumber($(this).find('.cessAmount').text());
+            totalTds += cleanNumber($(this).find('.annualTax').text());
         });
 
-        savedProjectionSummary[year] = {
+        const regime = $('#ddlRegime').val();
+        const key = `${year}_${regime || 0}`;
+
+        savedProjectionSummary[key] = {
+            FinancialYear: year,
+            RegimeId: regime || '',
+            RegimeName: $('#ddlRegime option:selected').text() || '',
             EmployeeCount: employeeCount,
-            TotalTDS: totalTds.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            TotalTaxBeforeCess: totalTaxBeforeCess.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            TotalCessAmount: totalCess.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            TotalTDS: totalTds.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            Status: 'Draft'
         };
 
         renderProjectionSummary();
+    }
+
+    function cleanNumber(val) {
+        return parseFloat((val || '0').toString().replace(/₹/g, '').replace(/,/g, '').trim()) || 0;
+    }
+
+    function formatNumber(val) {
+        return (parseFloat(val) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     // ---------- Global (Projection) rebate toggle ----------
@@ -940,6 +1546,14 @@
             $('#isRebateApplied').val(0);
             $('#rebateText').text('Not Applied');
         }
+
+        const companyIds = ($('#ddlCompany').val() || []).filter(v => v !== 'multiselect-all');
+        if (companyIds.length > 0 && $('#ddlFY').val()) {
+            calculateProjections();
+            return;
+        }
+
+        refreshProjectionGridForRebate(parseInt($('#isRebateApplied').val() || '0', 10));
     });
 
     // ---------- Modal employee rebate toggle ----------
@@ -965,7 +1579,7 @@
         $('#ddlCompany, #ddlDepartment').on('change', function () {
             loadEmployeeByFilters();
         });
-        renderProjectionSummary();
+        loadProjectionSummaryRows();
 
         $('#projectionEditorModal').on('click', function (e) {
             if (e.target.id === 'projectionEditorModal') {
@@ -973,16 +1587,71 @@
             }
         });
     });
-    function loadFY() {
-        const url = "/PayrollTds/GetFinancialYears";  // ❌ con → ✅ const
+    function loadFY(callback) {
+        const url = "/PayrollTds/GetFinancialYears";
+        const $ddl = $('#ddlFY');
 
-        $.getJSON(url, function (res) {
-            const $ddl = $('#ddlFY').empty();  // ❌ missing quotes → ✅ '#ddlFY'
+        if ($ddl.children('option').length > 0) {
+            if (typeof callback === 'function') callback();
+            return $.Deferred().resolve().promise();
+        }
 
-            res.forEach(x =>
-                $ddl.append(`<option value="${x.value}">${x.text}</option>`) // ❌ x[value] → ✅ x.value
-            ); 
+        return $.getJSON(url, function (res) {
+            $ddl.empty();
+
+            res.forEach(x => {
+                const isCurrent = x.isCurrent === true || x.isCurrent === 'true' || x.isCurrent === 1;
+                $ddl.append(`<option value="${x.value}" data-current="${isCurrent ? '1' : '0'}">${x.text}</option>`);
+            });
+
+            if (typeof callback === 'function') callback();
         });
+    }
+
+    function selectCurrentFinancialYear() {
+        const $ddl = $('#ddlFY');
+        let selectedValue = '';
+
+        $ddl.find('option').each(function () {
+            const optionText = ($(this).text() || '').toLowerCase();
+            if ($(this).data('current') === 1 || optionText.indexOf('current') >= 0) {
+                selectedValue = $(this).val();
+                return false;
+            }
+        });
+
+        if (!selectedValue) {
+            selectedValue = $ddl.find('option:first').val() || '';
+        }
+
+        if (selectedValue) {
+            $ddl.val(selectedValue).trigger('change');
+            $ddl.data('financial-year-id', selectedValue);
+            $ddl.data('financial-year-code', $ddl.find('option:selected').text() || '');
+        }
+    }
+
+    function selectFinancialYear(finYearId, financialYearCode) {
+        const $ddl = $('#ddlFY');
+
+        if (finYearId) {
+            $ddl.val(finYearId);
+        }
+
+        if (!$ddl.val() && financialYearCode) {
+            $ddl.find('option').each(function () {
+                const optionText = ($(this).text() || '').trim();
+                const optionValue = ($(this).val() || '').trim();
+                if (optionText === financialYearCode || optionText.indexOf(financialYearCode) === 0 || optionValue === financialYearCode) {
+                    $ddl.val(optionValue);
+                    return false;
+                }
+            });
+        }
+
+        $ddl.data('financial-year-id', $ddl.val() || finYearId || '');
+        $ddl.data('financial-year-code', financialYearCode || '');
+        $ddl.trigger('change');
     }
     function loadInitialFilters() {
         loadDropdown('/SalaryCTC/GetCompanyList', '#ddlCompany', 'CompanyId', 'CompanyName');
@@ -1022,6 +1691,13 @@
 
     // ---------- Projection ----------
     function calculateProjections() {
+        const activeToken = ++projectionRequestToken;
+        cancelRebateRefresh();
+
+        if (activeProjectionRequest && activeProjectionRequest.readyState !== 4) {
+            activeProjectionRequest.abort();
+        }
+
         const companyIds = ($('#ddlCompany').val() || []).filter(v => v !== 'multiselect-all');
         const deptIds = ($('#ddlDepartment').val() || []).filter(v => v !== 'multiselect-all');
         const empIds = ($('#ddlEmployee').val() || []).filter(v => v !== 'multiselect-all');
@@ -1038,46 +1714,30 @@
 
         $('#tbodyData').html('<tr><td colspan="9" class="text-center"><i class="fa fa-spinner fa-spin"></i> Processing Tax Engine...</td></tr>');
 
-        $.ajax({
+        activeProjectionRequest = $.ajax({
             url: "@Url.Action("AnnualTdsProjection", "PayrollTds")",
             type: 'POST',
             data: filters,
             traditional: true,
+            timeout: 120000,
             success: function (res) {
+                if (activeToken !== projectionRequestToken) return;
+
                 if (!res || !res.success) {
                     $('#tbodyData').html(`<tr><td colspan="9" class="text-center text-danger">${(res && res.message) ? res.message : 'Error'} </td></tr>`);
                     return;
                 }
 
-                let html = '';
-                if (!res.Data || res.Data.length === 0) {
-                    html = '<tr><td colspan="9" class="text-center">No records found for selected filters.</td></tr>';
-                } else {
-                    res.Data.forEach(function (row, index) {
-                        html += `<tr data-empid="${row.EmployeeID}">
-                        <td class="text-center">${index + 1}</td>
-                        <td>${row.EmployeeName}</td>
-                        <td class="text-right annualgross">${row.AnnualGross}</td>
-                        <td class="text-right nettaxable">${row.NetTaxable}</td>
-                        <td class="text-right totalBaseTax">${row.TotalTaxBeforeCess}</td>
-                        <td class="text-right cessAmount">${row.CessAmount}</td>
-                        <td class="text-right annualTax">${row.AnnualTax}</td>
-                        <td class="text-right monthlyTds bold-blue">${row.MonthlyTDS}</td>
-                        <input type="hidden" class="rebateApplied" value="${row.RebateApplied || 0}" />
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-outline-primary"
-                                onclick="viewDetails('${row.EmployeeID}')">
-                                <i class="fa fa-list-alt"></i>
-                            </button>
-                        </td>
-                    </tr>`;
-                    });
-                }
-                $('#tbodyData').html(html);
-                setupPagination();
+                renderProjectionRows(res.Data || []);
             },
-            error: function () {
-                $('#tbodyData').html('<tr><td colspan="9" class="text-center text-danger">Error contacting server.</td></tr>');
+            error: function (xhr, status) {
+                if (activeToken !== projectionRequestToken) return;
+
+                const message = status === 'timeout'
+                    ? 'Tax Engine request timed out. Please try with fewer employees or check the stored procedure.'
+                    : 'Error contacting server.';
+
+                $('#tbodyData').html(`<tr><td colspan="9" class="text-center text-danger">${message}</td></tr>`);
             }
         });
     }
@@ -1086,32 +1746,59 @@
     function viewDetails(empId) {
         currentEmpId = empId;
 
-        const year = $('#ddlFY').val();
-        const globalRebate = parseInt($('#isRebateApplied').val() || '0', 10);
+        const year = $('#ddlFY').val() || $('#ddlFY').data('financial-year-id');
+        const rowRebate = $('#tbodyData tr[data-empid="' + empId + '"]').find('.rebateApplied').val();
+        const appliedRebate = parseInt((rowRebate !== undefined && rowRebate !== '') ? rowRebate : ($('#isRebateApplied').val() || '0'), 10);
+
+        if (!year) {
+            alert('Financial year is not loaded. Please reopen the projection and try again.');
+            return;
+        }
 
         $('#incomeContainer').html('<p><i class="fa fa-spinner fa-spin"></i> Loading...</p>');
         $('#slabContainer').html('<p><i class="fa fa-spinner fa-spin"></i> Loading...</p>');
 
-        // default toggle state = global projection toggle
-        $('#chkEmpRebate').prop('checked', globalRebate === 1);
+        $('#chkEmpRebate').prop('checked', appliedRebate === 1);
 
-        $.post("@Url.Action("GetTdsAudit", "PayrollTds")", { empId: empId, year: year, isRebateApplied: globalRebate }, function (res) {
+        $.post("@Url.Action("GetTdsAudit", "PayrollTds")", { empId: empId, year: year, isRebateApplied: appliedRebate }, function (res) {
             if (!res || !res.success) {
                 alert(res && res.message ? res.message : 'Error');
                 return;
             }
             renderAuditModal(res);
-            $('#tdsModal').fadeIn(200);
+            $('#tdsModal').addClass('open').hide().fadeIn(200);
         });
     }
 
     function closeModal() {
-        $('#tdsModal').fadeOut();
+        $('#tdsModal').fadeOut(120, function () {
+            $(this).removeClass('open');
+            clearDetailsModal();
+        });
+    }
+
+    function clearDetailsModal() {
+        currentEmpId = 0;
+        $('#lblModalEmpName').text('Employee Detail');
+        $('#incomeContainer').empty();
+        $('#slabContainer').empty();
+        $('#chkEmpRebate').prop('checked', false);
+        $('#rebateSection').hide();
+        $('#rebateNotApplied').show();
+        $('#lblModalAnnualGross').text('0.00');
+        $('#lblModalStdDed').text('- 0.00');
+        $('#lblModalNetTaxable').text('0.00');
+        $('#lblModalBaseTax').text('0.00');
+        $('#lblModalCess').text('0.00');
+        $('#lblModalMonthlyTDS').text('₹ 0.00');
+        $('#lblRebateThreshold').text('₹ 0.00');
+        $('#lblRebateLimit').text('₹ 0.00');
+        $('#lblTaxAfterRebate').text('₹ 0.00');
     }
 
     // ---------- Modal recalculation ----------
     function recalculateEmployeeTax(empId, isRebateApplied) {
-        const year = $('#ddlFY').val();
+        const year = getSelectedFinancialYearId();
 
         $('#slabContainer').html('<p><i class="fa fa-spinner fa-spin"></i> Recalculating...</p>');
 
@@ -1125,39 +1812,7 @@
 
                 renderAuditModal(res);
 
-                const rebateFlag = res.Summary?.RebateApplied ? 1 : 0;
-
-                const $row = $('#tbodyData tr[data-empid="' + empId + '"]');
-
-                if ($row.length) {
-
-                    // 🔹 Update grid numbers
-                    $row.find('.annualgross')
-                        .text(res.Summary?.AnnualGross || '0.00');
-                    $row.find('.nettaxable')
-                        .text(res.Summary?.NetTaxable || '0.00');
-                    $row.find('.totalBaseTax')
-                        .text(res.Summary?.TotalTaxBeforeCess || '0.00');
-
-                    $row.find('.cessAmount')
-                        .text(res.Summary?.CessAmount || '0.00');
-
-                    $row.find('.annualTax')
-                        .text(res.Summary?.TotalTaxPayable || '0.00');
-
-                    $row.find('.monthlyTds')
-                        .text(res.Summary?.MonthlyTDS || '0.00');
-
-                    // 🔹 Update hidden rebate flag
-                    $row.find('.rebateApplied').val(rebateFlag);
-
-                    // 🔹 Optional highlight
-                    if (rebateFlag === 1) {
-                        $row.addClass('table-success');
-                    } else {
-                        $row.removeClass('table-success');
-                    }
-                }
+                updateProjectionRowFromSummary(empId, res.Summary);
             }
         );
     }
@@ -1255,6 +1910,10 @@
             const annualTax = cleanNumber($row.find('.annualTax').text());
             const monthlyTds = cleanNumber($row.find('.monthlyTds').text());
 
+            if (annualTax === 0 && monthlyTds === 0) {
+                return;
+            }
+
             projectionData.push({
                 EmployeeId: empId,
                 FinancialYear: year,
@@ -1295,7 +1954,7 @@
                         $('#btnFinalize').prop('disabled', false).html('<i class="fa fa-save"></i> Finalize & Save');
                         return;
                     }
-                    updateSummaryForCurrentGrid();
+                    loadProjectionSummaryRows();
                     alert("Saved successfully");
                     $('#btnFinalize').prop('disabled', false).html('<i class="fa fa-save"></i> Finalize & Save');
                     closeProjectionEditor();
@@ -1315,7 +1974,7 @@
 
         $('#tblProjections button').prop('disabled', true);
 
-        $('<div style="margin-top:10px;color:#2e7d32;font-weight:bold;">Projection Finalized</div>')
+        $('<div class="projection-finalized-message" style="margin-top:10px;color:#2e7d32;font-weight:bold;">Projection Finalized</div>')
             .insertAfter('#paginationContainer');
     }
   </script>

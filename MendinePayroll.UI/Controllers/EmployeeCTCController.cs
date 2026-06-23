@@ -33,6 +33,98 @@ namespace MendinePayroll.UI.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult ExportEmployeeCTCExcel(
+            List<string> companyIds,
+            List<string> deptIds,
+            List<string> categoryIds,
+            List<string> payGroupIds,
+            string status)
+        {
+            string userId = Session["UserId"]?.ToString();
+            string companyFilter = NormalizeMultiSelect(companyIds);
+            string deptFilter = NormalizeMultiSelect(deptIds);
+            string categoryFilter = NormalizeMultiSelect(categoryIds);
+            var payGroups = NormalizeMultiSelectList(payGroupIds);
+            string statusFilter = string.IsNullOrWhiteSpace(status) ? "ACTIVE" : status;
+
+            DataTable dt = clsDatabase.fnDataTable(
+                "SP_SAAS_GET_EMPLOYEE_CTC",
+                tenantID,
+                companyFilter,
+                deptFilter,
+                categoryFilter,
+                userId
+            );
+
+            var rows = dt.AsEnumerable()
+                .Where(r =>
+                {
+                    string rowStatus = Convert.ToString(r["Status"]);
+                    string rowPayGroup = Convert.ToString(r["PayGroupID"]);
+
+                    if (!statusFilter.Equals("All", StringComparison.OrdinalIgnoreCase) &&
+                        !rowStatus.Equals(statusFilter, StringComparison.OrdinalIgnoreCase))
+                        return false;
+
+                    if (payGroups.Any() && !payGroups.Contains(rowPayGroup))
+                        return false;
+
+                    return true;
+                })
+                .ToList();
+
+            using (var workbook = new ClosedXML.Excel.XLWorkbook())
+            {
+                var ws = workbook.Worksheets.Add("Employee CTC");
+
+                ws.Cell(1, 1).Value = "Employee Info";
+                ws.Cell(1, 2).Value = "Designation & Post";
+                ws.Cell(1, 3).Value = "Department";
+                ws.Cell(1, 4).Value = "Pay Group";
+
+                var header = ws.Range(1, 1, 1, 4);
+                header.Style.Font.Bold = true;
+                header.Style.Font.FontColor = ClosedXML.Excel.XLColor.White;
+                header.Style.Fill.BackgroundColor = ClosedXML.Excel.XLColor.FromHtml("#0E7777");
+                header.Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Center;
+                header.Style.Alignment.Vertical = ClosedXML.Excel.XLAlignmentVerticalValues.Center;
+
+                int rowIndex = 2;
+                foreach (DataRow r in rows)
+                {
+                    ws.Cell(rowIndex, 1).Value = $"{Convert.ToString(r["EmpName"])}{Environment.NewLine}{Convert.ToString(r["EmpCode"])}";
+                    ws.Cell(rowIndex, 2).Value = $"{Convert.ToString(r["Designation"])}{Environment.NewLine}{Convert.ToString(r["Postname"])}";
+                    ws.Cell(rowIndex, 3).Value = Convert.ToString(r["Department"]);
+                    ws.Cell(rowIndex, 4).Value = Convert.ToString(r["PayGroupName"]);
+                    rowIndex++;
+                }
+
+                if (ws.RangeUsed() != null)
+                {
+                    ws.RangeUsed().Style.Alignment.SetVertical(ClosedXML.Excel.XLAlignmentVerticalValues.Center);
+                    ws.RangeUsed().Style.Alignment.SetWrapText(true);
+                }
+
+                ws.Columns().AdjustToContents();
+                ws.Column(1).Width = Math.Max(ws.Column(1).Width, 28);
+                ws.Column(2).Width = Math.Max(ws.Column(2).Width, 28);
+                ws.Column(3).Width = Math.Max(ws.Column(3).Width, 22);
+                ws.Column(4).Width = Math.Max(ws.Column(4).Width, 24);
+
+                using (var stream = new System.IO.MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    string fileName = $"Employee_CTC_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                    return File(
+                        stream.ToArray(),
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        fileName
+                    );
+                }
+            }
+        }
+
         [HttpPost]
         public JsonResult CalculateEmployeeCTC(EmployeeCTCCalculateRequest model)
         {
@@ -113,6 +205,23 @@ namespace MendinePayroll.UI.Controllers
 
             // 6. Build response
             return BuildCalculatedResponse(configList, calcs, model);
+        }
+
+        private string NormalizeMultiSelect(List<string> items)
+        {
+            return string.Join(",", NormalizeMultiSelectList(items));
+        }
+
+        private List<string> NormalizeMultiSelectList(List<string> items)
+        {
+            if (items == null || items.Count == 0)
+                return new List<string>();
+
+            return items
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Where(x => !x.Equals("multiselect-all", StringComparison.OrdinalIgnoreCase))
+                .Distinct()
+                .ToList();
         }
 
         private List<SalaryComponentConfig> MapConfig(DataTable dt)
@@ -414,6 +523,128 @@ namespace MendinePayroll.UI.Controllers
 
             return response;
         }
+        [HttpPost]
+        public JsonResult SaveSalaryDetailsComponents(SalaryDetailsComponentSaveRequest model)
+        {
+            try
+            {
+                if (model == null)
+                {
+                    return Json(new { Success = false, Message = "Invalid request data." });
+                }
+
+                if (model.EmployeeID <= 0 || model.PayGroupID <= 0)
+                {
+                    return Json(new { Success = false, Message = "Employee and PayGroup are required." });
+                }
+
+                if (model.Allowances == null || !model.Allowances.Any())
+                {
+                    return Json(new { Success = false, Message = "No allowance values found." });
+                }
+
+                var validValues = model.Allowances
+                    .Where(x => x.AllowanceId > 0)
+                    .Select(x => new
+                    {
+                        x.AllowanceId,
+                        x.Value
+                    })
+                    .ToList();
+
+                if (!validValues.Any())
+                {
+                    return Json(new { Success = false, Message = "No valid allowance values found." });
+                }
+
+                string userName = Session["UserName"]?.ToString() ?? "SYSTEM";
+                DateTime effectiveFrom = model.EffectiveFrom.HasValue
+                    ? model.EffectiveFrom.Value
+                    : new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+                var calculateRequest = new EmployeeCTCCalculateRequest
+                {
+                    EmployeeID = model.EmployeeID,
+                    PayGroupID = model.PayGroupID,
+                    EmpSalaryConfigID = model.EmpSalaryConfigID,
+                    IsPF = model.IsPF ?? true,
+                    IsESIC = model.IsESIC ?? true,
+                    IsPTAX = model.IsPTAX ?? true,
+                    Inputs = validValues.Select(x => new EmployeeCTCInputValue
+                    {
+                        PayConfigId = x.AllowanceId,
+                        MonthlyAmount = x.Value
+                    }).ToList()
+                };
+
+                var calculated = CalculateSalaryOnBackend(calculateRequest);
+
+                var payload = new
+                {
+                    EmployeeID = model.EmployeeID,
+                    PayGroupID = model.PayGroupID,
+                    EmpSalaryConfigID = model.EmpSalaryConfigID,
+
+                    IsPF = calculateRequest.IsPF,
+                    IsESIC = calculateRequest.IsESIC,
+                    IsPTAX = calculateRequest.IsPTAX,
+
+                    EffectiveFrom = effectiveFrom,
+
+                    MonthlyGross = calculated.Header.MonthlyGross,
+                    TotalAllowance = calculated.Header.TotalAllowance,
+                    TotalDeduction = calculated.Header.TotalDeduction,
+                    TotalContribution = calculated.Header.TotalContribution,
+
+                    NetPay = calculated.Header.NetPay,
+                    MonthlyCTC = calculated.Header.MonthlyCTC,
+                    AnnualCTC = calculated.Header.AnnualCTC,
+
+                    DetailList = calculated.DetailList
+                };
+
+                string jsonPayload = JsonConvert.SerializeObject(payload);
+
+                DataTable dt = clsDatabase.fnDataTable(
+                    "PRC_Save_EmployeeSalaryConfig",
+                    tenantID,
+                    jsonPayload,
+                    userName
+                );
+
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    int status = Convert.ToInt32(dt.Rows[0][0]);
+                    string message = dt.Rows[0][1].ToString();
+                    long configId = Convert.ToInt64(dt.Rows[0][2]);
+
+                    return Json(new
+                    {
+                        Success = status == 1,
+                        Message = message,
+                        EmpSalaryConfigID = configId,
+                        EmployeeID = model.EmployeeID,
+                        PayGroupID = model.PayGroupID,
+                        AllowanceCount = validValues.Count
+                    });
+                }
+
+                return Json(new
+                {
+                    Success = false,
+                    Message = "No response from server."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
         [HttpPost]
         public JsonResult SaveEmployeeSalaryRevision(EmpSalaryConfigModel model)
         {

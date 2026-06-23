@@ -360,7 +360,7 @@ namespace MendinePayroll.UI.BLL
             DateTime startDate = DateTime.Parse("01 " + StartMonth + " " + StartYear);
             DateTime endDate = DateTime.Parse("01 " + EndMonth + " " + EndYear);
 
-            DateTime cutOff = new DateTime(2025, 12, 1);
+            DateTime cutOff = new DateTime(2026, 04, 1);
 
             DataTable result = new DataTable();
 

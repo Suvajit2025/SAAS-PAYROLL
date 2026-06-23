@@ -6,85 +6,174 @@
 
 <style>
     :root {
-        --primary: #0f172a; /* Slate 900 */
-        --secondary: #64748b; /* Slate 500 */
-        --accent: #4f46e5; /* Indigo 600 */
-        --accent-hover: #4338ca;
-        --border: #e2e8f0;
-        --bg-body: #f1f5f9;
+        --primary: #1f2937;
+        --secondary: #6b7280;
+        --accent: #0e7777;
+        --accent-hover: #0a5f5f;
+        --border: #e5e7eb;
+        --bg-soft: #f8fafc;
+        --bg-tint: #eef7f7;
         --radius: 8px;
     }
 
-    body {
-        font-family: 'Inter', sans-serif;
-        background: var(--bg-body);
+    .paygroup-access-page {
         color: var(--primary);
     }
 
-    /* Panel Styling */
     .panel-modern {
         border: none;
         border-radius: var(--radius);
         background: #ffffff;
-        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
         margin-bottom: 20px;
+        overflow: hidden;
     }
 
     .panel-header-modern {
-        padding: 20px 24px;
+        padding: 18px 22px;
         border-bottom: 1px solid var(--border);
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        background: #ffffff;
     }
 
     .panel-title-modern {
         font-weight: 700;
         font-size: 18px;
         color: var(--primary);
+        margin: 0 0 4px;
+        line-height: 1.25;
+    }
+
+    .panel-subtitle-modern {
+        color: var(--secondary);
+        font-size: 12px;
         margin: 0;
     }
 
-    /* Selection Card (Left Side) */
+    .mapping-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
     .selection-sidebar {
-        background: #f8fafc;
+        background: linear-gradient(180deg, var(--bg-soft) 0%, #ffffff 100%);
         border-right: 1px solid var(--border);
         padding: 24px;
         min-height: 500px;
     }
 
-    /* Table Styling */
+    .selection-title {
+        font-size: 11px;
+        color: var(--secondary);
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin: 0 0 12px;
+        text-transform: uppercase;
+    }
+
+    .selection-card {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        box-shadow: 0 1px 2px rgba(15,23,42,0.03);
+    }
+
+    .hint-card {
+        background: var(--bg-tint);
+        border: 1px solid #cce9e9;
+        border-radius: var(--radius);
+        padding: 14px;
+        color: #0a5f5f;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .hint-card i {
+        margin-right: 8px;
+        color: var(--accent);
+    }
+
+    .search-wrap {
+        position: relative;
+        width: 260px;
+        max-width: 100%;
+    }
+
+    .search-wrap i {
+        color: var(--secondary);
+        font-size: 12px;
+        left: 12px;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+    }
+
+    .table-scroll {
+        max-height: 600px;
+        overflow: auto;
+    }
+
     .table-modern {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
+        margin: 0;
     }
 
         .table-modern thead th {
-            background: #f8fafc;
+            background: var(--bg-soft);
             color: var(--secondary);
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 12px 24px;
+            padding: 12px 20px;
             border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            white-space: nowrap;
         }
 
         .table-modern tbody td {
-            padding: 14px 24px;
+            padding: 14px 20px;
             border-bottom: 1px solid var(--border);
             font-size: 13px;
-            color: #334155;
+            color: #374151;
             vertical-align: middle;
         }
 
         .table-modern tbody tr:hover td {
-            background-color: #f1f5f9;
+            background-color: #f9fbfb;
             transition: 0.2s;
         }
 
-    /* Custom Checkbox */
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .paygroup-name {
+        color: var(--primary);
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .paygroup-description {
+        color: var(--secondary);
+        font-size: 12px;
+        line-height: 1.4;
+        max-width: 420px;
+    }
+
     .custom-chk {
         width: 18px;
         height: 18px;
@@ -92,22 +181,22 @@
         accent-color: var(--accent);
     }
 
-    /* Action Buttons */
     .btn-indigo {
         background: var(--accent);
         color: white;
         border: none;
-        padding: 10px 24px;
+        padding: 9px 18px;
         border-radius: 6px;
         font-weight: 600;
         font-size: 13px;
         transition: 0.2s;
+        white-space: nowrap;
     }
 
         .btn-indigo:hover {
             background: var(--accent-hover);
             color: white;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            box-shadow: 0 4px 10px rgba(14,119,119,0.18);
         }
 
     .form-control-modern {
@@ -118,45 +207,128 @@
         border: 1px solid var(--border);
         border-radius: 6px;
         outline: none;
+        box-shadow: none;
+        color: var(--primary);
     }
 
         .form-control-modern:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            box-shadow: 0 0 0 3px rgba(14,119,119,0.10);
         }
 
+    .search-wrap .form-control-modern {
+        height: 36px;
+        padding-left: 32px;
+    }
+
+    .select2-container {
+        width: 100% !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        height: 38px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px !important;
+        color: var(--primary) !important;
+        padding-left: 12px !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+    }
+
     .badge-code {
-        background: #eff6ff;
-        color: #1e40af;
+        background: #eef7f7;
+        color: var(--accent-hover);
         padding: 4px 8px;
         border-radius: 4px;
         font-family: monospace;
         font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .select-all-wrap {
+        align-items: center;
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        display: flex;
+        min-height: 36px;
+        padding: 8px 12px;
+        white-space: nowrap;
+    }
+
+    .select-all-wrap label {
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        margin: 0 0 0 8px;
+    }
+
+    @@media (max-width: 991px) {
+        .selection-sidebar {
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+            min-height: auto;
+        }
+
+        .mapping-toolbar {
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .search-wrap {
+            width: 100%;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .panel-header-modern,
+        .selection-sidebar {
+            padding: 16px;
+        }
+
+        .mapping-toolbar,
+        .btn-indigo {
+            width: 100%;
+        }
+
+        .select-all-wrap {
+            width: 100%;
+        }
+
+        .table-modern thead th,
+        .table-modern tbody td {
+            padding: 12px 14px;
+        }
     }
 </style>
 
-<section role="main" class="content-body">
+<section role="main" class="content-body paygroup-access-page">
     <header class="page-header">
-        <h2 style="font-weight:700; color: var(--primary);">User Access Management</h2>
+        <h2>Pay Group Access Mapping</h2>
     </header>
 
     <div class="panel-modern">
         <div class="row no-gutters">
 
             <div class="col-md-4 selection-sidebar">
-                <h6 class="text-uppercase font-weight-bold mb-3" style="font-size: 11px; color: var(--secondary); letter-spacing: 1px;">
-                    1. Select Employees
-                </h6>
-                <div class="form-group mb-4">
-                    @* Added ID 'TargetHR' specifically for JS hooks *@
-                    @Html.DropDownList("TargetHR", Model.masterModel.selectListItems, new { @id = "TargetHR", @class = "form-control-modern select2", onchange = "loadExistingMapping()" })
-                </div>
+                <div class="selection-card">
+                    <h6 class="selection-title">Select employee</h6>
+                    <div class="form-group mb-md">
+                        @* Added ID 'TargetHR' specifically for JS hooks *@
+                        @Html.DropDownList("TargetHR", Model.masterModel.selectListItems, new { @id = "TargetHR", @class = "form-control-modern select2", onchange = "loadExistingMapping()" })
+                    </div>
 
-                <div id="infoAlert" class="p-3 border-rounded" style="background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 8px;">
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-info-circle text-blue-600 mr-2" style="color: #0284c7;"></i>
-                        <span style="font-size: 12px; color: #0369a1; font-weight: 500;">
-                            Selecting an Employee will filter and display their current Pay Group assignments.
+                    <div id="infoAlert" class="hint-card">
+                        <i class="fa fa-info-circle"></i>
+                        <span>
+                            Choose an employee to load their current pay group assignments.
                         </span>
                     </div>
                 </div>
@@ -164,25 +336,28 @@
 
             <div class="col-md-8">
                 <div class="panel-header-modern">
-                    <h5 class="panel-title-modern">Assign Pay Groups</h5>
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="position-relative mr-3" style="width: 250px;">
-                            <i class="fa fa-search position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: var(--secondary); font-size: 12px;"></i>
-                            <input type="text" id="txtSearchPayGroup" class="form-control-modern" placeholder="Search Pay Groups..." style="padding-left: 32px; height: 34px;">
+                    <div>
+                        <h5 class="panel-title-modern">Assign Pay Groups</h5>
+                        <p class="panel-subtitle-modern">Search, select, and save the groups this employee can access.</p>
+                    </div>
+                    <div class="mapping-toolbar">
+                        <div class="search-wrap">
+                            <i class="fa fa-search"></i>
+                            <input type="text" id="txtSearchPayGroup" class="form-control-modern" placeholder="Search pay groups">
                         </div>
 
-                        <div class="custom-control custom-checkbox mr-3">
-                            <input type="checkbox" class="custom-control-input" id="chkSelectAll" onclick="toggleSelectAll(this)">
-                            <label class="custom-control-label font-weight-bold small" for="chkSelectAll" style="cursor:pointer">Select All</label>
+                        <div class="select-all-wrap">
+                            <input type="checkbox" id="chkSelectAll" onclick="toggleSelectAll(this)">
+                            <label for="chkSelectAll">Select All</label>
                         </div>
 
                         <button class="btn-indigo" onclick="saveMapping()">
-                            <i class="fa fa-save mr-2"></i> Save Permissions
+                            <i class="fa fa-save mr-xs"></i> Save Permissions
                         </button>
                     </div>
                 </div>
 
-                <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                <div class="table-responsive table-scroll">
                     <table class="table-modern">
                         <thead>
                             <tr>
@@ -201,12 +376,14 @@
                                         <input type="checkbox" class="pg-chk custom-chk" value="@item.PayGroupID" id="pg_@item.PayGroupID">
                                     </td>
                                     <td>
-                                        <div style="font-weight: 600; color: var(--primary);">@item.PayGroupName</div>
+                                        <div class="paygroup-name">@item.PayGroupName</div>
                                     </td>
                                     <td>
                                         <span class="badge-code">@item.PayGroupMasterCode</span>
                                     </td>
-                                    <td class="text-muted small">@item.Description</td>
+                                    <td>
+                                        <div class="paygroup-description">@item.Description</div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -223,6 +400,11 @@
 <script>
     // Ensure "Select All" works even on initial load if everything is pre-checked
     $(document).ready(function () {
+        $("#TargetHR").select2({
+            width: "100%",
+            placeholder: "Select employee"
+        });
+
         // Search Filter Logic
         $("#txtSearchPayGroup").on("keyup", function () {
             var value = $(this).val().toLowerCase();

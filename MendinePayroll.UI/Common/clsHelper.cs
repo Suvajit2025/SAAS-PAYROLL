@@ -564,18 +564,18 @@ namespace Common.Utility
 
         public static void fnErrorLog(String Detail)
         {
-            String path = HttpContext.Current.Server.MapPath("~\\CompanyData\\ErrorLog\\ErrorLog.txt");
-            String mError = "----------START-------- - "+
+            String path = System.Web.Hosting.HostingEnvironment.MapPath("~\\CompanyData\\ErrorLog\\ErrorLog.txt");
+            String mError = "----------START--------- " + Environment.NewLine +
                             "Date & Time : " + DateTime.Now + Environment.NewLine +
                             "Message :  " + Detail + Environment.NewLine +
                             "----------END--------- " + Environment.NewLine;
             try
             {
-                if (File.Exists(path) == false)
-                {
-                    File.Create(path);
-                }
-                File.WriteAllText(path, mError);
+                string directory = Path.GetDirectoryName(path);
+                if (!Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
+
+                File.AppendAllText(path, mError);
             }
             catch (Exception) { }
             finally { }
@@ -758,17 +758,18 @@ namespace Common.Utility
         {
             String path = System.Web.Hosting.HostingEnvironment.MapPath("~\\CompanyData\\ErrorLog\\ErrorLog.txt");
             //String path = HttpContext.Current.Server.MapPath("~\\CompanyData\\ErrorLog\\ErrorLog.txt");
-            String mError = "Date & Time : " + DateTime.Now + Environment.NewLine +
+            String mError = "----------START--------- " + Environment.NewLine +
+                            "Date & Time : " + DateTime.Now + Environment.NewLine +
                             "SP Name :  " + SPName + Environment.NewLine +
                             "Message :  " + Result + Environment.NewLine +
                             "----------END--------- " + Environment.NewLine;
             try
             {
-                if (File.Exists(path)== false)
-                {
-                    File.Create(path);
-                }
-                File.WriteAllText(path, mError); 
+                string directory = Path.GetDirectoryName(path);
+                if (!Directory.Exists(directory))
+                    Directory.CreateDirectory(directory);
+
+                File.AppendAllText(path, mError);
             }
             catch (Exception) { }
             finally { }
