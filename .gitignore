@@ -384,3 +384,4 @@ logs/
 # Temporary
 temp/
 tmp/
+/MendinePayroll.UI/Database/PayrollCycleConfiguration_Procedures.sql
