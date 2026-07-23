@@ -46,19 +46,59 @@ namespace MendinePayroll.UI.Controllers
         // GET: Payslip
         public ActionResult Index(int empId, string month, int year)
         {
-            //if (!IsPayslipPaid(empId, month, year))
-            //{
-            //    return View(CreateUnavailablePayslipModel(month, year, false, "No payslip generated for Month of " + month + "-" + year));
-            //}
+            try
+            {
+                //clsDatabase.fnErrorLog(
+                //    "PayslipIndexStart",
+                //    $"tenantId={Request?.QueryString["tenantId"]}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}");
 
-            var model = GetPayslipData(empId, month, year, false, 0);
-            return View(model);
+                var model = GetPayslipData(empId, month, year, false, 0);
+
+                string viewName = GetPayslipViewName(model.TenantId);
+
+                return View(viewName, model);
+            }
+            catch (Exception ex)
+            {
+                clsDatabase.fnErrorLog(
+                    "PayslipIndexError",
+                    $"tenantId={Request?.QueryString["tenantId"]}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}; error={ex}");
+
+                return Content("Payslip view failed. Please check server ErrorLog.txt for PayslipIndexError.");
+            }
         }
+        internal string GetPayslipViewName(string tenantId)
+        {
+            string viewName = clsDatabase.fnDBOperation(
+                "SP_GetPayslipViewName",
+                tenantId);
 
+            if (string.IsNullOrWhiteSpace(viewName))
+                viewName = "Index";
+
+            return viewName;
+        }
         public ActionResult HrPreview(int empId, string month, int year)
         {
-            var model = GetPayslipData(empId, month, year, true, 1);
-            return View("Index", model);
+            try
+            {
+                clsDatabase.fnErrorLog(
+                    "PayslipHrPreviewStart",
+                    $"tenantId={Request?.QueryString["tenantId"]}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}");
+
+                var model = GetPayslipData(empId, month, year, false, 1);
+                string viewName = GetPayslipViewName(model.TenantId);
+
+                return View(viewName, model);
+            }
+            catch (Exception ex)
+            {
+                clsDatabase.fnErrorLog(
+                    "PayslipHrPreviewError",
+                    $"tenantId={Request?.QueryString["tenantId"]}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}; error={ex}");
+
+                return Content("Payslip preview failed. Please check server ErrorLog.txt for PayslipHrPreviewError.");
+            }
         }
  
         public static string NumberToWords(long number)
@@ -116,42 +156,42 @@ namespace MendinePayroll.UI.Controllers
 
 
     
-    public ActionResult Download(int empId, string month, int year)
+    public ActionResult Downloadpdf(int empId, string month, int year)
         {
-            // reuse your Index logic
-            //if (!IsPayslipPaid(empId, month, year))
-            //{
-            //    return Content("Payslip is available after salary is marked as paid.");
-            //}
-            //if (!IsPayslipPaid(empId, month, year))
-            //{
-            //    return Content( "No payslip generated for Month of " + month + "-" + year);
-            //}
-            var model = GetPayslipData(empId, month, year, true, 1);
+            try
+            {
+                //clsDatabase.fnErrorLog(
+                //    "PayslipDownloadPdfStart",
+                //    $"tenantId={TenantId}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}");
 
-           
-            var pdfService = new PayslipPdfService();
-            byte[] pdfBytes = pdfService.GeneratePayslipPdf(
-                this.ControllerContext,
-                model,
-                $"Payslip_{model.EmpName}_{month}_{year}.pdf"
-            );
-            if (pdfBytes == null || pdfBytes.Length == 0)
-                throw new Exception("Payslip PDF generation failed.");
+                
+                var model = GetPayslipData(empId, month, year, true, 1);
+                string viewName = GetPayslipViewName(model.TenantId);
 
-            // 🔥 FORCE DOWNLOAD (not inline preview)
-            Response.Clear();
-            Response.ContentType = "application/pdf";
-            Response.AddHeader(
-                "Content-Disposition",
-                $"attachment; filename=Payslip_{model.EmpName}_{month}_{year}.pdf"
-            );
-            Response.BinaryWrite(pdfBytes);
-            Response.Flush();
-            Response.End();
+                var pdfService = new PayslipPdfService();
 
-            return new EmptyResult();
-            //return File(pdfBytes, "application/pdf");
+                byte[] pdfBytes = pdfService.GeneratePayslipPdf(
+                    this.ControllerContext,
+                    viewName,
+                    model,
+                    $"Payslip_{model.EmpName}_{month}_{year}.pdf"
+                );
+                if (pdfBytes == null || pdfBytes.Length == 0)
+                    throw new Exception("Payslip PDF generation failed.");
+
+                clsDatabase.fnErrorLog(
+                    "PayslipDownloadPdfGenerated",
+                    $"tenantId={TenantId}; empId={empId}; month={month}; year={year}; bytes={pdfBytes.Length}");
+
+                return File(pdfBytes, "application/pdf", $"Payslip_{model.EmpName}_{month}_{year}.pdf");
+            }
+            catch (Exception ex)
+            {
+                clsDatabase.fnErrorLog(
+                    "PayslipDownloadPdfError",
+                    $"tenantId={Request?.QueryString["tenantId"]}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}; error={ex}");
+                return Content("Payslip PDF download failed. Please check server ErrorLog.txt for PayslipDownloadPdfError.");
+            }
         }
 
         private PayslipViewModel CreateUnavailablePayslipModel(string month, int year, bool isPdf, string message)
@@ -669,7 +709,8 @@ namespace MendinePayroll.UI.Controllers
             {
                 Month = Month,
                 Year = Year,
-                isPdf = ispdf
+                isPdf = ispdf,
+                TenantId=TenantId
             };
 
             int monthNum = DateTime.ParseExact(
@@ -677,255 +718,8 @@ namespace MendinePayroll.UI.Controllers
                 "MMMM",
                 System.Globalization.CultureInfo.InvariantCulture
             ).Month;
-
-            //-------------------------------------------------------
-            // OLD ENGINE (UP TO DECEMBER 2025)
-            //-------------------------------------------------------
-            if (Convert.ToInt32(Year) < 2026 ||
-                    (Convert.ToInt32(Year) == 2026 && monthNum < 4))
-            {
-            DataSet ds1 = clsDatabase.fnDataSet(
-                "Essp.dbo.PRC_Get_PayslipFullData",
-                EmpId, Month, Year, TenantId);
-
-            if (ds1 == null || ds1.Tables.Count == 0)
-                return model;
-
-            // Company
-            if (ds1.Tables[0].Rows.Count > 0)
-            {
-                var row = ds1.Tables[0].Rows[0];
-                model.CompanyName = row["Company"].ToString();
-                model.CompanyLogoUrl = row["CompanyLogoUrl"].ToString();
-                model.CompanyAddressLine1 = row["Address1"].ToString();
-                model.CompanyAddressLine2 = row["Address2"].ToString();
-            }
-
-            // Employee
-            if (ds1.Tables.Count > 1 && ds1.Tables[1].Rows.Count > 0)
-            {
-                var row = ds1.Tables[1].Rows[0];
-
-                model.EmpId = Convert.ToInt32(row["empid"]);
-                model.EmpNo = row["empno"].ToString();
-                model.EmpCode = row["empcode"].ToString();
-                model.EmpName = row["EmployeeName"].ToString();
-                model.Designation = row["Designation"].ToString();
-                model.Department = row["Department"].ToString();
-                model.DOJ = Convert.ToDateTime(row["joining"]);
-                model.PAN = row["emppancardno"].ToString();
-                model.UAN = row["empuanno"].ToString();
-                model.PFNo = row["empepfno"].ToString();
-                model.ESICNo = row["empesicno"].ToString();
-                model.BankAccount = row["empaccountno"].ToString();
-                model.BankName = row["bankname"].ToString();
-            }
-
-            // 3. Attendance Summary
-            var SalesEmpNo = clsDatabase.fnDBOperation("Essp.dbo.PROC_GETEMPNO_SALES", EmpId);
-            if (!string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
-            {
-                DataTable officeTable = clsDatabase.fnDataTable("proc_dailyattendance", Month, Year, SalesEmpNo, "");
-                // Step 2: Fetch API data (Sales)
-                List<AttendanceLog> apiLogs = new List<AttendanceLog>();
-                if (!string.IsNullOrEmpty(SalesEmpNo) && SalesEmpNo != "0")
-                {
-                    using (var client = new HttpClient())
-                    {
-                        string url = $"https://crmfieldforceapi.mendine.co.in/api/crm/HRMSApi/EmployeeAttendanceSheet?Businessid=MEND-PVTL-890&Employeeno={SalesEmpNo}&Month={Month}&Year={Year}";
-                        var response = client.GetStringAsync(url).Result;
-
-
-
-                        //apiLogs = JsonSerializer.Deserialize<List<AttendanceLog>>(response,
-                        //    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                        apiLogs = JsonConvert.DeserializeObject<List<AttendanceLog>>(response);
-
-                        // Log response
-                        System.IO.File.WriteAllText(
-                                System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AttendanceApiLog.txt"),
-                                JsonConvert.SerializeObject(apiLogs, Formatting.Indented)
-                            );
-
-                    }
-
-                }
-                // Step 3: Merge sources if Hybrid
-                int totalDays = 0, presentDays = 0, leaveDays = 0;
-
-                int monthNumber = DateTime.ParseExact(Month, "MMMM", System.Globalization.CultureInfo.InvariantCulture).Month;
-                int yearNumber = Convert.ToInt32(Year);
-
-                var calendarDays = Enumerable.Range(1, DateTime.DaysInMonth(yearNumber, monthNumber))
-                                                .Select(d => new DateTime(yearNumber, monthNumber, d));
-
-                foreach (var day in calendarDays)
-                {
-                    totalDays++;
-
-                    // ✅ check from proc_dailyattendance (office punches)
-                    bool officePresent = officeTable?.AsEnumerable().Any(r =>
-                        Convert.ToDateTime(r["LOGDATE"]).Date == day.Date &&
-                        !string.IsNullOrWhiteSpace(r["INTIME"]?.ToString()) &&
-                        !string.IsNullOrWhiteSpace(r["OUTTIME"]?.ToString()) &&
-                        r["DURATION"] != DBNull.Value &&
-                        r["DURATION"].ToString() != "00:00:00"
-                    ) ?? false;
-
-                    var apiDay = apiLogs.FirstOrDefault(l =>
-                    {
-                        if (string.IsNullOrWhiteSpace(l.LogDate))
-                            return false;
-
-                        DateTime parsed;
-                        if (!DateTime.TryParseExact(l.LogDate,
-                            new[] { "dd/MM/yyyy", "yyyy-MM-dd", "MM/dd/yyyy HH:mm:ss" },
-                            System.Globalization.CultureInfo.InvariantCulture,
-                            System.Globalization.DateTimeStyles.None,
-                            out parsed))
-                            return false;
-
-                        return parsed.Date == day.Date;
-                    });
-
-                    bool apiPresent = apiDay != null && !string.IsNullOrWhiteSpace(apiDay.CheckIn);
-                    bool isLeave = apiDay != null && apiDay.WorkType?.Trim().ToUpper() == "LEAVE";
-
-                    if (isLeave)
-                        leaveDays++;
-                    else if (officePresent || apiPresent)
-                        presentDays++;
-                    else
-                        leaveDays++;
-                }
-                // Assign
-                model.TotalDays = totalDays;
-                model.WorkedDays = presentDays;  // or adjust with policy
-                model.LeaveTaken = leaveDays;
-                if (ds1.Tables.Count > 2 && ds1.Tables[2].Rows.Count > 0)
-                {
-                    var dsRow = ds1.Tables[2].Rows[0];
-                    model.TotalDays = Convert.ToInt32(dsRow["TotalDays"]);
-                    model.PayableDays = Convert.ToInt32(dsRow["TotalDays"]);
-                    model.LeaveTaken = Convert.ToInt32(dsRow["TotalLeave"]);
-                }
-
-            }
-            else
-            {
-                // 3. Attendance Summary For except Sales Employee
-                if (ds1.Tables.Count > 2 && ds1.Tables[2].Rows.Count > 0)
-                {
-                    var row = ds1.Tables[2].Rows[0];
-                    model.TotalDays = Convert.ToInt32(row["TotalDays"]);
-                    model.WorkedDays = Convert.ToInt32(row["WorkedDays"]);
-                    model.LOPDays = 0;
-                    model.PayableDays = Convert.ToInt32(row["TotalDays"]); // or DaysPayable
-                    model.LeaveTaken = Convert.ToInt32(row["TotalLeave"]);
-                }
-            }
-
-            // 4. Leave Balances
-            if (ds1.Tables.Count > 3)
-            {
-                foreach (DataRow row in ds1.Tables[3].Rows)
-                {
-                    model.LeaveBalances.Add(new LeaveBalance
-                    {
-                        CodeType = row["CodeType"].ToString(),
-                        Balance = Convert.ToDecimal(row["LeaveBalance"])
-                    });
-                }
-            }
-            // 5. Earnings (Table 4) → skip 0 and Gross Amount
-            if (ds1.Tables.Count > 4)
-            {
-                var earningsList = new List<SalaryHead>();
-
-                foreach (DataRow row in ds1.Tables[4].Rows)
-                {
-                    decimal amount = Convert.ToDecimal(row["Amount"]);
-                    string name = row["PayConfigName"].ToString();
-
-                    if (amount == 0) continue;
-                    if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
-
-                    earningsList.Add(new SalaryHead
-                    {
-                        PayConfigName = ToTitleCase(name),
-                        Amount = amount
-                    });
-                }
-
-                // ✅ Priority Order: Basic > Stipend > Others
-                model.Earnings = earningsList
-                    .OrderBy(e =>
-                        e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
-                        e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
-                    )
-                    .ThenBy(e => e.PayConfigName) // optional: alphabetical for the rest
-                    .ToList();
-            }
-
-            // 6. Deductions (Table 5) → skip 0 values
-            if (ds1.Tables.Count > 5)
-            {
-                foreach (DataRow row in ds1.Tables[5].Rows)
-                {
-                    decimal amount = Convert.ToDecimal(row["Amount"]);
-                    if (amount == 0) continue;
-
-                    model.Deductions.Add(new SalaryHead
-                    {
-                        PayConfigName = ToTitleCase(row["PayConfigName"].ToString()),
-                        Amount = amount
-                    });
-                }
-            }
-
-            //7. Net Pay 
-            if (ds1.Tables.Count > 5 && ds1.Tables[6].Rows.Count > 0)
-            {
-                var row = ds1.Tables[6].Rows[0];
-                if (row.Table.Columns.Contains("NetPay"))
-                {
-                    model.NetPay = Convert.ToDecimal(row["NetPay"]);
-                    model.ShowNetPay = true;
-                }
-            }
-            //7. Loan 
-            // 7. Loan (only if SP returned a loan dataset with values)
-            if (ds1.Tables.Count > 7 && ds1.Tables[7] != null && ds1.Tables[7].Rows.Count > 0)
-            {
-                var row = ds1.Tables[7].Rows[0];
-
-                model.LoanInstallment = row["LoanInstallment"] == DBNull.Value ? 0
-                                        : Math.Round(Convert.ToDecimal(row["LoanInstallment"]), 0);
-
-                model.OpeningLoan = row["OpeningAmount"] == DBNull.Value ? 0
-                                        : Math.Round(Convert.ToDecimal(row["OpeningAmount"]), 0);
-
-                model.ClosingLoan = row["ClosingAmount"] == DBNull.Value ? 0
-                                        : Math.Round(Convert.ToDecimal(row["ClosingAmount"]), 0);
-            }
-
-            // Totals
-            var grossRow = model.Earnings
-                .FirstOrDefault(x => x.PayConfigName.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase));
-            model.GrossEarnings = grossRow != null ? grossRow.Amount : model.Earnings.Sum(x => x.Amount);
-            model.TotalDeductions = model.Deductions.Sum(x => x.Amount);
-            //model.NetPay = model.GrossEarnings - model.TotalDeductions;
-            model.NetPayWords = NumberToWords((long)model.NetPay);
-        }
-
-        //-------------------------------------------------------
-        // NEW ENGINE (JANUARY 2026 ONWARDS)
-        //-------------------------------------------------------
-        else
-        {
-            DataSet ds = clsDatabase.fnDataSet(
-                "PRC_Get_PayslipFullData",
-                EmpId, Month, Year, TenantId, hrTag);
+             
+            DataSet ds = clsDatabase.fnDataSet("PRC_Get_PayslipFullData",EmpId, Month, Year, TenantId, hrTag);
 
             if (ds == null || ds.Tables.Count == 0)
                 return model;
@@ -958,6 +752,7 @@ namespace MendinePayroll.UI.Controllers
                 model.ESICNo = row["empesicno"].ToString();
                 model.BankAccount = row["empaccountno"].ToString();
                 model.BankName = row["bankname"].ToString();
+                model.IFSCCode= row["IFSCCode"].ToString();
             }
 
             // 3. Attendance Summary
@@ -1027,11 +822,13 @@ namespace MendinePayroll.UI.Controllers
                 if (ds.Tables.Count > 2 && ds.Tables[2].Rows.Count > 0)
                 {
                     var row = ds.Tables[2].Rows[0];
-                    model.TotalDays = Convert.ToInt32(row["TotalDays"]);
-                    model.WorkedDays = Convert.ToInt32(row["WorkedDays"]);
-                    model.LOPDays = row.Table.Columns.Contains("LOPDays") ? Convert.ToInt32(row["LOPDays"]) : 0;
-                    model.PayableDays = Convert.ToInt32(row["TotalDays"]);
-                    model.LeaveTaken = Convert.ToInt32(row["TotalLeave"]);
+                    model.WorkedDays = Convert.ToInt32(row["WorkingDays"]);
+                    model.WeeklyOffHoliday = Convert.ToInt32(row["WeeklyOffHoliday"]);
+                    model.PayableDays = Convert.ToInt32(row["PayDays"]);
+                    model.LeaveTaken = Convert.ToInt32(row["LeaveTaken"]);
+                    model.LOPDays = row.Table.Columns.Contains("LWP") ? Convert.ToInt32(row["LWP"]) : 0;
+                    
+                   
                 }
             }
             // Step 1: Fetch office data (DB)
@@ -1049,63 +846,132 @@ namespace MendinePayroll.UI.Controllers
                     });
                 }
             }
-            // 5. Earnings (Table 4) → Side-by-Side Actual vs Earned
+                // 5. Earnings (Table 4) → Side-by-Side Actual vs Earned
 
-            if (ds.Tables.Count > 4)
-            {
-                var earningsList = new List<SalaryHead>();
+                //if (ds.Tables.Count > 4)
+                //{
+                //    var earningsList = new List<SalaryHead>();
 
-                foreach (DataRow row in ds.Tables[4].Rows)
+                //    foreach (DataRow row in ds.Tables[4].Rows)
+                //    {
+
+                //        // Adjust column names to match your new SP output
+                //        decimal actual = row.Table.Columns.Contains("ActualAmount") ? Convert.ToDecimal(row["ActualAmount"]) : 0;
+                //        decimal earned = row.Table.Columns.Contains("EarnedAmount") ? Convert.ToDecimal(row["EarnedAmount"]) : 0;
+                //        string name = row["AllowanceName"].ToString();
+
+                //        // Skip if both are zero or if it's the Total row
+                //        if (actual == 0 && earned == 0) continue;
+                //        if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
+
+                //        earningsList.Add(new SalaryHead
+                //        {
+                //            PayConfigName = ToTitleCase(name),
+                //            ActualAmount = actual,
+                //            Amount = earned
+                //        });
+                //    }
+
+                //    // ✅ Priority Order: Basic > Stipend > Others
+                //    model.Earnings = earningsList
+                //        .OrderBy(e =>
+                //            e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
+                //            e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
+                //        )
+                //        .ThenBy(e => e.PayConfigName)
+                //        .ToList();
+                //}
+                if (ds.Tables.Count > 4)
                 {
-                    // Adjust column names to match your new SP output
-                    decimal actual = row.Table.Columns.Contains("ActualAmount") ? Convert.ToDecimal(row["ActualAmount"]) : 0;
-                    decimal earned = row.Table.Columns.Contains("EarnedAmount") ? Convert.ToDecimal(row["EarnedAmount"]) : 0;
-                    string name = row["AllowanceName"].ToString();
+                    var earnings = new List<SalaryHead>();
 
-                    // Skip if both are zero or if it's the Total row
-                    if (actual == 0 && earned == 0) continue;
-                    if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
-
-                    earningsList.Add(new SalaryHead
+                    foreach (DataRow row in ds.Tables[4].Rows)
                     {
-                        PayConfigName = ToTitleCase(name),
-                        ActualAmount = actual,
-                        Amount = earned
-                    });
+                        bool isOld = row.Table.Columns.Contains("PayConfigName");
+
+                        string name = isOld
+                            ? row["PayConfigName"].ToString()
+                            : row["AllowanceName"].ToString();
+
+                        decimal actual = isOld
+                            ? Convert.ToDecimal(row["Amount"])
+                            : Convert.ToDecimal(row["ActualAmount"]);
+
+                        decimal earned = isOld
+                            ? Convert.ToDecimal(row["Amount"])
+                            : Convert.ToDecimal(row["EarnedAmount"]);
+
+                        if (actual == 0 && earned == 0)
+                            continue;
+
+                        if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        earnings.Add(new SalaryHead
+                        {
+                            PayConfigName = ToTitleCase(name),
+                            ActualAmount = actual,
+                            Amount = earned
+                        });
+                    }
+
+                    model.Earnings = earnings
+                        .OrderBy(e =>
+                            e.PayConfigName.Equals("Basic", StringComparison.OrdinalIgnoreCase) ? 0 :
+                            e.PayConfigName.Equals("Stipend", StringComparison.OrdinalIgnoreCase) ? 1 : 2)
+                        .ThenBy(e => e.PayConfigName)
+                        .ToList();
                 }
+                // 6. Deductions (Table 5) 
+                //    if (ds.Tables.Count > 5)
+                //{
+                //    foreach (DataRow row in ds.Tables[5].Rows)
+                //    {
+                //        // Adjust column names to match your new Deduction SP output
+                //        decimal configDeduction = row.Table.Columns.Contains("ConfiguredDeduction") ? Convert.ToDecimal(row["ConfiguredDeduction"]) : 0;
+                //        decimal actualDeduction = row.Table.Columns.Contains("ActualDeduction") ? Convert.ToDecimal(row["ActualDeduction"]) : 0;
 
-                // ✅ Priority Order: Basic > Stipend > Others
-                model.Earnings = earningsList
-                    .OrderBy(e =>
-                        e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
-                        e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
-                    )
-                    .ThenBy(e => e.PayConfigName)
-                    .ToList();
-            }
+                //        if (configDeduction == 0 && actualDeduction == 0) continue;
 
-            // 6. Deductions (Table 5) 
-            if (ds.Tables.Count > 5)
-            {
-                foreach (DataRow row in ds.Tables[5].Rows)
+                //        model.Deductions.Add(new SalaryHead
+                //        {
+                //            PayConfigName = ToTitleCase(row["DeductionName"].ToString()),
+                //            ActualAmount = configDeduction, // Standard deduction
+                //            Amount = actualDeduction     // Processed deduction
+                //        });
+                //    }
+                //}
+                if (ds.Tables.Count > 5)
                 {
-                    // Adjust column names to match your new Deduction SP output
-                    decimal configDeduction = row.Table.Columns.Contains("ConfiguredDeduction") ? Convert.ToDecimal(row["ConfiguredDeduction"]) : 0;
-                    decimal actualDeduction = row.Table.Columns.Contains("ActualDeduction") ? Convert.ToDecimal(row["ActualDeduction"]) : 0;
-
-                    if (configDeduction == 0 && actualDeduction == 0) continue;
-
-                    model.Deductions.Add(new SalaryHead
+                    foreach (DataRow row in ds.Tables[5].Rows)
                     {
-                        PayConfigName = ToTitleCase(row["DeductionName"].ToString()),
-                        ActualAmount = configDeduction, // Standard deduction
-                        Amount = actualDeduction     // Processed deduction
-                    });
-                }
-            }
+                        bool isOld = row.Table.Columns.Contains("PayConfigName");
 
-            //7. Net Pay is optional. HRTag = 0 may intentionally skip this resultset.
-            var netPayTable = FindTableWithColumn(ds, "NetPay", 6);
+                        string name = isOld
+                            ? row["PayConfigName"].ToString()
+                            : row["DeductionName"].ToString();
+
+                        decimal configured = isOld
+                            ? Convert.ToDecimal(row["Amount"])
+                            : Convert.ToDecimal(row["ConfiguredDeduction"]);
+
+                        decimal actual = isOld
+                            ? Convert.ToDecimal(row["Amount"])
+                            : Convert.ToDecimal(row["ActualDeduction"]);
+
+                        if (configured == 0 && actual == 0)
+                            continue;
+
+                        model.Deductions.Add(new SalaryHead
+                        {
+                            PayConfigName = ToTitleCase(name),
+                            ActualAmount = configured,
+                            Amount = actual
+                        });
+                    }
+                }
+                //7. Net Pay is optional. HRTag = 0 may intentionally skip this resultset.
+                var netPayTable = FindTableWithColumn(ds, "NetPay", 6);
             if (netPayTable != null && netPayTable.Rows.Count > 0)
             {
                 var row = netPayTable.Rows[0];
@@ -1132,7 +998,17 @@ namespace MendinePayroll.UI.Controllers
                 model.OpeningLoan = GetSafeDecimal(row, "OpeningBalance");
                 model.ClosingLoan = GetSafeDecimal(row, "ClosingBalance");
             }
-
+            bool isOldPayroll = ds.Tables.Count > 4 &&
+                    ds.Tables[4].Columns.Contains("PayConfigName");
+            if (isOldPayroll && model.LoanInstallment > 0)
+            {
+                model.Deductions.Add(new SalaryHead
+                {
+                    PayConfigName = "Salary Advance",
+                    ActualAmount = model.LoanInstallment,
+                    Amount = model.LoanInstallment
+                });
+            }
             // Totals
             var grossRow = model.Earnings
                 .FirstOrDefault(x => x.PayConfigName.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase));
@@ -1141,7 +1017,7 @@ namespace MendinePayroll.UI.Controllers
             //model.NetPay = model.GrossEarnings - model.TotalDeductions;
             model.NetPayWords = NumberToWords((long)model.NetPay);
             // Remaining ds logic same as your previous block
-        }
+        //}
 
         //-------------------------------------------------------
         // Final Totals
@@ -1159,20 +1035,22 @@ namespace MendinePayroll.UI.Controllers
 
             using (var zipStream = new MemoryStream())
             {
+                var pdfService = new PayslipPdfService();
+
                 using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
                 {
                     foreach (int empId in empList)
                     {
                         var model = GetPayslipData(empId, month, year, true, 1);
+                        string viewName = GetPayslipViewName(model.TenantId);
+
                         if (model == null) continue;
 
-                        var pdfResult = new ViewAsPdf("Index", model)
-                        {
-                            PageSize = Rotativa.Options.Size.A4,
-                            PageOrientation = Rotativa.Options.Orientation.Portrait
-                        };
-
-                        byte[] pdfBytes = pdfResult.BuildFile(ControllerContext);
+                        byte[] pdfBytes = pdfService.GeneratePayslipPdf(
+                            ControllerContext,
+                            viewName,
+                            model,
+                            $"Payslip_{model.EmpCode}_{model.EmpName}_{month}_{year}.pdf");
 
                         var entry = archive.CreateEntry($"Payslip_{model.EmpCode}_{model.EmpName}_{month}_{year}.pdf",
                                                         CompressionLevel.Fastest);

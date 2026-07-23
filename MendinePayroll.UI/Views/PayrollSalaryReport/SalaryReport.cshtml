@@ -106,7 +106,7 @@
                 <button onclick="approveSelectedSalaries()" class="btn btn-primary btn-sm"><i class="fa fa-check-circle mr-xs"></i> Approve / Finalize</button>
                 <button onclick="rejectSelectedSalaries()" class="btn btn-danger btn-sm"><i class="fa fa-times-circle mr-xs"></i> Reject</button>
                 @*<button onclick="downloadBulkPayslips()" class="btn btn-default btn-sm"><i class="fa fa-file-pdf-o text-danger mr-xs" disabled></i> Bulk Payslips</button>*@
-                <button onclick="processPayment()" class="btn btn-success btn-sm"><i class="fa fa-check-circle mr-xs"></i> Mark as Paid</button>
+                <button id="btnProcessPayment" onclick="processPayment()" class="btn btn-success btn-sm"><i class="fa fa-check-circle mr-xs"></i> Mark as Paid</button>
             </div>
         </header>
 
@@ -390,6 +390,13 @@
 
             let statusBadge = r.Status == 2 ? '<span class="label label-success">Finalized</span>' :
                 (r.Status == 3 ? '<span class="label label-danger">Rejected</span>' : '<span class="label label-warning">Draft</span>');
+            const downloadButton = r.Status == 3
+                    ? `<button class="btn btn-xs btn-primary" disabled title="Payslip cannot be downloaded for rejected payroll">
+                    <i class="fa fa-file-pdf-o"></i>
+                       </button>`
+                                : `<button class="btn btn-xs btn-primary" onclick="downloadPayslip(${r.EmployeeID})">
+                            <i class="fa fa-file-pdf-o"></i>
+                       </button>`;
 
             const tr = `
             <tr>
@@ -412,7 +419,7 @@
                 }</td>
                 <td class="text-center">
                     <button class="btn btn-xs btn-default" onclick="openBankModal(${r.EmployeeID}, '${escapeHtml(r.EmployeeName)}')"><i class="fa fa-university"></i></button>
-                    <button class="btn btn-xs btn-primary" onclick="downloadPayslip(${r.EmployeeID})" ><i class="fa fa-file-pdf-o"></i></button>
+                    ${downloadButton}
                 </td>
             </tr>`;
             $tbody.append(tr);
@@ -865,7 +872,17 @@
         pageNumber = p;
         refreshGrid();
     } 
+    let isPaymentProcessing = false;
+
+    function setPaymentButtonsDisabled(disabled) {
+        $("#btnProcessPayment, #btnConfirmPaid").prop("disabled", disabled);
+    }
+
     function processPayment() {
+        if (isPaymentProcessing || $("#MarkPaidModal").hasClass("in")) {
+            return;
+        }
+
         const ids = getSelectedEmployeeIds();
         if (!ids.length) {
             toastr.warning("Please select at least one employee.");
@@ -881,10 +898,21 @@
         const dd = String(d.getDate()).padStart(2, "0");
         $("#txtPaidDate").val(`${yyyy}-${mm}-${dd}`);
 
+        $("#btnProcessPayment").prop("disabled", true);
         $("#MarkPaidModal").modal("show");
     }
 
+    $("#MarkPaidModal").on("hidden.bs.modal", function () {
+        if (!isPaymentProcessing) {
+            $("#btnProcessPayment").prop("disabled", false);
+        }
+    });
+
     $(document).on("click", "#btnConfirmPaid", function () {
+        if (isPaymentProcessing) {
+            return;
+        }
+
         const ids = getSelectedEmployeeIds();
         const paidDate = $("#txtPaidDate").val();
 
@@ -897,6 +925,8 @@
             return;
         }
 
+        isPaymentProcessing = true;
+        setPaymentButtonsDisabled(true);
         showPayrollLoader();
 
         $.ajax({
@@ -945,6 +975,8 @@
             },
             complete: function () {
                 hidePayrollLoader();
+                isPaymentProcessing = false;
+                setPaymentButtonsDisabled(false);
             }
         });
     });

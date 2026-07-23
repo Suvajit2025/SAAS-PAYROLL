@@ -12,8 +12,10 @@ namespace MendinePayroll.UI.Utility
         {
             var routeData = filterContext.RouteData.Values;
             string controller = routeData["controller"].ToString().ToLower();
+            string action = routeData["action"].ToString().ToLower();
 
-            if (controller == "login")
+            if (controller == "login" ||
+                (controller == "payslip" && (action == "index" || action == "downloadpdf")))
                 return;
 
             var session = filterContext.HttpContext.Session;

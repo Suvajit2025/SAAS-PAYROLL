@@ -20,18 +20,16 @@ public class MailService
             bool enableSsl = ConfigurationManager.AppSettings["enablessl"] == "1";
             string defaultFrom = ConfigurationManager.AppSettings["MailFrom"];
             string adminEmail = ConfigurationManager.AppSettings["AdminEmail"];
+            string resolvedTo = !string.IsNullOrWhiteSpace(toEmail) ? toEmail : adminEmail;
+            string resolvedFrom = !string.IsNullOrWhiteSpace(fromEmail) ? fromEmail : defaultFrom;
 
             using (var mail = new MailMessage())
             {
                 // FROM
-                mail.From = new MailAddress(
-                    !string.IsNullOrWhiteSpace(fromEmail) ? fromEmail : defaultFrom
-                );
+                mail.From = new MailAddress(resolvedFrom);
 
                 // TO
-                mail.To.Add(
-                    !string.IsNullOrWhiteSpace(toEmail) ? toEmail : adminEmail
-                );
+                mail.To.Add(resolvedTo);
 
                 mail.Subject = subject;
                 mail.IsBodyHtml = true;
@@ -66,12 +64,23 @@ public class MailService
 
                 using (var smtp = new SmtpClient(smtpHost, smtpPort))
                 {
+                    ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
                     smtp.EnableSsl = enableSsl;
                     smtp.UseDefaultCredentials = false;
                     smtp.Credentials = new NetworkCredential(smtpUser, smtpPass);
                     smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtp.Timeout = 60000;
+
+                    clsDatabase.fnErrorLog(
+                        "MailSendAttempt",
+                        $"Host={smtpHost}; Port={smtpPort}; EnableSsl={enableSsl}; From={resolvedFrom}; To={resolvedTo}; AttachmentBytes={(attachmentBytes == null ? 0 : attachmentBytes.Length)}");
 
                     smtp.Send(mail);
+
+                    clsDatabase.fnErrorLog(
+                        "MailSendSuccess",
+                        $"Host={smtpHost}; Port={smtpPort}; From={resolvedFrom}; To={resolvedTo}");
                 }
             }
 

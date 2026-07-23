@@ -983,89 +983,104 @@
             transform: translateY(-1px);
         }
 
-/* --- TABLE SPECIFIC LOADER --- */
-.table-container {
-    position: relative;
-    min-height: 300px; /* Prevents layout jump */
-}
+    /* --- TABLE SPECIFIC LOADER --- */
+    .table-container {
+        position: relative;
+        min-height: 300px; /* Prevents layout jump */
+    }
 
-.table-loader-overlay {
-    display: none; /* Hidden by default */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.7);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(2px);
-}
+    .table-loader-overlay {
+        display: none; /* Hidden by default */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(2px);
+    }
 
-.spinner-ring {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #e2e8f0;
-    border-top: 3px solid var(--primary);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
+    .spinner-ring {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e2e8f0;
+        border-top: 3px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
 
-@@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
 
-/* Skeleton Effect for Rows (Optional but looks great) */
-.loading-row {
-    height: 40px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: skeleton-loading 1.5s infinite;
-    margin-bottom: 8px;
-    border-radius: 4px;
-}
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 
-@@keyframes skeleton-loading {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-/* --- MODAL SPECIFIC LOADER --- */
-.modal-body {
-    position: relative; /* Essential for absolute positioning of loader */
-}
+    /* Skeleton Effect for Rows (Optional but looks great) */
+    .loading-row {
+        height: 40px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+        margin-bottom: 8px;
+        border-radius: 4px;
+    }
 
-.modal-loader-overlay {
-    display: none; /* Hidden by default */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    z-index: 100;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(2px);
-}
+    @@keyframes skeleton-loading {
+        0% {
+            background-position: 200% 0;
+        }
 
-.modal-spinner {
-    width: 45px;
-    height: 45px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--primary);
-    border-radius: 50%;
-    animation: spin-modal 1s linear infinite;
-}
+        100% {
+            background-position: -200% 0;
+        }
+    }
+    /* --- MODAL SPECIFIC LOADER --- */
+    .modal-body {
+        position: relative; /* Essential for absolute positioning of loader */
+    }
 
-@@keyframes spin-modal {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+    .modal-loader-overlay {
+        display: none; /* Hidden by default */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 100;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(2px);
+    }
+
+    .modal-spinner {
+        width: 45px;
+        height: 45px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        animation: spin-modal 1s linear infinite;
+    }
+
+    @@keyframes spin-modal {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 
     .salary-detail-box {
         max-width: 1200px;
@@ -1293,11 +1308,11 @@
             font-size: 10px;
         }
 
-        .salary-allowance-table td:last-child,
-        .salary-allowance-table th:last-child {
-            text-align: right;
-            font-weight: 800;
-        }
+            .salary-allowance-table td:last-child,
+            .salary-allowance-table th:last-child {
+                text-align: right;
+                font-weight: 800;
+            }
 
     .salary-detail-empty {
         padding: 24px;
@@ -1440,10 +1455,10 @@
 
             </div>
 
-             
+
 
         </div>
-         
+
         <!-- ======================= INPUT PANEL ======================= -->
         <div id="inputPanel" class="input-panel p-3 border-bottom bg-light">
             <small class="text-muted">Select a template to load inputs...</small>
@@ -1579,7 +1594,7 @@
             </div>
 
             <div class="footer-action-zone ms-3">
-                
+
                 <button type="button" class="btn-saas-primary" onclick="saveData()">
                     <i class="fa-solid fa-cloud-arrow-up me-2"></i>Save Structure
                 </button>
@@ -1635,13 +1650,13 @@
             </div>
 
             @*<button type="button" class="btn-close salary-detail-close" onclick="closeSalaryDetailsModal()" aria-label="Close salary details">
-            <i class="fa-solid fa-xmark"></i>
-        </button>*@
-        <button type="button" class="salary-detail-close border-0 bg-transparent"
-                onclick="closeSalaryDetailsModal()"
-                aria-label="Close salary details">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
+                    <i class="fa-solid fa-xmark"></i>
+                </button>*@
+            <button type="button" class="salary-detail-close border-0 bg-transparent"
+                    onclick="closeSalaryDetailsModal()"
+                    aria-label="Close salary details">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
 
         <div class="salary-detail-body">
@@ -1720,7 +1735,7 @@
     </div>
 </div>
 
- 
+
 
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -1743,6 +1758,31 @@
         currentConfig: [],
         componentValuesById: {}
     };
+
+    function parseMoney(value) {
+        const parsed = parseFloat(value);
+        return Number.isFinite(parsed) ? Math.round((parsed + Number.EPSILON) * 100) / 100 : 0;
+    }
+
+    function formatMoney(value) {
+        return parseMoney(value).toFixed(2);
+    }
+
+    function formatRupee(value) {
+        return Math.round(parseMoney(value)).toString();
+    }
+
+    function setMoneyText(selector, value) {
+        $(selector).text(formatMoney(value));
+    }
+
+    function setCurrencyText(selector, value) {
+        $(selector).text("₹ " + formatMoney(value));
+    }
+
+    function setRupeeCurrencyText(selector, value) {
+        $(selector).text("₹ " + formatRupee(value));
+    }
 
     $(document).ready(function () {
 
@@ -1968,6 +2008,34 @@
             let badgeClass =
                 emp.Status === "Configured" ? "badge-done" : "badge-pending";
 
+            const actionButton = (emp.PayGroupID == 83 || emp.PayGroupID == 85 || emp.PayGroupID == 108 || emp.PayGroupID == 109)
+                ? `
+            <td>
+                <button type="button"
+                    class="btn btn-primary btn-sm"
+                    onclick="openModal(
+                        '${escapeHtml(emp.EmpName).replace(/'/g, "\\'")}',
+                        ${emp.EmpID},
+                        ${emp.EmpSalaryConfigID || 0}
+                    )">
+                    <i class="fa-solid fa-gear"></i> Configure
+                </button>
+            </td>
+        `
+                : `
+            <td>
+                <button type="button"
+                    class="btn-details-saas"
+                    data-empid="${escapeHtml(emp.EmpID)}"
+                    data-empsalaryconfigid="${escapeHtml(emp.EmpSalaryConfigID || 0)}"
+                    data-empname="${escapeHtml(emp.EmpName)}"
+                    data-paygroupid="${escapeHtml(emp.PayGroupID || '')}"
+                    data-paygroupname="${escapeHtml(emp.PayGroupName || '-')}"
+                    onclick="openSalaryDetailsModal(this)">
+                    <i class="fa-solid fa-list-check"></i> View
+                </button>
+            </td>
+        `;
             tbody.append(`
         <tr>
             <td>${index + 1}</td>
@@ -1981,7 +2049,7 @@
                 <div class="tbl-text-muted">${escapeHtml(emp.Post)}</div>
             </td>
             <td>
-            <div class="tbl-text">${escapeHtml(emp.Department)}</div> 
+            <div class="tbl-text">${escapeHtml(emp.Department)}</div>
             </td>
             <td>
             <div class="tbl-text">${escapeHtml(emp.PayGroupName ?? '-')}</div>
@@ -1991,18 +2059,7 @@
                     ${escapeHtml(emp.Status)}
                 </span>
             </td>
-            <td>
-                <button type="button"
-                    class="btn-details-saas"
-                    data-empid="${escapeHtml(emp.EmpID)}"
-                    data-empsalaryconfigid="${escapeHtml(emp.EmpSalaryConfigID || 0)}"
-                    data-empname="${escapeHtml(emp.EmpName)}"
-                    data-paygroupid="${escapeHtml(emp.PayGroupID || '')}"
-                    data-paygroupname="${escapeHtml(emp.PayGroupName || '-')}"
-                    onclick="openSalaryDetailsModal(this)">
-                    <i class="fa-solid fa-list-check"></i> View
-                </button>
-            </td>
+             ${actionButton}
         </tr>
     `);
         });
@@ -2206,7 +2263,7 @@
 
     function cacheSalaryDetailComponentValues(detailList) {
         (detailList || []).filter(isSalaryDetailComponent).forEach(item => {
-            const amount = parseFloat(item.MonthlyAmount || 0);
+            const amount = parseMoney(item.MonthlyAmount);
             const id = String(item.PayConfigId || "");
 
             if (id) salaryDetailState.componentValuesById[id] = amount;
@@ -2245,9 +2302,10 @@
                         <input type="number"
                             class="form-control-saas salary-detail-allowance-input"
                             style="width:130px; text-align:right;"
+                            step="0.01"
                             data-payconfigid="${escapeHtml(item.PayConfigId)}"
                             data-payconfigname="${escapeHtml(item.PayConfigName)}"
-                            value="${amount}"
+                            value="${formatMoney(amount)}"
                             oninput="captureSalaryDetailAllowanceInputs()" />
                     </td>
                 </tr>
@@ -2265,13 +2323,13 @@
             return salaryDetailState.componentValuesById[id];
         }
 
-        return parseFloat(item.MonthlyAmount || 0);
+        return parseMoney(item.MonthlyAmount);
     }
 
     function captureSalaryDetailAllowanceInputs() {
         $('.salary-detail-allowance-input').each(function () {
             const id = String($(this).data('payconfigid') || "");
-            const amount = parseFloat($(this).val() || 0);
+            const amount = parseMoney($(this).val());
 
             if (id) salaryDetailState.componentValuesById[id] = amount;
         });
@@ -2318,7 +2376,7 @@
         return $('.salary-detail-allowance-input').map(function () {
             return {
                 AllowanceId: parseInt($(this).data('payconfigid') || 0),
-                Value: parseFloat($(this).val() || 0)
+                Value: parseMoney($(this).val())
             };
         }).get().filter(x => x.AllowanceId > 0);
     }
@@ -2482,40 +2540,40 @@
 
             // 🔥 INPUT PANEL (GROSS etc)
             if (input) {
-                input.value = x.MonthlyAmount;
+                input.value = formatMoney(x.MonthlyAmount);
             }
 
             // 🔥 GRID MANUAL (FIXED fields)
             if (manual && manual.classList.contains('inp-manual')) {
-                manual.value = x.MonthlyAmount;
+                manual.value = formatMoney(x.MonthlyAmount);
             }
 
             // 🔥 GRID CALCULATED
             let calcBox = document.getElementById("val_" + x.PayConfigId);
             if (calcBox && !calcBox.classList.contains('inp-manual')) {
-                calcBox.value = x.MonthlyAmount;
+                calcBox.value = formatMoney(x.MonthlyAmount);
             }
 
             // 🔥 YEAR
             let yr = document.getElementById("yr_" + x.PayConfigId);
             if (yr) {
-                yr.innerText = x.YearlyAmount;
+                yr.innerText = formatMoney(x.YearlyAmount);
             }
         });
 
         // HEADER
-        $('#lblTotalGross').text(header.MonthlyGross);
-        $('#lblTotalGrossYear').text(header.MonthlyGross * 12);
+        setMoneyText('#lblTotalGross', header.MonthlyGross);
+        setMoneyText('#lblTotalGrossYear', parseMoney(header.MonthlyGross) * 12);
 
-        $('#lblTotalDed').text(header.TotalDeduction);
-        $('#lblTotalDedYear').text(header.TotalDeduction * 12);
+        setMoneyText('#lblTotalDed', header.TotalDeduction);
+        setMoneyText('#lblTotalDedYear', parseMoney(header.TotalDeduction) * 12);
 
-        $('#lblTotalContrib').text(header.TotalContribution);
-        $('#lblTotalContribYear').text(header.TotalContribution * 12);
+        setMoneyText('#lblTotalContrib', header.TotalContribution);
+        setMoneyText('#lblTotalContribYear', parseMoney(header.TotalContribution) * 12);
 
-        $('#lblNetPay').text("₹ " + header.NetPay);
-        $('#lblCTCMonth').text("₹ " + header.MonthlyCTC);
-        $('#lblCTCYear').text("₹ " + header.AnnualCTC);
+        setRupeeCurrencyText('#lblNetPay', header.NetPay);
+        setRupeeCurrencyText('#lblCTCMonth', header.MonthlyCTC);
+        setRupeeCurrencyText('#lblCTCYear', header.AnnualCTC);
 
         lastCalculatedData = {
             Header: header,
@@ -2548,14 +2606,14 @@
             $("#modalEmpName").text("--");
 
             // Totals
-            $('#lblTotalGross').text("0");
-            $('#lblTotalGrossYear').text("0");
+            $('#lblTotalGross').text("0.00");
+            $('#lblTotalGrossYear').text("0.00");
 
-            $('#lblTotalDed').text("0");
-            $('#lblTotalDedYear').text("0");
+            $('#lblTotalDed').text("0.00");
+            $('#lblTotalDedYear').text("0.00");
 
-            $('#lblTotalContrib').text("0");
-            $('#lblTotalContribYear').text("0");
+            $('#lblTotalContrib').text("0.00");
+            $('#lblTotalContribYear').text("0.00");
 
             $('#lblNetPay').text("₹ 0");
             $('#lblCTCMonth').text("₹ 0");
@@ -2630,6 +2688,7 @@
             <input type="number"
                    id="${x.id}"
                    class="form-control input-gross"
+                   step="0.01"
                    data-payconfigid="${x.id}"
                    data-payconfigname="${x.name}"
                    data-logic="${x.logic}"
@@ -2651,13 +2710,14 @@
             let inp = "";
 
             if (x.isManual || x.logic === "EXCEL_UPLOAD") {
-                inp = `<input type="text"
+                inp = `<input type="number"
                           id="val_${x.id}"
                           class="inp-manual form-control text-end"
+                          step="0.01"
                           data-payconfigid="${x.id}"
                           data-payconfigname="${x.name}"
                           data-logic="${x.logic}"
-                          value="${x.rate || 0}"
+                          value="${formatMoney(x.rate || 0)}"
                           oninput="handleInputChange(this)" />`;
             } else {
                 inp = `<input type="text"
@@ -2691,10 +2751,6 @@
     let calcTimer;
 
     function handleInputChange(el) {
-
-        let val = parseFloat($(el).val()) || 0;
-        $(el).val(val);
-
         clearTimeout(calcTimer);
 
         calcTimer = setTimeout(() => {
@@ -2712,7 +2768,7 @@
                 PayConfigId: parseInt($(this).data('payconfigid') || 0),
                 PayConfigName: $(this).data('payconfigname') || "",
                 logic: $(this).data('logic') || "",
-                MonthlyAmount: parseFloat($(this).val()) || 0
+                MonthlyAmount: parseMoney($(this).val())
             });
         });
 
@@ -2722,7 +2778,7 @@
                 PayConfigId: parseInt($(this).data('payconfigid') || 0),
                 PayConfigName: $(this).data('payconfigname') || "",
                 logic: $(this).data('logic') || "",
-                MonthlyAmount: parseFloat($(this).val()) || 0
+                MonthlyAmount: parseMoney($(this).val())
             });
         });
 
@@ -2762,14 +2818,14 @@
     // ================= BIND RESULT =================
     //function bindCalculationResult(data) {
 
-    //    if (!data) return; 
+    //    if (!data) return;
     //    // Update monthly + yearly values row by row
-    //    (data.DetailList || []).forEach(x => {  
+    //    (data.DetailList || []).forEach(x => {
     //        let monthlyBox = $(`#val_${x.PayConfigId}`);
     //        let yearlyBox = $(`#yr_${x.PayConfigId}`);
     //        // 🔥 Get logic from DOM (NOT curConfig)
     //        let logic = (monthlyBox.data('logic') || "").toString().toUpperCase();
-             
+
     //        //if (monthlyBox.length) {
     //        //    if (!monthlyBox.hasClass('inp-manual') && logic === "EXCEL_UPLOAD") {
     //        //        monthlyBox.val(x.MonthlyAmount);
@@ -2791,7 +2847,7 @@
     //        if (yearlyBox.length) {
     //            yearlyBox.text(x.YearlyAmount);
     //        }
-             
+
     //    });
 
     //    // Header totals
@@ -2848,7 +2904,7 @@
 
                     if (currentVal === "" || currentVal === "0") {
                         console.log("Setting Monthly from backend:", x.MonthlyAmount);
-                        monthlyBox.val(x.MonthlyAmount);
+                        monthlyBox.val(formatMoney(x.MonthlyAmount));
                     } else {
                         console.log("Skipping overwrite (user value kept):", currentVal);
                     }
@@ -2856,7 +2912,7 @@
                 else if (!monthlyBox.hasClass('inp-manual')) {
 
                     console.log("Branch: Calculated field -> set Monthly:", x.MonthlyAmount);
-                    monthlyBox.val(x.MonthlyAmount);
+                    monthlyBox.val(formatMoney(x.MonthlyAmount));
                 }
                 else {
                     console.log("Branch: Manual FIXED -> skip overwrite");
@@ -2868,26 +2924,26 @@
             // ================= YEARLY =================
             if (yearlyBox.length) {
 
-                let yearly = x.YearlyAmount;
+                let yearly = parseMoney(x.YearlyAmount);
 
                 if (logic === "EXCEL_UPLOAD") {
 
                     // 🔥 take value from input (NOT backend)
-                    let domVal = parseFloat(monthlyBox.val()) || 0;
-                    yearly = domVal * 12;
+                    let domVal = parseMoney(monthlyBox.val());
+                    yearly = parseMoney(domVal * 12);
 
                     console.log("EXCEL_UPLOAD Yearly from DOM:", yearly);
                 }
                 else {
                     if (!yearly || yearly === 0) {
-                        yearly = (x.MonthlyAmount || 0) * 12;
+                        yearly = parseMoney(x.MonthlyAmount) * 12;
                         console.log("Yearly fallback used:", yearly);
                     } else {
                         console.log("Yearly from backend:", yearly);
                     }
                 }
 
-                yearlyBox.text(yearly);
+                yearlyBox.text(formatMoney(yearly));
             }
 
             console.groupEnd();
@@ -2900,18 +2956,18 @@
         console.log("Contribution:", data.Header.TotalContribution);
         console.log("Net:", data.Header.NetPay);
 
-        $('#lblTotalGross').text(data.Header.MonthlyGross);
-        $('#lblTotalGrossYear').text(data.Header.MonthlyGross * 12);
+        setMoneyText('#lblTotalGross', data.Header.MonthlyGross);
+        setMoneyText('#lblTotalGrossYear', parseMoney(data.Header.MonthlyGross) * 12);
 
-        $('#lblTotalDed').text(data.Header.TotalDeduction);
-        $('#lblTotalDedYear').text(data.Header.TotalDeduction * 12);
+        setMoneyText('#lblTotalDed', data.Header.TotalDeduction);
+        setMoneyText('#lblTotalDedYear', parseMoney(data.Header.TotalDeduction) * 12);
 
-        $('#lblTotalContrib').text(data.Header.TotalContribution);
-        $('#lblTotalContribYear').text(data.Header.TotalContribution * 12);
+        setMoneyText('#lblTotalContrib', data.Header.TotalContribution);
+        setMoneyText('#lblTotalContribYear', parseMoney(data.Header.TotalContribution) * 12);
 
-        $('#lblNetPay').text("₹ " + data.Header.NetPay);
-        $('#lblCTCMonth').text("₹ " + data.Header.MonthlyCTC);
-        $('#lblCTCYear').text("₹ " + data.Header.AnnualCTC);
+        setRupeeCurrencyText('#lblNetPay', data.Header.NetPay);
+        setRupeeCurrencyText('#lblCTCMonth', data.Header.MonthlyCTC);
+        setRupeeCurrencyText('#lblCTCYear', data.Header.AnnualCTC);
 
         lastCalculatedData = data;
 
@@ -2932,12 +2988,12 @@
             // 🔥 If EXCEL_UPLOAD → take from UI
             if (logic === "EXCEL_UPLOAD" && inputBox.length) {
 
-                let domVal = parseFloat(inputBox.val()) || 0;
+                let domVal = parseMoney(inputBox.val());
 
                 return {
                     ...item,
                     MonthlyAmount: domVal,
-                    YearlyAmount: domVal * 12
+                    YearlyAmount: parseMoney(domVal * 12)
                 };
             }
 

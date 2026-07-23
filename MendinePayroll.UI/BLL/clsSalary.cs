@@ -355,47 +355,45 @@ namespace MendinePayroll.UI.BLL
         //    return clsDatabase.fnDataTable(spName, IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
         //    //return  clsDatabase.fnDataTable("PRC_Salary_Register", IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
         //}
-        public static DataTable SalaryRegisterNew(string TenantId, long IDEmployee, string StartMonth, int StartYear, string EndMonth, int EndYear)
+        public static DataTable SalaryRegisterNew(string TenantId,long IDEmployee,string StartMonth,int StartYear,string EndMonth,int EndYear)
         {
-            DateTime startDate = DateTime.Parse("01 " + StartMonth + " " + StartYear);
-            DateTime endDate = DateTime.Parse("01 " + EndMonth + " " + EndYear);
+            DateTime startDate = DateTime.ParseExact($"01 {StartMonth} {StartYear}","dd MMMM yyyy",System.Globalization.CultureInfo.InvariantCulture);
 
-            DateTime cutOff = new DateTime(2026, 04, 1);
+            DateTime endDate = DateTime.ParseExact($"01 {EndMonth} {EndYear}","dd MMMM yyyy",System.Globalization.CultureInfo.InvariantCulture);
 
-            DataTable result = new DataTable();
+            // Old procedure contains data up to April 2026.
+            // New procedure contains data from May 2026.
+            DateTime cutOff = new DateTime(2026, 5, 1);
 
-            // Case 1 : Entirely old
-            if (endDate <= cutOff)
+            if (startDate > endDate)
+                throw new ArgumentException("Start month cannot be after end month.");
+
+            // Entire selected period is up to April 2026
+            if (endDate < cutOff)
             {
-                result = clsDatabase.fnDataTable("PRC_Salary_Register",IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
+                return clsDatabase.fnDataTable("PRC_Salary_Register",IDEmployee,StartMonth,StartYear,EndMonth,EndYear,TenantId);
             }
 
-            // Case 2 : Entirely new
-            else if (startDate > cutOff)
+            // Entire selected period starts from May 2026
+            if (startDate >= cutOff)
             {
-                result = clsDatabase.fnDataTable("PRC_Salary_Register_New",
-                    IDEmployee, StartMonth, StartYear, EndMonth, EndYear, TenantId);
+                return clsDatabase.fnDataTable("PRC_Salary_Register_New",IDEmployee,StartMonth,StartYear,EndMonth,EndYear,TenantId);
             }
 
-            // Case 3 : Cross period
-            else
-            {
-                // Old data
-                DataTable dtOld = clsDatabase.fnDataTable("PRC_Salary_Register",
-                    IDEmployee, StartMonth, StartYear, "December", 2025, TenantId);
+            // Mixed period:
+            // Old procedure: selected start month to April 2026
+            DataTable dtOld = clsDatabase.fnDataTable("PRC_Salary_Register",IDEmployee,StartMonth,StartYear,cutOff.AddMonths(-1).ToString("MMMM"),cutOff.AddMonths(-1).Year,TenantId);
 
-                // New data
-                DataTable dtNew = clsDatabase.fnDataTable("PRC_Salary_Register_New",
-                    IDEmployee, "January", 2026, EndMonth, EndYear, TenantId);
+            // New procedure: May 2026 to selected end month
+            DataTable dtNew = clsDatabase.fnDataTable("PRC_Salary_Register_New",IDEmployee,cutOff.ToString("MMMM"),cutOff.Year,EndMonth,EndYear,TenantId);
 
-                result = dtOld.Clone();
+            DataTable result = dtOld.Clone();
 
-                foreach (DataRow row in dtOld.Rows)
-                    result.ImportRow(row);
+            foreach (DataRow row in dtOld.Rows)
+                result.ImportRow(row);
 
-                foreach (DataRow row in dtNew.Rows)
-                    result.ImportRow(row);
-            }
+            foreach (DataRow row in dtNew.Rows)
+                result.ImportRow(row);
 
             return result;
         }
@@ -447,9 +445,9 @@ namespace MendinePayroll.UI.BLL
             //return clsDatabase.fnDataTable("PRC_User_Login_Log_Report", IDUser, Type);
             return clsDatabase.fnDataTable("PRC_Report_Payroll_Access_Log");
         }
-        public static DataTable  TDSAnnexure1(long IDEmployee,String CompanyCode, String Month, int Year)
+        public static DataTable  TDSAnnexure1(long IDEmployee,String CompanyCode, String Month, int Year,string TenantId)
         {
-            return clsDatabase.fnDataTable("Payroll_Annexure1_Register", Month, Year, IDEmployee, CompanyCode);
+            return clsDatabase.fnDataTable("Payroll_Annexure1_Register", Month, Year, IDEmployee, CompanyCode, TenantId);
         }
         public static List<clsCompanyInfo> CompanyList(string TenantId)
         {

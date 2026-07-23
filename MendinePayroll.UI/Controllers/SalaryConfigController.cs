@@ -832,5 +832,274 @@ namespace MendinePayroll.UI.Controllers
         }
         #endregion
 
+        #region Payroll_Cycle_Configaration
+        [HttpGet]
+        public ActionResult Payroll_Cycle_Configaration()
+        {
+            clsAccessLogInfo info = new clsAccessLogInfo();
+            info.AccessType = "PAYROLL-CYCLE-CONFIGURATION";
+            clsAccessLog.AccessLog_Save(info);
+            return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetPayrollCycleConfigurations()
+        {
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable("SP_PayrollCycleConfiguration_List", GetPayrollTenantId());
+                var list = BuildPayrollCycleConfigurationList(dt);
+
+                return Json(new { Success = true, Data = list }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetPayrollCycleConfiguration(int id)
+        {
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable("SP_PayrollCycleConfiguration_GetById", id, GetPayrollTenantId());
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    return Json(new { Success = false, Message = "Configuration not found." }, JsonRequestBehavior.AllowGet);
+                }
+
+                DataRow row = dt.Rows[0];
+                var model = new
+                {
+                    PayrollConfigID = Convert.ToInt32(row["PayrollConfigID"]),
+                    TenantID = row["TenantID"].ToString(),
+                    TypeID = Convert.ToByte(row["TypeID"]),
+                    PayrollCycleType = row["PayrollCycleType"] == DBNull.Value ? (byte?)null : Convert.ToByte(row["PayrollCycleType"]),
+                    StartDay = row["StartDay"] == DBNull.Value ? (byte?)null : Convert.ToByte(row["StartDay"]),
+                    EndDay = row["EndDay"] == DBNull.Value ? (byte?)null : Convert.ToByte(row["EndDay"]),
+                    PaidDaysSource = row["PaidDaysSource"] == DBNull.Value ? (byte)1 : Convert.ToByte(row["PaidDaysSource"]),
+                    IsActive = Convert.ToBoolean(row["IsActive"])
+                };
+
+                return Json(new { Success = true, Data = model }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SavePayrollCycleConfiguration(PayrollCycleConfigurationModel model)
+        {
+            try
+            {
+                ValidatePayrollCycleConfiguration(model);
+
+                Guid tenantId = GetPayrollTenantId();
+                string userName = GetPayrollUserName();
+                DataTable dt = clsDatabase.fnDataTable(
+                    "SP_PayrollCycleConfiguration_Save",
+                    model.PayrollConfigID,
+                    tenantId,
+                    model.TypeID,
+                    (object)model.PayrollCycleType ?? DBNull.Value,
+                    (object)model.StartDay ?? DBNull.Value,
+                    (object)model.EndDay ?? DBNull.Value,
+                    model.PaidDaysSource,
+                    userName
+                );
+
+                return BuildPayrollCycleProcedureResponse(dt, "Payroll cycle configuration saved successfully.");
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DeletePayrollCycleConfiguration(int id)
+        {
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable(
+                    "SP_PayrollCycleConfiguration_Delete",
+                    id,
+                    GetPayrollTenantId(),
+                    GetPayrollUserName()
+                );
+
+                return BuildPayrollCycleProcedureResponse(dt, "Payroll cycle configuration deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message });
+            }
+        }
+
+        private void ValidatePayrollCycleConfiguration(PayrollCycleConfigurationModel model)
+        {
+            if (model == null)
+                throw new Exception("Invalid payroll cycle configuration.");
+
+            if (model.TypeID != 1 && model.TypeID != 2)
+                throw new Exception("Select a valid payroll type.");
+
+            if (model.PaidDaysSource != 1 && model.PaidDaysSource != 2)
+                model.PaidDaysSource = 1;
+
+            if (model.TypeID == 2)
+            {
+                model.PayrollCycleType = null;
+                model.StartDay = null;
+                model.EndDay = null;
+                return;
+            }
+
+            if (!model.PayrollCycleType.HasValue || (model.PayrollCycleType.Value != 1 && model.PayrollCycleType.Value != 2))
+                throw new Exception("Select a valid payroll cycle type.");
+
+            if (model.PayrollCycleType.Value == 1)
+            {
+                model.StartDay = null;
+                model.EndDay = null;
+                return;
+            }
+
+            if (!model.StartDay.HasValue || model.StartDay.Value < 1 || model.StartDay.Value > 31)
+                throw new Exception("Payroll Starts On must be between 1 and 31.");
+
+            if (!model.EndDay.HasValue || model.EndDay.Value < 1 || model.EndDay.Value > 31)
+                throw new Exception("Payroll Ends On must be between 1 and 31.");
+        }
+
+        private Guid GetPayrollTenantId()
+        {
+            Guid tenantId;
+            if (Session["TenantID"] == null || !Guid.TryParse(Session["TenantID"].ToString(), out tenantId))
+                throw new Exception("Invalid TenantID in session. Payroll_CycleConfiguration requires UNIQUEIDENTIFIER TenantID.");
+
+            return tenantId;
+        }
+
+        private string GetPayrollUserName()
+        {
+            string userName = Session["UserName"] == null ? "" : Session["UserName"].ToString();
+
+            if (string.IsNullOrWhiteSpace(userName))
+                throw new Exception("Invalid UserName in session. Payroll_CycleConfiguration requires CreatedBy/ModifiedBy user name.");
+
+            return userName.Length > 50 ? userName.Substring(0, 50) : userName;
+        }
+
+        private string GetPayrollTypeName(byte typeId)
+        {
+            return typeId == 1 ? "Monthly" : typeId == 2 ? "Contractual" : "-";
+        }
+
+        private string GetPayrollCycleTypeName(byte? payrollCycleType)
+        {
+            if (!payrollCycleType.HasValue)
+                return "-";
+
+            return payrollCycleType == 1 ? "Calendar Month" : payrollCycleType == 2 ? "Fixed Payroll Cycle" : "-";
+        }
+
+        private string GetPayrollPeriodText(byte typeId, byte? payrollCycleType, byte? startDay, byte? endDay)
+        {
+            if (typeId == 2)
+                return "Manual From Date and To Date during salary processing";
+
+            if (payrollCycleType == 1)
+                return "1st day to last day of selected month";
+
+            if (payrollCycleType == 2)
+                return "Day " + startDay + " to Day " + endDay;
+
+            return "-";
+        }
+
+        private string GetPaidDaysSourceName(byte paidDaysSource)
+        {
+            return paidDaysSource == 2 ? "Attendance Data" : "Month/Period Days";
+        }
+
+        private List<object> BuildPayrollCycleConfigurationList(DataTable dt)
+        {
+            var list = new List<object>();
+
+            if (dt == null)
+                return list;
+
+            foreach (DataRow row in dt.Rows)
+            {
+                byte typeId = Convert.ToByte(row["TypeID"]);
+                byte? cycleType = row["PayrollCycleType"] == DBNull.Value ? (byte?)null : Convert.ToByte(row["PayrollCycleType"]);
+                byte? startDay = row["StartDay"] == DBNull.Value ? (byte?)null : Convert.ToByte(row["StartDay"]);
+                byte? endDay = row["EndDay"] == DBNull.Value ? (byte?)null : Convert.ToByte(row["EndDay"]);
+                byte paidDaysSource = row["PaidDaysSource"] == DBNull.Value ? (byte)1 : Convert.ToByte(row["PaidDaysSource"]);
+
+                list.Add(new
+                {
+                    PayrollConfigID = Convert.ToInt32(row["PayrollConfigID"]),
+                    TenantID = row["TenantID"].ToString(),
+                    TypeID = typeId,
+                    TypeName = GetPayrollTypeName(typeId),
+                    PayrollCycleType = cycleType,
+                    PayrollCycleTypeName = GetPayrollCycleTypeName(cycleType),
+                    StartDay = startDay,
+                    EndDay = endDay,
+                    PeriodText = GetPayrollPeriodText(typeId, cycleType, startDay, endDay),
+                    PaidDaysSource = paidDaysSource,
+                    PaidDaysSourceName = GetPaidDaysSourceName(paidDaysSource),
+                    IsActive = Convert.ToBoolean(row["IsActive"]),
+                    CreatedOn = Convert.ToDateTime(row["CreatedOn"]).ToString("dd-MMM-yyyy"),
+                    ModifiedOn = row["ModifiedOn"] == DBNull.Value ? "" : Convert.ToDateTime(row["ModifiedOn"]).ToString("dd-MMM-yyyy")
+                });
+            }
+
+            return list;
+        }
+
+        private JsonResult BuildPayrollCycleProcedureResponse(DataTable dt, string defaultSuccessMessage)
+        {
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return Json(new { Success = true, Message = defaultSuccessMessage, PayrollConfigID = 0 });
+            }
+
+            DataRow row = dt.Rows[0];
+            int code = dt.Columns.Contains("Code") ? Convert.ToInt32(row["Code"]) : 1;
+            string message = dt.Columns.Contains("Message") ? row["Message"].ToString() : defaultSuccessMessage;
+            int payrollConfigId = 0;
+
+            if (dt.Columns.Contains("PayrollConfigID") && row["PayrollConfigID"] != DBNull.Value)
+            {
+                payrollConfigId = Convert.ToInt32(row["PayrollConfigID"]);
+            }
+
+            return Json(new
+            {
+                Success = code == 1,
+                Message = message,
+                PayrollConfigID = payrollConfigId
+            });
+        }
+
+        #endregion
+
+    }
+
+    public class PayrollCycleConfigurationModel
+    {
+        public int PayrollConfigID { get; set; }
+        public byte TypeID { get; set; }
+        public byte? PayrollCycleType { get; set; }
+        public byte? StartDay { get; set; }
+        public byte? EndDay { get; set; }
+        public byte PaidDaysSource { get; set; }
     }
 }

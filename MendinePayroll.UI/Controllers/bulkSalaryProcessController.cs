@@ -77,19 +77,48 @@ namespace MendinePayroll.UI.Controllers
             return Json(data, JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
-        public JsonResult GetPayGroups(int payrollType)
+        public JsonResult GetPayGroups()
         {
             string UserId = Session["UserId"].ToString();
-            DataTable dt = clsDatabase.fnDataTable("Payroll_SaaS_PayGroupTypewise", payrollType, TenantId, UserId);
+            DataTable dt = clsDatabase.fnDataTable("Payroll_SaaS_PayGroup_GET", TenantId, UserId);
 
             var data = dt.AsEnumerable().Select(x => new
             {
                 value = x["PayGroupID"]?.ToString(),
                 text = x["PayGroupName"]?.ToString(),
-                desc = x["Description"]?.ToString()
+                desc = x["Description"]?.ToString(),
+                salaryConfigureType = x["SalaryConfigureType"]?.ToString()
             }).ToList();
 
             return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetActivePayrollCycle()
+        {
+            try
+            {
+                PayrollCycleRuntimeConfig config = GetActivePayrollCycleConfiguration();
+
+                return Json(new
+                {
+                    success = true,
+                    payrollConfigID = config.PayrollConfigID,
+                    typeID = config.TypeID,
+                    payrollCycleType = config.PayrollCycleType,
+                    startDay = config.StartDay,
+                    endDay = config.EndDay,
+                    paidDaysSource = config.PaidDaysSource
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpGet]
@@ -222,11 +251,12 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new { Success = false, Message = "Employee list empty" });
             }
 
+            try
+            {
             string entryUser = Session["UserName"].ToString();
+            PayrollCycleRuntimeConfig payrollCycleConfig = GetActivePayrollCycleConfiguration();
 
-            int totalDays = request.PayrollType == "1"
-                ? DateTime.DaysInMonth(request.ProcessYear.Value, request.ProcessMonth.Value)
-                : (request.ToDate.Value - request.FromDate.Value).Days + 1;
+            int totalDays = ApplyPayrollCycleConfiguration(request, payrollCycleConfig);
 
             /* =============================
                1️⃣ CREATE PREVIEW BATCH
@@ -382,7 +412,101 @@ namespace MendinePayroll.UI.Controllers
             // RETURN TO UI
             // =============================
             return Json(pivot, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message });
+            }
         }
+
+        private PayrollCycleRuntimeConfig GetActivePayrollCycleConfiguration()
+        {
+            DataTable dt = clsDatabase.fnDataTable("SP_PayrollCycleConfiguration_GetActive", TenantId);
+
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                throw new Exception("Payroll cycle configuration is not set. Please configure Payroll Cycle Configuration first.");
+            }
+
+            DataRow row = dt.Rows[0];
+
+            return new PayrollCycleRuntimeConfig
+            {
+                PayrollConfigID = Convert.ToInt32(row["PayrollConfigID"]),
+                TypeID = Convert.ToByte(row["TypeID"]),
+                PayrollCycleType = row["PayrollCycleType"] == DBNull.Value ? (byte?)null : Convert.ToByte(row["PayrollCycleType"]),
+                StartDay = row["StartDay"] == DBNull.Value ? (byte?)null : Convert.ToByte(row["StartDay"]),
+                EndDay = row["EndDay"] == DBNull.Value ? (byte?)null : Convert.ToByte(row["EndDay"]),
+                PaidDaysSource = row.Table.Columns.Contains("PaidDaysSource") && row["PaidDaysSource"] != DBNull.Value
+                    ? Convert.ToByte(row["PaidDaysSource"])
+                    : (byte)1
+            };
+        }
+
+        private int ApplyPayrollCycleConfiguration(PayrollProcessRequest request, PayrollCycleRuntimeConfig config)
+        {
+            bool isMonthlyRequest = request.PayrollType == "1";
+            byte requestedTypeId = isMonthlyRequest ? (byte)1 : (byte)2;
+
+            if (config.TypeID != requestedTypeId)
+            {
+                string configuredType = config.TypeID == 1 ? "Monthly" : "Contractual";
+                string selectedType = requestedTypeId == 1 ? "Monthly" : "Contractual";
+                throw new Exception("Active payroll setup is configured for " + configuredType + " payroll. Selected payroll type is " + selectedType + ".");
+            }
+
+            if (!isMonthlyRequest)
+            {
+                if (!request.FromDate.HasValue || !request.ToDate.HasValue)
+                    throw new Exception("From Date and To Date are required for contractual payroll.");
+
+                if (request.ToDate.Value.Date < request.FromDate.Value.Date)
+                    throw new Exception("To Date cannot be earlier than From Date.");
+
+                request.ProcessMonth = request.ProcessMonth ?? request.FromDate.Value.Month;
+                request.ProcessYear = request.ProcessYear ?? request.FromDate.Value.Year;
+
+                return (request.ToDate.Value.Date - request.FromDate.Value.Date).Days + 1;
+            }
+
+            if (!request.ProcessMonth.HasValue || !request.ProcessYear.HasValue)
+                throw new Exception("Process Month and Process Year are required for monthly payroll.");
+
+            if (!config.PayrollCycleType.HasValue)
+                throw new Exception("Monthly payroll cycle type is not configured.");
+
+            int year = request.ProcessYear.Value;
+            int month = request.ProcessMonth.Value;
+
+            if (config.PayrollCycleType.Value == 1)
+            {
+                request.FromDate = new DateTime(year, month, 1);
+                request.ToDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+            }
+            else
+            {
+                if (!config.StartDay.HasValue || !config.EndDay.HasValue)
+                    throw new Exception("Payroll start day and end day are required for fixed payroll cycle.");
+
+                int startMonth = month - 1;
+                int startYear = year;
+
+                if (startMonth == 0)
+                {
+                    startMonth = 12;
+                    startYear = year - 1;
+                }
+
+                int startDay = Math.Min(config.StartDay.Value, DateTime.DaysInMonth(startYear, startMonth));
+                int endDay = Math.Min(config.EndDay.Value, DateTime.DaysInMonth(year, month));
+
+                request.FromDate = new DateTime(startYear, startMonth, startDay);
+                request.ToDate = new DateTime(year, month, endDay);
+            }
+
+            return (request.ToDate.Value.Date - request.FromDate.Value.Date).Days + 1;
+        }
+
         public static EmployeeSalaryResponse CalculateMonthlySalary(List<SalaryComponentResult> components, int employeeId, int processMonth, int processYear,
                                                                bool isPFApplicable, bool isESICApplicable, bool isPTaxApplicable, ComponentValueResolver valueResolver)
         {
@@ -418,6 +542,13 @@ namespace MendinePayroll.UI.Controllers
                     c.Rate = c.Amount; // Keep master rate in Rate field
                     c.Amount = ApplyRounding(c.BaseAmount, "");
                     valueMap[c.PayConfigName] = c.Amount;
+
+                    // Store absent days for Production Bonus formula
+                    if (c.OtherType == "CONT_ATTND")
+                    {
+                        valueMap["{ABSENT_DAYS}"] = rawVal;
+                    }
+
                     continue;
                 }
 
@@ -506,7 +637,10 @@ namespace MendinePayroll.UI.Controllers
                         valueMap["{RATE}"] = c.Rate;
                         valueMap["{PAIDDAYS}"] = c.PaidDays;
                         valueMap["{WORKING_DAYS}"] = totalDays;
-
+                        if (!valueMap.ContainsKey("{ABSENT_DAYS}"))
+                        {
+                            valueMap["{ABSENT_DAYS}"] = 0;
+                        }
                         baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
                         formulaEvaluated = true;
                     }
@@ -2977,6 +3111,223 @@ namespace MendinePayroll.UI.Controllers
 
             return Json(data, JsonRequestBehavior.AllowGet);
         }
+
+        private class PayrollCycleRuntimeConfig
+        {
+            public int PayrollConfigID { get; set; }
+            public byte TypeID { get; set; }
+            public byte? PayrollCycleType { get; set; }
+            public byte? StartDay { get; set; }
+            public byte? EndDay { get; set; }
+            public byte PaidDaysSource { get; set; }
+        }
+
+        #region Finalize Salary Delete
+        [HttpGet]
+        public ActionResult FinalizeSalaryDelete()
+        {
+            if (Session["UserName"] == null)
+                return RedirectToAction("Index", "Login");
+
+            clsAccessLogInfo info = new clsAccessLogInfo();
+            info.AccessType = "DELETE-EMPLOYEE-SALARY";
+            clsAccessLog.AccessLog_Save(info);
+            return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetFinalizedSalaryDeleteEmployees(int month, int year, int? payGroupId, string search, int pageNumber = 1, int pageSize = 500)
+        {
+            try
+            {
+                if (Session["UserName"] == null)
+                    return Json(new { success = false, message = "Session expired" }, JsonRequestBehavior.AllowGet);
+
+                if (month < 1 || month > 12 || year < 2000)
+                    return Json(new { success = false, message = "Please select a valid month and year." }, JsonRequestBehavior.AllowGet);
+
+                string userId = Session["UserId"]?.ToString();
+                if (string.IsNullOrWhiteSpace(userId))
+                    return Json(new { success = false, message = "No valid user." }, JsonRequestBehavior.AllowGet);
+
+                if (pageNumber < 1) pageNumber = 1;
+                if (pageSize < 1) pageSize = 500;
+
+                System.Data.DataSet ds = clsDatabase.fnDataSet(
+                    "SP_Payroll_SalaryRegister_Grid",
+                    TenantId,
+                    month,
+                    year,
+                    null,
+                    payGroupId,
+                    search,
+                    2,
+                    pageNumber,
+                    pageSize,
+                    userId
+                );
+
+                if (ds == null || ds.Tables.Count < 2)
+                    return Json(new { success = false, message = "No response from salary register." }, JsonRequestBehavior.AllowGet);
+
+                int totalRows = ds.Tables[0].Rows.Count > 0
+                    ? Convert.ToInt32(ds.Tables[0].Rows[0]["TotalRows"])
+                    : 0;
+
+                var rows = ds.Tables[1].AsEnumerable().Select(r => new
+                {
+                    PayrollProcessEmployeeID = Convert.ToInt64(r["PayrollProcessEmployeeID"]),
+                    EmployeeID = Convert.ToInt32(r["EmployeeID"]),
+                    EmployeeCode = r["EmployeeCode"]?.ToString(),
+                    EmployeeName = r["EmployeeName"]?.ToString() ?? "",
+                    CompanyName = r["CompanyName"]?.ToString() ?? "",
+                    PayGroupName = r["PayGroupName"]?.ToString() ?? "",
+                    BasicAmount = Convert.ToDecimal(r["BasicAmount"] == DBNull.Value ? 0 : r["BasicAmount"]),
+                    AllowancesAmount = Convert.ToDecimal(r["AllowancesAmount"] == DBNull.Value ? 0 : r["AllowancesAmount"]),
+                    TotalGross = Convert.ToDecimal(r["TotalGross"] == DBNull.Value ? 0 : r["TotalGross"]),
+                    TotalDeduction = Convert.ToDecimal(r["TotalDeduction"] == DBNull.Value ? 0 : r["TotalDeduction"]),
+                    TotalTakeHome = Convert.ToDecimal(r["TotalTakeHome"] == DBNull.Value ? 0 : r["TotalTakeHome"]),
+                    Status = Convert.ToInt32(r["Status"] == DBNull.Value ? 0 : r["Status"]),
+                    PaidStatus = Convert.ToInt32(r["PaidStatus"] == DBNull.Value ? 0 : r["PaidStatus"])
+                }).ToList();
+
+                return Json(new { success = true, totalRows, rows }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DeleteFinalizedSalaries(FinalizedSalaryDeleteRequest request)
+        {
+            try
+            {
+                string userName = Session["UserName"]?.ToString();
+                string userId = Session["UserId"]?.ToString();
+
+                if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(userId))
+                    return Json(new { success = false, message = "Session expired" });
+
+                if (request == null || request.Month < 1 || request.Month > 12 || request.Year < 2000)
+                    return Json(new { success = false, message = "Please select a valid month and year." });
+
+                if (request.PayrollProcessEmployeeIds == null || !request.PayrollProcessEmployeeIds.Any())
+                    return Json(new { success = false, message = "No employees selected." });
+
+                if (string.IsNullOrWhiteSpace(request.Reason))
+                    return Json(new { success = false, message = "Please enter a reason before deleting finalized salary." });
+
+                var selectedIds = request.PayrollProcessEmployeeIds.Distinct().ToList();
+
+                System.Data.DataSet ds = clsDatabase.fnDataSet(
+                    "SP_Payroll_SalaryRegister_Grid",
+                    TenantId,
+                    request.Month,
+                    request.Year,
+                    null,
+                    null,
+                    null,
+                    2,
+                    1,
+                    999999,
+                    userId
+                );
+
+                if (ds == null || ds.Tables.Count < 2)
+                    return Json(new { success = false, message = "Unable to verify selected salary records." });
+
+                DataTable dtEmployees = ds.Tables[1];
+                var selectedRows = dtEmployees.AsEnumerable()
+                    .Where(r => selectedIds.Contains(Convert.ToInt64(r["PayrollProcessEmployeeID"])))
+                    .ToList();
+
+                var foundIds = selectedRows.Select(r => Convert.ToInt64(r["PayrollProcessEmployeeID"])).ToList();
+                var missingIds = selectedIds.Where(id => !foundIds.Contains(id)).ToList();
+
+                if (missingIds.Any())
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Some selected salary records are no longer finalized or do not belong to the selected month and year."
+                    });
+                }
+
+                var paidEmployees = selectedRows
+                    .Where(r => Convert.ToInt32(r["PaidStatus"] == DBNull.Value ? 0 : r["PaidStatus"]) == 1)
+                    .Select(r => new
+                    {
+                        EmployeeCode = r["EmployeeCode"]?.ToString(),
+                        EmployeeName = r["EmployeeName"]?.ToString(),
+                        Reason = "Salary is already marked as paid and cannot be deleted."
+                    })
+                    .ToList();
+
+                if (paidEmployees.Any())
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Paid salary cannot be deleted. Please remove paid employees from the selection.",
+                        blockedEmployees = paidEmployees
+                    });
+                }
+
+                string finalizedIds = string.Join(",", selectedIds);
+
+                clsAccessLogInfo info = new clsAccessLogInfo();
+                info.AccessType = "DELETE-FINALIZED-EMPLOYEE-SALARY";
+                clsAccessLog.AccessLog_Save(info);
+
+                DataTable dt = clsDatabase.fnDataTable(
+                    "SP_Rollback_FinalizedSalary_EmployeeWise",
+                    request.Month,
+                    request.Year,
+                    finalizedIds,
+                    request.Reason.Trim(),
+                    userName
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return Json(new { success = false, message = "Database did not return a response." });
+
+                DataRow result = dt.Rows[0];
+                int statusCode = result.Table.Columns.Contains("StatusCode")
+                    ? Convert.ToInt32(result["StatusCode"])
+                    : result.Table.Columns.Contains("Status")
+                        ? Convert.ToInt32(result["Status"])
+                        : 1;
+                string message = result.Table.Columns.Contains("Message")
+                    ? result["Message"].ToString()
+                    : "Finalized salary deleted successfully.";
+                int deletedCount = result.Table.Columns.Contains("DeletedCount")
+                    ? Convert.ToInt32(result["DeletedCount"])
+                    : selectedIds.Count;
+
+                return Json(new
+                {
+                    success = statusCode == 1,
+                    message,
+                    deletedCount
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        public class FinalizedSalaryDeleteRequest
+        {
+            public int Month { get; set; }
+            public int Year { get; set; }
+            public string Reason { get; set; }
+            public List<long> PayrollProcessEmployeeIds { get; set; }
+        }
+
+        #endregion
 
     }
 }

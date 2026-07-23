@@ -348,7 +348,7 @@ namespace MendinePayroll.UI.Controllers
         private decimal ApplyRounding(decimal value, string type)
         {
             if (string.IsNullOrWhiteSpace(type))
-                return Math.Round(value, 0);
+                return Math.Round(value, 2, MidpointRounding.AwayFromZero);
 
             type = type.Trim().ToUpper();
 
@@ -356,7 +356,7 @@ namespace MendinePayroll.UI.Controllers
             {
                 var digitsText = type.Replace("ROUND", "");
                 if (int.TryParse(digitsText, out int digits))
-                    return Math.Round(value, digits);
+                    return Math.Round(value, digits, MidpointRounding.AwayFromZero);
             }
 
             switch (type)
@@ -367,14 +367,46 @@ namespace MendinePayroll.UI.Controllers
                     return Math.Floor(value);
                 case "ROUND":
                 default:
-                    return Math.Round(value, 0);
+                    return Math.Round(value, 2, MidpointRounding.AwayFromZero);
             }
+        }
+
+        private decimal RoundMoney(decimal value)
+        {
+            return Math.Round(value, 2, MidpointRounding.AwayFromZero);
+        }
+
+        private decimal RoundRupee(decimal value)
+        {
+            return Math.Round(value, 0, MidpointRounding.AwayFromZero);
+        }
+
+        private decimal RoundStatutory(decimal value, string statType, string configuredRoundingType)
+        {
+            statType = (statType ?? "").Trim().ToUpper();
+
+            // Statutory deductions/contributions are kept aligned with common Indian payroll rules:
+            // PF is rounded to the nearest rupee, ESIC is rounded up to the next rupee, and PTAX is slab-based.
+            if (statType == "PF_EE" || statType == "PF_ER")
+                return Math.Round(value, 0, MidpointRounding.AwayFromZero);
+
+            if (statType == "ESIC_EE" || statType == "ESIC_ER")
+                return Math.Ceiling(value);
+
+            if (statType == "PTAX")
+                return Math.Round(value, 0, MidpointRounding.AwayFromZero);
+
+            if (!string.IsNullOrWhiteSpace(configuredRoundingType))
+                return ApplyRounding(value, configuredRoundingType);
+
+            return RoundMoney(value);
         }
 
         private void ApplyStatutoryCalculation(List<SalaryComponentConfig> configList,Dictionary<string, decimal> calcs,EmployeeCTCCalculateRequest model,decimal grossVal)
         {
             foreach (var item in configList.Where(x => x.IsStatutory))
             {
+                string payConfigKey = item.PayConfigName.Trim().ToUpper();
                 decimal baseVal = EvaluateFormula(item.CalculationFormula, calcs);
                 if (baseVal == 0)
                     baseVal = grossVal;
@@ -392,7 +424,7 @@ namespace MendinePayroll.UI.Controllers
                                 ? Math.Min(baseVal, item.MaxLimit.Value)
                                 : baseVal;
 
-                            val = ApplyRounding((cap * item.ManualRate) / 100, item.RoundingType);
+                            val = RoundStatutory((cap * item.ManualRate) / 100, statType, item.RoundingType);
                         }
                         break;
 
@@ -405,7 +437,7 @@ namespace MendinePayroll.UI.Controllers
                                 : 21000;
 
                             if (baseVal <= esicCap)
-                                val = ApplyRounding((baseVal * item.ManualRate) / 100, item.RoundingType);
+                                val = RoundStatutory((baseVal * item.ManualRate) / 100, statType, item.RoundingType);
                         }
                         break;
 
@@ -413,14 +445,19 @@ namespace MendinePayroll.UI.Controllers
                         if (model.IsPTAX && grossVal > 0 && item.PTaxSlabs != null && item.PTaxSlabs.Count > 0)
                         {
                             var slab = item.PTaxSlabs.FirstOrDefault(x => grossVal >= x.MinSalary && grossVal <= x.MaxSalary);
-                            val = slab != null ? slab.PTaxAmount : 0;
+                            val = slab != null ? RoundStatutory(slab.PTaxAmount, statType, item.RoundingType) : 0;
                         }
                         break;
 
                     case "GRATUITY":
                         decimal gratuityRate = item.ManualRate > 0 ? item.ManualRate : 4.81m;
-                        val = ApplyRounding((baseVal * gratuityRate) / 100, item.RoundingType);
+                        val = RoundStatutory((baseVal * gratuityRate) / 100, statType, item.RoundingType);
                         break;
+                    case "TDS":
+                        if (calcs.ContainsKey(payConfigKey))
+                            continue;
+
+                        break; 
                 }
 
                 calcs[item.PayConfigName.Trim().ToUpper()] = val;
@@ -462,7 +499,9 @@ namespace MendinePayroll.UI.Controllers
             decimal totalGross = basicValue + totalAllowance;
             decimal netPay = totalGross - totalDeduction;
             decimal monthlyCTC = totalGross + totalContribution;
-            decimal annualCTC = monthlyCTC * 12;
+            decimal roundedNetPay = RoundRupee(netPay);
+            decimal roundedMonthlyCTC = RoundRupee(monthlyCTC);
+            decimal roundedAnnualCTC = roundedMonthlyCTC * 12;
 
             var response = new EmployeeCTCCalculateResponse
             {
@@ -476,13 +515,13 @@ namespace MendinePayroll.UI.Controllers
                     IsESIC = model.IsESIC,
                     IsPTAX = model.IsPTAX,
 
-                    MonthlyGross = ApplyRounding(totalGross, "ROUND"),
-                    TotalAllowance = ApplyRounding(totalGross, "ROUND"),
-                    TotalDeduction = ApplyRounding(totalDeduction, "ROUND"),
-                    TotalContribution = ApplyRounding(totalContribution, "ROUND"),
-                    NetPay = ApplyRounding(netPay, "ROUND"),
-                    MonthlyCTC = ApplyRounding(monthlyCTC, "ROUND"),
-                    AnnualCTC = ApplyRounding(annualCTC, "ROUND")
+                    MonthlyGross = RoundMoney(totalGross),
+                    TotalAllowance = RoundMoney(totalGross),
+                    TotalDeduction = RoundMoney(totalDeduction),
+                    TotalContribution = RoundMoney(totalContribution),
+                    NetPay = roundedNetPay,
+                    MonthlyCTC = roundedMonthlyCTC,
+                    AnnualCTC = roundedAnnualCTC
                 }
             };
 
@@ -490,14 +529,18 @@ namespace MendinePayroll.UI.Controllers
             {
                 decimal monthly = calcs[item.PayConfigName.Trim().ToUpper()];
 
+                decimal roundedMonthly = item.IsStatutory
+                    ? RoundStatutory(monthly, item.StatutoryType, item.RoundingType)
+                    : RoundMoney(monthly);
+
                 response.DetailList.Add(new EmployeeCTCDetailResult
                 {
                     PayConfigId = item.PayConfigId,
                     PayConfigName = item.PayConfigName,
                     PayType = item.PayType,
 
-                    MonthlyAmount = ApplyRounding(monthly, "ROUND"),
-                    YearlyAmount = ApplyRounding(monthly * 12, "ROUND"),
+                    MonthlyAmount = roundedMonthly,
+                    YearlyAmount = RoundMoney(roundedMonthly * 12),
 
                     TimeBasis = item.TimeBasis,
                     LogicType = item.LogicType,

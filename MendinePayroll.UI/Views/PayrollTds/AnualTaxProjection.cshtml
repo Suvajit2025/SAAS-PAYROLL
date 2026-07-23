@@ -971,7 +971,7 @@
 
                     <div class="calc-row" style="color:#2e7d32; font-weight:600;">
                         <span>Tax After Rebate</span>
-                        <span id="lblTaxAfterRebate">₹ 0.00</span>
+                        <span id="lblTaxAfterRebate">&#8377; 0.00</span>
                     </div>
                 </div>
 
@@ -982,7 +982,7 @@
 
                 <div class="tax-result-box">
                     <small style="text-transform:uppercase; color:#64748b; font-weight:bold;">Monthly Projected TDS</small>
-                    <div class="monthly-val" id="lblModalMonthlyTDS">₹ 0.00</div>
+                    <div class="monthly-val" id="lblModalMonthlyTDS">&#8377; 0.00</div>
                     <small style="color:#94a3b8;">(Annual Tax / 12)</small>
                 </div>
             </div>
@@ -1132,6 +1132,8 @@
     let rebateRefreshToken = 0;
     let activeProjectionRequest = null;
     let activeRebateRequests = [];
+    const RUPEE_SYMBOL = String.fromCharCode(8377);
+    const RUPEE_MOJIBAKE = String.fromCharCode(226, 8218, 185);
 
     function openProjectionEditor(finYearId, regimeId, loadSavedData, financialYearCode) {
         pendingEditYear = financialYearCode || finYearId || null;
@@ -1530,7 +1532,11 @@
     }
 
     function cleanNumber(val) {
-        return parseFloat((val || '0').toString().replace(/₹/g, '').replace(/,/g, '').trim()) || 0;
+        return parseFloat((val || '0').toString()
+            .replace(new RegExp(RUPEE_SYMBOL, 'g'), '')
+            .replace(new RegExp(RUPEE_MOJIBAKE, 'g'), '')
+            .replace(/,/g, '')
+            .trim()) || 0;
     }
 
     function formatNumber(val) {
@@ -1790,10 +1796,10 @@
         $('#lblModalNetTaxable').text('0.00');
         $('#lblModalBaseTax').text('0.00');
         $('#lblModalCess').text('0.00');
-        $('#lblModalMonthlyTDS').text('₹ 0.00');
-        $('#lblRebateThreshold').text('₹ 0.00');
-        $('#lblRebateLimit').text('₹ 0.00');
-        $('#lblTaxAfterRebate').text('₹ 0.00');
+        $('#lblModalMonthlyTDS').text(RUPEE_SYMBOL + ' 0.00');
+        $('#lblRebateThreshold').text(RUPEE_SYMBOL + ' 0.00');
+        $('#lblRebateLimit').text(RUPEE_SYMBOL + ' 0.00');
+        $('#lblTaxAfterRebate').text(RUPEE_SYMBOL + ' 0.00');
     }
 
     // ---------- Modal recalculation ----------
@@ -1835,7 +1841,7 @@
             // IMPORTANT: use @@ to avoid Razor @@ parsing in cshtml
             slabHtml += `
                 <div class="calc-row">
-                    <span>${s.Range} @@ ${s.Rate}% (₹ ${s.Salary})</span>
+                    <span>${s.Range} @@ ${s.Rate}% (${RUPEE_SYMBOL} ${s.Salary})</span>
                     <span>${s.Tax}</span>
                 </div>`;
         });
@@ -1853,7 +1859,7 @@
 
         $('#lblModalBaseTax').text(res.Summary?.TotalTaxBeforeCess || '0.00');
         $('#lblModalCess').text(res.Summary?.CessAmount || '0.00');
-        $('#lblModalMonthlyTDS').text('₹ ' + (res.Summary?.MonthlyTDS || '0.00'));
+        $('#lblModalMonthlyTDS').text(RUPEE_SYMBOL + ' ' + (res.Summary?.MonthlyTDS || '0.00'));
 
         // Sync employee toggle based on server
         if (typeof res.Summary?.RebateApplied !== 'undefined') {
@@ -1868,9 +1874,9 @@
 
         if (rebateApplied) {
 
-            $('#lblRebateThreshold').text('₹ ' + (res.Summary?.RebateThreshold || '0.00'));
-            $('#lblRebateLimit').text('₹ ' + (res.Summary?.RebateLimit || '0.00'));
-            $('#lblTaxAfterRebate').text('₹ ' + (res.Summary?.TaxAfterRebate || res.Summary?.TotalTaxBeforeCess || '0.00'));
+            $('#lblRebateThreshold').text(RUPEE_SYMBOL + ' ' + (res.Summary?.RebateThreshold || '0.00'));
+            $('#lblRebateLimit').text(RUPEE_SYMBOL + ' ' + (res.Summary?.RebateLimit || '0.00'));
+            $('#lblTaxAfterRebate').text(RUPEE_SYMBOL + ' ' + (res.Summary?.TaxAfterRebate || res.Summary?.TotalTaxBeforeCess || '0.00'));
 
             $('#rebateSection').fadeIn(150);
         }
@@ -1895,14 +1901,6 @@
 
             const empId = $row.data('empid');
             const rebateApplied = parseInt($row.find('.rebateApplied').val() || 0);
-
-            function cleanNumber(val) {
-                return parseFloat(
-                    val.replace(/₹/g, '')
-                        .replace(/,/g, '')
-                        .trim()
-                ) || 0;
-            }
             const annualgross = cleanNumber($row.find('.annualgross').text());
             const nettaxable = cleanNumber($row.find('.nettaxable').text());
             const totalBaseTax = cleanNumber($row.find('.totalBaseTax').text());

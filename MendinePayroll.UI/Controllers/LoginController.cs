@@ -63,13 +63,21 @@ namespace MendinePayroll.UI.Controllers
             {
                 //return Redirect("https://iehrms.iecsl.in/Account/ChoosePortal.aspx");
                 //Development
+                //SetPayrollSession(
+                //    "10195",
+                //    "suvajit.das@iecsl.co.in",
+                //    "476",
+                //    "101450",
+                //    "suvajit.das@iecsl.co.in",
+                //    "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14");
+                ////Development
                 SetPayrollSession(
-                    "10195",
-                    "suvajit.das@iecsl.co.in",
-                    "476",
-                    "101450",
-                    "suvajit.das@iecsl.co.in",
-                    "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14");
+                    "10345",
+                    "iniciolab@iecsl.co.in",
+                    "3542",
+                    "13500001",
+                    "iniciolab@iecsl.co.in",
+                    "808E0AC6-94CE-4887-AD9D-85AF318ED335");
 
                 //SetPayrollSession(
                 //    "10198",
@@ -78,10 +86,18 @@ namespace MendinePayroll.UI.Controllers
                 //    "101007",
                 //    "saikat.manna@mendine.com",
                 //    "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14");
+
+                //SetPayrollSession(
+                //    "10152",
+                //    "demo@corporation.in",
+                //    "348",
+                //    "37",
+                //    "demo@corporation.in",
+                //    "24A72122-DD46-4386-873D-758E450E252A");
             }
 
 
-           
+
             // Access Log Data Insert 
             clsAccessLogInfo info = new clsAccessLogInfo();
             info.AccessType = "PAYROLL-LOGIN";
@@ -109,6 +125,15 @@ namespace MendinePayroll.UI.Controllers
 
                 return Content(result, "text/plain");
             }
+        }
+
+        public ActionResult RestoreSession(string returnUrl)
+        {
+            var payslipReturnUrl = GetExternalPayslipReturnUrl(returnUrl);
+            if (!string.IsNullOrWhiteSpace(payslipReturnUrl))
+                return Redirect(payslipReturnUrl);
+
+            return Redirect(GetPortalUrl());
         }
 
         public JsonResult EmployeeLogin(string Email,string Password)
@@ -179,6 +204,43 @@ namespace MendinePayroll.UI.Controllers
         {
             string logoutUrl = ConfigurationManager.AppSettings["PayrollLogout"];
             return string.IsNullOrWhiteSpace(logoutUrl) ? DefaultPortalUrl : logoutUrl;
+        }
+
+        private string GetExternalPayslipReturnUrl(string returnUrl)
+        {
+            for (int i = 0; i < 25; i++)
+            {
+                if (string.IsNullOrWhiteSpace(returnUrl))
+                    return null;
+
+                returnUrl = HttpUtility.UrlDecode(returnUrl);
+
+                Uri uri;
+                if (!Uri.TryCreate(returnUrl, UriKind.Relative, out uri))
+                    return null;
+
+                var path = uri.GetLeftPart(UriPartial.Path).TrimEnd('/').ToLowerInvariant();
+                var query = HttpUtility.ParseQueryString(uri.Query);
+
+                if (path == "/login/restoresession")
+                {
+                    returnUrl = query["returnUrl"];
+                    continue;
+                }
+
+                if ((path == "/payslip" || path == "/payslip/index" || path == "/payslip/downloadpdf") &&
+                        !string.IsNullOrWhiteSpace(query["tenantId"]) &&
+                        !string.IsNullOrWhiteSpace(query["empId"]) &&
+                        !string.IsNullOrWhiteSpace(query["month"]) &&
+                        !string.IsNullOrWhiteSpace(query["year"]))
+                {
+                    return returnUrl;
+                }
+
+                return null;
+            }
+
+            return null;
         }
     }
 

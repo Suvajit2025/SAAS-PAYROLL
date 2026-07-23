@@ -110,7 +110,7 @@ namespace MendinePayroll.UI.Reports
             String Month = ddlMonth.SelectedItem.Text;
             int Year = clsHelper.fnConvert2Int(ddlYear.SelectedItem.Text);
 
-            DataTable dt = clsSalary.TDSAnnexure1(IDEmployee, CCode, Month, Year);
+            DataTable dt = clsSalary.TDSAnnexure1(IDEmployee, CCode, Month, Year,TenantId);
 
             RVViewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
             RVViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/RDLC/TDSAnnexure1.rdlc");

@@ -503,6 +503,112 @@
         text-transform: uppercase;
     }
 
+    .payroll-cycle-month-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 7px 9px;
+        margin-bottom: 8px;
+        border: 1px solid #dbeafe;
+        border-left: 3px solid var(--primary);
+        border-radius: 4px;
+        background: #f8fafc;
+    }
+
+    .payroll-cycle-month-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 24px;
+        font-size: 11px;
+    }
+
+    .payroll-cycle-month-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .payroll-cycle-month-title {
+        color: var(--primary);
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .payroll-cycle-month-box .form-control-custom {
+        width: 155px;
+        height: 34px;
+        padding: 6px 9px;
+        background: #ffffff;
+        flex: 0 0 155px;
+    }
+
+    .payroll-cycle-month-note {
+        color: #64748b;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .payroll-period-date-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .payroll-period-date-row .form-control-custom {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .payroll-period-separator {
+        color: #334155;
+        font-weight: 600;
+        font-size: 12px;
+        flex: 0 0 auto;
+    }
+
+    .attendance-period-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 12px 16px;
+        padding: 10px 12px;
+        border: 1px solid #dbeafe;
+        border-left: 3px solid var(--primary);
+        border-radius: 4px;
+        background: #f8fafc;
+        color: #334155;
+    }
+
+    .attendance-period-summary strong {
+        color: var(--primary);
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .attendance-period-summary span {
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .attendance-period-days {
+        background: var(--primary-light);
+        color: var(--primary);
+        border-radius: 12px;
+        padding: 4px 10px;
+        white-space: nowrap;
+    }
+
     .selection-container {
         display: flex;
         height: 350px;
@@ -2456,10 +2562,12 @@
                     <!-- PAYROLL TYPE -->
                     <div style="flex:1">
                         <label class="form-label-custom">Payroll Type</label>
-                        <select id="ddlType" class="form-control-custom" onchange="handleTypeChange()">
+                        <select id="ddlType" class="form-control-custom hidden">
                             <option value="1">Normal (Monthly)</option>
                             <option value="2">Contractual (Hourly / Daily)</option>
                         </select>
+                        <input type="text" id="txtPayrollTypeName" class="form-control-custom" readonly
+                               value="Select Pay Group" />
                     </div>
                 </div>
 
@@ -2493,14 +2601,28 @@
 
                         <!-- CONTRACTUAL -->
                         <div id="pnlRange" class="hidden">
-                            <label class="form-label-custom">Work Period</label>
-                            <div style="display:flex; gap:10px;">
+                            <label class="form-label-custom" id="lblWorkPeriod">Work Period</label>
+                            <div id="pnlFixedCycleMonth" class="hidden payroll-cycle-month-box">
+                                <div class="payroll-cycle-month-content">
+                                    <span id="fixedCycleInfoIcon" class="payroll-cycle-month-icon" title="">
+                                        <i class="fas fa-info-circle"></i>
+                                    </span>
+                                    <span id="payrollCycleMonthTitle" class="payroll-cycle-month-title">Payroll Cycle</span>
+                                    <small id="payrollCycleMonthNote" class="payroll-cycle-month-note">Select payroll month</small>
+                                </div>
+                                <input type="month"
+                                       id="txtFixedCycleMonth"
+                                       class="form-control-custom"
+                                       onchange="handleFixedCycleMonthChange()" />
+                            </div>
+
+                            <div id="pnlPeriodDateRow" class="payroll-period-date-row">
                                 <input type="date"
                                        id="txtFromDate"
                                        class="form-control-custom"
                                        onblur="handleDateRangeBlur()" />
 
-                                <span>TO</span>
+                                <span class="payroll-period-separator">TO</span>
 
                                 <input type="date"
                                        id="txtToDate"
@@ -2563,6 +2685,13 @@
             </div>
             <!-- BODY -->
             <div class="modal-body" style="padding:0; max-height:70vh; overflow-y:scroll;">
+                <div id="attPeriodSummary" class="attendance-period-summary hidden">
+                    <div>
+                        <strong><i class="fas fa-calendar-alt"></i> Payroll Period</strong>
+                        <span id="attPeriodText"></span>
+                    </div>
+                    <div class="attendance-period-days" id="attPeriodDays"></div>
+                </div>
 
                 <!-- ACCORDION 1 : FILE UPLOAD -->
                 <div class="accordion-section">
@@ -2947,6 +3076,7 @@
     $(document).ready(function () {
 
         // Load payroll batch dashboard on first load
+        initDashboardFilters();
         loadPayrollBatchGrid();
 
         initEmployeeWiseFilters();
@@ -2977,6 +3107,8 @@
     let dtInstance = null;
     let editingEmpId = null;
     let currentData = [];
+    let activePayrollCycleConfig = null;
+    let isMonthlyFixedCycle = false;
     /* =====================================================
        INIT FILTER DROPDOWNS (DATA ONLY)
        ===================================================== */
@@ -3284,7 +3416,67 @@
             return;
         }
 
+        if (!updateAttendancePeriodSummary()) {
+            return;
+        }
+
         loadAttendanceComponents(payGroupId, payrollType);
+    }
+
+    function getPayrollPeriodDates() {
+        const payrollType = $("#ddlType").val();
+
+        if (payrollType === '1' && !isMonthlyFixedCycle) {
+            const ym = $("#txtMonthYear").val();
+            if (!ym) return null;
+
+            const parts = ym.split("-");
+            const year = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+
+            return {
+                from: new Date(year, month - 1, 1),
+                to: new Date(year, month, 0)
+            };
+        }
+
+        const from = $("#txtFromDate").val();
+        const to = $("#txtToDate").val();
+
+        if (!from || !to) return null;
+
+        return {
+            from: new Date(from),
+            to: new Date(to)
+        };
+    }
+
+    function formatDisplayDate(date) {
+        return date.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        }).replace(/ /g, '-');
+    }
+
+    function updateAttendancePeriodSummary() {
+        const period = getPayrollPeriodDates();
+
+        if (!period) {
+            toastr.error("Please select a valid payroll period.");
+            return false;
+        }
+
+        if (period.to < period.from) {
+            toastr.error("Payroll period To Date cannot be earlier than From Date.");
+            return false;
+        }
+
+        const days = Math.floor((period.to - period.from) / 86400000) + 1;
+        $("#attPeriodText").text(` ${formatDisplayDate(period.from)} to ${formatDisplayDate(period.to)}`);
+        $("#attPeriodDays").text(`${days} Days`);
+        $("#attPeriodSummary").removeClass("hidden");
+        return true;
     }
 
 
@@ -3364,6 +3556,8 @@
             const [year, month] = $("#txtMonthYear").val().split("-");
             payload.processMonth = parseInt(month);
             payload.processYear = parseInt(year);
+            payload.fromDate = $("#txtFromDate").val();
+            payload.toDate = $("#txtToDate").val();
         } else {
             payload.fromDate = $("#txtFromDate").val();
             payload.toDate = $("#txtToDate").val();
@@ -3582,7 +3776,10 @@
 
         loadCompanyList();   // 👈 FIRST
 
-        handleTypeChange();
+        $("#ddlType").val('');
+        $("#txtPayrollTypeName").val('Select Pay Group');
+        applyPayrollTypeUI('');
+        loadPayGroups();
     }
     function clearEmployeeSelection() {
 
@@ -3618,6 +3815,26 @@
         const year = now.getFullYear();
 
         document.getElementById('txtMonthYear').value = `${year}-${month}`;
+        document.getElementById('txtFixedCycleMonth').value = `${year}-${month}`;
+    }
+
+    function setFixedCycleDefaultMonthYear(endDay) {
+        const now = new Date();
+        const configuredEndDay = parseInt(endDay, 10);
+        const currentMonthLastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        const cutoffDay = Math.min(configuredEndDay || 1, currentMonthLastDay);
+        const payrollMonthDate = new Date(now);
+
+        if (now.getDate() < cutoffDay) {
+            payrollMonthDate.setMonth(payrollMonthDate.getMonth() - 1);
+        }
+
+        const month = String(payrollMonthDate.getMonth() + 1).padStart(2, '0');
+        const year = payrollMonthDate.getFullYear();
+        const value = `${year}-${month}`;
+
+        document.getElementById('txtMonthYear').value = value;
+        document.getElementById('txtFixedCycleMonth').value = value;
     }
 
     /*=================Open Company================= */
@@ -3642,7 +3859,23 @@
         // value format = YYYY-MM
         if (!val || val.length !== 7) return;
 
+        if ($("#ddlType").val() === '1') {
+            fillMonthlyPayrollCycleDates();
+        }
+
         // Only now generate
+        loadEmployeeList();
+        tryGenerateRefNo();
+        tryGenerateComments();
+    }
+
+    function handleFixedCycleMonthChange() {
+        const val = document.getElementById('txtFixedCycleMonth').value;
+
+        if (!val || val.length !== 7) return;
+
+        document.getElementById('txtMonthYear').value = val;
+        fillMonthlyPayrollCycleDates();
         loadEmployeeList();
         tryGenerateRefNo();
         tryGenerateComments();
@@ -3772,20 +4005,204 @@
     }
 
     /* ======Load PayGroup =============== */
-    function handleTypeChange() {
-        const type = $("#ddlType").val();
+    function getSelectedPayGroupSalaryType() {
+        const selected = $("#ddlGroup option:selected");
+        return String(selected.data("salaryConfigureType") || selected.attr("data-salary-configure-type") || "");
+    }
+
+    function resetPeriodControls() {
+        activePayrollCycleConfig = null;
+        isMonthlyFixedCycle = false;
+        $("#txtFromDate, #txtToDate").prop("readonly", false);
+        $("#pnlFixedCycleMonth").addClass('hidden');
+        $("#pnlPeriodDateRow").removeClass('hidden');
+        $("#fixedCycleInfoIcon").attr("title", "");
+        $("#lblWorkPeriod").text("Work Period");
+    }
+
+    function applyPayrollTypeUI(type) {
+        $("#ddlType").val(type);
+        resetPeriodControls();
 
         if (type === '1') { // Monthly
             $("#pnlMonthly").removeClass('hidden');
             $("#pnlRange").addClass('hidden');
+            $("#txtPayrollTypeName").val('Normal (Monthly)');
         } else { // Contractual
             $("#pnlMonthly").addClass('hidden');
+            $("#pnlRange").toggleClass('hidden', type !== '2');
+            $("#txtPayrollTypeName").val(type === '2' ? 'Contractual (Hourly / Daily)' : 'Select Pay Group');
+        }
+    }
+
+    function handleTypeChange() {
+        applyPayrollTypeUI($("#ddlType").val());
+    }
+
+    function loadMonthlyPayrollCycleAndApply(callback) {
+        $.getJSON('/bulkSalaryProcess/GetActivePayrollCycle')
+            .done(function (res) {
+                if (!res || res.success === false) {
+                    toastr.error((res && res.message) || "Payroll cycle configuration is not set.");
+                    if (callback) callback(false);
+                    return;
+                }
+
+                if (String(res.typeID) !== '1') {
+                    toastr.error("Active payroll cycle setup is not configured for Monthly payroll.");
+                    if (callback) callback(false);
+                    return;
+                }
+
+                applyMonthlyPayrollCycleUI(res);
+                if (callback) callback(true);
+            })
+            .fail(function () {
+                toastr.error("Failed to load payroll cycle configuration.");
+                if (callback) callback(false);
+            });
+    }
+
+    function applyMonthlyPayrollCycleUI(config) {
+        activePayrollCycleConfig = config;
+        $("#pnlMonthly").removeClass('hidden');
+        $("#txtPayrollTypeName").val('Normal (Monthly)');
+
+        if (String(config.payrollCycleType) === '1') {
+            isMonthlyFixedCycle = false;
+            $("#pnlMonthly").addClass('hidden');
             $("#pnlRange").removeClass('hidden');
+            $("#pnlFixedCycleMonth").removeClass('hidden');
+            $("#pnlPeriodDateRow").addClass('hidden');
+            $("#txtFixedCycleMonth").val($("#txtMonthYear").val());
+            $("#txtFromDate, #txtToDate").prop("readonly", true);
+            $("#lblWorkPeriod").text("Payroll Period");
+            $("#payrollCycleMonthTitle").text("Calendar Month");
+            $("#payrollCycleMonthNote").text("1st day to last day");
+            fillMonthlyPayrollCycleDates();
+            return;
         }
 
-        loadPayGroups(type);
+        if (String(config.payrollCycleType) === '2') {
+            isMonthlyFixedCycle = true;
+            setFixedCycleDefaultMonthYear(config.endDay);
+            $("#pnlMonthly").addClass('hidden');
+            $("#pnlRange").removeClass('hidden');
+            $("#pnlFixedCycleMonth").removeClass('hidden');
+            $("#pnlPeriodDateRow").addClass('hidden');
+            $("#txtFixedCycleMonth").val($("#txtMonthYear").val());
+            $("#txtFromDate, #txtToDate").prop("readonly", true);
+            $("#lblWorkPeriod").text("Payroll Period");
+            $("#payrollCycleMonthTitle").text("Fixed Cycle");
+            $("#payrollCycleMonthNote").text("Configured start day to end day");
+            fillMonthlyPayrollCycleDates();
+            return;
+        }
+
+        toastr.error("Monthly payroll cycle type is not configured.");
     }
+
+    function getDaysInMonth(year, monthNumber) {
+        return new Date(year, monthNumber, 0).getDate();
+    }
+
+    function toDateInputValue(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function fillMonthlyPayrollCycleDates() {
+        if (!activePayrollCycleConfig) return;
+
+        if (String(activePayrollCycleConfig.payrollCycleType) === '1') {
+            fillCalendarPayrollCycleDates();
+            return;
+        }
+
+        fillFixedPayrollCycleDates();
+    }
+
+    function fillCalendarPayrollCycleDates() {
+        const ym = $("#txtMonthYear").val();
+        if (!ym || ym.length !== 7) return;
+
+        const parts = ym.split('-');
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+
+        if (!year || !month) return;
+
+        const fromDate = new Date(year, month - 1, 1);
+        const toDate = new Date(year, month, 0);
+
+        $("#txtFromDate").val(toDateInputValue(fromDate));
+        $("#txtToDate").val(toDateInputValue(toDate));
+        $("#fixedCycleInfoIcon").attr("title", `From ${formatDisplayDate(fromDate)} To ${formatDisplayDate(toDate)}`);
+    }
+
+    function fillFixedPayrollCycleDates() {
+        if (!activePayrollCycleConfig) return;
+
+        const ym = $("#txtMonthYear").val();
+        if (!ym || ym.length !== 7) return;
+
+        const parts = ym.split('-');
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const startDayConfigured = parseInt(activePayrollCycleConfig.startDay, 10);
+        const endDayConfigured = parseInt(activePayrollCycleConfig.endDay, 10);
+
+        if (!year || !month || !startDayConfigured || !endDayConfigured) return;
+
+        let startYear = year;
+        let startMonth = month - 1;
+
+        if (startMonth === 0) {
+            startMonth = 12;
+            startYear = year - 1;
+        }
+
+        const startDay = Math.min(startDayConfigured, getDaysInMonth(startYear, startMonth));
+        const endDay = Math.min(endDayConfigured, getDaysInMonth(year, month));
+
+        $("#txtFromDate").val(toDateInputValue(new Date(startYear, startMonth - 1, startDay)));
+        $("#txtToDate").val(toDateInputValue(new Date(year, month - 1, endDay)));
+
+        const fromDisplay = formatDisplayDate(new Date(startYear, startMonth - 1, startDay));
+        const toDisplay = formatDisplayDate(new Date(year, month - 1, endDay));
+        $("#fixedCycleInfoIcon").attr("title", `From ${fromDisplay} To ${toDisplay}`);
+    }
+
     function handleGroupChange() {
+        clearEmployeeSelection();
+        $("#genRefNo").val('');
+
+        const type = getSelectedPayGroupSalaryType();
+        if (!$("#ddlGroup").val()) {
+            applyPayrollTypeUI('');
+            $("#txtComments").val('');
+            return;
+        }
+
+        if (type !== '1' && type !== '2') {
+            applyPayrollTypeUI('');
+            toastr.error("Salary configure type is missing for selected Pay Group.");
+            return;
+        }
+
+        applyPayrollTypeUI(type);
+        if (type === '1') {
+            loadMonthlyPayrollCycleAndApply(function (success) {
+                if (!success) return;
+                tryGenerateRefNo();   // Ref No depends on PayGroup
+                loadEmployeeList(); // Employees depend on PayGroup
+                tryGenerateComments();
+            });
+            return;
+        }
+
         tryGenerateRefNo();   // Ref No depends on PayGroup
         loadEmployeeList(); // Employees depend on PayGroup
         tryGenerateComments();
@@ -3810,7 +4227,7 @@
         });
     }
 
-    function loadPayGroups(type) {
+    function loadPayGroups() {
         const ddl = $("#ddlGroup");
 
         if ($.fn.select2 && ddl.data("select2")) {
@@ -3819,14 +4236,15 @@
 
         ddl.empty();
 
-        $.getJSON('/bulkSalaryProcess/GetPayGroups', { payrollType: type }, function (groups) {
+        $.getJSON('/bulkSalaryProcess/GetPayGroups', function (groups) {
             ddl.append(`<option value="">-- Select Group --</option>`);
             groups.forEach(g => {
-                ddl.append(`<option value="${g.value}">${g.text}</option>`);
+                ddl.append(`<option value="${g.value}" data-salary-configure-type="${g.salaryConfigureType || ''}">${g.text}</option>`);
             });
 
             initPayGroupSelect2();
             ddl.val("").trigger("change.select2");
+            applyPayrollTypeUI('');
         }).fail(function () {
             toastr.error("Failed to load pay groups.");
         });
@@ -4005,6 +4423,11 @@
             contentType: 'application/json',
             data: JSON.stringify(payload),
             success: function (res) {
+                if (res && res.Success === false) {
+                    toastr.error(res.Message || "Salary calculation failed");
+                    return;
+                }
+
                 /* 🔴 BLOCKED CASE */
                 if (res.PreviewBatchID === -1) {
                     toastr.warning("Payroll draft already exists or is finalized. You cannot create it again.");
@@ -4708,6 +5131,12 @@
         for (let y = yearNow - 5; y <= yearNow + 1; y++) {
             yddl.append(`<option value="${y}">${y}</option>`);
         }
+
+        const previousMonth = new Date();
+        previousMonth.setMonth(previousMonth.getMonth() - 1);
+
+        mddl.val(String(previousMonth.getMonth() + 1));
+        yddl.val(String(previousMonth.getFullYear()));
     }
     function loadPayrollBatchGrid() {
         $.ajax({
@@ -4815,6 +5244,14 @@
     function applyDashboardFilters() {
         if (!groupDtInstance) return;
 
+        if (!$('#ddlDashMonth').val() || !$('#ddlDashYear').val()) {
+            const previousMonth = new Date();
+            previousMonth.setMonth(previousMonth.getMonth() - 1);
+
+            $('#ddlDashMonth').val(String(previousMonth.getMonth() + 1));
+            $('#ddlDashYear').val(String(previousMonth.getFullYear()));
+        }
+
         const month = $('#ddlDashMonth').val();
         const year = $('#ddlDashYear').val();
 
@@ -4861,14 +5298,6 @@
                 complete: hidePayrollLoader
             });
         });
-
-    /* ===============================
-       PAGE LOAD
-    ================================ */
-    $(document).ready(function () {
-        initDashboardFilters();
-        loadPayrollBatchGrid();
-    });
 
     function openBatchView(payrollBatchId, payGroupId, batchStatus) {
 

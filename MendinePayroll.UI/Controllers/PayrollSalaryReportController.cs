@@ -690,7 +690,7 @@ namespace MendinePayroll.UI.Controllers
         
         private string GetApplicationBaseUrl()
         {
-            var configuredUrl = ConfigurationManager.AppSettings["ApiUrl"];
+            var configuredUrl = ConfigurationManager.AppSettings["PayslipBaseUrl"];
             if (!string.IsNullOrWhiteSpace(configuredUrl))
             {
                 configuredUrl = configuredUrl.Trim();
@@ -699,7 +699,7 @@ namespace MendinePayroll.UI.Controllers
 
             var request = System.Web.HttpContext.Current?.Request;
             if (request?.Url == null)
-                return "https://liliospayroll.iecsl.in/";
+                return "https://payroll.iecsl.in/";
 
             var appPath = request.ApplicationPath;
             if (string.IsNullOrWhiteSpace(appPath) || appPath == "/")
@@ -781,6 +781,10 @@ namespace MendinePayroll.UI.Controllers
                     return;
                 }
 
+                LogBulkPayslipDebug(
+                    "BulkPayslipRows",
+                    $"EmployeeCount={dtValidation.Rows.Count}; Ids={payrollProcessEmployeeIds}");
+
                 string monthName =
                     CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
 
@@ -838,6 +842,7 @@ namespace MendinePayroll.UI.Controllers
 
                 // 🔥 Mail service (create once)
                 var mailService = new MailService();
+                var pdfService = new PayslipPdfService();
 
                 foreach (DataRow dr in dtValidation.Rows)
                 {
@@ -855,13 +860,17 @@ namespace MendinePayroll.UI.Controllers
                             continue;
                         }
 
+                        LogBulkPayslipDebug(
+                            "BulkPayslipEmployeeStart",
+                            $"EmployeeId={empId}; Email={email}; Month={monthName}; Year={year}");
+
                         // 1️⃣ Get payslip data
                         var model = payslipCtrl.GetPayslipData(
                             empId,
                             monthName,
                             year,
                             true);
-
+                        string viewName = payslipCtrl.GetPayslipViewName(model.TenantId);
                         if (model == null)
                         {
                             LogBulkPayslipDebug(
@@ -870,19 +879,23 @@ namespace MendinePayroll.UI.Controllers
                             continue;
                         }
 
-                        // 2️⃣ Generate PDF
-                        var pdf = new Rotativa.ViewAsPdf(
-                            "~/Views/Payslip/Index.cshtml",
-                            model)
-                        {
-                            PageSize = Rotativa.Options.Size.A4,
-                            PageOrientation = Rotativa.Options.Orientation.Portrait
-                        };
+                        LogBulkPayslipDebug(
+                            "BulkPayslipPdfStart",
+                            $"EmployeeId={empId}; Email={email}; EmpCode={model.EmpCode}; Month={monthName}; Year={year}");
 
-                        byte[] pdfBytes = pdf.BuildFile(controllerContext);
+                        // 2️⃣ Generate PDF using the same formatter as manual payslip download.
+                        byte[] pdfBytes = pdfService.GeneratePayslipPdf(
+                            controllerContext,
+                            viewName,
+                            model,
+                            $"Payslip_{model.EmpCode}_{monthName}_{year}.pdf");
 
                         if (pdfBytes == null || pdfBytes.Length == 0)
                             throw new Exception("Rotativa generated empty PDF.");
+
+                        LogBulkPayslipDebug(
+                            "BulkPayslipPdfGenerated",
+                            $"EmployeeId={empId}; Email={email}; EmpCode={model.EmpCode}; PdfBytes={pdfBytes.Length}");
 
                         string subject = GetPayslipMailSubject(model, firstName, email, monthName, year);
                         string bodyHtml = GetPayslipMailBody(model, firstName, email, monthName, year);

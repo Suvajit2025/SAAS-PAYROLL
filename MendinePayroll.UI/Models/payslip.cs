@@ -24,6 +24,7 @@ namespace MendinePayroll.UI.Models
     {
         public string Month { get; set; }
         public int Year { get; set; }
+        public string TenantId { get; set; }
         // --- Company Info ---
         public string CompanyName { get; set; }
         public string CompanyLogoUrl { get; set; }
@@ -44,10 +45,12 @@ namespace MendinePayroll.UI.Models
         public string ESICNo { get; set; }
         public string BankAccount { get; set; }
         public string BankName { get; set; }
+        public string IFSCCode { get; set; }
 
         // --- Attendance ---
         public int TotalDays { get; set; }
         public int WorkedDays { get; set; }
+        public int WeeklyOffHoliday { get; set; }
         public int LOPDays { get; set; }
         public int PayableDays { get; set; }
         public int LeaveTaken { get; set; }
