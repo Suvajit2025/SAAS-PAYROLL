@@ -108,6 +108,7 @@ namespace MendinePayroll.UI.Controllers
                     payrollCycleType = config.PayrollCycleType,
                     startDay = config.StartDay,
                     endDay = config.EndDay,
+                    PaidDaysSource = config.PaidDaysSource,
                     paidDaysSource = config.PaidDaysSource
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -211,30 +212,31 @@ namespace MendinePayroll.UI.Controllers
                 }
 
                 var dt = new DataTable();
-                dt = clsDatabase.fnDataTable("SP_Payroll_GetAttendanceEmployees", TenantId, payGroupId, payrollType, employeeIds, processMonth, processYear, fromDate, toDate);
+                PayrollCycleRuntimeConfig payrollCycleConfig = GetActivePayrollCycleConfiguration();
+                int payGroupIdValue;
 
-                // 🔹 Convert DataTable to generic JSON
-                var rows = new List<Dictionary<string, object>>();
-
-                foreach (DataRow dr in dt.Rows)
+                if (int.TryParse(payGroupId, out payGroupIdValue) && processMonth.HasValue && processYear.HasValue)
                 {
-                    var row = new Dictionary<string, object>();
-
-                    foreach (DataColumn col in dt.Columns)
+                    DataTable cachedAttendance = GetCachedAttendance(payGroupIdValue, employeeIds, processMonth.Value, processYear.Value);
+                    if (IsCompleteAttendanceCache(cachedAttendance, employeeIds))
                     {
-                        row[col.ColumnName] = dr[col] == DBNull.Value ? null : dr[col];
+                        return BuildAttendanceEmployeesJson(cachedAttendance, JsonRequestBehavior.AllowGet);
                     }
-
-                    rows.Add(row);
                 }
 
-                return Json(new
+                if (payrollCycleConfig.PaidDaysSource == 2)
                 {
-                    columns = dt.Columns.Cast<DataColumn>()
-                                         .Select(c => c.ColumnName)
-                                         .ToList(),
-                    data = rows
-                }, JsonRequestBehavior.AllowGet);
+                    dt = clsDatabase.fnDataTable("SP_Payroll_GetAttendanceEmployees_AttendanceBased", TenantId, payGroupId, employeeIds, processMonth, processYear, fromDate, toDate);
+                }
+                else
+                {
+                    dt = clsDatabase.fnDataTable("SP_Payroll_GetAttendanceEmployees", TenantId, payGroupId, payrollType, employeeIds, processMonth, processYear, fromDate, toDate);
+                }
+
+                if (int.TryParse(payGroupId, out payGroupIdValue) && processMonth.HasValue && processYear.HasValue)
+                    SaveAttendanceCacheFromTable(payGroupIdValue, processMonth.Value, processYear.Value, dt);
+
+                return BuildAttendanceEmployeesJson(dt, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -242,6 +244,146 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        private JsonResult BuildAttendanceEmployeesJson(DataTable dt, JsonRequestBehavior behavior)
+        {
+            var rows = new List<Dictionary<string, object>>();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                var row = new Dictionary<string, object>();
+
+                foreach (DataColumn col in dt.Columns)
+                    row[col.ColumnName] = dr[col] == DBNull.Value ? null : dr[col];
+
+                rows.Add(row);
+            }
+
+            return Json(new
+            {
+                columns = dt.Columns.Cast<DataColumn>()
+                                     .Select(c => c.ColumnName)
+                                     .ToList(),
+                data = rows
+            }, behavior);
+        }
+
+        private DataTable GetCachedAttendance(int payGroupId, string employeeIds, int processMonth, int processYear)
+        {
+            return clsDatabase.fnDataTable(
+                "SP_Payroll_AttendanceCache_Get",
+                TenantId,
+                payGroupId,
+                employeeIds,
+                processMonth,
+                processYear);
+        }
+
+        private bool IsCompleteAttendanceCache(DataTable dt, string employeeIds)
+        {
+            if (dt == null || dt.Rows.Count == 0 || !dt.Columns.Contains("EmployeeId"))
+                return false;
+
+            var requestedIds = ParseEmployeeIds(employeeIds);
+            if (requestedIds.Count == 0)
+                return false;
+
+            var cachedIds = new HashSet<int>(
+                dt.AsEnumerable()
+                  .Where(r => r["EmployeeId"] != DBNull.Value)
+                  .Select(r => Convert.ToInt32(r["EmployeeId"])));
+
+            return requestedIds.All(id => cachedIds.Contains(id));
+        }
+
+        private List<int> ParseEmployeeIds(string employeeIds)
+        {
+            if (string.IsNullOrWhiteSpace(employeeIds))
+                return new List<int>();
+
+            return employeeIds
+                .Split(',')
+                .Select(id =>
+                {
+                    int parsed;
+                    return int.TryParse(id, out parsed) ? parsed : 0;
+                })
+                .Where(id => id > 0)
+                .Distinct()
+                .ToList();
+        }
+
+        private void SaveAttendanceCacheFromTable(int payGroupId, int processMonth, int processYear, DataTable dt)
+        {
+            if (dt == null || dt.Rows.Count == 0)
+                return;
+
+            string paidColumn = dt.Columns.Contains("PaidUnits")
+                ? "PaidUnits"
+                : dt.Columns.Contains("PaidDays") ? "PaidDays" : string.Empty;
+
+            if (string.IsNullOrEmpty(paidColumn) || !dt.Columns.Contains("EmployeeId"))
+                return;
+
+            var attendanceRows = dt.AsEnumerable()
+                .Where(r => r["EmployeeId"] != DBNull.Value)
+                .Select(r => new
+                {
+                    EmployeeId = Convert.ToInt32(r["EmployeeId"]),
+                    EmployeeName = dt.Columns.Contains("EmployeeName") && r["EmployeeName"] != DBNull.Value
+                        ? r["EmployeeName"].ToString()
+                        : string.Empty,
+                    PaidDays = r[paidColumn] == DBNull.Value ? 0m : Convert.ToDecimal(r[paidColumn])
+                })
+                .ToList();
+
+            SaveAttendanceCache(payGroupId, processMonth, processYear, attendanceRows);
+        }
+
+        private void SaveAttendanceCacheFromRequest(PayrollProcessRequest request, int payGroupId)
+        {
+            if (request == null
+                || request.Employees == null
+                || request.Employees.Count == 0
+                || payGroupId <= 0
+                || !request.ProcessMonth.HasValue
+                || !request.ProcessYear.HasValue)
+            {
+                return;
+            }
+
+            var attendanceRows = request.Employees.Select(e => new
+            {
+                EmployeeId = e.EmployeeId,
+                EmployeeName = e.EmployeeName ?? string.Empty,
+                PaidDays = e.PaidDays
+            }).ToList();
+
+            SaveAttendanceCache(payGroupId, request.ProcessMonth.Value, request.ProcessYear.Value, attendanceRows);
+        }
+
+        private void SaveAttendanceCache(int payGroupId, int processMonth, int processYear, object attendanceRows)
+        {
+            try
+            {
+                string userName = Session["UserName"]?.ToString() ?? "System";
+                string attendanceJson = JsonConvert.SerializeObject(attendanceRows);
+
+                clsDatabase.fnDBOperation(
+                    "SP_Payroll_AttendanceCache_Save",
+                    TenantId,
+                    payGroupId,
+                    processMonth,
+                    processYear,
+                    attendanceJson,
+                    userName);
+            }
+            catch (Exception ex)
+            {
+                clsDatabase.fnErrorLog("PayrollAttendanceCacheSaveError", ex.ToString());
+            }
+        }
+
         /*========== Salary Calculation ================*/
         [HttpPost]
         public JsonResult CalculateSalary(PayrollProcessRequest request)
@@ -288,6 +430,7 @@ namespace MendinePayroll.UI.Controllers
 
             decimal totalCTC = 0m;
             decimal totalNet = 0m;
+            int attendancePayGroupId = request.PayGroupId;
 
             var results = new List<EmployeeSalaryResponse>();
 
@@ -313,6 +456,10 @@ namespace MendinePayroll.UI.Controllers
                 bool isESIC = Convert.ToBoolean(h["IsESIC_Applicable"]);
                 bool isPTax = Convert.ToBoolean(h["IsPTax_Applicable"]);
                 int PayGroupID=Convert.ToInt32(h["PayGroupID"]);
+
+                if (attendancePayGroupId <= 0)
+                    attendancePayGroupId = PayGroupID;
+
                 /* --- Salary Components --- */
                 DataTable dtComp = clsDatabase.fnDataTable(
                     "Payroll_SaaS_GetSalaryDetails",
@@ -392,6 +539,7 @@ namespace MendinePayroll.UI.Controllers
 
             }
 
+            SaveAttendanceCacheFromRequest(request, attendancePayGroupId);
 
             /* =============================
                5️⃣ UPDATE PREVIEW TOTALS
@@ -710,7 +858,7 @@ namespace MendinePayroll.UI.Controllers
                 // 🔹 PF
                 if (c.StatutoryType.StartsWith("PF"))
                 {
-                    if (!isPFApplicable) { c.Amount = 0; continue; }
+                    if (!isPFApplicable) { c.Amount = 0; c.OriginalAmount = 0; continue; }
                     decimal pfBase = dynamicBaseValue;
                     if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && pfBase > c.MaxLimit.Value)
                         pfBase = c.MaxLimit.Value;

@@ -17,7 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using UI.BLL;
@@ -65,6 +64,44 @@ namespace MendinePayroll.UI.Controllers
             info.AccessType = "SALARY-REPORT";
             clsAccessLog.AccessLog_Save(info);
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetActivePayrollCycle()
+        {
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable("SP_PayrollCycleConfiguration_GetActive", TenantId);
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Payroll cycle configuration is not set."
+                    }, JsonRequestBehavior.AllowGet);
+                }
+
+                DataRow row = dt.Rows[0];
+                byte paidDaysSource = row.Table.Columns.Contains("PaidDaysSource") && row["PaidDaysSource"] != DBNull.Value
+                    ? Convert.ToByte(row["PaidDaysSource"])
+                    : (byte)1;
+
+                return Json(new
+                {
+                    success = true,
+                    PaidDaysSource = paidDaysSource,
+                    paidDaysSource = paidDaysSource
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpGet]
@@ -203,7 +240,7 @@ namespace MendinePayroll.UI.Controllers
                 // Combine Validation Skips and SQL Skips
                 var allSkipped = validationSkipped.Cast<object>().Concat(sqlSkipped).ToList();
 
-                if(totalEmployees > 0)
+                if(paidUpdated > 0)
                 {
                     LogBulkPayslipDebug(
                         "BulkPayslipQueued",
@@ -212,6 +249,12 @@ namespace MendinePayroll.UI.Controllers
                     System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(ct =>
                         SendBulkPayslips(finalizedIds, month, year, tenantId, applicationBaseUrl)
                     );
+                }
+                else
+                {
+                    LogBulkPayslipDebug(
+                        "BulkPayslipNotQueued",
+                        $"No newly paid employees. Ids={finalizedIds}; Month={month}; Year={year}; TenantId={tenantId}; PaidUpdated={paidUpdated}; TotalEmployees={totalEmployees}");
                 }
                 return Json(new
                 {
@@ -763,6 +806,68 @@ namespace MendinePayroll.UI.Controllers
                 .Replace("{MonthYear}", $"{monthName} {year}");
         }
 
+        private bool TryReservePayslipMail(string tenantId, int employeeId, int month, int year, string toEmail)
+        {
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable(
+                    "SP_Saas_PayslipMailSendLog_TryBegin",
+                    tenantId,
+                    employeeId,
+                    month,
+                    year,
+                    toEmail ?? string.Empty);
+
+                if (dt == null || dt.Rows.Count == 0 || !dt.Columns.Contains("CanSend"))
+                    return true;
+
+                return Convert.ToInt32(dt.Rows[0]["CanSend"]) == 1;
+            }
+            catch (Exception ex)
+            {
+                clsDatabase.fnErrorLog("PayslipMailReserveError", ex.ToString());
+                return false;
+            }
+        }
+
+        private void MarkPayslipMailSent(string tenantId, int employeeId, int month, int year)
+        {
+            try
+            {
+                clsDatabase.fnDBOperation(
+                    "SP_Saas_PayslipMailSendLog_Complete",
+                    tenantId,
+                    employeeId,
+                    month,
+                    year,
+                    "Sent",
+                    string.Empty);
+            }
+            catch (Exception ex)
+            {
+                clsDatabase.fnErrorLog("PayslipMailSentLogError", ex.ToString());
+            }
+        }
+
+        private void MarkPayslipMailFailed(string tenantId, int employeeId, int month, int year, string errorMessage)
+        {
+            try
+            {
+                clsDatabase.fnDBOperation(
+                    "SP_Saas_PayslipMailSendLog_Complete",
+                    tenantId,
+                    employeeId,
+                    month,
+                    year,
+                    "Failed",
+                    errorMessage ?? string.Empty);
+            }
+            catch (Exception ex)
+            {
+                clsDatabase.fnErrorLog("PayslipMailFailedLogError", ex.ToString());
+            }
+        }
+
         private void SendBulkPayslips(string payrollProcessEmployeeIds,int month,int year,string tenantId,string applicationBaseUrl)
         {
             try
@@ -846,10 +951,13 @@ namespace MendinePayroll.UI.Controllers
 
                 foreach (DataRow dr in dtValidation.Rows)
                 {
+                    bool mailReserved = false;
+                    int empId = 0;
+                    string email = string.Empty;
                     try
                     {
-                        int empId = Convert.ToInt32(dr["EmployeeId"]);
-                        string email = dr["empemail"]?.ToString();
+                        empId = Convert.ToInt32(dr["EmployeeId"]);
+                        email = dr["empemail"]?.ToString();
                         string firstName = dr["empfirstname"]?.ToString();
 
                         if (string.IsNullOrWhiteSpace(email))
@@ -857,6 +965,15 @@ namespace MendinePayroll.UI.Controllers
                             LogBulkPayslipDebug(
                                 "BulkPayslipSkippedNoEmail",
                                 $"EmployeeId={empId}; Month={monthName}; Year={year}");
+                            continue;
+                        }
+
+                        mailReserved = TryReservePayslipMail(resolvedTenantId, empId, month, year, email);
+                        if (!mailReserved)
+                        {
+                            LogBulkPayslipDebug(
+                                "BulkPayslipMailDuplicateSkipped",
+                                $"EmployeeId={empId}; Email={email}; Month={monthName}; Year={year}; TenantId={resolvedTenantId}");
                             continue;
                         }
 
@@ -907,16 +1024,32 @@ namespace MendinePayroll.UI.Controllers
                             bodyHtml: bodyHtml,
                             subject: subject,
                             attachmentBytes: pdfBytes,
-                            fileNameWithoutExt: $"Payslip_{monthName}_{year}"
+                            fileNameWithoutExt: $"Payslip_{monthName}_{year}",
+                            tenantId: resolvedTenantId,
+                            mailPurpose: "Payslip",
+                            profileName: "Payroll",
+                            templateValues: new Dictionary<string, string>
+                            {
+                                { "FirstName", string.IsNullOrWhiteSpace(firstName) ? model.EmpName : firstName },
+                                { "EmployeeName", model.EmpName ?? string.Empty },
+                                { "EmployeeCode", model.EmpCode ?? string.Empty },
+                                { "Email", email ?? string.Empty },
+                                { "MonthName", monthName ?? string.Empty },
+                                { "Year", year.ToString(CultureInfo.InvariantCulture) },
+                                { "MonthYear", $"{monthName} {year}" }
+                            }
                         );
 
                         if (!sent)
                         {
+                            MarkPayslipMailFailed(resolvedTenantId, empId, month, year, "MailService.SendMails returned false.");
                             LogBulkPayslipDebug(
                                 "BulkPayslipMailFailed",
                                 $"EmployeeId={empId}; Email={email}; Subject={subject}; PdfBytes={pdfBytes.Length}");
                             continue;
                         }
+
+                        MarkPayslipMailSent(resolvedTenantId, empId, month, year);
 
                         LogBulkPayslipDebug(
                             "BulkPayslipMailSent",
@@ -924,6 +1057,9 @@ namespace MendinePayroll.UI.Controllers
                     }
                     catch (Exception ex)
                     {
+                        if (mailReserved)
+                            MarkPayslipMailFailed(resolvedTenantId, empId, month, year, ex.Message);
+
                         clsDatabase.fnErrorLog(
                             "BulkPayslipLoopError",
                             ex.ToString());

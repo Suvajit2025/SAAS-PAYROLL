@@ -512,11 +512,12 @@ namespace MendinePayroll.UI.Controllers
             return null;
         }
         [HttpPost]
-        public JsonResult SaveSalaryConfig(SalaryConfigModel model)
+        public JsonResult SaveSalaryConfig(SalaryConfigSaveRequest model)
         {
             try
             {
                 string EntryUser = Session["UserName"].ToString();
+                byte calculationMode = model.CalculationMode == 2 ? (byte)2 : (byte)1;
 
                 //------------------------------------------------------
                 // 1️⃣ SAVE HEADER (Insert / Update)
@@ -527,6 +528,7 @@ namespace MendinePayroll.UI.Controllers
                     model.SalaryConfigureName,
                     model.SalaryConfigureType,
                     model.PayGroupID,
+                    calculationMode,
                     TenantId,
                     EntryUser
                 );
@@ -1101,5 +1103,15 @@ namespace MendinePayroll.UI.Controllers
         public byte? StartDay { get; set; }
         public byte? EndDay { get; set; }
         public byte PaidDaysSource { get; set; }
+    }
+
+    public class SalaryConfigSaveRequest
+    {
+        public int SalaryConfigureID { get; set; }
+        public string SalaryConfigureName { get; set; }
+        public int SalaryConfigureType { get; set; }
+        public int PayGroupID { get; set; }
+        public byte CalculationMode { get; set; } = 1;
+        public string ComponentListJson { get; set; }
     }
 }

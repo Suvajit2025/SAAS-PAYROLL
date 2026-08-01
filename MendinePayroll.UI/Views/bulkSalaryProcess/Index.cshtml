@@ -3076,8 +3076,7 @@
     $(document).ready(function () {
 
         // Load payroll batch dashboard on first load
-        initDashboardFilters();
-        loadPayrollBatchGrid();
+        loadDashboardWithActivePayrollCycle();
 
         initEmployeeWiseFilters();
     });
@@ -3108,6 +3107,7 @@
     let editingEmpId = null;
     let currentData = [];
     let activePayrollCycleConfig = null;
+    let dashboardPaidDaysSource = '1';
     let isMonthlyFixedCycle = false;
     /* =====================================================
        INIT FILTER DROPDOWNS (DATA ONLY)
@@ -4395,6 +4395,7 @@
 
         let payload = {
             PayrollType: payrollType,
+            PayGroupId: parseInt($("#ddlGroup").val(), 10) || 0,
             Employees: employees,
             refNo: $("#genRefNo").val(),
             Comments: $("#txtComments").val()
@@ -5110,6 +5111,41 @@
     /* ===============================
        INIT MONTH / YEAR FILTERS
     ================================ */
+    function getDashboardDefaultPeriod() {
+        const defaultDate = new Date();
+
+        if (String(dashboardPaidDaysSource) !== '2') {
+            defaultDate.setMonth(defaultDate.getMonth() - 1);
+        }
+
+        return {
+            month: String(defaultDate.getMonth() + 1),
+            year: String(defaultDate.getFullYear())
+        };
+    }
+
+    function setDashboardDefaultFilters() {
+        const defaultPeriod = getDashboardDefaultPeriod();
+
+        $('#ddlDashMonth').val(defaultPeriod.month);
+        $('#ddlDashYear').val(defaultPeriod.year);
+    }
+
+    function loadDashboardWithActivePayrollCycle() {
+        $.getJSON('/bulkSalaryProcess/GetActivePayrollCycle')
+            .done(function (res) {
+                const paidDaysSource = res && (res.paidDaysSource || res.PaidDaysSource || res.paidDayssource);
+
+                if (res && res.success !== false && paidDaysSource) {
+                    dashboardPaidDaysSource = String(paidDaysSource);
+                }
+            })
+            .always(function () {
+                initDashboardFilters();
+                loadPayrollBatchGrid();
+            });
+    }
+
     function initDashboardFilters() {
 
         const months = [
@@ -5132,11 +5168,7 @@
             yddl.append(`<option value="${y}">${y}</option>`);
         }
 
-        const previousMonth = new Date();
-        previousMonth.setMonth(previousMonth.getMonth() - 1);
-
-        mddl.val(String(previousMonth.getMonth() + 1));
-        yddl.val(String(previousMonth.getFullYear()));
+        setDashboardDefaultFilters();
     }
     function loadPayrollBatchGrid() {
         $.ajax({
@@ -5234,6 +5266,7 @@
                     .append($('#ddlDashMonth').show())
                     .append($('#ddlDashYear').show());
 
+                setDashboardDefaultFilters();
                 applyDashboardFilters();
             }
         });
@@ -5245,11 +5278,7 @@
         if (!groupDtInstance) return;
 
         if (!$('#ddlDashMonth').val() || !$('#ddlDashYear').val()) {
-            const previousMonth = new Date();
-            previousMonth.setMonth(previousMonth.getMonth() - 1);
-
-            $('#ddlDashMonth').val(String(previousMonth.getMonth() + 1));
-            $('#ddlDashYear').val(String(previousMonth.getFullYear()));
+            setDashboardDefaultFilters();
         }
 
         const month = $('#ddlDashMonth').val();

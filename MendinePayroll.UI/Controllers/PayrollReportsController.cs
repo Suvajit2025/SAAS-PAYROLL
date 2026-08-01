@@ -123,13 +123,14 @@ namespace MendinePayroll.UI.Controllers
             string EmpIds = filters.empIds != null ? string.Join(",", filters.empIds) : "";
             int Year = filters.year;
             int Month = filters.month;
+            if (filters.fromYear > 0) Year = filters.fromYear;
+            if (filters.fromMonth > 0) Month = filters.fromMonth;
             string Status = filters.status;
 
             // Note: If you pass multiple IDs, your SP should handle comma-separated strings
             // Or you can filter the DataTable in C# as shown below
             //DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEES", companyIds, deptIds, categoryIds, status,TenantId);
-            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEES",
-                    Year, Month, CompanyIds, DeptIds, CategoryIds, PayGroupIds, EmpIds, Status, TenantId);
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEES", CompanyIds, DeptIds, CategoryIds, PayGroupIds, EmpIds, Status, TenantId, UserId);
             var list = dt.AsEnumerable().Select(r => new
             {
                 EmployeeID = r["EmployeeID"].ToString(),
@@ -154,65 +155,247 @@ namespace MendinePayroll.UI.Controllers
 
             return View(); // Looks for SalaryRegister.cshtml
         }
+        //[HttpPost]
+        //public JsonResult SalaryRegister(ReportFilterModel filters)
+        //{
+        //    try
+        //    {
+        //        // 1. Convert List<int> to Comma-Separated Strings for your SP
+        //        string CompanyIds = filters.companyIds != null ? string.Join(",", filters.companyIds) : "";
+        //        string DeptIds = filters.deptIds != null ? string.Join(",", filters.deptIds) : "";
+        //        string CategoryIds = filters.categoryIds != null ? string.Join(",", filters.categoryIds) : "";
+        //        string PayGroupIds = filters.paygroupIds != null ? string.Join(",", filters.paygroupIds) : "";
+        //        string EmpIds = filters.empIds != null ? string.Join(",", filters.empIds) : "";
+        //        int fromYear = filters.fromYear > 0 ? filters.fromYear : filters.year;
+        //        int fromMonth = filters.fromMonth > 0 ? filters.fromMonth : filters.month;
+        //        int toYear = filters.toYear > 0 ? filters.toYear : fromYear;
+        //        int toMonth = filters.toMonth > 0 ? filters.toMonth : fromMonth;
+        //        string Status = filters.status;
+
+        //        DateTime fromPeriod = new DateTime(fromYear, fromMonth, 1);
+        //        DateTime toPeriod = new DateTime(toYear, toMonth, 1);
+
+        //        if (fromPeriod > toPeriod)
+        //            return Json(new { success = false, message = "From period cannot be greater than To period." });
+
+        //        DataTable dt = null;
+
+        //        for (DateTime period = fromPeriod; period <= toPeriod; period = period.AddMonths(1))
+        //        {
+        //            DataTable periodTable = clsDatabase.fnDataTable("SP_PAYROLL_SALARY_REGISTER",
+        //                period.Year, period.Month, CompanyIds, DeptIds, CategoryIds, PayGroupIds, EmpIds, Status, TenantId,UserId);
+
+        //            if (periodTable == null)
+        //                continue;
+
+        //            if (dt == null)
+        //            {
+        //                dt = periodTable.Clone();
+        //            }
+
+        //            foreach (DataRow sourceRow in periodTable.Rows)
+        //            {
+        //                dt.ImportRow(sourceRow);
+        //            }
+        //        }
+
+        //        if (dt == null || dt.Rows.Count == 0)
+        //            return Json(new { success = false, message = "No records found." });
+
+        //        // 3. Extract Headers dynamically from the SQL Result Columns
+        //        var finalHeaders = new List<string>();
+        //        foreach (DataColumn column in dt.Columns)
+        //        {
+        //            finalHeaders.Add(column.ColumnName);
+        //        }
+
+        //        // 4. Convert DataTable Rows to List of Dictionaries
+        //        var finalRows = new List<Dictionary<string, object>>();
+        //        foreach (DataRow dr in dt.Rows)
+        //        {
+        //            var row = new Dictionary<string, object>();
+        //            foreach (DataColumn col in dt.Columns)
+        //            {
+        //                var value = dr[col];
+
+        //                // Format numeric values to 2 decimal places for the report
+        //                if (value != DBNull.Value && (col.DataType == typeof(decimal) || col.DataType == typeof(double)))
+        //                {
+        //                    row[col.ColumnName] = Convert.ToDecimal(value).ToString("N2");
+        //                }
+        //                else
+        //                {
+        //                    row[col.ColumnName] = value != DBNull.Value ? value.ToString() : "";
+        //                }
+        //            }
+        //            finalRows.Add(row);
+        //        }
+
+        //        return Json(new { success = true, Headers = finalHeaders, Data = finalRows });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { success = false, message = "Server Error: " + ex.Message });
+        //    }
+        //}
         [HttpPost]
         public JsonResult SalaryRegister(ReportFilterModel filters)
         {
             try
             {
-                // 1. Convert List<int> to Comma-Separated Strings for your SP
-                string CompanyIds = filters.companyIds != null ? string.Join(",", filters.companyIds) : "";
-                string DeptIds = filters.deptIds != null ? string.Join(",", filters.deptIds) : "";
-                string CategoryIds = filters.categoryIds != null ? string.Join(",", filters.categoryIds) : "";
-                string PayGroupIds = filters.paygroupIds != null ? string.Join(",", filters.paygroupIds) : "";
-                string EmpIds = filters.empIds != null ? string.Join(",", filters.empIds) : "";
-                int Year = filters.year;
-                int Month = filters.month;
-                string Status = filters.status;
-                // 2. Execute ADO.NET SP
-                // Order: Year, Month, Company, Dept, Category, PayGroup, Employee, Status, Tenant
-                DataTable dt = clsDatabase.fnDataTable("SP_PAYROLL_SALARY_REGISTER",
-                    Year, Month, CompanyIds, DeptIds, CategoryIds, PayGroupIds, EmpIds, Status, TenantId);
+                string companyIds = filters.companyIds != null
+                    ? string.Join(",", filters.companyIds)
+                    : "";
+
+                string deptIds = filters.deptIds != null
+                    ? string.Join(",", filters.deptIds)
+                    : "";
+
+                string categoryIds = filters.categoryIds != null
+                    ? string.Join(",", filters.categoryIds)
+                    : "";
+
+                string payGroupIds = filters.paygroupIds != null
+                    ? string.Join(",", filters.paygroupIds)
+                    : "";
+
+                string empIds = filters.empIds != null
+                    ? string.Join(",", filters.empIds)
+                    : "";
+
+                string status = filters.status ?? "";
+
+                int fromYear = filters.fromYear > 0
+                    ? filters.fromYear
+                    : filters.year;
+
+                int fromMonth = filters.fromMonth > 0
+                    ? filters.fromMonth
+                    : filters.month;
+
+                int toYear = filters.toYear > 0
+                    ? filters.toYear
+                    : fromYear;
+
+                int toMonth = filters.toMonth > 0
+                    ? filters.toMonth
+                    : fromMonth;
+
+                 
+                // Replace the above line with your actual logged-in UserId source.
+
+                if (fromYear <= 0 || toYear <= 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Please select a valid From Year and To Year."
+                    });
+                }
+
+                if (fromMonth < 1 || fromMonth > 12 ||
+                    toMonth < 1 || toMonth > 12)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Month must be between 1 and 12."
+                    });
+                }
+
+                DateTime fromPeriod = new DateTime(fromYear, fromMonth, 1);
+                DateTime toPeriod = new DateTime(toYear, toMonth, 1);
+
+                if (fromPeriod > toPeriod)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "From period cannot be greater than To period."
+                    });
+                }
+
+                DataTable dt = clsDatabase.fnDataTable
+                (
+                    "SP_PAYROLL_SALARY_REGISTER",
+                    fromYear,
+                    fromMonth,
+                    toYear,
+                    toMonth,
+                    companyIds,
+                    deptIds,
+                    categoryIds,
+                    payGroupIds,
+                    empIds,
+                    status,
+                    TenantId,
+                    UserId
+                );
 
                 if (dt == null || dt.Rows.Count == 0)
-                    return Json(new { success = false, message = "No records found." });
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No records found."
+                    });
+                }
 
-                // 3. Extract Headers dynamically from the SQL Result Columns
                 var finalHeaders = new List<string>();
+
                 foreach (DataColumn column in dt.Columns)
                 {
                     finalHeaders.Add(column.ColumnName);
                 }
 
-                // 4. Convert DataTable Rows to List of Dictionaries
                 var finalRows = new List<Dictionary<string, object>>();
-                foreach (DataRow dr in dt.Rows)
+
+                foreach (DataRow dataRow in dt.Rows)
                 {
                     var row = new Dictionary<string, object>();
-                    foreach (DataColumn col in dt.Columns)
-                    {
-                        var value = dr[col];
 
-                        // Format numeric values to 2 decimal places for the report
-                        if (value != DBNull.Value && (col.DataType == typeof(decimal) || col.DataType == typeof(double)))
+                    foreach (DataColumn column in dt.Columns)
+                    {
+                        object value = dataRow[column];
+
+                        if (value == DBNull.Value)
                         {
-                            row[col.ColumnName] = Convert.ToDecimal(value).ToString("N2");
+                            row[column.ColumnName] = "";
+                        }
+                        else if (
+                            column.DataType == typeof(decimal) ||
+                            column.DataType == typeof(double) ||
+                            column.DataType == typeof(float)
+                        )
+                        {
+                            row[column.ColumnName] =
+                                Convert.ToDecimal(value).ToString("N2");
                         }
                         else
                         {
-                            row[col.ColumnName] = value != DBNull.Value ? value.ToString() : "";
+                            row[column.ColumnName] = value.ToString();
                         }
                     }
+
                     finalRows.Add(row);
                 }
 
-                return Json(new { success = true, Headers = finalHeaders, Data = finalRows });
+                return Json(new
+                {
+                    success = true,
+                    Headers = finalHeaders,
+                    Data = finalRows
+                });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Server Error: " + ex.Message });
+                return Json(new
+                {
+                    success = false,
+                    message = "Server Error: " + ex.Message
+                });
             }
         }
-
         #region Loan Register
         public ActionResult LoanRegister()
         {

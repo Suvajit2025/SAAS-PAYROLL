@@ -30,6 +30,7 @@ namespace MendinePayroll.UI.Controllers
             clsAccessLogInfo info = new clsAccessLogInfo();
             info.AccessType = "EMPLOYEE-CTC-ENTRY";
             clsAccessLog.AccessLog_Save(info);
+            ViewBag.CurrentTenantID = tenantID;
             return View();
         }
 
@@ -198,6 +199,15 @@ namespace MendinePayroll.UI.Controllers
                     decimal val = item.ISPercentage ? (baseVal * item.ManualRate / 100) : baseVal;
                     calcs[item.PayConfigName.Trim().ToUpper()] = val;
                 }
+            }
+            // Minimal fix: update Gross after formulas are calculated
+            if (grossItem != null)
+            {
+                string grossKey = grossItem.PayConfigName.Trim().ToUpper();
+
+                grossVal = calcs.ContainsKey(grossKey)
+                    ? calcs[grossKey]
+                    : 0;
             }
 
             // 5. Statutory
@@ -463,42 +473,153 @@ namespace MendinePayroll.UI.Controllers
                 calcs[item.PayConfigName.Trim().ToUpper()] = val;
             }
         }
-
         private EmployeeCTCCalculateResponse BuildCalculatedResponse(List<SalaryComponentConfig> configList,Dictionary<string, decimal> calcs,EmployeeCTCCalculateRequest model)
         {
             decimal totalAllowance = 0;
             decimal totalDeduction = 0;
             decimal totalContribution = 0;
 
-            var basicItem = configList.FirstOrDefault(x => x.IsBasicComponent);
-            decimal basicValue = basicItem != null
-                ? calcs[basicItem.PayConfigName.Trim().ToUpper()]
-                : 0;
-
-            foreach (var item in configList)
+            string GetKey(SalaryComponentConfig item)
             {
-                decimal val = calcs[item.PayConfigName.Trim().ToUpper()];
+                return (item?.PayConfigName ?? string.Empty)
+                    .Trim()
+                    .ToUpperInvariant();
+            }
 
-                if (item.IsBasicComponent)
-                    continue;
+            decimal GetRawValue(SalaryComponentConfig item)
+            {
+                if (item == null)
+                    return 0;
 
-                switch (item.PayType)
+                string key = GetKey(item);
+
+                return calcs.TryGetValue(key, out decimal value)
+                    ? value
+                    : 0;
+            }
+
+            decimal GetRoundedValue(SalaryComponentConfig item)
+            {
+                if (item == null)
+                    return 0;
+
+                decimal value = GetRawValue(item);
+
+                if (item.IsStatutory)
                 {
-                    case "Allowances":
-                        totalAllowance += val;
+                    return RoundStatutory(
+                        value,
+                        item.StatutoryType,
+                        item.RoundingType);
+                }
+
+                return ApplyRounding(value, item.RoundingType);
+            }
+
+            /*
+             * calcs is keyed by PayConfigName.
+             * Therefore, the response calculation must also use each component
+             * name only once. Otherwise, duplicate configuration rows will add
+             * the same dictionary value multiple times.
+             */
+            var uniqueConfigList = configList
+                .Where(x => x != null)
+                .GroupBy(x => GetKey(x), StringComparer.OrdinalIgnoreCase)
+                .Select(group => group.First())
+                .ToList();
+
+            var basicItem = uniqueConfigList
+                .FirstOrDefault(x => x.IsBasicComponent);
+
+            var grossItem = uniqueConfigList
+                .FirstOrDefault(x => x.IsGrossComponent);
+
+            decimal basicValue = GetRoundedValue(basicItem);
+
+            foreach (var item in uniqueConfigList)
+            {
+                string key = GetKey(item);
+
+                /*
+                 * These are summary or aggregate components and must not
+                 * separately participate in allowance/deduction totals.
+                 */
+                if (item.IsBasicComponent ||item.IsGrossComponent ||key == "MONTHLY_CTC" ||key == "MONTHLY_NET")
+                {
+                    continue;
+                }
+
+                decimal value = GetRoundedValue(item);
+
+                string payType = (item.PayType ?? string.Empty)
+                    .Trim()
+                    .ToUpperInvariant();
+
+                switch (payType)
+                {
+                    case "ALLOWANCE":
+                    case "ALLOWANCES":
+                        totalAllowance += value;
                         break;
-                    case "Deduction":
-                        totalDeduction += val;
+
+                    case "DEDUCTION":
+                    case "DEDUCTIONS":
+                        totalDeduction += value;
                         break;
+
                     case "CC":
-                        totalContribution += val;
+                    case "CONTRIBUTION":
+                    case "CONTRIBUTIONS":
+                    case "EMPLOYER CONTRIBUTION":
+                    case "EMPLOYER CONTRIBUTIONS":
+                        totalContribution += value;
                         break;
                 }
             }
 
-            decimal totalGross = basicValue + totalAllowance;
+            /*
+             * Use the calculated Gross component directly.
+             * Basic + Allowances is only a fallback when no Gross component exists.
+             */
+            decimal totalGross = grossItem != null
+                ? GetRoundedValue(grossItem)
+                : basicValue + totalAllowance;
+
+            totalGross = grossItem != null
+                ? ApplyRounding(totalGross, grossItem.RoundingType)
+                : RoundMoney(totalGross);
+
+            totalAllowance = RoundMoney(totalAllowance);
+            totalDeduction = RoundMoney(totalDeduction);
+            totalContribution = RoundMoney(totalContribution);
+
             decimal netPay = totalGross - totalDeduction;
-            decimal monthlyCTC = totalGross + totalContribution;
+
+            /*
+             * Monthly CTC mode:
+             * Use the entered MONTHLY_CTC value.
+             *
+             * Gross/Net mode:
+             * Derive Monthly CTC from Gross + Employer Contributions.
+             */
+            decimal monthlyCTC;
+
+            var monthlyCTCItem = uniqueConfigList
+                .FirstOrDefault(x => GetKey(x) == "MONTHLY_CTC");
+
+            decimal inputMonthlyCTC = monthlyCTCItem != null
+                ? GetRoundedValue(monthlyCTCItem)
+                : 0;
+
+            if (inputMonthlyCTC > 0)
+            {
+                monthlyCTC = inputMonthlyCTC;
+            }
+            else
+            {
+                monthlyCTC = totalGross + totalContribution;
+            }
+
             decimal roundedNetPay = RoundRupee(netPay);
             decimal roundedMonthlyCTC = RoundRupee(monthlyCTC);
             decimal roundedAnnualCTC = roundedMonthlyCTC * 12;
@@ -516,22 +637,19 @@ namespace MendinePayroll.UI.Controllers
                     IsPTAX = model.IsPTAX,
 
                     MonthlyGross = RoundMoney(totalGross),
-                    TotalAllowance = RoundMoney(totalGross),
+                    TotalAllowance = RoundMoney(totalAllowance),
                     TotalDeduction = RoundMoney(totalDeduction),
                     TotalContribution = RoundMoney(totalContribution),
+
                     NetPay = roundedNetPay,
                     MonthlyCTC = roundedMonthlyCTC,
                     AnnualCTC = roundedAnnualCTC
                 }
             };
 
-            foreach (var item in configList)
+            foreach (var item in uniqueConfigList)
             {
-                decimal monthly = calcs[item.PayConfigName.Trim().ToUpper()];
-
-                decimal roundedMonthly = item.IsStatutory
-                    ? RoundStatutory(monthly, item.StatutoryType, item.RoundingType)
-                    : RoundMoney(monthly);
+                decimal roundedMonthly = GetRoundedValue(item);
 
                 response.DetailList.Add(new EmployeeCTCDetailResult
                 {
@@ -558,14 +676,119 @@ namespace MendinePayroll.UI.Controllers
                     OtherType = item.OtherType,
                     MaxLimit = item.MaxLimit,
                     RoundingType = item.RoundingType,
-                    PTaxSlabsJson = item.PTaxSlabs != null && item.PTaxSlabs.Count > 0
-                        ? JsonConvert.SerializeObject(item.PTaxSlabs)
-                        : null
+
+                    PTaxSlabsJson =
+                        item.PTaxSlabs != null &&
+                        item.PTaxSlabs.Count > 0
+                            ? JsonConvert.SerializeObject(item.PTaxSlabs)
+                            : null
                 });
             }
 
             return response;
         }
+        //private EmployeeCTCCalculateResponse BuildCalculatedResponse(List<SalaryComponentConfig> configList,Dictionary<string, decimal> calcs,EmployeeCTCCalculateRequest model)
+        //{
+        //    decimal totalAllowance = 0;
+        //    decimal totalDeduction = 0;
+        //    decimal totalContribution = 0;
+
+        //    var basicItem = configList.FirstOrDefault(x => x.IsBasicComponent);
+        //    decimal basicValue = basicItem != null
+        //        ? calcs[basicItem.PayConfigName.Trim().ToUpper()]
+        //        : 0;
+
+        //    foreach (var item in configList)
+        //    {
+        //        decimal val = calcs[item.PayConfigName.Trim().ToUpper()];
+
+        //        if (item.IsBasicComponent)
+        //            continue;
+
+        //        switch (item.PayType)
+        //        {
+        //            case "Allowances":
+        //                totalAllowance += val;
+        //                break;
+        //            case "Deduction":
+        //                totalDeduction += val;
+        //                break;
+        //            case "CC":
+        //                totalContribution += val;
+        //                break;
+        //        }
+        //    }
+
+        //    decimal totalGross = basicValue + totalAllowance;
+        //    decimal netPay = totalGross - totalDeduction;
+        //    decimal monthlyCTC = totalGross + totalContribution;
+        //    decimal roundedNetPay = RoundRupee(netPay);
+        //    decimal roundedMonthlyCTC = RoundRupee(monthlyCTC);
+        //    decimal roundedAnnualCTC = roundedMonthlyCTC * 12;
+
+        //    var response = new EmployeeCTCCalculateResponse
+        //    {
+        //        Header = new EmployeeCTCHeaderResult
+        //        {
+        //            EmployeeID = model.EmployeeID,
+        //            PayGroupID = model.PayGroupID,
+        //            EmpSalaryConfigID = model.EmpSalaryConfigID,
+
+        //            IsPF = model.IsPF,
+        //            IsESIC = model.IsESIC,
+        //            IsPTAX = model.IsPTAX,
+
+        //            MonthlyGross = RoundMoney(totalGross),
+        //            TotalAllowance = RoundMoney(totalGross),
+        //            TotalDeduction = RoundMoney(totalDeduction),
+        //            TotalContribution = RoundMoney(totalContribution),
+        //            NetPay = roundedNetPay,
+        //            MonthlyCTC = roundedMonthlyCTC,
+        //            AnnualCTC = roundedAnnualCTC
+        //        }
+        //    };
+
+        //    foreach (var item in configList)
+        //    {
+        //        decimal monthly = calcs[item.PayConfigName.Trim().ToUpper()];
+
+        //        decimal roundedMonthly = item.IsStatutory
+        //            ? RoundStatutory(monthly, item.StatutoryType, item.RoundingType)
+        //            : RoundMoney(monthly);
+
+        //        response.DetailList.Add(new EmployeeCTCDetailResult
+        //        {
+        //            PayConfigId = item.PayConfigId,
+        //            PayConfigName = item.PayConfigName,
+        //            PayType = item.PayType,
+
+        //            MonthlyAmount = roundedMonthly,
+        //            YearlyAmount = RoundMoney(roundedMonthly * 12),
+
+        //            TimeBasis = item.TimeBasis,
+        //            LogicType = item.LogicType,
+        //            MappedColumn = item.MappedColumn,
+        //            CalculationFormula = item.CalculationFormula,
+        //            ManualRate = item.ManualRate,
+        //            ISPercentage = item.ISPercentage,
+
+        //            IsBasicComponent = item.IsBasicComponent,
+        //            IsGrossComponent = item.IsGrossComponent,
+        //            IsStatutory = item.IsStatutory,
+        //            StatutoryType = item.StatutoryType,
+
+        //            IsOther = item.IsOther,
+        //            OtherType = item.OtherType,
+        //            MaxLimit = item.MaxLimit,
+        //            RoundingType = item.RoundingType,
+        //            PTaxSlabsJson = item.PTaxSlabs != null && item.PTaxSlabs.Count > 0
+        //                ? JsonConvert.SerializeObject(item.PTaxSlabs)
+        //                : null
+        //        });
+        //    }
+
+        //    return response;
+        //}
         [HttpPost]
         public JsonResult SaveSalaryDetailsComponents(SalaryDetailsComponentSaveRequest model)
         {
@@ -709,7 +932,75 @@ namespace MendinePayroll.UI.Controllers
                 }
 
                 string userName = Session["UserName"]?.ToString() ?? "SYSTEM";
+                string Normalize(string value)
+                {
+                    return (value ?? string.Empty)
+                        .Trim()
+                        .ToUpperInvariant();
+                }
+                /*
+                * Sum all monthly earning/allowance components.
+                * Exclude GROSS because it is a summary component.
+                */
+                decimal totalAllowance = model.DetailList
+                    .Where(x =>
+                    {
+                        string payType = Normalize(x.PayType);
+                        string componentName = Normalize(x.PayConfigName);
 
+                        bool isAllowance =
+                            payType == "ALLOWANCE" ||
+                            payType == "ALLOWANCES";
+
+                        bool isSummaryComponent =
+                            x.IsGrossComponent ||
+                            componentName == "GROSS" ||
+                            componentName == "MONTHLY_CTC" ||
+                            componentName == "MONTHLY_NET";
+
+                        return isAllowance && !isSummaryComponent;
+                    })
+                    .Sum(x => x.MonthlyAmount);
+
+                decimal totalDeduction = model.DetailList
+                    .Where(x =>
+                    {
+                        string payType = Normalize(x.PayType);
+
+                        return payType == "DEDUCTION" ||
+                               payType == "DEDUCTIONS";
+                    })
+                    .Sum(x => x.MonthlyAmount);
+
+                decimal totalContribution = model.DetailList
+                    .Where(x =>
+                    {
+                        string payType = Normalize(x.PayType);
+
+                        return payType == "CC" ||
+                               payType == "CONTRIBUTION" ||
+                               payType == "CONTRIBUTIONS" ||
+                               payType == "EMPLOYER CONTRIBUTION";
+                    })
+                    .Sum(x => x.MonthlyAmount);
+
+                var grossItem = model.DetailList
+                    .FirstOrDefault(x =>
+                        x.IsGrossComponent ||
+                        Normalize(x.PayConfigName) == "GROSS");
+
+                decimal monthlyGross = grossItem != null
+                    ? grossItem.MonthlyAmount
+                    : model.MonthlyGross;
+
+                decimal netPay =
+                    monthlyGross - totalDeduction;
+
+                decimal monthlyCTC =
+                    monthlyGross + totalContribution;
+
+                decimal annualCTC =
+                    monthlyCTC * 12;
                 // 🔥 FINAL PAYLOAD STRUCTURE (MATCHES SP)
                 var payload = new
                 {
@@ -723,14 +1014,14 @@ namespace MendinePayroll.UI.Controllers
 
                     EffectiveFrom = model.EffectiveFrom,
 
-                    MonthlyGross = model.MonthlyGross,
-                    TotalAllowance = model.TotalAllowance,
-                    TotalDeduction = model.TotalDeduction,
-                    TotalContribution = model.TotalContribution,
+                    MonthlyGross = monthlyGross,
+                    TotalAllowance = totalAllowance,
+                    TotalDeduction = totalDeduction,
+                    TotalContribution = totalContribution,
 
-                    NetPay = model.NetPay,
-                    MonthlyCTC = model.MonthlyCTC,
-                    AnnualCTC = model.AnnualCTC,
+                    NetPay = netPay,
+                    MonthlyCTC = monthlyCTC,
+                    AnnualCTC = annualCTC,
 
                     DetailList = model.DetailList
                 };

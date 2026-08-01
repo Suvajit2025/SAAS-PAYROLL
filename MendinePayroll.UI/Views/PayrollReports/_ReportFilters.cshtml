@@ -1,26 +1,56 @@
 ﻿<style>
-    /* Container styling */
     .filter-card {
         background: #ffffff;
-        padding: 20px;
+        padding: 14px 16px;
         border-radius: 8px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        margin-bottom: 20px;
-        border: 1px solid #eef2f6;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
+        margin-bottom: 14px;
+        border: 1px solid #e2e8f0;
     }
 
-    /* Labels and Selects */
+    .filter-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        color: #0f172a;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+        .filter-section-title i {
+            color: #0E7777;
+        }
+
     .filter-item label {
         font-size: 11px;
         font-weight: 700;
         color: #64748b;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
         margin-bottom: 6px;
         display: block;
     }
 
-    /* Standardizing height for all inputs including multiselect buttons */
+    .filter-grid,
+    .period-grid {
+        display: grid;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .period-grid {
+        grid-template-columns: minmax(130px, 1fr) minmax(110px, .85fr) 28px minmax(130px, 1fr) minmax(110px, .85fr);
+    }
+
+    .filter-grid {
+        grid-template-columns: repeat(6, minmax(135px, 1fr));
+    }
+
+    .filter-item {
+        min-width: 0;
+    }
+
     .filter-item .form-control,
     .filter-item .btn-group,
     .filter-item select {
@@ -28,6 +58,7 @@
         font-size: 13px;
         color: #1e293b;
         height: 34px !important;
+        width: 100% !important;
     }
 
         .filter-item select.form-control {
@@ -35,11 +66,49 @@
             background-color: #f8fafc;
         }
 
-    /* Button Styling */
+    .filter-card .btn-group,
+    .filter-card .multiselect-native-select,
+    .filter-card .multiselect-container {
+        width: 100%;
+    }
+
+    .filter-card button.multiselect {
+        width: 100% !important;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .filter-card button.multiselect .caret {
+        float: right;
+        margin-top: 8px;
+    }
+
+    .period-band {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .period-divider {
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
     .filter-btn {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
+        min-width: 0;
     }
 
     #btnClearFilters {
@@ -54,6 +123,7 @@
         justify-content: center;
         gap: 5px;
         border-radius: 6px;
+        width: 100%;
     }
 
         #btnClearFilters:hover {
@@ -62,46 +132,79 @@
             border-color: #cbd5e1;
         }
 
-    /* Row spacing */
-    .filter-row {
-        margin-bottom: 15px;
+    @@media (max-width: 1199px) {
+        .filter-grid {
+            grid-template-columns: repeat(3, minmax(145px, 1fr));
+        }
     }
 
-        .filter-row:last-child {
-            margin-bottom: 0;
+    @@media (max-width: 767px) {
+        .period-grid,
+        .filter-grid {
+            grid-template-columns: 1fr;
         }
+
+        .period-divider {
+            height: auto;
+            justify-content: flex-start;
+        }
+    }
 </style>
 
 <div class="filter-card">
-    <div class="row filter-row">
-        <div class="col-md-3 filter-item">
-            <label>Year</label>
-            <select id="ddlYear" class="form-control filter-trigger"></select>
+    <div class="filter-section-title">
+        <i class="fa fa-filter"></i>
+        <span>Report Filters</span>
+    </div>
+
+    <div class="period-band">
+        <div class="period-grid">
+            <div class="filter-item">
+                <label>From Month</label>
+                <select id="ddlFromMonth" class="form-control filter-trigger"></select>
+            </div>
+            <div class="filter-item">
+                <label>From Year</label>
+                <select id="ddlFromYear" class="form-control filter-trigger"></select>
+            </div>
+            <div>
+                <div class="period-divider">To</div>
+            </div>
+            <div class="filter-item">
+                <label>To Month</label>
+                <select id="ddlToMonth" class="form-control filter-trigger"></select>
+            </div>
+            <div class="filter-item">
+                <label>To Year</label>
+                <select id="ddlToYear" class="form-control filter-trigger"></select>
+            </div>
         </div>
-        <div class="col-md-3 filter-item">
-            <label>Month</label>
-            <select id="ddlMonth" class="form-control filter-trigger"></select>
-        </div>
-        <div class="col-md-3 filter-item">
+        <select id="ddlMonth" class="hidden"></select>
+        <select id="ddlYear" class="hidden"></select>
+    </div>
+
+    <div class="filter-grid">
+        <div class="filter-item">
             <label>Company</label>
             <select id="ddlCompany" class="form-control multi-select filter-trigger" multiple></select>
         </div>
-        <div class="col-md-3 filter-item">
+        <div class="filter-item">
             <label>Department</label>
             <select id="ddlDepartment" class="form-control multi-select filter-trigger" multiple></select>
         </div>
-    </div>
-
-    <div class="row filter-row">
-        <div class="col-md-2 filter-item">
+        <div class="filter-item">
             <label>Employment Type</label>
             <select id="ddlCategory" class="form-control multi-select filter-trigger" multiple></select>
         </div>
-        <div class="col-md-3 filter-item">
+        <div class="filter-item">
             <label>Pay Group</label>
             <select id="ddlpaygroup" class="form-control multi-select filter-trigger" multiple></select>
         </div>
-        <div class="col-md-2 filter-item">
+        <div class="filter-item">
+            <label>Employee</label>
+            <select id="ddlEmployee" class="form-control multi-select filter-trigger" multiple></select>
+        </div>
+        <div class="filter-item">
             <label>Status</label>
             <select id="ddlstatus" class="form-control filter-trigger">
                 <option value="ACTIVE" selected>Active</option>
@@ -109,11 +212,7 @@
                 <option value="All">All</option>
             </select>
         </div>
-        <div class="col-md-3 filter-item">
-            <label>Employee</label>
-            <select id="ddlEmployee" class="form-control multi-select filter-trigger" multiple></select>
-        </div>
-        <div class="col-md-2 filter-btn">
+        <div class="filter-btn">
             <label>&nbsp;</label>
             <button id="btnClearFilters" class="btn btn-default btn-block btn-sm">
                 <i class="fa fa-refresh"></i> Reset All

@@ -605,18 +605,33 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Structure Name <span style="color:red">*</span></label>
-                        <input type="text" id="txtStructure" onkeyup="this.value = this.value.toUpperCase();" class="form-control" placeholder="e.g. Factory Structure 2025">
+                        <input type="text" id="txtStructure"
+                               onkeyup="this.value = this.value.toUpperCase();"
+                               class="form-control"
+                               placeholder="e.g. Factory Structure 2025">
                     </div>
+
                     <div class="form-group">
                         <label class="form-label">Type <span style="color:red">*</span></label>
-                        <select class="form-control">
+                        <select id="ddlType" class="form-control">
                             <option value="1">Normal (Monthly)</option>
                             <option value="2">Contractual (Hourly/Daily)</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label class="form-label">Pay Group<span style="color:red">*</span></label>
+                        <label class="form-label">Pay Group <span style="color:red">*</span></label>
                         <select id="ddlPayGroup" class="form-control"></select>
+                    </div>
+
+                    <!-- NEW -->
+                    <div class="form-group">
+                        <label class="form-label">Calculation Mode <span style="color:red">*</span></label>
+                        <select id="ddlCalculationMode" class="form-control">
+                            <option value="1">Gross Input</option>
+                            <option value="2">Monthly CTC Input</option>
+                            <option value="3">Monthly Net/In-Hand Input</option>
+                        </select>
                     </div>
                 </div>
                 <input type="hidden" id="hdnMode" value="ADD" />
@@ -846,6 +861,7 @@
 
         $("#modalTitle").text("Configure Salary Structure [Add]");
         $("#btnSaveConfig").text("Save Configuration");
+        $("#ddlCalculationMode").val("1");
 
         loadMasterData().done(() => {
             renderManuals();
@@ -866,6 +882,7 @@
 
         // 3️⃣ Reset dropdowns
         $("#ddlPayGroup").val("0");
+        $("#ddlCalculationMode").val("1");
 
         // 4️⃣ Reset hidden fields
         $("#hdnMode").val("ADD");
@@ -1243,6 +1260,7 @@
         let structureName = headerDiv.find(".form-group:nth-child(1) input").val().trim();
         let structureType = headerDiv.find(".form-group:nth-child(2) select").val();
         let payGroupId = headerDiv.find(".form-group:nth-child(3) select").val();
+        let calculationMode = $("#ddlCalculationMode").val() || "1";
 
         if (structureName === "") {
             alert("Enter Structure Name");
@@ -1259,6 +1277,7 @@
             SalaryConfigureName: structureName,
             SalaryConfigureType: structureType,
             PayGroupID: payGroupId,
+            CalculationMode: calculationMode,
             ComponentListJson: JSON.stringify(selected)
         };
 
@@ -1327,6 +1346,7 @@
                     $(".form-row").first().find(".form-group:nth-child(1) input").val(header.SalaryConfigureName);
                     $(".form-row").first().find(".form-group:nth-child(2) select").val(header.SalaryConfigureType);
                     $(".form-row").first().find(".form-group:nth-child(3) select").val(header.PayGroupID);
+                    $("#ddlCalculationMode").val(header.CalculationMode || "1");
 
                     // Store current ID for update mode
                     window.currentEditID = header.SalaryConfigureID;

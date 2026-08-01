@@ -822,6 +822,7 @@ namespace MendinePayroll.UI.Controllers
                 if (ds.Tables.Count > 2 && ds.Tables[2].Rows.Count > 0)
                 {
                     var row = ds.Tables[2].Rows[0];
+                    model.TotalDays = Convert.ToInt32(row["TotalDays"]);
                     model.WorkedDays = Convert.ToInt32(row["WorkingDays"]);
                     model.WeeklyOffHoliday = Convert.ToInt32(row["WeeklyOffHoliday"]);
                     model.PayableDays = Convert.ToInt32(row["PayDays"]);

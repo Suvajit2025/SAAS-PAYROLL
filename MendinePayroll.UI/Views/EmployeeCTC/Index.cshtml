@@ -1749,6 +1749,23 @@
     let dt = null;
     let lastCalculatedData = null;
     let curConfig = [];
+    let currentCalculationMode = 0;
+    let isFirstEmployeeTableLoad = true;
+    const currentTenantId = '@System.Web.HttpUtility.JavaScriptStringEncode(Convert.ToString(ViewBag.CurrentTenantID))';
+    const netToGrossTenantId = '808E0AC6-94CE-4887-AD9D-85AF318ED335';
+    function normalizeName(value) {
+        return String(value || '')
+            .trim()
+            .toUpperCase()
+            .replace(/\s+/g, '_');
+    }
+
+    function toBoolean(value) {
+        return value === true ||
+            value === 1 ||
+            value === '1' ||
+            String(value).toLowerCase() === 'true';
+    }
     let salaryDetailState = {
         empId: 0,
         empSalaryConfigID: 0,
@@ -1766,6 +1783,14 @@
 
     function formatMoney(value) {
         return parseMoney(value).toFixed(2);
+    }
+
+    function roundMoney(value) {
+        return Math.round(parseMoney(value));
+    }
+
+    function formatRoundedMoney(value) {
+        return roundMoney(value).toFixed(2);
     }
 
     function formatRupee(value) {
@@ -1993,6 +2018,31 @@
     /* ===============================
        RENDER DATATABLE
     ================================ */
+    function shouldOpenConfigureButton(emp) {
+
+        const payGroupId =
+            parseInt(
+                emp.PayGroupID || 0,
+                10
+            );
+
+        const isExistingConfigurePayGroup =
+            payGroupId === 83 ||
+            payGroupId === 85 ||
+            payGroupId === 108 ||
+            payGroupId === 109;
+
+        const isNetToGrossTenant =
+            String(currentTenantId || '').toUpperCase() ===
+            netToGrossTenantId;
+
+        return isExistingConfigurePayGroup ||
+            (
+                isNetToGrossTenant &&
+                isFirstEmployeeTableLoad
+            );
+    }
+
     function renderTable(data) {
 
         if (dt) {
@@ -2008,7 +2058,7 @@
             let badgeClass =
                 emp.Status === "Configured" ? "badge-done" : "badge-pending";
 
-            const actionButton = (emp.PayGroupID == 83 || emp.PayGroupID == 85 || emp.PayGroupID == 108 || emp.PayGroupID == 109)
+            const actionButton = shouldOpenConfigureButton(emp)
                 ? `
             <td>
                 <button type="button"
@@ -2088,6 +2138,7 @@
             }
         });
 
+        isFirstEmployeeTableLoad = false;
     }
 
     /* ===============================
@@ -2635,27 +2686,101 @@
     }
 
     // ================= TEMPLATE LOAD =================
+    //function renderTemplate() {
+
+    //    let payGroupId = $('#ddlgroup').val();
+    //    if (!payGroupId) return;
+
+    //    $.ajax({
+    //        url: '/SalaryCTC/GetSalaryConfigByPayGroup',
+    //        type: 'GET',
+    //        data: { payGroupId: payGroupId },
+    //        success: function (res) {
+
+    //            curConfig = res.map(x => ({
+    //                id: x.PayConfigId,
+    //                name: x.PayConfigName,
+    //                type: x.PayType === "Allowances" ? "Add"
+    //                    : x.PayType === "Deduction" ? "Ded"
+    //                        : x.PayType === "CC" ? "Cont"
+    //                            : "Manual",
+
+    //                isInput: x.PayType === "Manual" || x.IsGrossComponent,
+    //                isManual: x.LogicType === "FIXED" && x.PayType !== "Manual" && !x.IsStatutory,
+    //                isBasic: x.IsBasicComponent,
+    //                isGross: x.IsGrossComponent,
+
+    //                formula: x.CalculationFormula,
+    //                logic: x.LogicType,
+    //                rate: x.ManualRate
+    //            }));
+
+    //            drawTemplate(false);
+    //        }
+    //    });
+    //}
+    // ================= TEMPLATE LOAD =================
+
+    //=============== TEMPLATE DRAW =====================
+
+    // ================= TEMPLATE LOAD =================
     function renderTemplate() {
 
         let payGroupId = $('#ddlgroup').val();
-        if (!payGroupId) return;
+
+        if (!payGroupId) {
+            clearSalaryTemplate();
+            return;
+        }
 
         $.ajax({
             url: '/SalaryCTC/GetSalaryConfigByPayGroup',
             type: 'GET',
             data: { payGroupId: payGroupId },
+
             success: function (res) {
 
+                // Avoid duplicate components like EMPLOYEE ESI
+                res = res.filter((item, index, arr) =>
+                    index === arr.findIndex(x =>
+                        x.PayConfigId === item.PayConfigId
+                    )
+                );
+
+                let calculationMode =
+                    res.length > 0
+                        ? Number(res[0].CalculationMode)
+                        : 0;
+
                 curConfig = res.map(x => ({
+
                     id: x.PayConfigId,
                     name: x.PayConfigName,
-                    type: x.PayType === "Allowances" ? "Add"
-                        : x.PayType === "Deduction" ? "Ded"
-                            : x.PayType === "CC" ? "Cont"
-                                : "Manual",
 
-                    isInput: x.PayType === "Manual" || x.IsGrossComponent,
-                    isManual: x.LogicType === "FIXED" && x.PayType !== "Manual" && !x.IsStatutory,
+                    type:
+                        x.PayType === "Allowances" ? "Add"
+                            : x.PayType === "Deduction" ? "Ded"
+                                : x.PayType === "CC" ? "Cont"
+                                    : "Manual",
+
+                    // Minimal change:
+                    // Mode 1 = Gross
+                    // Mode 2 = Monthly CTC
+                    // Mode 3 = Monthly Net
+                    isInput:
+                        calculationMode === 1
+                            ? x.IsGrossComponent == 1
+                            : calculationMode === 2
+                                ? x.PayConfigName === "MONTHLY_CTC"
+                                : calculationMode === 3
+                                    ? x.PayConfigName === "MONTHLY_NET"
+                                    : x.PayType === "Manual",
+
+                    isManual:
+                        x.LogicType === "FIXED" &&
+                        x.PayType !== "Manual" &&
+                        !x.IsStatutory,
+
                     isBasic: x.IsBasicComponent,
                     isGross: x.IsGrossComponent,
 
@@ -2665,11 +2790,23 @@
                 }));
 
                 drawTemplate(false);
+            },
+
+            error: function () {
+                clearSalaryTemplate();
             }
         });
     }
+    function clearSalaryTemplate() {
 
-    //=============== TEMPLATE DRAW =====================
+        curConfig = [];
+
+        $('#inputPanel').empty().hide();
+
+        $('#tbody_earnings').empty();
+        $('#tbody_deductions').empty();
+        $('#tbody_contribution').empty();
+    }
     function drawTemplate(isEditMode = false) {
 
         let inputsHtml = "";
@@ -2893,6 +3030,10 @@
             console.log("DOM -> Exists:", monthlyBox.length > 0, "Current Val:", domVal);
             console.log("Logic (DOM):", logic);
 
+            const isCalculatedComponent =
+                !monthlyBox.hasClass('inp-manual') &&
+                logic !== "EXCEL_UPLOAD";
+
             // ================= MONTHLY =================
             if (monthlyBox.length) {
 
@@ -2903,16 +3044,24 @@
                     console.log("Branch: EXCEL_UPLOAD");
 
                     if (currentVal === "" || currentVal === "0") {
-                        console.log("Setting Monthly from backend:", x.MonthlyAmount);
-                        monthlyBox.val(formatMoney(x.MonthlyAmount));
+                        const roundedMonthly =
+                            roundMoney(x.MonthlyAmount);
+
+                        console.log("Setting Monthly from backend:", roundedMonthly);
+                        x.MonthlyAmount = roundedMonthly;
+                        monthlyBox.val(formatRoundedMoney(roundedMonthly));
                     } else {
                         console.log("Skipping overwrite (user value kept):", currentVal);
                     }
                 }
-                else if (!monthlyBox.hasClass('inp-manual')) {
+                else if (isCalculatedComponent) {
 
-                    console.log("Branch: Calculated field -> set Monthly:", x.MonthlyAmount);
-                    monthlyBox.val(formatMoney(x.MonthlyAmount));
+                    const roundedMonthly =
+                        roundMoney(x.MonthlyAmount);
+
+                    console.log("Branch: Calculated field -> set Monthly:", roundedMonthly);
+                    x.MonthlyAmount = roundedMonthly;
+                    monthlyBox.val(formatRoundedMoney(roundedMonthly));
                 }
                 else {
                     console.log("Branch: Manual FIXED -> skip overwrite");
@@ -2930,20 +3079,23 @@
 
                     // 🔥 take value from input (NOT backend)
                     let domVal = parseMoney(monthlyBox.val());
-                    yearly = parseMoney(domVal * 12);
+                    yearly = roundMoney(domVal * 12);
+                    x.YearlyAmount = yearly;
 
                     console.log("EXCEL_UPLOAD Yearly from DOM:", yearly);
                 }
                 else {
                     if (!yearly || yearly === 0) {
-                        yearly = parseMoney(x.MonthlyAmount) * 12;
+                        yearly = roundMoney(x.MonthlyAmount * 12);
                         console.log("Yearly fallback used:", yearly);
                     } else {
+                        yearly = roundMoney(yearly);
                         console.log("Yearly from backend:", yearly);
                     }
                 }
 
-                yearlyBox.text(formatMoney(yearly));
+                x.YearlyAmount = yearly;
+                yearlyBox.text(formatRoundedMoney(yearly));
             }
 
             console.groupEnd();
@@ -2956,14 +3108,27 @@
         console.log("Contribution:", data.Header.TotalContribution);
         console.log("Net:", data.Header.NetPay);
 
+        data.Header.MonthlyGross =
+            roundMoney(data.Header.MonthlyGross);
+        data.Header.TotalDeduction =
+            roundMoney(data.Header.TotalDeduction);
+        data.Header.TotalContribution =
+            roundMoney(data.Header.TotalContribution);
+        data.Header.NetPay =
+            roundMoney(data.Header.NetPay);
+        data.Header.MonthlyCTC =
+            roundMoney(data.Header.MonthlyCTC);
+        data.Header.AnnualCTC =
+            roundMoney(data.Header.AnnualCTC);
+
         setMoneyText('#lblTotalGross', data.Header.MonthlyGross);
-        setMoneyText('#lblTotalGrossYear', parseMoney(data.Header.MonthlyGross) * 12);
+        setMoneyText('#lblTotalGrossYear', roundMoney(data.Header.MonthlyGross * 12));
 
         setMoneyText('#lblTotalDed', data.Header.TotalDeduction);
-        setMoneyText('#lblTotalDedYear', parseMoney(data.Header.TotalDeduction) * 12);
+        setMoneyText('#lblTotalDedYear', roundMoney(data.Header.TotalDeduction * 12));
 
         setMoneyText('#lblTotalContrib', data.Header.TotalContribution);
-        setMoneyText('#lblTotalContribYear', parseMoney(data.Header.TotalContribution) * 12);
+        setMoneyText('#lblTotalContribYear', roundMoney(data.Header.TotalContribution * 12));
 
         setRupeeCurrencyText('#lblNetPay', data.Header.NetPay);
         setRupeeCurrencyText('#lblCTCMonth', data.Header.MonthlyCTC);
@@ -3013,7 +3178,7 @@
 
             // ✅ FROM BACKEND CALCULATION
             MonthlyGross: lastCalculatedData.Header.MonthlyGross,
-            TotalAllowance: lastCalculatedData.Header.MonthlyGross,
+            TotalAllowance: lastCalculatedData.Header.Allowances,
             TotalDeduction: lastCalculatedData.Header.TotalDeduction,
             TotalContribution: lastCalculatedData.Header.TotalContribution,
             NetPay: lastCalculatedData.Header.NetPay,

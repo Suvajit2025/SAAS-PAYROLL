@@ -75,9 +75,7 @@ var ReportEngine = {
             $('.multi-select').val(null);
             $('#ddlstatus').val('ACTIVE');
 
-            const now = new Date();
-            $('#ddlYear').val(now.getFullYear());
-            $('#ddlMonth').val(now.getMonth() + 1);
+            self.setDefaultPeriod();
 
             $('.multi-select').multiselect('rebuild');
             self.loadData(self.currentUrl);
@@ -89,18 +87,82 @@ var ReportEngine = {
     /* ================= LOOKUPS ================= */
 
     populateYearMonth: function () {
-        const y = $('#ddlYear');
-        if (y.children().length) return;
-
         const year = new Date().getFullYear();
-        for (let i = 0; i < 5; i++)
-            y.append(new Option(year - i, year - i));
+        const yearTargets = $('#ddlYear, #ddlFromYear, #ddlToYear');
+        const monthTargets = $('#ddlMonth, #ddlFromMonth, #ddlToMonth');
 
-        const m = $('#ddlMonth');
         const months = ["January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"];
-        months.forEach((x, i) => m.append(new Option(x, i + 1)));
-        m.val(new Date().getMonth() + 1);
+
+        yearTargets.each(function () {
+            const ddl = $(this);
+            if (!ddl.length || ddl.children().length) return;
+
+            for (let i = 0; i < 6; i++) {
+                ddl.append(new Option(year - i, year - i));
+            }
+        });
+
+        monthTargets.each(function () {
+            const ddl = $(this);
+            if (!ddl.length || ddl.children().length) return;
+
+            months.forEach((x, i) => ddl.append(new Option(x, i + 1)));
+        });
+
+        if (!$('#ddlFromMonth').val() && !$('#ddlMonth').val()) {
+            this.setDefaultPeriod();
+        }
+    },
+
+    setDefaultPeriod: function () {
+        const defaultDate = new Date();
+        defaultDate.setMonth(defaultDate.getMonth() - 1);
+
+        const month = String(defaultDate.getMonth() + 1);
+        const year = String(defaultDate.getFullYear());
+
+        $('#ddlMonth, #ddlFromMonth, #ddlToMonth').val(month);
+        $('#ddlYear, #ddlFromYear, #ddlToYear').val(year);
+    },
+
+    syncLegacyPeriod: function () {
+        $('#ddlMonth').val($('#ddlFromMonth').val() || $('#ddlMonth').val());
+        $('#ddlYear').val($('#ddlFromYear').val() || $('#ddlYear').val());
+    },
+
+    getFilterPayload: function () {
+        this.syncLegacyPeriod();
+
+        return {
+            year: $('#ddlYear').val(),
+            month: $('#ddlMonth').val(),
+            fromYear: $('#ddlFromYear').val() || $('#ddlYear').val(),
+            fromMonth: $('#ddlFromMonth').val() || $('#ddlMonth').val(),
+            toYear: $('#ddlToYear').val() || $('#ddlYear').val(),
+            toMonth: $('#ddlToMonth').val() || $('#ddlMonth').val(),
+            companyIds: $('#ddlCompany').val() || [],
+            deptIds: $('#ddlDepartment').val() || [],
+            categoryIds: $('#ddlCategory').val() || [],
+            paygroupIds: $('#ddlpaygroup').val() || [],
+            empIds: $('#ddlEmployee').val() || [],
+            status: $('#ddlstatus').val()
+        };
+    },
+
+    getPeriodLabel: function () {
+        const fromMonth = $('#ddlFromMonth option:selected').text() || $('#ddlMonth option:selected').text();
+        const fromYear = $('#ddlFromYear').val() || $('#ddlYear').val();
+        const toMonth = $('#ddlToMonth option:selected').text() || $('#ddlMonth option:selected').text();
+        const toYear = $('#ddlToYear').val() || $('#ddlYear').val();
+
+        if (!fromMonth || !fromYear || !toMonth || !toYear) return '';
+
+        if ($('#ddlFromMonth').val() === $('#ddlToMonth').val() && fromYear === toYear) {
+            return `${fromMonth} ${fromYear}`;
+        }
+
+        return `${fromMonth} ${fromYear} to ${toMonth} ${toYear}`;
     },
 
     loadStaticLookups: function () {
@@ -140,16 +202,7 @@ var ReportEngine = {
                 url: '/PayrollReports/GetEmployeeList',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({
-                    year: $('#ddlYear').val(),
-                    month: $('#ddlMonth').val(),
-                    companyIds: $('#ddlCompany').val() || [],
-                    deptIds: $('#ddlDepartment').val() || [],
-                    categoryIds: $('#ddlCategory').val() || [],
-                    paygroupIds: $('#ddlpaygroup').val() || [],
-                    empIds: $('#ddlEmployee').val() || [],
-                    status: $('#ddlstatus').val()
-                }),
+                data: JSON.stringify(this.getFilterPayload()),
                 success: function (res) {
                     const ddl = $('#ddlEmployee').empty();
                     res.forEach(x => ddl.append(new Option(x.EmployeeName, x.EmployeeID)));
@@ -178,6 +231,19 @@ var ReportEngine = {
 
     loadData: function (url) {
         const self = this;
+        const payload = self.getFilterPayload();
+        const fromPeriod = new Date(parseInt(payload.fromYear, 10), parseInt(payload.fromMonth, 10) - 1, 1);
+        const toPeriod = new Date(parseInt(payload.toYear, 10), parseInt(payload.toMonth, 10) - 1, 1);
+
+        if (fromPeriod > toPeriod) {
+            $('#gridBody').html('<tr><td colspan="100" class="text-center">From period cannot be greater than To period.</td></tr>');
+            return;
+        }
+
+        self.reportSubTitle = self.getPeriodLabel()
+            ? `For the Period ${self.getPeriodLabel()}`
+            : '';
+
         self.loadEmployees();
 
         
@@ -191,16 +257,7 @@ var ReportEngine = {
             url: url,
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({
-                year: $('#ddlYear').val(),
-                month: $('#ddlMonth').val(),
-                companyIds: $('#ddlCompany').val() || [],
-                deptIds: $('#ddlDepartment').val() || [],
-                categoryIds: $('#ddlCategory').val() || [],
-                paygroupIds: $('#ddlpaygroup').val() || [],
-                empIds: $('#ddlEmployee').val() || [],
-                status: $('#ddlstatus').val()
-            }),
+            data: JSON.stringify(payload),
             success: function (res) {
                 if (res.success && res.Data) {
                     self.currentData = res.Data;
@@ -259,12 +316,45 @@ var ReportEngine = {
         $('#btnNext').prop('disabled', self.currentPage === totalPages);
 
         /* Page Numbers */
-        let p = '';
-        for (let i = 1; i <= totalPages; i++) {
-            p += `<button class="btn-page ${i === self.currentPage ? 'active' : ''}"
-                   onclick="ReportEngine.gotoPage(${i})">${i}</button>`;
+        $('#pageNumbers').html(self.buildPagination(totalPages));
+    },
+
+    buildPagination: function (totalPages) {
+        if (totalPages <= 1) return '';
+
+        const current = this.currentPage;
+        const pages = [];
+        const addPage = function (page) {
+            if (page >= 1 && page <= totalPages && pages.indexOf(page) === -1) {
+                pages.push(page);
+            }
+        };
+
+        addPage(1);
+        addPage(2);
+
+        for (let page = current - 2; page <= current + 2; page++) {
+            addPage(page);
         }
-        $('#pageNumbers').html(p);
+
+        addPage(totalPages - 1);
+        addPage(totalPages);
+        pages.sort((a, b) => a - b);
+
+        let html = '';
+        let previous = 0;
+
+        pages.forEach(page => {
+            if (previous && page - previous > 1) {
+                html += '<span class="page-ellipsis">...</span>';
+            }
+
+            html += `<button class="btn-page ${page === current ? 'active' : ''}"
+                       onclick="ReportEngine.gotoPage(${page})">${page}</button>`;
+            previous = page;
+        });
+
+        return html;
     },
 
     gotoPage: function (p) {
@@ -322,7 +412,7 @@ var ReportEngine = {
 
         XLSX.writeFile(
             wb,
-            `Salary_Register_${$('#ddlMonth option:selected').text()}_${$('#ddlYear').val()}.xlsx`
+            `Salary_Register_${this.getPeriodLabel().replace(/\s+/g, '_')}.xlsx`
         );
     },
 
@@ -343,7 +433,7 @@ var ReportEngine = {
     downloadFile: function (blob, ext) {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `Salary_Register_${$('#ddlMonth option:selected').text()}_${$('#ddlYear').val()}.${ext}`;
+        a.download = `Salary_Register_${this.getPeriodLabel().replace(/\s+/g, '_')}.${ext}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

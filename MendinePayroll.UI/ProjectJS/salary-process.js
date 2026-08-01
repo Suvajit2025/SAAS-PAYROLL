@@ -177,7 +177,11 @@ function processFinalPayroll() {
         employees.push({ EmployeeId: employeeId, PaidDays: paidDays });
     });
 
-    let payload = { PayrollType: payrollType, Employees: employees };
+    let payload = {
+        PayrollType: payrollType,
+        PayGroupId: parseInt($("#ddlGroup").val(), 10) || 0,
+        Employees: employees
+    };
     if (payrollType === '1') {
         const [year, month] = $("#txtMonthYear").val().split("-");
         payload.ProcessMonth = parseInt(month);

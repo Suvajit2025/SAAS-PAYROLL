@@ -100,15 +100,40 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 14px;
+    }
+
+    #paginationInfo {
+        color: #64748b;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    #paginationControls {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    #pageNumbers {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
     }
 
     .btn-page {
-        padding: 5px 12px;
-        margin-left: 4px;
+        min-width: 32px;
+        height: 32px;
+        padding: 0 10px;
+        margin-left: 0;
         border: 1px solid #e2e8f0;
         background: #fff;
         border-radius: 4px;
         font-size: 12px;
+        line-height: 30px;
         cursor: pointer;
     }
 
@@ -123,6 +148,31 @@
             color: #cbd5e1;
             cursor: not-allowed;
         }
+
+    .page-ellipsis {
+        min-width: 18px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 767px) {
+        .pagination-bar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        #paginationControls {
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        #pageNumbers {
+            flex-wrap: wrap;
+            white-space: normal;
+        }
+    }
 </style>
 
 <div class="table-card">

@@ -11,6 +11,7 @@ namespace MendinePayroll.UI.Models
     public class PayrollProcessRequest
     {
         public string PayrollType { get; set; }   // "1" Monthly, "2" Contractual
+        public int PayGroupId { get; set; }
         public string refNo { get; set; } = string.Empty;
         public string Comments { get; set; }= string.Empty;
         public int? ProcessMonth { get; set; }

@@ -19,10 +19,40 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="~/Content/report-engine.js"></script>
     <script>
-    $(document).ready(function () {
+    function bindSalaryRegisterMonthYear() {
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        const currentYear = new Date().getFullYear();
+        const defaultDate = new Date();
+        defaultDate.setMonth(defaultDate.getMonth() - 1);
 
-        const monthText = $('#ddlMonth option:selected').text() || '';
-        const yearText = $('#ddlYear').val() || '';
+        const monthSelectors = ['#ddlFromMonth', '#ddlToMonth', '#ddlMonth'];
+        const yearSelectors = ['#ddlFromYear', '#ddlToYear', '#ddlYear'];
+
+        monthSelectors.forEach(function (selector) {
+            const ddl = $(selector).empty();
+            months.forEach(function (monthName, index) {
+                ddl.append(new Option(monthName, index + 1));
+            });
+            ddl.val(String(defaultDate.getMonth() + 1));
+        });
+
+        yearSelectors.forEach(function (selector) {
+            const ddl = $(selector).empty();
+            for (let year = currentYear; year >= currentYear - 5; year--) {
+                ddl.append(new Option(year, year));
+            }
+            ddl.val(String(defaultDate.getFullYear()));
+        });
+    }
+
+    $(document).ready(function () {
+        bindSalaryRegisterMonthYear();
+
+        const monthText = $('#ddlFromMonth option:selected').text() || '';
+        const yearText = $('#ddlFromYear').val() || '';
 
         ReportEngine.init(
             '@Url.Action("SalaryRegister", "PayrollReports")',

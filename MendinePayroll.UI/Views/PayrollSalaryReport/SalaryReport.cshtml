@@ -106,7 +106,7 @@
                 <button onclick="approveSelectedSalaries()" class="btn btn-primary btn-sm"><i class="fa fa-check-circle mr-xs"></i> Approve / Finalize</button>
                 <button onclick="rejectSelectedSalaries()" class="btn btn-danger btn-sm"><i class="fa fa-times-circle mr-xs"></i> Reject</button>
                 @*<button onclick="downloadBulkPayslips()" class="btn btn-default btn-sm"><i class="fa fa-file-pdf-o text-danger mr-xs" disabled></i> Bulk Payslips</button>*@
-                <button id="btnProcessPayment" onclick="processPayment()" class="btn btn-success btn-sm"><i class="fa fa-check-circle mr-xs"></i> Mark as Paid</button>
+                <button type="button" id="btnProcessPayment" onclick="processPayment()" class="btn btn-success btn-sm"><i class="fa fa-check-circle mr-xs"></i> Mark as Paid</button>
             </div>
         </header>
 
@@ -268,8 +268,8 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button class="btn btn-success" id="btnConfirmPaid">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="btnConfirmPaid">
                     <i class="fa fa-check"></i> Paid
                 </button>
             </div>
@@ -319,6 +319,7 @@
     let pageNumber = 1;
     let pageSize = 50;
     let selectedPayrollEmployeeIds = []; // 🔑 GLOBAL MEMORY
+    let salaryReportPaidDaysSource = "1";
 
     $(document).ready(function () {
         $("#fltStatus").val("");
@@ -763,31 +764,44 @@
         });
     }
     function loadFilterData() {
-        bindMonthYear(); // Sync call
-        $.ajax({
-            url: "/PayrollSalaryReport/GetFilterData",
-            type: "GET",
-            success: function (res) {
-                if (res && res.success) {
-                    const companies = [{ Value: "", Text: "All Companies" }].concat(res.companies || []);
-                    bindSelect("#fltCompany", companies, "");
-                    const payGroups = [{ Value: "", Text: "All Groups" }].concat(res.payGroups || []);
-                    bindSelect("#fltPayGroup", payGroups, "");
+        $.getJSON("/PayrollSalaryReport/GetActivePayrollCycle")
+            .done(function (res) {
+                const paidDaysSource = res && (res.paidDaysSource || res.PaidDaysSource || res.paidDayssource);
+
+                if (res && res.success !== false && paidDaysSource) {
+                    salaryReportPaidDaysSource = String(paidDaysSource);
                 }
-                refreshGrid(); // Trigger first hit here
-            },
-            error: function () { refreshGrid(); }
-        });
+            })
+            .always(function () {
+                bindMonthYear();
+
+                $.ajax({
+                    url: "/PayrollSalaryReport/GetFilterData",
+                    type: "GET",
+                    success: function (res) {
+                        if (res && res.success) {
+                            const companies = [{ Value: "", Text: "All Companies" }].concat(res.companies || []);
+                            bindSelect("#fltCompany", companies, "");
+                            const payGroups = [{ Value: "", Text: "All Groups" }].concat(res.payGroups || []);
+                            bindSelect("#fltPayGroup", payGroups, "");
+                        }
+                        refreshGrid(); // Trigger first hit here
+                    },
+                    error: function () { refreshGrid(); }
+                });
+            });
     }
     function bindMonthYear() {
         const monthList = [{ Value: "1", Text: "January" }, { Value: "2", Text: "February" }, { Value: "3", Text: "March" }, { Value: "4", Text: "April" }, { Value: "5", Text: "May" }, { Value: "6", Text: "June" }, { Value: "7", Text: "July" }, { Value: "8", Text: "August" }, { Value: "9", Text: "September" }, { Value: "10", Text: "October" }, { Value: "11", Text: "November" }, { Value: "12", Text: "December" }];
         const currentYear = new Date().getFullYear();
         const yearList = [];
         for (let y = currentYear; y >= currentYear - 5; y--) { yearList.push({ Value: String(y), Text: String(y) }); }
-        const now = new Date();
-        const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        bindSelect("#fltMonth", monthList, String(prev.getMonth() + 1));
-        bindSelect("#fltYear", yearList, String(prev.getFullYear()));
+        const defaultDate = new Date();
+        if (String(salaryReportPaidDaysSource) !== "2") {
+            defaultDate.setMonth(defaultDate.getMonth() - 1);
+        }
+        bindSelect("#fltMonth", monthList, String(defaultDate.getMonth() + 1));
+        bindSelect("#fltYear", yearList, String(defaultDate.getFullYear()));
     }
     function bindSelect(selector, list, selectedValue) {
         const $ddl = $(selector).empty();

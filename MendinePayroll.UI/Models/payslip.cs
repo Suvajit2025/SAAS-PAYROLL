@@ -48,12 +48,12 @@ namespace MendinePayroll.UI.Models
         public string IFSCCode { get; set; }
 
         // --- Attendance ---
-        public int TotalDays { get; set; }
-        public int WorkedDays { get; set; }
-        public int WeeklyOffHoliday { get; set; }
-        public int LOPDays { get; set; }
-        public int PayableDays { get; set; }
-        public int LeaveTaken { get; set; }
+        public Decimal TotalDays { get; set; }
+        public Decimal WorkedDays { get; set; }
+        public Decimal WeeklyOffHoliday { get; set; }
+        public Decimal LOPDays { get; set; }
+        public Decimal PayableDays { get; set; }
+        public Decimal LeaveTaken { get; set; }
 
         // --- Leave Balances ---
         public List<LeaveBalance> LeaveBalances { get; set; }

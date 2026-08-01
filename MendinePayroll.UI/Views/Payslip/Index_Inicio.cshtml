@@ -320,119 +320,197 @@
                         <td>@Model.IFSCCode</td>
                     </tr>
                 </table>
-
-                <table class="attendanceTable">
-                    <tr>
-                        <th>Total Days</th>
-                        <th>Worked Days</th>
-                        <th>Payable Days</th>
-                        <th>Weekly Off/Hol</th>
-                        <th>LWP</th>
-                        <th>Leave Taken</th>
-                    </tr>
-                    <tr>
-                        <td>@Model.TotalDays.ToString("N2")</td>
-                        <td>@Model.WorkedDays.ToString("N2")</td>
-                        <td>@Model.PayableDays.ToString("N2")</td>
-                        <td>@Model.WeeklyOffHoliday.ToString("N2")</td>
-                        <td>@Model.LOPDays.ToString("N2")</td>
-                        <td>@Model.LeaveTaken.ToString("N2")</td>
-                    </tr>
-                </table>
-
-                @if (Model.LeaveBalances != null && Model.LeaveBalances.Any())
-                {
-                    <table class="leaveTable">
-                        <tr>
-                            @foreach (var leave in Model.LeaveBalances)
-                            {
-                                <th>@leave.CodeType</th>
-                            }
-                        </tr>
-                        <tr>
-                            @foreach (var leave in Model.LeaveBalances)
-                            {
-                                <td>@leave.Balance.ToString("N2")</td>
-                            }
-                        </tr>
-                    </table>
-                }
-
-                @if (Model.LoanInstallment > 0 || Model.OpeningLoan > 0 || Model.ClosingLoan > 0)
-                {
-                    <table class="loanTable">
-                        <tr>
-                            <th>Opening Loan Balance</th>
-                            <th>Current Installment</th>
-                            <th>Closing Loan Balance</th>
-                        </tr>
-                        <tr>
-                            <td>@Model.OpeningLoan.ToString("N2")</td>
-                            <td>@Model.LoanInstallment.ToString("N2")</td>
-                            <td>@Model.ClosingLoan.ToString("N2")</td>
-                        </tr>
-                    </table>
-                }
-
-                <table class="earnDed">
-                    <tr>
-                        <th colspan="3">Earning</th>
-                        <th colspan="3">Deductions</th>
-                    </tr>
-                    <tr>
-                        <th>Head</th>
-                        <th>Amount</th>
-                        <th>Payable</th>
-                        <th>Head</th>
-                        <th>Amount</th>
-                        <th>Deductions</th>
-                    </tr>
-                    @{
-                        int rows = Math.Max(Model.Earnings.Count, Model.Deductions.Count);
-                        for (int i = 0; i < rows; i++)
-                        {
+                    @if (Model.TotalDays > 0 || Model.WorkedDays > 0 || Model.PayableDays > 0 || Model.WeeklyOffHoliday >0 || Model.LOPDays >0 || Model.LeaveTaken > 0)
+                    {
+                        <table class="attendanceTable">
                             <tr>
-                                <td>@(i < Model.Earnings.Count ? Model.Earnings[i].PayConfigName : "")</td>
-                                <td class="num">@(i < Model.Earnings.Count ? Model.Earnings[i].ActualAmount.ToString("N2") : "")</td>
-                                <td class="num">@(i < Model.Earnings.Count ? Model.Earnings[i].Amount.ToString("N2") : "")</td>
-                                <td>@(i < Model.Deductions.Count ? Model.Deductions[i].PayConfigName : "")</td>
-                                <td class="num">@(i < Model.Deductions.Count ? Model.Deductions[i].ActualAmount.ToString("N2") : "")</td>
-                                <td class="num">@(i < Model.Deductions.Count ? Model.Deductions[i].Amount.ToString("N2") : "")</td>
+                                <th>Total Days</th>
+                                <th>Worked Days</th>
+                                <th>Payable Days</th>
+                                <th>Weekly Off/Hol</th>
+                                <th>LWP</th>
+                                <th>Leave Taken</th>
                             </tr>
-                        }
+                            <tr>
+                                <td>@Model.TotalDays.ToString("N2")</td>
+                                <td>@Model.WorkedDays.ToString("N2")</td>
+                                <td>@Model.PayableDays.ToString("N2")</td>
+                                <td>@Model.WeeklyOffHoliday.ToString("N2")</td>
+                                <td>@Model.LOPDays.ToString("N2")</td>
+                                <td>@Model.LeaveTaken.ToString("N2")</td>
+                            </tr>
+                        </table>
                     }
-                    <tr class="totalRow">
-                        <td>Total Earnings</td>
-                        <td></td>
-                        <td class="num">@Model.GrossEarnings.ToString("N2")</td>
-                        <td>Total Deductions</td>
-                        <td></td>
-                        <td class="num">@Model.TotalDeductions.ToString("N2")</td>
-                    </tr>
-                </table>
+                    @if (Model.LeaveBalances != null && Model.LeaveBalances.Any())
+                    {
+                        <table class="leaveTable">
+                            <tr>
+                                @foreach (var leave in Model.LeaveBalances)
+                                {
+                                    <th>@leave.CodeType</th>
+                                }
+                            </tr>
+                            <tr>
+                                @foreach (var leave in Model.LeaveBalances)
+                                {
+                                    <td>@leave.Balance.ToString("N2")</td>
+                                }
+                            </tr>
+                        </table>
+                    }
 
-                @if (Model.ShowNetPay)
-                {
-                    <div class="netPayable">
-                        Net Payble (INR) &nbsp;&nbsp;&nbsp; <span class="amt">@Model.NetPay.ToString("N2")</span>
-                    </div>
-                    <div class="words">
-                        Net Payble INR (In Words): &nbsp;<b>@Model.NetPayWords Only</b>
-                    </div>
-                }
+                    @if (Model.LoanInstallment > 0 || Model.OpeningLoan > 0 || Model.ClosingLoan > 0)
+                    {
+                        <table class="loanTable">
+                            <tr>
+                                <th>Opening Loan Balance</th>
+                                <th>Current Installment</th>
+                                <th>Closing Loan Balance</th>
+                            </tr>
+                            <tr>
+                                <td>@Model.OpeningLoan.ToString("N2")</td>
+                                <td>@Model.LoanInstallment.ToString("N2")</td>
+                                <td>@Model.ClosingLoan.ToString("N2")</td>
+                            </tr>
+                        </table>
+                    }
 
-                <div class="footer-note">This is system generated Document signature not require.</div>
+                    @*<table class="earnDed">
+                        <tr>
+                            <th colspan="3">Earning</th>
+                            <th colspan="3">Deductions</th>
+                        </tr>
+                        <tr>
+                            <th>Head</th>
+                            <th>Amount</th>
+                            <th>Payable</th>
+                            <th>Head</th>
+                            <th>Amount</th>
+                            <th>Deductions</th>
+                        </tr>
+                        @{
+                            int rows = Math.Max(Model.Earnings.Count, Model.Deductions.Count);
+                            for (int i = 0; i < rows; i++)
+                            {
+                                <tr>
+                                    <td>@(i < Model.Earnings.Count ? Model.Earnings[i].PayConfigName : "")</td>
+                                    <td class="num">@(i < Model.Earnings.Count ? Model.Earnings[i].ActualAmount.ToString("N2") : "")</td>
+                                    <td class="num">@(i < Model.Earnings.Count ? Model.Earnings[i].Amount.ToString("N2") : "")</td>
+                                    <td>@(i < Model.Deductions.Count ? Model.Deductions[i].PayConfigName : "")</td>
+                                    <td class="num">@(i < Model.Deductions.Count ? Model.Deductions[i].ActualAmount.ToString("N2") : "")</td>
+                                    <td class="num">@(i < Model.Deductions.Count ? Model.Deductions[i].Amount.ToString("N2") : "")</td>
+                                </tr>
+                            }
+                        }
+                        <tr class="totalRow">
+                            <td>Total Earnings</td>
+                            <td></td>
+                            <td class="num">@Model.GrossEarnings.ToString("N2")</td>
+                            <td>Total Deductions</td>
+                            <td></td>
+                            <td class="num">@Model.TotalDeductions.ToString("N2")</td>
+                        </tr>
+                    </table>*@
+                    <table class="earnDed">
+                        <tr>
+                            <th colspan="3">Earning</th>
+                            <th colspan="3">Deductions</th>
+                        </tr>
 
-                @if (!Model.isPdf)
-                {
-                    <div class="noprint download-pdf">
-                        <a href="@Url.Action("Downloadpdf", "Payslip", new { tenantId = Model.TenantId, empId = Model.EmpId, month = Model.Month, year = Model.Year })">
-                            Download as PDF
-                        </a>
-                    </div>
-                }
+                        <tr>
+                            <th>Head</th>
+                            <th>Amount</th>
+                            <th>Payable</th>
+                            <th>Head</th>
+                            <th>Amount</th>
+                            <th>Deductions</th>
+                        </tr>
 
-            </div>
+                        @{
+                            int rows = Math.Max(Model.Earnings.Count, Model.Deductions.Count);
+
+                            for (int i = 0; i < rows; i++)
+                            {
+                                var earningName = i < Model.Earnings.Count? Model.Earnings[i].PayConfigName: "";
+
+                                var deductionName = i < Model.Deductions.Count? Model.Deductions[i].PayConfigName: "";
+
+                                // Convert Hra / Lta to uppercase
+                                if (string.Equals(earningName, "Hra", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    earningName = "HRA";
+                                }
+                                else if (string.Equals(earningName, "Lta", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    earningName = "LTA";
+                                }
+
+                                if (string.Equals(deductionName, "Hra", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    deductionName = "HRA";
+                                }
+                                else if (string.Equals(deductionName, "Lta", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    deductionName = "LTA";
+                                }
+
+                                <tr>
+                                    <td>@earningName</td>
+
+                                    <td class="num">
+                                        @(i < Model.Earnings.Count? Model.Earnings[i].ActualAmount.ToString("N2"): "")
+                                    </td>
+
+                                    <td class="num">
+                                        @(i < Model.Earnings.Count? Model.Earnings[i].Amount.ToString("N2"): "")
+                                    </td>
+
+                                    <td>@deductionName</td>
+
+                                    <td class="num">
+                                        @(i < Model.Deductions.Count? Model.Deductions[i].ActualAmount.ToString("N2"): "")
+                                    </td>
+
+                                    <td class="num">
+                                        @(i < Model.Deductions.Count? Model.Deductions[i].Amount.ToString("N2"): "")
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                        <tr class="totalRow">
+                            <td>Total Earnings</td>
+                            <td></td>
+                            <td class="num">@Model.GrossEarnings.ToString("N2")</td>
+
+                            <td>Total Deductions</td>
+                            <td></td>
+                            <td class="num">@Model.TotalDeductions.ToString("N2")</td>
+                        </tr>
+                    </table>
+
+                    @if (Model.ShowNetPay)
+                    {
+                        <div class="netPayable">
+                            Net Payable (INR) &nbsp;&nbsp;&nbsp; <span class="amt">@Model.NetPay.ToString("N2")</span>
+                        </div>
+                        <div class="words">
+                            Net Payable INR (In Words): &nbsp;<b>@Model.NetPayWords Only</b>
+                        </div>
+                    }
+
+                    <div class="footer-note">This is system generated document signature not require.</div>
+
+                    @if (!Model.isPdf)
+                    {
+                        <div class="noprint download-pdf">
+                            <a href="@Url.Action("Downloadpdf", "Payslip", new { tenantId = Model.TenantId, empId = Model.EmpId, month = Model.Month, year = Model.Year })">
+                                Download as PDF
+                            </a>
+                        </div>
+                    }
+
+                </div>
         </div>
     }
 

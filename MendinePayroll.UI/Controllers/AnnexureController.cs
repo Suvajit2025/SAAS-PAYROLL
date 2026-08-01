@@ -144,7 +144,7 @@ namespace MendinePayroll.UI.Controllers
             String pathB = Path.Combine(Server.MapPath("/Form16Data"), filenameB);
             postedFileA.SaveAs(pathA);
             postedFileB.SaveAs(pathB);
-            Result = clsSalary.Form16Upload(idform, year, Companycode, empno, pathA, filenameA, pathB, filenameB);
+            Result = clsSalary.Form16Upload(idform, year, Companycode, empno, pathA, filenameA, pathB, filenameB, TenantId);
             if (Result == "")
                 return Json(new { success = "" }, JsonRequestBehavior.AllowGet);
             else
@@ -157,12 +157,7 @@ namespace MendinePayroll.UI.Controllers
         {
             return View();
         }
-
-        //public ActionResult Form16UPLoad()
-        //{
-        //    return View();
-        //}
-
+         
 
         [HttpPost]
         public JsonResult allform16upload()
