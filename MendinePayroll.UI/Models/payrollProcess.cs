@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -51,6 +51,8 @@ namespace MendinePayroll.UI.Models
         public int PayConfigId { get; set; }
         public string PayConfigName { get; set; }
         public string ReferenceIds { get; set; } = string.Empty;// 🔑 Store the LoanId here
+        public int SortOrder { get; set; }
+        public int OrderBy { get; set; }
         /* =========================
            Classification
         ========================= */
@@ -72,8 +74,10 @@ namespace MendinePayroll.UI.Models
         public bool IsStatutory { get; set; }
 
         public bool IsBasicComponent { get; set; } // Used for PF base
-        public bool IsGrossComponent { get; set; } // Used for ESIC / PTAX base
-
+        public bool IsGrossComponent { get; set; } // Used for ESIC base
+        public bool? IsIncludedInGross { get; set; }
+        public bool IsTaxable { get; set; }        // Used for PTAX calculation base
+        public bool IsProratable { get; set; }
         public string StatutoryType { get; set; }  // PF_EE / PF_ER / ESIC_EE / ESIC_ER / PTAX / TDS
         public string PTaxSlabsJson { get; set; }  // JSON slab definition
 
@@ -153,9 +157,12 @@ namespace MendinePayroll.UI.Models
         public bool IsEditable { get; set; }       // UI rule: MANUAL_INPUT / EXCEL_UPLOAD / OtherType etc
         public bool IsWaivable { get; set; }       // Loan waive
         public int DisplayOrder { get; set; }
+        public int SortOrder { get; set; }
+        public int OrderBy { get; set; }
 
         public bool IsBasicComponent { get; set; } // Used for PF base
-        public bool IsGrossComponent { get; set; } // Used for ESIC / PTAX base
+        public bool IsGrossComponent { get; set; } // Used for ESIC base
+        public bool IsTaxable { get; set; }        // Used for PTAX base
         public string ReferenceIds { get; set; } = string.Empty;
 
     }

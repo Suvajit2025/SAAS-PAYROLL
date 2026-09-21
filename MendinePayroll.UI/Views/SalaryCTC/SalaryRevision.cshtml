@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Employee Salary Revision";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -990,17 +990,17 @@
 
             <div>
                 <small class="text-muted">NET PAY</small><br>
-                <span class="summary-val" id="lblNetPay">₹ 0</span>
+                <span class="summary-val" id="lblNetPay">&#8377; 0</span>
             </div>
 
             <div class="text-end">
                 <small class="text-muted">MONTHLY CTC</small><br>
-                <span class="summary-val" id="lblCTCMonth">₹ 0</span>
+                <span class="summary-val" id="lblCTCMonth">&#8377; 0</span>
             </div>
 
             <div class="text-end ps-3 border-start">
                 <small class="text-warning">ANNUAL CTC</small><br>
-                <span class="summary-highlight" id="lblCTCYear">₹ 0</span>
+                <span class="summary-highlight" id="lblCTCYear">&#8377; 0</span>
             </div>
 
             <button class="btn-saas" onclick="saveData()">Revised Structure</button>
@@ -1319,7 +1319,7 @@
         // 4. Format using Indian Locale (en-IN)
         // maximumFractionDigits: 0 removes decimals (50,000)
         // maximumFractionDigits: 2 keeps decimals (50,000.00)
-        return "₹ " + num.toLocaleString('en-IN', {
+        return "\u20B9 " + num.toLocaleString('en-IN', {
             maximumFractionDigits: 0,
             minimumFractionDigits: 0
         });
@@ -1416,9 +1416,9 @@
                 $('#lblTotalGross').text(header.MonthlyGross);
                 $('#lblTotalDed').text(header.TotalDeduction);
                 $('#lblTotalContrib').text(header.TotalContribution);
-                $('#lblNetPay').text("₹ " + header.NetPay);
-                $('#lblCTCMonth').text("₹ " + header.MonthlyCTC);
-                $('#lblCTCYear').text("₹ " + header.AnnualCTC);
+                $('#lblNetPay').text("\u20B9 " + header.NetPay);
+                $('#lblCTCMonth').text("\u20B9 " + header.MonthlyCTC);
+                $('#lblCTCYear').text("\u20B9 " + header.AnnualCTC);
 
                 // -----------------------------------------------------
                 // 5️⃣ Fill Component Values
@@ -1485,9 +1485,9 @@
             $('#lblTotalContrib').text("0");
             $('#lblTotalContribYear').text("0");
 
-            $('#lblNetPay').text("₹ 0");
-            $('#lblCTCMonth').text("₹ 0");
-            $('#lblCTCYear').text("₹ 0");
+            $('#lblNetPay').text("\u20B9 0");
+            $('#lblCTCMonth').text("\u20B9 0");
+            $('#lblCTCYear').text("\u20B9 0");
 
             // Checkboxes
             $('#chkPF').prop('checked', true);
@@ -1631,7 +1631,7 @@
                 let formulaText = "";
                 if (r.LogicType === "FIXED") {
                     formulaText = (r.ManualRate && parseFloat(r.ManualRate) > 0)
-                        ? `₹${parseFloat(r.ManualRate)} FIXED`
+                        ? `\u20B9${parseFloat(r.ManualRate)} FIXED`
                         : "FIXED";
                 }
                 else if (r.LogicType === "FORMULA") {
@@ -1671,6 +1671,7 @@
                     // 🔘 Component Flags (CORRECTED)
                     isBasic: Number(r.IsBasicComponent) === 1,
                     isGross: Number(r.IsGrossComponent) === 1,
+                    isTaxable: Number(r.IsTaxable) === 1,
                     isLoan: Number(r.IsLoanComponent) === 1,
                     isCalculative: Number(r.IScalculative) === 1,
                     isVariable: Number(r.IsVariableAmt) === 1,
@@ -2207,9 +2208,9 @@
         const ctcMRounded = applyRounding(ctcMonth, "ROUND");
         const ctcYRounded = applyRounding(ctcYear, "ROUND");
 
-        $('#lblNetPay').text("₹ " + netRounded.toLocaleString('en-IN'));
-        $('#lblCTCMonth').text("₹ " + ctcMRounded.toLocaleString('en-IN'));
-        $('#lblCTCYear').text("₹ " + ctcYRounded.toLocaleString('en-IN'));
+        $('#lblNetPay').text("\u20B9 " + netRounded.toLocaleString('en-IN'));
+        $('#lblCTCMonth').text("\u20B9 " + ctcMRounded.toLocaleString('en-IN'));
+        $('#lblCTCYear').text("\u20B9 " + ctcYRounded.toLocaleString('en-IN'));
     }
 
 
@@ -2301,7 +2302,8 @@
                 ISPercentage: false,
 
                 IsBasicComponent: x.isBasic,
-                IsGrossComponent: x.isGross
+                IsGrossComponent: x.isGross,
+                IsTaxable: x.isTaxable
             });
         });
 
@@ -2349,6 +2351,7 @@
                 // Component Flags
                 IsBasicComponent: x.isBasic === true,
                 IsGrossComponent: x.isGross === true,
+                IsTaxable: x.isTaxable === true,
                 IsStatutory: x.isStatutory === true,
                 StatutoryType: x.statType || null,
                 IsOther: x.isOther === true,

@@ -2765,6 +2765,33 @@
         </div>
     </div>
 
+    <!-- MODAL: VIEW UPLOADED COMPONENT DATA -->
+    <div id="uploadedDataModal" class="modal-overlay" style="display:none; z-index: 100000 !important; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(3px);">
+        <div class="modal-box modal-lg" style="max-width: 850px; width: 92%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); border: 1px solid #cbd5e1;">
+            <div class="modal-header-custom" style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 14px 20px;">
+                <div class="modal-title-custom">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-file-excel" style="color: #10b981; font-size: 1.3em;"></i>
+                        <h3 id="lblUploadedModalTitle" style="margin:0; font-size: 16px; font-weight: 700; color: #1e293b;">Uploaded Component Data</h3>
+                    </div>
+                    <small style="color: #64748b;">Review uploaded incentive / variable values from database</small>
+                </div>
+                <button class="btn-close-custom" onclick="$('#uploadedDataModal').fadeOut(200);">&times;</button>
+            </div>
+            <div style="padding: 15px 20px; overflow-y: auto; flex: 1; min-height: 200px; max-height: 55vh; background: #fff;">
+                <div id="uploadedDataLoading" style="text-align:center; padding: 30px; color: #64748b;">
+                    <i class="fas fa-circle-notch fa-spin fa-2x" style="color: #0284c7;"></i>
+                    <p style="margin-top: 10px; font-size: 13px; font-weight: 600;">Loading uploaded data...</p>
+                </div>
+                <div id="uploadedDataContent"></div>
+            </div>
+            <div class="modal-footer-custom" style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px 20px;">
+                <span id="lblUploadedCount" style="font-size: 12px; color: #475569; font-weight: 700;"></span>
+                <button class="btn-outline" onclick="$('#uploadedDataModal').fadeOut(200);">Close</button>
+            </div>
+        </div>
+    </div>
+
     <div id="detailModal" class="modal-overlay">
         <div class="modal-box modal-xl">
             <div class="modal-header-custom">
@@ -3481,9 +3508,16 @@
 
 
     function loadAttendanceComponents(payGroupId, payrollType) {
+        let month = 0, year = 0;
+        const ym = $("#txtMonthYear").val();
+        if (ym) {
+            const parts = ym.split("-");
+            year = parseInt(parts[0], 10);
+            month = parseInt(parts[1], 10);
+        }
 
         $.getJSON('/bulkSalaryProcess/GetAttendanceComponents',
-            { payGroupId, payrollType },
+            { payGroupId, payrollType, month, year },
             function (components) {
 
                 closeModal('genModal');
@@ -3512,14 +3546,21 @@
                     <th>Time Basis</th>
                     <th class="text-center">Format</th>
                     <th class="text-center">Upload</th>
+                    <th class="text-center">View Data</th>
                 </tr>
             </thead>
             <tbody>
     `;
 
         components.forEach(c => {
+            const eyeButtonHtml = c.hasData
+                ? `<button type="button" class="btn-outline" style="padding: 4px 10px; color: #0284c7; border-color: #38bdf8;" title="View Uploaded Data" onclick="viewUploadedComponentData(${c.id}, '${c.name.replace(/'/g, "\\'")}')">
+                       <i class="fas fa-eye"></i>
+                   </button>`
+                : `<span style="color:#94a3b8; font-size:11px;">--</span>`;
+
             table += `
-            <tr>
+            <tr id="row_comp_${c.id}">
                 <td><strong>${c.name}</strong></td>
                 <td>${c.timeBasis}</td>
                 <td class="text-center">
@@ -3535,6 +3576,9 @@
                             id="file_${c.id}"
                             style="display:none"
                             onchange="uploadComponentFile(${c.id}, this,false)">
+                </td>
+                <td class="text-center" id="view_cell_${c.id}">
+                    ${eyeButtonHtml}
                 </td>
             </tr>
         `;
@@ -3711,7 +3755,7 @@
         formData.append("configId", ConfigureSalaryComponentId);
         formData.append("month", parseInt(parts[1]));
         formData.append("year", parseInt(parts[0]));
-        formData.append("paygroupid", $("#ddlType").val());
+        formData.append("paygroupid", $("#ddlGroup").val());
         // Add the forceUpdate flag to the request
         formData.append("forceUpdate", forceUpdate);
 
@@ -3737,6 +3781,12 @@
                 }
                 else if (res.success) {
                     toastr.success(res.message);
+                    // Show Eye button immediately for this component
+                    $(`#view_cell_${ConfigureSalaryComponentId}`).html(`
+                        <button type="button" class="btn-outline" style="padding: 4px 10px; color: #0284c7; border-color: #38bdf8;" title="View Uploaded Data" onclick="viewUploadedComponentData(${ConfigureSalaryComponentId}, 'Component Data')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    `);
                     // Refresh grid using current filter values
                     loadAttendanceEmployees($("#ddlGroup").val(), $("#ddlType").val());
                     $(input).val('');
@@ -3756,6 +3806,74 @@
                     hidePayrollLoader();
                 }
             }
+        });
+    }
+
+    /* ====== View Uploaded Component Data Logic ====== */
+    function viewUploadedComponentData(configId, compName) {
+        const ym = $("#txtMonthYear").val();
+        if (!ym) {
+            toastr.error("Month and Year not selected.");
+            return;
+        }
+        const [year, month] = ym.split("-");
+        const payGroupId = $("#ddlGroup").val();
+
+        $("#lblUploadedModalTitle").text(`${compName} - Uploaded Data (${month}/${year})`);
+        $("#uploadedDataLoading").show();
+        $("#uploadedDataContent").empty();
+        $("#lblUploadedCount").text('');
+        $("#uploadedDataModal").fadeIn(200);
+
+        $.getJSON('/bulkSalaryProcess/GetUploadedVariableComponentData', {
+            configId: configId,
+            month: parseInt(month, 10),
+            year: parseInt(year, 10),
+            payGroupId: parseInt(payGroupId, 10) || 0
+        })
+        .done(function (res) {
+            $("#uploadedDataLoading").hide();
+            if (!res || !res.success || !res.data || res.data.length === 0) {
+                $("#uploadedDataContent").html('<div style="text-align:center; padding:30px; color:#94a3b8; font-size:13px;"><i class="fas fa-folder-open fa-2x" style="display:block; margin-bottom:10px;"></i>No uploaded records found in database for this period.</div>');
+                $("#lblUploadedCount").text('Total Records: 0');
+                return;
+            }
+
+            const rows = res.data;
+            const columns = Object.keys(rows[0]);
+            let tbl = `<table class="batch-table" style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f1f5f9;">`;
+            
+            columns.forEach(col => {
+                const isVal = col.toLowerCase().includes('value') || col.toLowerCase().includes('amount');
+                tbl += `<th class="${isVal ? 'text-right' : 'text-left'}" style="padding: 10px 14px; font-weight: 700; color: #334155; font-size: 12px; border-bottom: 2px solid #cbd5e1; ${isVal ? 'text-align: right;' : 'text-align: left;'}">${col}</th>`;
+            });
+            tbl += `</tr></thead><tbody>`;
+
+            rows.forEach((r, idx) => {
+                tbl += `<tr style="background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'}; border-bottom: 1px solid #e2e8f0;">`;
+                columns.forEach(col => {
+                    const rawVal = r[col] !== null && r[col] !== undefined ? r[col] : '';
+                    const isVal = col.toLowerCase().includes('value') || col.toLowerCase().includes('amount') || typeof rawVal === 'number';
+                    
+                    let displayVal = rawVal;
+                    if (typeof rawVal === 'number') {
+                        displayVal = Number(rawVal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                    
+                    tbl += `<td class="${isVal ? 'text-right' : 'text-left'}" style="padding: 10px 14px; font-size: 13px; color: #1e293b; ${isVal ? 'text-align: right; font-weight: 600; color: #0e7490;' : 'text-align: left;'}">${displayVal}</td>`;
+                });
+                tbl += `</tr>`;
+            });
+            tbl += `</tbody></table>`;
+
+            $("#uploadedDataContent").html(tbl);
+            $("#lblUploadedCount").text(`Total Records: ${rows.length}`);
+        })
+        .fail(function () {
+            $("#uploadedDataLoading").hide();
+            $("#uploadedDataContent").html('<div style="text-align:center; padding:30px; color:#ef4444;"><i class="fas fa-exclamation-circle fa-2x" style="display:block; margin-bottom:10px;"></i>Failed to load uploaded data from server.</div>');
         });
     }
     /* ================Open General Modal================== */

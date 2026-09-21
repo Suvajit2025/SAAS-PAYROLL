@@ -59,7 +59,7 @@
             }
         }
 
-        .header {
+        /*.header {
             position: relative;
             min-height: 96px;
             text-align: center;
@@ -67,21 +67,34 @@
             padding: 4px 115px 6px;
             margin-bottom: 8px;
         }
+*/
+        .header {
+            position: relative;
+            min-height: 120px;
+            text-align: center;
+            border-bottom: 1.5px solid #000;
+            padding: 10px 155px 12px;
+            margin-bottom: 8px;
+        }
 
         .header-logo {
             position: absolute;
-            left: 0;
+            left: 10px;
             top: 50%;
-            width: 105px;
-            text-align: left;
+            width: 140px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
             transform: translateY(-50%);
         }
 
             .header-logo img {
-                max-width: 155px;
-                max-height: 88px;
+                max-width: 135px;
+                max-height: 100px;
                 width: auto;
                 height: auto;
+                object-fit: contain;
                 display: block;
             }
 
@@ -102,7 +115,7 @@
         .slip-title {
             font-size: 13px;
             font-weight: bold;
-            margin-top: 6px;
+            margin-top: 20px;
         }
 
         table.infoTable {

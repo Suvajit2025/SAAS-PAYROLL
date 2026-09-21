@@ -1,4 +1,4 @@
-﻿using Common.Utility;
+using Common.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -216,6 +216,7 @@ namespace MendinePayroll.UI.Controllers
 
                     IsBasicComponent = Convert.ToInt32(row["IsBasicComponent"]) == 1,
                     IsGrossComponent = Convert.ToInt32(row["IsGrossComponent"]) == 1,
+                    IsTaxable = (row.Table.Columns.Contains("IsTaxable") && row["IsTaxable"] != DBNull.Value && Convert.ToInt32(row["IsTaxable"]) == 1) || (row.Table.Columns.Contains("isTaxable") && row["isTaxable"] != DBNull.Value && Convert.ToInt32(row["isTaxable"]) == 1),
                     IsStatutory = Convert.ToInt32(row["IsStatutory"]) == 1,
                     StatutoryType = row["StatutoryType"]?.ToString(),
 
@@ -236,8 +237,8 @@ namespace MendinePayroll.UI.Controllers
         }
 
         /* =====================================================
-    3️⃣ SALARY ENGINE (JS → C# PORT) – FIXED
- ===================================================== */
+            3️⃣ SALARY ENGINE (JS → C# PORT) – FIXED
+           ===================================================== */
         private SalaryResult CalculateSalary(List<SalaryComponent> cfg)
         {
             var calcs = cfg.ToDictionary(
@@ -302,7 +303,12 @@ namespace MendinePayroll.UI.Controllers
                         break;
 
                     case "PTAX":
-                        x.MonthlyAmount = GetPTax(gross, x.PTaxSlabsJson);
+                        // =========================================================================
+                        // MODIFICATION: Calculate sum of all taxable components (IsTaxable == true)
+                        // PTAX slab matching is evaluated against totalTaxable instead of gross.
+                        // =========================================================================
+                        decimal totalTaxable = cfg.Where(c => c.IsTaxable).Sum(c => c.MonthlyAmount);
+                        x.MonthlyAmount = GetPTax(totalTaxable, x.PTaxSlabsJson);
                         break;
                 }
 
@@ -373,12 +379,13 @@ namespace MendinePayroll.UI.Controllers
             }
         }
 
-        private decimal GetPTax(decimal gross, string json)
+        // Evaluates PTAX slab based on taxable amount
+        private decimal GetPTax(decimal taxableAmount, string json)
         {
             if (string.IsNullOrEmpty(json)) return 0;
 
             var slabs = JsonConvert.DeserializeObject<List<PTaxSlab>>(json);
-            var slab = slabs.FirstOrDefault(s => gross >= s.MinSalary && gross <= s.MaxSalary);
+            var slab = slabs.FirstOrDefault(s => taxableAmount >= s.MinSalary && taxableAmount <= s.MaxSalary);
             return slab?.PTAXAmount ?? 0;
         }
 
@@ -444,6 +451,7 @@ namespace MendinePayroll.UI.Controllers
 
             public bool IsBasicComponent { get; set; }
             public bool IsGrossComponent { get; set; }
+            public bool IsTaxable { get; set; }
             public bool IsStatutory { get; set; }
             public string StatutoryType { get; set; }
 

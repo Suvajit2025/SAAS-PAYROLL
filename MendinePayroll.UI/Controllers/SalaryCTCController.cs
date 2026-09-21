@@ -1,4 +1,4 @@
-﻿
+
 using Common.Utility;
 using DocumentFormat.OpenXml.Bibliography;
 using MendinePayroll.Models;
@@ -181,7 +181,7 @@ namespace MendinePayroll.UI.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveEmployeeSalaryStructure(EmpSalaryConfigModel model)
+        public JsonResult SaveEmployeeSalaryStructure(EmpSalaryConfigRevisionModel model)
         {
             try
             {
@@ -276,6 +276,7 @@ namespace MendinePayroll.UI.Controllers
 
                     IsBasicComponent = Convert.ToBoolean(r["IsBasicComponent"]),
                     IsGrossComponent = Convert.ToBoolean(r["IsGrossComponent"]),
+                    IsTaxable = (ds.Tables[1].Columns.Contains("IsTaxable") && r["IsTaxable"] != DBNull.Value && Convert.ToBoolean(r["IsTaxable"])) || (ds.Tables[1].Columns.Contains("isTaxable") && r["isTaxable"] != DBNull.Value && Convert.ToBoolean(r["isTaxable"])),
                     IsStatutory = Convert.ToBoolean(r["IsStatutory"]),
                     StatutoryType = Convert.ToString(r["StatutoryType"]),
 
@@ -303,6 +304,7 @@ namespace MendinePayroll.UI.Controllers
 
                     IsBasicComponent = Convert.ToBoolean(r["IsBasicComponent"]),
                     IsGrossComponent = Convert.ToBoolean(r["IsGrossComponent"]),
+                    IsTaxable = (ds.Tables[2].Columns.Contains("IsTaxable") && r["IsTaxable"] != DBNull.Value && Convert.ToBoolean(r["IsTaxable"])) || (ds.Tables[2].Columns.Contains("isTaxable") && r["isTaxable"] != DBNull.Value && Convert.ToBoolean(r["isTaxable"])),
                     IsLoanComponent = Convert.ToBoolean(r["IsLoanComponent"]),
                     IsCalculative = Convert.ToBoolean(r["IScalculative"]),
                     IsVariableAmt = Convert.ToBoolean(r["IsVariableAmt"]),
@@ -392,7 +394,7 @@ namespace MendinePayroll.UI.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
-        public JsonResult UpdateEmployeeSalaryStructure(EmpSalaryConfigModel model)
+        public JsonResult UpdateEmployeeSalaryStructure(EmpSalaryConfigRevisionModel model)
         {
             try
             {

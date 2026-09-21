@@ -1,4 +1,6 @@
-﻿@{
+
+@inherits System.Web.Mvc.WebViewPage<dynamic>
+@{
     ViewBag.Title = "Employee Salary Structure";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -1580,17 +1582,17 @@
 
             <div>
                 <div style="font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Net Pay (In-Hand)</div>
-                <span class="summary-val" id="lblNetPay" style="color: #38bdf8;">₹ 0</span>
+                <span class="summary-val" id="lblNetPay" style="color: #38bdf8;">&#8377; 0</span>
             </div>
 
             <div class="text-end ms-auto me-4">
                 <div style="font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Monthly CTC</div>
-                <span class="summary-val" id="lblCTCMonth" style="color: #f1f5f9;">₹ 0</span>
+                <span class="summary-val" id="lblCTCMonth" style="color: #f1f5f9;">&#8377; 0</span>
             </div>
 
             <div class="text-end pe-4 border-end" style="border-color: #334155 !important;">
                 <div style="font-size: 10px; color: #fbbf24; font-weight: 700; text-transform: uppercase;">Annual CTC</div>
-                <span class="summary-highlight" id="lblCTCYear">₹ 0</span>
+                <span class="summary-highlight" id="lblCTCYear">&#8377; 0</span>
             </div>
 
             <div class="footer-action-zone ms-3">
@@ -1802,11 +1804,11 @@
     }
 
     function setCurrencyText(selector, value) {
-        $(selector).text("₹ " + formatMoney(value));
+        $(selector).text("\u20B9 " + formatMoney(value));
     }
 
     function setRupeeCurrencyText(selector, value) {
-        $(selector).text("₹ " + formatRupee(value));
+        $(selector).text("\u20B9 " + formatRupee(value));
     }
 
     $(document).ready(function () {
@@ -2551,6 +2553,7 @@
 
                     isBasic: x.IsBasicComponent,
                     isGross: x.IsGrossComponent,
+                    isTaxable: x.IsTaxable,
 
                     formula: x.CalculationFormula,
                     logic: x.LogicType,
@@ -2666,9 +2669,9 @@
             $('#lblTotalContrib').text("0.00");
             $('#lblTotalContribYear').text("0.00");
 
-            $('#lblNetPay').text("₹ 0");
-            $('#lblCTCMonth').text("₹ 0");
-            $('#lblCTCYear').text("₹ 0");
+            $('#lblNetPay').text("\u20B9 0");
+            $('#lblCTCMonth').text("\u20B9 0");
+            $('#lblCTCYear').text("\u20B9 0");
 
             // Checkboxes
             $('#chkPF').prop('checked', true);
@@ -2783,6 +2786,7 @@
 
                     isBasic: x.IsBasicComponent,
                     isGross: x.IsGrossComponent,
+                    isTaxable: x.IsTaxable,
 
                     formula: x.CalculationFormula,
                     logic: x.LogicType,

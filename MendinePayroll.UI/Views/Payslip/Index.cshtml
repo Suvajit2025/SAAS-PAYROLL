@@ -1,4 +1,4 @@
-﻿@inherits System.Web.Mvc.WebViewPage<MendinePayroll.UI.Models.PayslipViewModel>
+@inherits System.Web.Mvc.WebViewPage<MendinePayroll.UI.Models.PayslipViewModel>
 @{
     Layout = null;
     var tenantId = !string.IsNullOrWhiteSpace(Model.TenantId)
@@ -312,14 +312,16 @@
             <table>
                 <tr><th>Earnings</th><th>Amount (&#8377;)</th><th>Deductions</th><th>Amount (&#8377;)</th></tr>
                 @{
-                    int rows = Math.Max(Model.Earnings.Count, Model.Deductions.Count);
+                    var validEarnings = Model.Earnings.Where(x => x.Amount > 0).ToList();
+                    var validDeductions = Model.Deductions.Where(x => x.Amount > 0).ToList();
+                    int rows = Math.Max(validEarnings.Count, validDeductions.Count);
                     for (int i = 0; i < rows; i++)
                     {
                         <tr>
-                            <td>@(i < Model.Earnings.Count ? Model.Earnings[i].PayConfigName : "")</td>
-                            <td>@(i < Model.Earnings.Count ? Model.Earnings[i].Amount.ToString("N2") : "")</td>
-                            <td>@(i < Model.Deductions.Count ? Model.Deductions[i].PayConfigName : "")</td>
-                            <td>@(i < Model.Deductions.Count ? Model.Deductions[i].Amount.ToString("N2") : "")</td>
+                            <td>@(i < validEarnings.Count ? validEarnings[i].PayConfigName : "")</td>
+                            <td>@(i < validEarnings.Count ? validEarnings[i].Amount.ToString("N2") : "")</td>
+                            <td>@(i < validDeductions.Count ? validDeductions[i].PayConfigName : "")</td>
+                            <td>@(i < validDeductions.Count ? validDeductions[i].Amount.ToString("N2") : "")</td>
                         </tr>
                     }
                 }

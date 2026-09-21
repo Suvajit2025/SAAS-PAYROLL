@@ -385,5 +385,13 @@ logs/
 # Temporary
 temp/
 tmp/
+
+# Puppeteer-downloaded browser binaries
+/MendinePayroll.UI/App_Data/Puppeteer/
+
+# Application runtime error logs
+/MendinePayroll.UI/ErrorLog.txt
+/MendinePayroll.UI/CompanyData/ErrorLog/
+
 /MendinePayroll.UI/Database/PayrollCycleConfiguration_Procedures.sql
 /MendinePayroll.UI/letter-template-designer.html

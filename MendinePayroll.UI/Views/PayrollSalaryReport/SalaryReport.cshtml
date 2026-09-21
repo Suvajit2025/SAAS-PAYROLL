@@ -105,7 +105,7 @@
             <div class="btn-group">
                 <button onclick="approveSelectedSalaries()" class="btn btn-primary btn-sm"><i class="fa fa-check-circle mr-xs"></i> Approve / Finalize</button>
                 <button onclick="rejectSelectedSalaries()" class="btn btn-danger btn-sm"><i class="fa fa-times-circle mr-xs"></i> Reject</button>
-                @*<button onclick="downloadBulkPayslips()" class="btn btn-default btn-sm"><i class="fa fa-file-pdf-o text-danger mr-xs" disabled></i> Bulk Payslips</button>*@
+                @*<button onclick="downloadBulkPayslips()" class="btn btn-default btn-sm"><i class="fa fa-file-pdf-o text-danger mr-xs" disabled></i> Payslips</button>*@
                 <button type="button" id="btnProcessPayment" onclick="processPayment()" class="btn btn-success btn-sm"><i class="fa fa-check-circle mr-xs"></i> Mark as Paid</button>
             </div>
         </header>
@@ -398,6 +398,13 @@
                                 : `<button class="btn btn-xs btn-primary" onclick="downloadPayslip(${r.EmployeeID})">
                             <i class="fa fa-file-pdf-o"></i>
                        </button>`;
+            const sendMailButton = r.PaidStatus == 1
+                    ? `<button class="btn btn-xs btn-success" onclick="sendPayslipMail('${id}')" title="Send payslip mail">
+                            <i class="fa fa-envelope"></i>
+                       </button>`
+                    : `<button class="btn btn-xs btn-success" disabled title="Payslip mail can be sent after salary is marked paid">
+                            <i class="fa fa-envelope"></i>
+                       </button>`;
 
             const tr = `
             <tr>
@@ -421,6 +428,7 @@
                 <td class="text-center">
                     <button class="btn btn-xs btn-default" onclick="openBankModal(${r.EmployeeID}, '${escapeHtml(r.EmployeeName)}')"><i class="fa fa-university"></i></button>
                     ${downloadButton}
+                    ${sendMailButton}
                 </td>
             </tr>`;
             $tbody.append(tr);
@@ -1037,5 +1045,43 @@
 
         // 3. Redirect on _blank (New Tab)
         window.open(url, '_blank');
+    }
+
+    function sendPayslipMail(payrollProcessEmployeeId) {
+        const month = parseInt($("#fltMonth").val() || "0", 10);
+        const year = parseInt($("#fltYear").val() || "0", 10);
+
+        if (!month || !year) {
+            toastr.warning("Please select both Month and Year first.");
+            return;
+        }
+
+        showPayrollLoader();
+
+        $.ajax({
+            url: "/PayrollSalaryReport/SendPayslipMail",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                month: month,
+                year: year,
+                payrollProcessEmployeeId: payrollProcessEmployeeId
+            }),
+            success: function (res) {
+                if (res && res.success) {
+                    toastr.success(res.message || "Payslip mail queued successfully.");
+                    return;
+                }
+
+                toastr.warning(res?.message || "Payslip mail can be sent only after salary is marked paid.");
+            },
+            error: function () {
+                toastr.error("Server error while sending payslip mail.");
+            },
+            complete: function () {
+                hidePayrollLoader();
+            }
+        });
     }
 </script>

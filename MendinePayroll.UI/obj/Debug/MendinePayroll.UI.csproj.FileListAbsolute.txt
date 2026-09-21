@@ -212,6 +212,7 @@ D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.AspNet
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.AspNetCore.Routing.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.AspNetCore.WebUtilities.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Bcl.AsyncInterfaces.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Bcl.TimeProvider.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.DotNet.PlatformAbstractions.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Configuration.Abstractions.dll
@@ -224,6 +225,7 @@ D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extens
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Localization.Abstractions.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Localization.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Logging.Abstractions.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Logging.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.ObjectPool.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Options.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Primitives.dll
@@ -260,6 +262,7 @@ D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Security.
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Security.Principal.Windows.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Text.Encodings.Web.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Text.Json.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Threading.Channels.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Threading.Tasks.Extensions.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.Helpers.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.Mvc.dll
@@ -268,6 +271,7 @@ D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.Razor
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.WebPages.Deployment.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.WebPages.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.WebPages.Razor.dll
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\WebDriverBiDi.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\WebGrease.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\EnvDTE.dll
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.ReportViewer.WinForms.dll
@@ -311,6 +315,7 @@ D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.AspNet
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.AspNetCore.Routing.Abstractions.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.AspNetCore.WebUtilities.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Bcl.AsyncInterfaces.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Bcl.TimeProvider.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Configuration.Abstractions.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.DependencyInjection.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.DependencyInjection.Abstractions.xml
@@ -319,6 +324,7 @@ D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extens
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Hosting.Abstractions.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Localization.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Localization.Abstractions.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Logging.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Logging.Abstractions.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.ObjectPool.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.Extensions.Options.xml
@@ -345,6 +351,7 @@ D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Security.
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Security.Principal.Windows.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Text.Encodings.Web.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Text.Json.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Threading.Channels.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Threading.Tasks.Extensions.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.Helpers.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.Mvc.xml
@@ -353,6 +360,7 @@ D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.Razor
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.WebPages.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.WebPages.Deployment.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\System.Web.WebPages.Razor.xml
+D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\WebDriverBiDi.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Antlr3.Runtime.pdb
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 D:\CURRENT WORKING PROJECT\PayrollUI-SAAS\MendinePayroll.UI\bin\EnvDTE.xml

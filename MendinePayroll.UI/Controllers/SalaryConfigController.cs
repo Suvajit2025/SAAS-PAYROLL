@@ -1,4 +1,4 @@
-﻿using Common.Utility;
+using Common.Utility;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using MendinePayroll.Models;
 using MendinePayroll.UI.Models;
@@ -278,6 +278,7 @@ namespace MendinePayroll.UI.Controllers
 
                     isGross = Convert.ToInt32(r["isGross"]) == 1,
                     isBasic = Convert.ToInt32(r["isBasic"]) == 1,
+                    isTaxable = dt.Columns.Contains("isTaxable") ? (r["isTaxable"] != DBNull.Value && Convert.ToInt32(r["isTaxable"]) == 1) : (dt.Columns.Contains("IsTaxable") ? (r["IsTaxable"] != DBNull.Value && Convert.ToInt32(r["IsTaxable"]) == 1) : false),
                     //Statutory 
                     isStat = Convert.ToInt32(r["isStat"]) == 1, 
                     statKey = r["statKey"] == DBNull.Value ? "" : r["statKey"].ToString(),
@@ -357,6 +358,7 @@ namespace MendinePayroll.UI.Controllers
                 sort = Convert.ToInt32(r["SortOrder"]),
                 isBasic = Convert.ToInt32(r["IsBasicComponent"]) == 1,
                 isGross = Convert.ToInt32(r["IsGrossComponent"]) == 1,
+                isTaxable = dt.Columns.Contains("IsTaxable") ? (r["IsTaxable"] != DBNull.Value && Convert.ToInt32(r["IsTaxable"]) == 1) : (dt.Columns.Contains("isTaxable") && r["isTaxable"] != DBNull.Value ? Convert.ToInt32(r["isTaxable"]) == 1 : false),
                 isVar = Convert.ToInt32(r["IsVariableAmt"]) == 1,
                 isLoan = Convert.ToInt32(r["IsLoanComponent"]) == 1,
                 isStat = Convert.ToInt32(r["IsStatutory"]) == 1,
@@ -378,7 +380,7 @@ namespace MendinePayroll.UI.Controllers
             string UserName = Session["UserName"].ToString();
 
             DataTable dt = clsDatabase.fnDataTable("SP_SavePayConfig", model.PayConfigId, TenantId,model.PayConfigName,model.PayConfigType,model.IsCalculative,
-                model.SortOrder,model.IsBasicComponent, model.IsGrossComponent,model.IsVariableAmt,model.IsLoanComponent,model.IsStatutory, (object)model.StatutoryType ?? "", model.IsOther, (object)model.OtherType ?? ""
+                model.SortOrder,model.IsBasicComponent, model.IsGrossComponent,model.IsVariableAmt,model.IsLoanComponent,model.IsStatutory,model.IsTaxable, (object)model.StatutoryType ?? "", model.IsOther, (object)model.OtherType ?? ""
                 , model.IsAllowance, (object)model.AllowanceType ?? "", UserName
             );
 
@@ -446,6 +448,7 @@ namespace MendinePayroll.UI.Controllers
                     IsStatutory = GetNullableBool(row["IsStatutory"]),
                     IsGrossComponent = GetBool(row["IsGrossComponent"]),
                     IsBasicComponent = GetBool(row["IsBasicComponent"]),
+                    IsTaxable = dt.Columns.Contains("IsTaxable") ? (GetNullableBool(row["IsTaxable"]) ?? false) : (dt.Columns.Contains("isTaxable") ? (GetNullableBool(row["isTaxable"]) ?? false) : false),
                     IsVariableAmt = GetBool(row["IsVariableAmt"]),
                     IsLoanComponent = GetBool(row["IsLoanComponent"]),
 

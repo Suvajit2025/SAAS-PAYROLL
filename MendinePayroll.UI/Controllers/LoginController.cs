@@ -71,13 +71,13 @@ namespace MendinePayroll.UI.Controllers
                 //    "suvajit.das@iecsl.co.in",
                 //    "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14");
                 ////Development
-                //SetPayrollSession(
-                //    "10345",
-                //    "iniciolab@iecsl.co.in",
-                //    "3542",
-                //    "13500001",
-                //    "iniciolab@iecsl.co.in",
-                //    "808E0AC6-94CE-4887-AD9D-85AF318ED335");
+                SetPayrollSession(
+                    "10345",
+                    "iniciolab@iecsl.co.in",
+                    "3542",
+                    "13500001",
+                    "iniciolab@iecsl.co.in",
+                    "808E0AC6-94CE-4887-AD9D-85AF318ED335");
 
                 //SetPayrollSession(
                 //    "10198",
@@ -87,13 +87,13 @@ namespace MendinePayroll.UI.Controllers
                 //    "saikat.manna@mendine.com",
                 //    "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14");
 
-                SetPayrollSession(
-                    "10152",
-                    "demo@corporation.in",
-                    "348",
-                    "37",
-                    "demo@corporation.in",
-                    "24A72122-DD46-4386-873D-758E450E252A");
+                //SetPayrollSession(
+                //    "10152",
+                //    "demo@corporation.in",
+                //    "348",
+                //    "37",
+                //    "demo@corporation.in",
+                //    "24A72122-DD46-4386-873D-758E450E252A");
             }
 
 

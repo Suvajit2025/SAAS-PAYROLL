@@ -1,4 +1,4 @@
-﻿using Common.Utility;
+using Common.Utility;
 using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Math;
@@ -184,22 +184,156 @@ namespace MendinePayroll.UI.Controllers
             return Json(new { refNo }, JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
-        public JsonResult GetAttendanceComponents(int payGroupId, string payrollType)
+        public JsonResult GetAttendanceComponents(int payGroupId, string payrollType, int? month, int? year)
         {
             DataTable dt = clsDatabase.fnDataTable("SP_Payroll_GetAttendanceComponents", TenantId,
                 payGroupId,
                 payrollType == "1" ? "MONTHLY" : "CONTRACTUAL"
             );
 
-            var data = dt.AsEnumerable().Select(x => new
+            PayrollCycleRuntimeConfig payrollCycleConfig = null;
+            try { payrollCycleConfig = GetActivePayrollCycleConfiguration(); } catch { }
+            bool isPrevMonth = payrollCycleConfig != null && payrollCycleConfig.PaidDaysSource == 2;
+
+            int expenseMonth = month.HasValue ? (isPrevMonth ? (month.Value == 1 ? 12 : month.Value - 1) : month.Value) : 0;
+            int expenseYear = year.HasValue ? (isPrevMonth ? (month.Value == 1 ? year.Value - 1 : year.Value) : year.Value) : 0;
+
+            var data = dt.AsEnumerable().Select(x =>
             {
-                id = x["ConfigureSalaryComponentID"],
-                PayConfigId = x["PayConfigId"],
-                name = x["PayConfigName"].ToString(),
-                timeBasis = x["TimeBasis"].ToString()
+                int configId = Convert.ToInt32(x["ConfigureSalaryComponentID"]);
+                int payConfigId = x.Table.Columns.Contains("PayConfigId") && x["PayConfigId"] != DBNull.Value ? Convert.ToInt32(x["PayConfigId"]) : 0;
+                string otherType = x.Table.Columns.Contains("OtherType") && x["OtherType"] != DBNull.Value ? x["OtherType"].ToString().Trim() : "";
+                string compName = x["PayConfigName"]?.ToString() ?? "";
+                bool isExpense = (payConfigId == 130) ||
+                                 string.Equals(otherType, "EXPENCE", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(otherType, "EXPENSE", StringComparison.OrdinalIgnoreCase) ||
+                                 compName.ToUpper().Contains("EXPENSE") ||
+                                 compName.ToUpper().Contains("EXPENCE");
+
+                bool hasData = false;
+                if (month.HasValue && year.HasValue && month > 0 && year > 0)
+                {
+                    try
+                    {
+                        // If it is Expense (PayConfigId = 130 or OtherType = EXPENCE), fetch from PRC_Expense_Register_For_Payroll and insert into the table
+                        if (isExpense)
+                        {
+                            try
+                            {
+                               
+
+                                DataTable dtExpense = clsDatabase.fnDataTable("PRC_Get_Expense_Register_For_Payroll_INICIO", expenseMonth, expenseYear, payGroupId);
+                                if (dtExpense != null && dtExpense.Rows.Count > 0)
+                                {
+                                    string empIdCol = dtExpense.Columns.Cast<DataColumn>()
+                                        .FirstOrDefault(c => c.ColumnName.Equals("EmpID", StringComparison.OrdinalIgnoreCase))?.ColumnName;
+
+                                    string amtCol = dtExpense.Columns.Cast<DataColumn>()
+                                        .FirstOrDefault(c => c.ColumnName.Equals("Amount", StringComparison.OrdinalIgnoreCase))?.ColumnName;
+
+                                    if (amtCol == null)
+                                    {
+                                        foreach (DataColumn col in dtExpense.Columns)
+                                        {
+                                            if (col.ColumnName != empIdCol &&
+                                                (col.DataType == typeof(decimal) || col.DataType == typeof(double) || col.DataType == typeof(int) || col.DataType == typeof(float) || col.DataType == typeof(long)))
+                                            {
+                                                amtCol = col.ColumnName;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    var uploadList = new List<object>();
+                                    foreach (DataRow row in dtExpense.Rows)
+                                    {
+                                        int empId = 0;
+                                        decimal amt = 0;
+                                        if (empIdCol != null && row[empIdCol] != DBNull.Value)
+                                        {
+                                            int.TryParse(row[empIdCol].ToString(), out empId);
+                                        }
+                                        if (amtCol != null && row[amtCol] != DBNull.Value)
+                                        {
+                                            decimal.TryParse(row[amtCol].ToString(), out amt);
+                                        }
+
+                                        if (empId > 0)
+                                        {
+                                            uploadList.Add(new
+                                            {
+                                                EmployeeID = empId,
+                                                InputValue = amt
+                                            });
+                                        }
+                                    }
+
+                                    if (uploadList.Count > 0)
+                                    {
+                                        string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(uploadList);
+                                        string user = Session["UserName"]?.ToString() ?? "System";
+
+                                        clsDatabase.fnDBOperation("SP_Payroll_SaveVariableComponentInput_Bulk", jsonData, configId, expenseMonth, expenseYear, TenantId, user, payGroupId);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                clsDatabase.fnErrorLog("PRC_Expense_Register_For_Payroll", ex.Message);
+                            }
+                        }
+
+                        DataTable checkDt = clsDatabase.fnDataTable("SP_Get_Payroll_SaaS_Variable_Component_Inputs_List", configId,expenseMonth,expenseYear, TenantId, payGroupId);
+                        hasData = checkDt != null && checkDt.Rows.Count > 0;
+                    }
+                    catch { }
+                }
+
+                return new
+                {
+                    id = configId,
+                    PayConfigId = x["PayConfigId"],
+                    name = compName,
+                    timeBasis = x["TimeBasis"].ToString(),
+                    otherType = otherType,
+                    hasData = hasData
+                };
             }).ToList();
 
             return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetUploadedVariableComponentData(int configId, int month, int year, int payGroupId)
+        {
+            PayrollCycleRuntimeConfig payrollCycleConfig = null;
+            try { payrollCycleConfig = GetActivePayrollCycleConfiguration(); } catch { }
+            bool isPrevMonth = payrollCycleConfig != null && payrollCycleConfig.PaidDaysSource == 2;
+
+            int expenseMonth = isPrevMonth ? (month == 1 ? 12 : month - 1) : month;
+            int expenseYear = isPrevMonth ? (month == 1 ? year - 1 : year) : year;
+            try
+            {
+                DataTable dt = clsDatabase.fnDataTable("SP_Get_Payroll_SaaS_Variable_Component_Inputs_List", configId, expenseMonth, expenseYear, TenantId, payGroupId);
+                var list = new List<Dictionary<string, object>>();
+                if (dt != null)
+                {
+                    foreach (DataRow r in dt.Rows)
+                    {
+                        var dict = new Dictionary<string, object>();
+                        foreach (DataColumn c in dt.Columns)
+                        {
+                            dict[c.ColumnName] = r[c] == DBNull.Value ? null : r[c];
+                        }
+                        list.Add(dict);
+                    }
+                }
+                return Json(new { success = true, data = list, count = list.Count }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message, data = new List<object>(), count = 0 }, JsonRequestBehavior.AllowGet);
+            }
         }
         [HttpGet]
         public JsonResult GetAttendanceEmployees(string payGroupId, int payrollType, string employeeIds, int? processMonth, int? processYear, DateTime? fromDate, DateTime? toDate)
@@ -232,9 +366,6 @@ namespace MendinePayroll.UI.Controllers
                 {
                     dt = clsDatabase.fnDataTable("SP_Payroll_GetAttendanceEmployees", TenantId, payGroupId, payrollType, employeeIds, processMonth, processYear, fromDate, toDate);
                 }
-
-                if (int.TryParse(payGroupId, out payGroupIdValue) && processMonth.HasValue && processYear.HasValue)
-                    SaveAttendanceCacheFromTable(payGroupIdValue, processMonth.Value, processYear.Value, dt);
 
                 return BuildAttendanceEmployeesJson(dt, JsonRequestBehavior.AllowGet);
             }
@@ -340,26 +471,51 @@ namespace MendinePayroll.UI.Controllers
             SaveAttendanceCache(payGroupId, processMonth, processYear, attendanceRows);
         }
 
-        private void SaveAttendanceCacheFromRequest(PayrollProcessRequest request, int payGroupId)
+        private void SaveAttendanceCacheFromRequest(PayrollProcessRequest request, int payGroupId, Dictionary<int, int> employeePayGroupMap = null)
         {
             if (request == null
                 || request.Employees == null
                 || request.Employees.Count == 0
-                || payGroupId <= 0
                 || !request.ProcessMonth.HasValue
                 || !request.ProcessYear.HasValue)
             {
                 return;
             }
 
-            var attendanceRows = request.Employees.Select(e => new
+            if (employeePayGroupMap != null && employeePayGroupMap.Count > 0)
             {
-                EmployeeId = e.EmployeeId,
-                EmployeeName = e.EmployeeName ?? string.Empty,
-                PaidDays = e.PaidDays
-            }).ToList();
+                foreach (var group in employeePayGroupMap.GroupBy(kv => kv.Value, kv => kv.Key))
+                {
+                    int pgId = group.Key;
+                    if (pgId <= 0) continue;
 
-            SaveAttendanceCache(payGroupId, request.ProcessMonth.Value, request.ProcessYear.Value, attendanceRows);
+                    var groupEmpIds = new HashSet<int>(group);
+                    var attendanceRows = request.Employees
+                        .Where(e => groupEmpIds.Contains(e.EmployeeId))
+                        .Select(e => new
+                        {
+                            EmployeeId = e.EmployeeId,
+                            EmployeeName = e.EmployeeName ?? string.Empty,
+                            PaidDays = e.PaidDays
+                        }).ToList();
+
+                    if (attendanceRows.Count > 0)
+                    {
+                        SaveAttendanceCache(pgId, request.ProcessMonth.Value, request.ProcessYear.Value, attendanceRows);
+                    }
+                }
+            }
+            else if (payGroupId > 0)
+            {
+                var attendanceRows = request.Employees.Select(e => new
+                {
+                    EmployeeId = e.EmployeeId,
+                    EmployeeName = e.EmployeeName ?? string.Empty,
+                    PaidDays = e.PaidDays
+                }).ToList();
+
+                SaveAttendanceCache(payGroupId, request.ProcessMonth.Value, request.ProcessYear.Value, attendanceRows);
+            }
         }
 
         private void SaveAttendanceCache(int payGroupId, int processMonth, int processYear, object attendanceRows)
@@ -431,6 +587,7 @@ namespace MendinePayroll.UI.Controllers
             decimal totalCTC = 0m;
             decimal totalNet = 0m;
             int attendancePayGroupId = request.PayGroupId;
+            var employeePayGroupMap = new Dictionary<int, int>();
 
             var results = new List<EmployeeSalaryResponse>();
 
@@ -455,7 +612,8 @@ namespace MendinePayroll.UI.Controllers
                 bool isPF = Convert.ToBoolean(h["IsPF_Applicable"]);
                 bool isESIC = Convert.ToBoolean(h["IsESIC_Applicable"]);
                 bool isPTax = Convert.ToBoolean(h["IsPTax_Applicable"]);
-                int PayGroupID=Convert.ToInt32(h["PayGroupID"]);
+                int PayGroupID = Convert.ToInt32(h["PayGroupID"]);
+                employeePayGroupMap[emp.EmployeeId] = PayGroupID;
 
                 if (attendancePayGroupId <= 0)
                     attendancePayGroupId = PayGroupID;
@@ -511,6 +669,8 @@ namespace MendinePayroll.UI.Controllers
                         c.PayConfigName,
                         c.PayType,
                         c.LogicType,
+                        c.SortOrder,
+                        c.OrderBy,
                         Amount = c.Amount,
                         ReferenceIds = c.ReferenceIds
                     })
@@ -539,7 +699,7 @@ namespace MendinePayroll.UI.Controllers
 
             }
 
-            SaveAttendanceCacheFromRequest(request, attendancePayGroupId);
+            SaveAttendanceCacheFromRequest(request, attendancePayGroupId, employeePayGroupMap);
 
             /* =============================
                5️⃣ UPDATE PREVIEW TOTALS
@@ -567,8 +727,12 @@ namespace MendinePayroll.UI.Controllers
             }
         }
 
+        private PayrollCycleRuntimeConfig _cachedPayrollCycleConfig;
         private PayrollCycleRuntimeConfig GetActivePayrollCycleConfiguration()
         {
+            if (_cachedPayrollCycleConfig != null)
+                return _cachedPayrollCycleConfig;
+
             DataTable dt = clsDatabase.fnDataTable("SP_PayrollCycleConfiguration_GetActive", TenantId);
 
             if (dt == null || dt.Rows.Count == 0)
@@ -578,7 +742,7 @@ namespace MendinePayroll.UI.Controllers
 
             DataRow row = dt.Rows[0];
 
-            return new PayrollCycleRuntimeConfig
+            _cachedPayrollCycleConfig = new PayrollCycleRuntimeConfig
             {
                 PayrollConfigID = Convert.ToInt32(row["PayrollConfigID"]),
                 TypeID = Convert.ToByte(row["TypeID"]),
@@ -589,6 +753,8 @@ namespace MendinePayroll.UI.Controllers
                     ? Convert.ToByte(row["PaidDaysSource"])
                     : (byte)1
             };
+
+            return _cachedPayrollCycleConfig;
         }
 
         private int ApplyPayrollCycleConfiguration(PayrollProcessRequest request, PayrollCycleRuntimeConfig config)
@@ -662,9 +828,7 @@ namespace MendinePayroll.UI.Controllers
                 return null;
 
             // Determine total days in month for proration
-            decimal totalDays = components.First().TotalDays > 0
-                ? components.First().TotalDays
-                : DateTime.DaysInMonth(processYear, processMonth);
+            decimal totalDays = components.First().TotalDays > 0 ? components.First().TotalDays: DateTime.DaysInMonth(processYear, processMonth);
 
             decimal totalEarnings = 0;
             decimal totalDeductions = 0;
@@ -675,10 +839,7 @@ namespace MendinePayroll.UI.Controllers
             /* ============================================================
                 PASS 1: FIXED / MANUAL / EXCEL RAW DATA
                ============================================================ */
-            foreach (var c in components.Where(x => x.LogicType == "FIXED" ||
-                                                    x.LogicType == "MANUAL_INPUT" ||
-                                                    x.LogicType == "EXCEL_UPLOAD" ||
-                                                    (x.IsOther && x.OtherType == "LOANRECOVERY")))
+            foreach (var c in components.Where(x => x.LogicType == "FIXED" || x.LogicType == "MANUAL_INPUT" || x.LogicType == "EXCEL_UPLOAD" || (x.IsOther && x.OtherType == "LOANRECOVERY")))
             {
                 if (c.LogicType == "EXCEL_UPLOAD" || (c.IsStatutory && c.StatutoryType == "TDS") || (c.IsOther && c.OtherType == "LOANRECOVERY"))
                 {
@@ -699,13 +860,21 @@ namespace MendinePayroll.UI.Controllers
 
                     continue;
                 }
-
                 // Normal Fixed/Manual Logic with Proration
                 c.BaseAmount = c.Amount;
-                decimal prorated = Prorate(c.BaseAmount, c.PaidDays, totalDays);
-                c.OriginalAmount = prorated;
-                c.Amount = ApplyRounding(prorated, c.RoundingType);
+                decimal calculatedAmount = c.IsProratable ? Prorate(c.BaseAmount, c.PaidDays, totalDays) : c.BaseAmount;
+
+                c.OriginalAmount = calculatedAmount;
+
+                c.Amount = ApplyRounding(calculatedAmount,c.RoundingType);
+
                 valueMap[c.PayConfigName] = c.Amount;
+
+                //c.BaseAmount = c.Amount;
+                //decimal prorated = Prorate(c.BaseAmount, c.PaidDays, totalDays);
+                //c.OriginalAmount = prorated;
+                //c.Amount = ApplyRounding(prorated, c.RoundingType);
+                //valueMap[c.PayConfigName] = c.Amount;
             }
 
             ///* ============================================================
@@ -829,22 +998,108 @@ namespace MendinePayroll.UI.Controllers
 
                 valueMap[c.PayConfigName] = c.Amount;
             }
+            ///* ============================================================
+            //    DYNAMIC GROSS CALCULATION (For Factory Employees & Variable Components)
+            //   ============================================================ */
+            //// Sum of all allowances (Fixed, Formula, Manual, etc.) excluding the Gross summary component itself
+            //decimal calculatedGrossSum = components
+            //    .Where(x => ((x.PayType ?? "").Trim().ToUpperInvariant() == "ALLOWANCES" || x.IsAllowance) && !x.IsGrossComponent)
+            //    .Sum(x => x.Amount);
+
+            //// 🔑 Sum of LogicType == "EXCEL_UPLOAD" allowance/earning components to add into Gross
+            //decimal excelUploadGrossSum = components
+            //    .Where(x => x.LogicType == "EXCEL_UPLOAD" && ((x.PayType ?? "").Trim().ToUpperInvariant() == "ALLOWANCES" || x.IsAllowance) && !x.IsGrossComponent)
+            //    .Sum(x => x.Amount);
+
+            //var grossComp = components.FirstOrDefault(x => x.IsGrossComponent);
+            //if (grossComp != null)
+            //{
+            //    if (grossComp.Amount == 0)
+            //    {
+            //        // If Gross is dynamic/zero in master, assign full sum of allowances (including EXCEL_UPLOAD)
+            //        grossComp.Amount = calculatedGrossSum;
+            //        grossComp.OriginalAmount = calculatedGrossSum;
+            //        grossComp.BaseAmount = calculatedGrossSum;
+            //        valueMap[grossComp.PayConfigName] = calculatedGrossSum;
+            //    }
+            //    else if (excelUploadGrossSum > 0)
+            //    {
+            //        // 🔑 ADD EXCEL_UPLOAD FIELD VALUES TO FIXED GROSS:
+            //        // If Gross has a fixed master amount, add the variable LogicType == "EXCEL_UPLOAD" allowance values to Gross
+            //        grossComp.Amount += excelUploadGrossSum;
+            //        grossComp.OriginalAmount += excelUploadGrossSum;
+            //        grossComp.BaseAmount += excelUploadGrossSum;
+            //        valueMap[grossComp.PayConfigName] = grossComp.Amount;
+            //    }
+            //}
             /* ============================================================
-                DYNAMIC GROSS CALCULATION (For Factory Employees)
+               GROSS CALCULATION
+               ------------------------------------------------------------
+               IsGrossComponent   = identifies the GROSS input component
+               IsIncludedInGross  = explicitly controls Gross inclusion
+
+               Backward compatibility:
+               NULL = use legacy behavior
+               1    = include
+               0    = exclude
                ============================================================ */
+
             decimal calculatedGrossSum = components
-                .Where(x => (x.PayType ?? "").Trim().ToUpperInvariant() == "ALLOWANCES")
+                .Where(x =>
+                    ((x.PayType ?? "").Trim().ToUpperInvariant() == "ALLOWANCES" || x.IsAllowance)
+                    && !x.IsGrossComponent
+                    && (x.IsIncludedInGross == true || x.IsIncludedInGross == null)
+                )
                 .Sum(x => x.Amount);
 
-            var grossComp = components.FirstOrDefault(x => x.IsGrossComponent);
-            if (grossComp != null && grossComp.Amount == 0)
-            {
-                grossComp.Amount = calculatedGrossSum;
-                grossComp.OriginalAmount = calculatedGrossSum;
-                grossComp.BaseAmount = calculatedGrossSum;
-                valueMap[grossComp.PayConfigName] = calculatedGrossSum;
-            }
 
+            /* ============================================================
+               EXCEL UPLOAD COMPONENTS CONTRIBUTING TO GROSS
+
+               Only explicitly included Excel components or legacy NULL
+               components are considered.
+               ============================================================ */
+
+            decimal excelUploadGrossSum = components
+                .Where(x =>
+                    x.LogicType == "EXCEL_UPLOAD"
+                    && ((x.PayType ?? "").Trim().ToUpperInvariant() == "ALLOWANCES" || x.IsAllowance)
+                    && !x.IsGrossComponent
+                    && (x.IsIncludedInGross == true || x.IsIncludedInGross == null)
+                )
+                .Sum(x => x.Amount);
+
+
+            /* ============================================================
+               GROSS INPUT COMPONENT
+               ============================================================ */
+
+            var grossComp = components
+                .FirstOrDefault(x => x.IsGrossComponent);
+
+            if (grossComp != null)
+            {
+                if (grossComp.Amount == 0)
+                {
+                    // Preserve existing dynamic-Gross behavior
+                    grossComp.Amount = calculatedGrossSum;
+                    grossComp.OriginalAmount = calculatedGrossSum;
+                    grossComp.BaseAmount = calculatedGrossSum;
+
+                    valueMap[grossComp.PayConfigName] = grossComp.Amount;
+                }
+                else if (excelUploadGrossSum > 0)
+                {
+                    // Preserve existing behavior:
+                    // explicitly included Excel-upload components can
+                    // contribute to a fixed Gross.
+                    grossComp.Amount += excelUploadGrossSum;
+                    grossComp.OriginalAmount += excelUploadGrossSum;
+                    grossComp.BaseAmount += excelUploadGrossSum;
+
+                    valueMap[grossComp.PayConfigName] = grossComp.Amount;
+                }
+            }
             /* ============================================================
                 PASS 3 : STATUTORY CALCULATION
                ============================================================ */
@@ -890,16 +1145,56 @@ namespace MendinePayroll.UI.Controllers
                     }
 
                     decimal esicLimit = c.MaxLimit ?? 21000;
-                    if (!isESICApplicable || (!isInActiveWindow && actualMonthlyGross > esicLimit))
+                    // GROSS for ESIC = only taxable components
+                    // Non-taxable monthly-expense components are excluded.
+                    //decimal esicTaxableGross = components
+                    //   .Where(x => x.IsTaxable && !x.IsOther)
+                    //    .Sum(x => x.Amount);
+                    /* ============================================================
+                       ESIC BASE
+
+                       New configuration:
+                           IsIncludedInGross = 1  -> include
+                           IsIncludedInGross = 0  -> exclude
+
+                       Legacy configuration:
+                           IsIncludedInGross = NULL
+                           -> preserve previous ESIC behavior
+                       ============================================================ */
+
+                    decimal esicTaxableGross = components
+                        .Where(x =>
+                            (
+                                x.IsIncludedInGross == true
+                                ||
+                                (
+                                    x.IsIncludedInGross == null
+                                    && x.IsTaxable 
+                                )
+                            )
+                            && !x.IsGrossComponent
+                        )
+                        .Sum(x => x.Amount);
+                    // If no IsTaxable components are configured,
+                    // use the original dynamic ESIC formula.
+                    if (esicTaxableGross <= 0)
                     {
-                        c.Amount = 0;
+                        esicTaxableGross = dynamicBaseValue;
+                    }
+                    // ESIC eligibility is checked against taxable Gross
+                    if (!isESICApplicable || (!isInActiveWindow && esicTaxableGross > esicLimit))
+                    {
+                        c.BaseAmount = 0;
                         c.OriginalAmount = 0;
+                        c.Amount = 0;
                     }
                     else
                     {
-                        c.BaseAmount = dynamicBaseValue;
-                        c.OriginalAmount = dynamicBaseValue * (c.Rate / 100);
-                        c.Amount = Math.Ceiling(c.OriginalAmount); // ESIC rounds UP
+
+                        c.BaseAmount = esicTaxableGross;
+                        c.OriginalAmount =esicTaxableGross * (c.Rate / 100); 
+                        // ESIC rounds UP
+                        c.Amount = Math.Ceiling(c.OriginalAmount);
                         if (processMonth == slabEnd) clsDatabase.fnDataTable("SP_UPDATE_ESIC_TAG", employeeId, currentID);
                     }
                     valueMap[c.PayConfigName] = c.Amount;
@@ -908,8 +1203,17 @@ namespace MendinePayroll.UI.Controllers
                 else if (c.StatutoryType == "PTAX")
                 {
                     if (!isPTaxApplicable) { c.Amount = 0; continue; }
-                    decimal slabAmount = CalculatePTaxFromJson(grossAmount, c.PTaxSlabsJson);
-                    c.BaseAmount = dynamicBaseValue;
+
+                    // Sum of all components marked with IsTaxable.
+                    // If IsTaxable is not set in DB for basic/allowances, fallback to grossAmount
+                    decimal taxableSum = components
+                        .Where(x => x.IsTaxable)
+                        .Sum(x => x.Amount);
+
+                    decimal totalTaxable = taxableSum > 0 ? taxableSum : grossAmount;
+
+                    decimal slabAmount = CalculatePTaxFromJson(totalTaxable, c.PTaxSlabsJson);
+                    c.BaseAmount = totalTaxable;
                     c.OriginalAmount = slabAmount;
                     c.Amount = ApplyRounding(slabAmount, c.RoundingType);
                     valueMap[c.PayConfigName] = c.Amount;
@@ -1443,8 +1747,15 @@ namespace MendinePayroll.UI.Controllers
         {
             try
             {
+                PayrollCycleRuntimeConfig payrollCycleConfig = null;
+                try { payrollCycleConfig = GetActivePayrollCycleConfiguration(); } catch { }
+                bool isPrevMonth = payrollCycleConfig != null && payrollCycleConfig.PaidDaysSource == 2;
+
+                int expenseMonth = isPrevMonth ? (month == 1 ? 12 : month - 1) : month;
+                int expenseYear = isPrevMonth ? (month == 1 ? year - 1 : year) : year;
+
                 // Calling the SP
-                object result = clsDatabase.fnDBOperation("SP_Payroll_GetVariableComponentInput", employeeId, payConfigId,month,year,TenantId);
+                object result = clsDatabase.fnDBOperation("SP_Payroll_GetVariableComponentInput", employeeId, payConfigId, expenseMonth, expenseYear, TenantId);
 
                 // If result is null, return 0; otherwise convert to decimal
                 return result != null ? Convert.ToDecimal(result) : 0m;
@@ -1455,6 +1766,108 @@ namespace MendinePayroll.UI.Controllers
                 return 0m;
             }
         } 
+        private static int GetPayConfigIdFromRow(DataRow row)
+        {
+            if (row == null) return 0;
+            string[] idCols = new[] { "PayConfigId", "PayConfigID", "id", "ID", "ComponentID", "PayConfigurationID" };
+            foreach (var col in idCols)
+            {
+                if (row.Table.Columns.Contains(col) && row[col] != DBNull.Value)
+                {
+                    if (int.TryParse(row[col].ToString(), out int id) && id > 0)
+                        return id;
+                }
+            }
+            return 0;
+        }
+
+        private Dictionary<int, int> GetPayConfigSortOrderMap()
+        {
+            var map = new Dictionary<int, int>();
+            string[] possibleQueries = new[]
+            {
+                "SELECT * FROM Payroll_SaaS_PayConfig",
+                "SELECT * FROM PayConfig",
+                "SELECT * FROM tbl_PayConfig",
+                "SELECT * FROM Mst_PayConfig",
+                "SELECT * FROM PayConfigMaster"
+            };
+
+            try
+            {
+                string connStr = System.Configuration.ConfigurationManager.ConnectionStrings["Admin"]?.ConnectionString;
+                if (!string.IsNullOrEmpty(connStr))
+                {
+                    using (SqlConnection con = new SqlConnection(connStr))
+                    {
+                        con.Open();
+                        foreach (var q in possibleQueries)
+                        {
+                            try
+                            {
+                                using (SqlCommand cmd = new SqlCommand(q, con))
+                                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                                {
+                                    DataTable dt = new DataTable();
+                                    da.Fill(dt);
+                                    if (dt.Rows.Count > 0)
+                                    {
+                                        foreach (DataRow row in dt.Rows)
+                                        {
+                                            int id = GetPayConfigIdFromRow(row);
+                                            if (id > 0)
+                                            {
+                                                int order = GetSortOrderFromDataRow(row);
+                                                if (order > 0)
+                                                {
+                                                    map[id] = order;
+                                                }
+                                            }
+                                        }
+                                        if (map.Count > 0) break;
+                                    }
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            // Stored procedure fallbacks
+            if (map.Count == 0)
+            {
+                string[] spNames = new[] { "SP_GetAllPayConfig", "SP_GetPayConfigMaster", "PayConfig_GetAll_New", "SP_GetPayConfig" };
+                foreach (var sp in spNames)
+                {
+                    try
+                    {
+                        DataTable dt = clsDatabase.fnDataTable(sp, TenantId);
+                        if (dt != null && dt.Rows.Count > 0)
+                        {
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                int id = GetPayConfigIdFromRow(row);
+                                if (id > 0)
+                                {
+                                    int order = GetSortOrderFromDataRow(row);
+                                    if (order > 0)
+                                    {
+                                        map[id] = order;
+                                    }
+                                }
+                            }
+                            if (map.Count > 0) break;
+                        }
+                    }
+                    catch { }
+                }
+            }
+
+            return map;
+        }
+
         private PayrollPivotResponse BuildPivot(PayrollProcessRequest request, List<EmployeeSalaryResponse> results)
         {
             /* =========================
@@ -1464,6 +1877,8 @@ namespace MendinePayroll.UI.Controllers
                 .Where(r => r.Components != null)
                 .SelectMany(r => r.Components)
                 .ToList();
+
+            var payConfigOrderMap = GetPayConfigSortOrderMap();
 
             /* =========================
                2. Build Pivot Columns
@@ -1479,6 +1894,18 @@ namespace MendinePayroll.UI.Controllers
                         (c.PayType ?? "").Equals("DEDUCTION", StringComparison.OrdinalIgnoreCase)
                         && c.IsOther
                         && (c.OtherType ?? "").Equals("LOANRECOVERY", StringComparison.OrdinalIgnoreCase);
+
+                    int sortOrder = c.SortOrder > 0 ? c.SortOrder : (c.OrderBy > 0 ? c.OrderBy : 0);
+                    if (sortOrder <= 0 && payConfigOrderMap.TryGetValue(c.PayConfigId, out int mappedOrder) && mappedOrder > 0)
+                    {
+                        sortOrder = mappedOrder;
+                    }
+
+                    // Guarantee BASIC component is at 1st order
+                    if (sortOrder <= 0 && (c.IsBasicComponent || (c.PayConfigName ?? "").Trim().Equals("BASIC", StringComparison.OrdinalIgnoreCase) || (c.AllowanceType ?? "").Trim().Equals("BASIC", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        sortOrder = 1;
+                    }
 
                     return new PivotColumnDto
                     {
@@ -1503,12 +1930,15 @@ namespace MendinePayroll.UI.Controllers
                         // 🔒 Only loan is conceptually waivable/editable
                         IsWaivable = isLoan,
                         IsEditable = isLoan,
-                        ReferenceIds=c.ReferenceIds,
+                        ReferenceIds = c.ReferenceIds,
+                        SortOrder = sortOrder,
+                        OrderBy = sortOrder,
                         DisplayOrder = GetDisplayOrder(c)
                     };
                 })
                 .OrderBy(c => c.DisplayOrder)
-                .ThenBy(c => c.PayConfigName)
+                .ThenBy(c => c.SortOrder > 0 ? c.SortOrder : 9999)
+                .ThenBy(c => c.PayConfigId)
                 .ToList();
 
             /* =========================
@@ -2196,6 +2626,23 @@ namespace MendinePayroll.UI.Controllers
          => r[col] == DBNull.Value ? "" : Convert.ToString(r[col]);
 
 
+        private static int GetSortOrderFromDataRow(DataRow row)
+        {
+            if (row == null) return 0;
+            string[] orderColNames = new[] { "SortOrder", "sort", "OrderBy", "OrderByField", "Order_By", "OrderNo", "OrderByNo", "DisplayOrder", "OrderIndex", "ComponentOrder" };
+            foreach (var colName in orderColNames)
+            {
+                if (row.Table.Columns.Contains(colName) && row[colName] != DBNull.Value)
+                {
+                    if (int.TryParse(row[colName].ToString(), out int parsedOrder) && parsedOrder > 0)
+                    {
+                        return parsedOrder;
+                    }
+                }
+            }
+            return 0;
+        }
+
         private static List<SalaryComponentResult> MapComponents(DataTable dtComponents,decimal paidDays,int totalDays)
         {
             var components = new List<SalaryComponentResult>();
@@ -2205,6 +2652,8 @@ namespace MendinePayroll.UI.Controllers
 
             foreach (DataRow row in dtComponents.Rows)
             {
+                int sortOrder = GetSortOrderFromDataRow(row);
+
                 components.Add(new SalaryComponentResult
                 {
                     /* =========================
@@ -2212,6 +2661,8 @@ namespace MendinePayroll.UI.Controllers
                     ========================= */
                     PayConfigId = Convert.ToInt32(row["PayConfigId"]),
                     PayConfigName = row["PayConfigName"]?.ToString(),
+                    SortOrder = sortOrder,
+                    OrderBy = sortOrder,
 
                     /* =========================
                        Classification
@@ -2251,6 +2702,10 @@ namespace MendinePayroll.UI.Controllers
                                 && row["IsGrossComponent"] != DBNull.Value && Convert.ToDecimal(row["IsGrossComponent"]) > 0
                                 && Convert.ToBoolean(row["IsGrossComponent"]),
 
+                    IsTaxable = row.Table.Columns.Contains("IsTaxable")
+                                && row["IsTaxable"] != DBNull.Value && Convert.ToDecimal(row["IsTaxable"]) > 0
+                                && Convert.ToBoolean(row["IsTaxable"]),
+
                     StatutoryType = row.Table.Columns.Contains("StatutoryType")
                                 ? row["StatutoryType"]?.ToString()
                                 : null,
@@ -2274,7 +2729,14 @@ namespace MendinePayroll.UI.Controllers
                     OtherType = row.Table.Columns.Contains("OtherType")
                                 ? row["OtherType"]?.ToString()
                                 : null,
+                    IsProratable = row.Table.Columns.Contains("IsProratable")
+                                   && row["IsProratable"] != DBNull.Value
+                                   && Convert.ToBoolean(row["IsProratable"]),
 
+                    IsIncludedInGross = row.Table.Columns.Contains("IsIncludedInGross")
+                                        && row["IsIncludedInGross"] != DBNull.Value
+                                        ? Convert.ToBoolean(row["IsIncludedInGross"])
+                                        : (bool?)null,
                     /* =========================
                        Attendance Context
                     ========================= */
@@ -3103,6 +3565,26 @@ namespace MendinePayroll.UI.Controllers
 
             string componentName = ds.Tables[0].Rows[0]["PayConfigName"].ToString();
             DataTable dtEmployees = ds.Tables[1];
+
+            string otherType = "";
+            if (ds.Tables[0].Columns.Contains("OtherType") && ds.Tables[0].Rows[0]["OtherType"] != DBNull.Value)
+            {
+                otherType = ds.Tables[0].Rows[0]["OtherType"].ToString().Trim();
+            }
+            else if (ds.Tables[0].Columns.Contains("PayConfigId") && ds.Tables[0].Rows[0]["PayConfigId"] != DBNull.Value)
+            {
+                try
+                {
+                    int pId = Convert.ToInt32(ds.Tables[0].Rows[0]["PayConfigId"]);
+                    DataTable dtConfig = clsDatabase.fnDataTable("SP_GetPayConfigByID", pId, TenantId);
+                    if (dtConfig != null && dtConfig.Rows.Count > 0 && dtConfig.Columns.Contains("OtherType"))
+                    {
+                        otherType = dtConfig.Rows[0]["OtherType"]?.ToString()?.Trim() ?? "";
+                    }
+                }
+                catch { }
+            }
+
             // Professional Labeling Logic
             string valueHeader = "Value";
             if (componentName.ToUpper().Contains("CONTINUOUS ATTENDANCE"))
@@ -3113,6 +3595,100 @@ namespace MendinePayroll.UI.Controllers
                 valueHeader = "Target Achieved %";
             else if (componentName.ToUpper().Contains("SPECIAL ALLOWANCE"))
                 valueHeader = "Special Amount";
+            else if (string.Equals(otherType, "EXPENCE", StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(otherType, "EXPENSE", StringComparison.OrdinalIgnoreCase) ||
+                     componentName.ToUpper().Contains("EXPENSE") ||
+                     componentName.ToUpper().Contains("EXPENCE"))
+                valueHeader = "Expense Amount";
+
+            // If OtherType is EXPENCE / EXPENSE, call PRC_Expense_Register_For_Payroll month, year
+            Dictionary<int, decimal> empExpenseMap = new Dictionary<int, decimal>();
+            Dictionary<string, decimal> empCodeExpenseMap = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+
+            if (string.Equals(otherType, "EXPENCE", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(otherType, "EXPENSE", StringComparison.OrdinalIgnoreCase) ||
+                componentName.ToUpper().Contains("EXPENSE") ||
+                componentName.ToUpper().Contains("EXPENCE"))
+            {
+                try
+                {
+                    PayrollCycleRuntimeConfig payrollCycleConfig = null;
+                    try { payrollCycleConfig = GetActivePayrollCycleConfiguration(); } catch { }
+                    bool isPrevMonth = payrollCycleConfig != null && payrollCycleConfig.PaidDaysSource == 2;
+
+                    int expenseMonth = isPrevMonth ? (month == 1 ? 12 : month - 1) : month;
+                    int expenseYear = isPrevMonth ? (month == 1 ? year - 1 : year) : year;
+
+                    DataTable dtExpense = clsDatabase.fnDataTable("PRC_Expense_Register_For_Payroll", expenseMonth, expenseYear);
+                    if (dtExpense != null && dtExpense.Rows.Count > 0)
+                    {
+                        string empIdCol = dtExpense.Columns.Cast<DataColumn>().FirstOrDefault(c =>
+                            c.ColumnName.Equals("EmployeeID", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("EmpID", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("Emp_Id", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("Employee_ID", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("ID", StringComparison.OrdinalIgnoreCase))?.ColumnName;
+
+                        string empCodeCol = dtExpense.Columns.Cast<DataColumn>().FirstOrDefault(c =>
+                            c.ColumnName.Equals("EmployeeCode", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("EmpCode", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("Emp_Code", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("Employee_Code", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("Code", StringComparison.OrdinalIgnoreCase))?.ColumnName;
+
+                        string amtCol = dtExpense.Columns.Cast<DataColumn>().FirstOrDefault(c =>
+                            c.ColumnName.Equals("ExpenseAmount", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("TotalExpense", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("ApprovedAmount", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("Amount", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("Value", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("TotalAmount", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("ClaimAmount", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("PassedAmount", StringComparison.OrdinalIgnoreCase) ||
+                            c.ColumnName.Equals("NetPayable", StringComparison.OrdinalIgnoreCase))?.ColumnName;
+
+                        if (amtCol == null)
+                        {
+                            foreach (DataColumn col in dtExpense.Columns)
+                            {
+                                if (col.ColumnName != empIdCol && col.ColumnName != empCodeCol &&
+                                    (col.DataType == typeof(decimal) || col.DataType == typeof(double) || col.DataType == typeof(int) || col.DataType == typeof(float) || col.DataType == typeof(long)))
+                                {
+                                    amtCol = col.ColumnName;
+                                    break;
+                                }
+                            }
+                        }
+
+                        foreach (DataRow row in dtExpense.Rows)
+                        {
+                            decimal amt = 0;
+                            if (amtCol != null && row[amtCol] != DBNull.Value)
+                            {
+                                decimal.TryParse(row[amtCol].ToString(), out amt);
+                            }
+
+                            if (empIdCol != null && row[empIdCol] != DBNull.Value && int.TryParse(row[empIdCol].ToString(), out int eid))
+                            {
+                                empExpenseMap[eid] = amt;
+                            }
+                            if (empCodeCol != null && row[empCodeCol] != DBNull.Value)
+                            {
+                                string ecode = row[empCodeCol].ToString().Trim();
+                                if (!string.IsNullOrEmpty(ecode))
+                                {
+                                    empCodeExpenseMap[ecode] = amt;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    clsDatabase.fnErrorLog("PRC_Expense_Register_For_Payroll", ex.Message);
+                }
+            }
+
             // Set the license context to NonCommercial (REQUIRED for free usage)
             OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
              
@@ -3141,12 +3717,25 @@ namespace MendinePayroll.UI.Controllers
                 int currentRow = 2;
                 foreach (DataRow dr in dtEmployees.Rows)
                 {
+                    int empId = dr["EmployeeID"] != DBNull.Value ? Convert.ToInt32(dr["EmployeeID"]) : 0;
+                    string empCode = dr["EmployeeCode"]?.ToString()?.Trim() ?? "";
+
+                    decimal defaultVal = 0;
+                    if (empExpenseMap.ContainsKey(empId))
+                    {
+                        defaultVal = empExpenseMap[empId];
+                    }
+                    else if (!string.IsNullOrEmpty(empCode) && empCodeExpenseMap.ContainsKey(empCode))
+                    {
+                        defaultVal = empCodeExpenseMap[empCode];
+                    }
+
                     ws.Cells[currentRow, 1].Value = dr["EmployeeID"];
                     ws.Cells[currentRow, 2].Value = dr["EmployeeCode"];
                     ws.Cells[currentRow, 3].Value = dr["EmployeeName"];
                     ws.Cells[currentRow, 4].Value = monthName; // Passing Month Name
                     ws.Cells[currentRow, 5].Value = year;      // Passing Year
-                    ws.Cells[currentRow, 6].Value = 0;         // Default Input Value
+                    ws.Cells[currentRow, 6].Value = defaultVal; // Expense or Default Input Value
                     currentRow++;
                 }
 
@@ -3173,13 +3762,19 @@ namespace MendinePayroll.UI.Controllers
             if (file == null || file.ContentLength == 0)
                 return Json(new { success = false, message = "Please select a valid Excel file." });
 
+            PayrollCycleRuntimeConfig payrollCycleConfig = null;
+            try { payrollCycleConfig = GetActivePayrollCycleConfiguration(); } catch { }
+            bool isPrevMonth = payrollCycleConfig != null && payrollCycleConfig.PaidDaysSource == 2;
+
+            int expenseMonth = isPrevMonth ? (month == 1 ? 12 : month - 1) : month;
+            int expenseYear = isPrevMonth ? (month == 1 ? year - 1 : year) : year;
             try
             {
                 // 1. Check if data already exists for this month/year/config before processing the file
                 if (!forceUpdate)
                 {
                     // Assume fnExecuteScalar returns the count of existing records
-                    int existingCount = Convert.ToInt32(clsDatabase.fnDBOperation("SP_Get_Payroll_SaaS_Variable_Component_Inputs", configId, month, year, TenantId, paygroupid));
+                    int existingCount = Convert.ToInt32(clsDatabase.fnDBOperation("SP_Get_Payroll_SaaS_Variable_Component_Inputs", configId, expenseMonth, expenseYear, TenantId, paygroupid));
 
                     if (existingCount > 0)
                     {
@@ -3187,7 +3782,7 @@ namespace MendinePayroll.UI.Controllers
                         {
                             success = true,
                             exists = true,
-                            message = $"Data already exists for {month}/{year}. Do you want to overwrite it?"
+                            message = $"Data already exists for {expenseMonth}/{expenseYear}. Do you want to overwrite it?"
                         });
                     }
                 }
@@ -3224,7 +3819,7 @@ namespace MendinePayroll.UI.Controllers
                     string JsonData = Newtonsoft.Json.JsonConvert.SerializeObject(uploadList);
                     string User = Session["UserName"]?.ToString() ?? "System";
                     // Send to Stored Procedure in ONE call
-                    clsDatabase.fnDBOperation("SP_Payroll_SaveVariableComponentInput_Bulk", JsonData, configId,month,year,TenantId,User, paygroupid);
+                    clsDatabase.fnDBOperation("SP_Payroll_SaveVariableComponentInput_Bulk", JsonData, configId,expenseMonth,expenseYear,TenantId,User, paygroupid);
 
                     return Json(new { success = true, message = $"Successfully updated {uploadList.Count} records." });
                 }

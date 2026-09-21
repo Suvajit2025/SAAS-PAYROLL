@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Common.Utility;
 using MendinePayroll.UI.Models;
 using Newtonsoft.Json;
@@ -12,6 +12,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using UI.BLL;
 //using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -153,46 +154,171 @@ namespace MendinePayroll.UI.Controllers
 
             return words.Trim();
         }
-
-
-    
-    public ActionResult Downloadpdf(int empId, string month, int year)
+        public ActionResult Downloadpdf(
+    int empId,
+    string month,
+    int year)
         {
+            PayslipViewModel model = null;
+
             try
             {
-                //clsDatabase.fnErrorLog(
-                //    "PayslipDownloadPdfStart",
-                //    $"tenantId={TenantId}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}");
-
-                
-                var model = GetPayslipData(empId, month, year, true, 1);
-                string viewName = GetPayslipViewName(model.TenantId);
-
-                var pdfService = new PayslipPdfService();
-
-                byte[] pdfBytes = pdfService.GeneratePayslipPdf(
-                    this.ControllerContext,
-                    viewName,
-                    model,
-                    $"Payslip_{model.EmpName}_{month}_{year}.pdf"
+                clsDatabase.fnErrorLog(
+                    "PayslipDownloadPdfStart",
+                    $"tenantId={TenantId}; " +
+                    $"empId={empId}; " +
+                    $"month={month}; " +
+                    $"year={year}; " +
+                    $"url={Request?.RawUrl}"
                 );
-                if (pdfBytes == null || pdfBytes.Length == 0)
-                    throw new Exception("Payslip PDF generation failed.");
+
+                // ---------------------------------------------
+                // 1. Get payslip data
+                // ---------------------------------------------
+                model = GetPayslipData(
+                    empId,
+                    month,
+                    year,
+                    true,
+                    1
+                );
+
+                if (model == null)
+                    throw new Exception("Payslip data could not be loaded.");
+
+                if (model.EmpId == 0)
+                    throw new Exception("Employee payslip not found.");
+
+                model.isPdf = true;
+
+                // ---------------------------------------------
+                // 2. Get tenant-specific Razor view
+                // ---------------------------------------------
+                string viewName =
+                    GetPayslipViewName(model.TenantId);
+
+                if (string.IsNullOrWhiteSpace(viewName))
+                    viewName = "Index";
+
+                // ---------------------------------------------
+                // 3. File name
+                // ---------------------------------------------
+                string safeEmployeeName =
+                    MakeSafeFileName(
+                        string.IsNullOrWhiteSpace(model.EmpName)
+                            ? model.EmpCode
+                            : model.EmpName
+                    );
+
+                string fileName =
+                    $"Payslip_{safeEmployeeName}_{month}_{year}.pdf";
+
+                // ---------------------------------------------
+                // 4. Generate PDF using PuppeteerSharp
+                // ---------------------------------------------
+                var pdfService =
+                    new PayslipPdfService();
+
+                byte[] pdfBytes =
+                     pdfService.GeneratePayslipPdf(
+                        this.ControllerContext,
+                        viewName,
+                        model,
+                        fileName
+                    );
+
+                if (pdfBytes == null ||
+                    pdfBytes.Length == 0)
+                {
+                    throw new Exception(
+                        "PuppeteerSharp generated an empty PDF."
+                    );
+                }
 
                 clsDatabase.fnErrorLog(
                     "PayslipDownloadPdfGenerated",
-                    $"tenantId={TenantId}; empId={empId}; month={month}; year={year}; bytes={pdfBytes.Length}");
+                    $"tenantId={model.TenantId}; " +
+                    $"empId={empId}; " +
+                    $"month={month}; " +
+                    $"year={year}; " +
+                    $"viewName={viewName}; " +
+                    $"bytes={pdfBytes.Length}"
+                );
 
-                return File(pdfBytes, "application/pdf", $"Payslip_{model.EmpName}_{month}_{year}.pdf");
+                return File(
+                    pdfBytes,
+                    "application/pdf",
+                    fileName
+                );
             }
             catch (Exception ex)
             {
                 clsDatabase.fnErrorLog(
                     "PayslipDownloadPdfError",
-                    $"tenantId={Request?.QueryString["tenantId"]}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}; error={ex}");
-                return Content("Payslip PDF download failed. Please check server ErrorLog.txt for PayslipDownloadPdfError.");
+                    $"tenantId={model?.TenantId ?? TenantId}; " +
+                    $"empId={empId}; " +
+                    $"month={month}; " +
+                    $"year={year}; " +
+                    $"url={Request?.RawUrl}; " +
+                    $"error={ex}"
+                );
+
+                return Content(
+                    "Payslip PDF download failed. " +
+                    "Please check server ErrorLog.txt for PayslipDownloadPdfError."
+                );
             }
         }
+        private string MakeSafeFileName(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                return "Employee";
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.Replace(c, '_');
+            }
+
+            return fileName.Trim();
+        }
+
+        //public ActionResult Downloadpdf(int empId, string month, int year)
+        // {
+        //     try
+        //     {
+        //         //clsDatabase.fnErrorLog(
+        //         //    "PayslipDownloadPdfStart",
+        //         //    $"tenantId={TenantId}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}");
+
+
+        //         var model = GetPayslipData(empId, month, year, true, 1);
+        //         string viewName = GetPayslipViewName(model.TenantId);
+
+        //         var pdfService = new PayslipPdfService();
+
+        //         byte[] pdfBytes = pdfService.GeneratePayslipPdf(
+        //             this.ControllerContext,
+        //             viewName,
+        //             model,
+        //             $"Payslip_{model.EmpName}_{month}_{year}.pdf"
+        //         );
+        //         if (pdfBytes == null || pdfBytes.Length == 0)
+        //             throw new Exception("Payslip PDF generation failed.");
+
+        //         clsDatabase.fnErrorLog(
+        //             "PayslipDownloadPdfGenerated",
+        //             $"tenantId={TenantId}; empId={empId}; month={month}; year={year}; bytes={pdfBytes.Length}");
+
+        //         return File(pdfBytes, "application/pdf", $"Payslip_{model.EmpName}_{month}_{year}.pdf");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         clsDatabase.fnErrorLog(
+        //             "PayslipDownloadPdfError",
+        //             $"tenantId={Request?.QueryString["tenantId"]}; empId={empId}; month={month}; year={year}; url={Request?.RawUrl}; error={ex}");
+        //         return Content("Payslip PDF download failed. Please check server ErrorLog.txt for PayslipDownloadPdfError.");
+        //     }
+        // }
 
         private PayslipViewModel CreateUnavailablePayslipModel(string month, int year, bool isPdf, string message)
         {
@@ -703,7 +829,7 @@ namespace MendinePayroll.UI.Controllers
             return null;
         }
 
-    internal PayslipViewModel GetPayslipData(int EmpId, string Month, int Year, bool ispdf, int hrTag = 0)
+        internal PayslipViewModel GetPayslipData(int EmpId, string Month, int Year, bool ispdf, int hrTag = 0)
     {
             var model = new PayslipViewModel
             {
@@ -724,6 +850,24 @@ namespace MendinePayroll.UI.Controllers
             if (ds == null || ds.Tables.Count == 0)
                 return model;
 
+            //Sortorder Pay component 
+            DataTable dtPayConfigSortOrder =clsDatabase.fnDataTable("PRC_Get_PayConfig_SortOrder");
+
+            // Create lookup: PayConfigName -> SortOrder
+            var payConfigSortOrder = dtPayConfigSortOrder
+                .AsEnumerable()
+                .Where(r => r["PayConfigName"] != DBNull.Value)
+                .GroupBy(
+                    r => r["PayConfigName"].ToString().Trim(),
+                    StringComparer.OrdinalIgnoreCase
+                )
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.First()["SortOrder"] == DBNull.Value
+                        ? 9999
+                        : Convert.ToInt32(g.First()["SortOrder"]),
+                    StringComparer.OrdinalIgnoreCase
+                );
             // Company
             if (ds.Tables[0].Rows.Count > 0)
             {
@@ -847,102 +991,163 @@ namespace MendinePayroll.UI.Controllers
                     });
                 }
             }
-                // 5. Earnings (Table 4) → Side-by-Side Actual vs Earned
+            // 5. Earnings (Table 4) → Side-by-Side Actual vs Earned
 
-                //if (ds.Tables.Count > 4)
-                //{
-                //    var earningsList = new List<SalaryHead>();
+            //if (ds.Tables.Count > 4)
+            //{
+            //    var earningsList = new List<SalaryHead>();
 
-                //    foreach (DataRow row in ds.Tables[4].Rows)
-                //    {
+            //    foreach (DataRow row in ds.Tables[4].Rows)
+            //    {
 
-                //        // Adjust column names to match your new SP output
-                //        decimal actual = row.Table.Columns.Contains("ActualAmount") ? Convert.ToDecimal(row["ActualAmount"]) : 0;
-                //        decimal earned = row.Table.Columns.Contains("EarnedAmount") ? Convert.ToDecimal(row["EarnedAmount"]) : 0;
-                //        string name = row["AllowanceName"].ToString();
+            //        // Adjust column names to match your new SP output
+            //        decimal actual = row.Table.Columns.Contains("ActualAmount") ? Convert.ToDecimal(row["ActualAmount"]) : 0;
+            //        decimal earned = row.Table.Columns.Contains("EarnedAmount") ? Convert.ToDecimal(row["EarnedAmount"]) : 0;
+            //        string name = row["AllowanceName"].ToString();
 
-                //        // Skip if both are zero or if it's the Total row
-                //        if (actual == 0 && earned == 0) continue;
-                //        if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
+            //        // Skip if both are zero or if it's the Total row
+            //        if (actual == 0 && earned == 0) continue;
+            //        if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase)) continue;
 
-                //        earningsList.Add(new SalaryHead
-                //        {
-                //            PayConfigName = ToTitleCase(name),
-                //            ActualAmount = actual,
-                //            Amount = earned
-                //        });
-                //    }
+            //        earningsList.Add(new SalaryHead
+            //        {
+            //            PayConfigName = ToTitleCase(name),
+            //            ActualAmount = actual,
+            //            Amount = earned
+            //        });
+            //    }
 
-                //    // ✅ Priority Order: Basic > Stipend > Others
-                //    model.Earnings = earningsList
-                //        .OrderBy(e =>
-                //            e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
-                //            e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
-                //        )
-                //        .ThenBy(e => e.PayConfigName)
-                //        .ToList();
-                //}
-                if (ds.Tables.Count > 4)
+            //    // ✅ Priority Order: Basic > Stipend > Others
+            //    model.Earnings = earningsList
+            //        .OrderBy(e =>
+            //            e.PayConfigName.IndexOf("BASIC", StringComparison.OrdinalIgnoreCase) >= 0 ? 0 :
+            //            e.PayConfigName.IndexOf("STIPEND", StringComparison.OrdinalIgnoreCase) >= 0 ? 1 : 2
+            //        )
+            //        .ThenBy(e => e.PayConfigName)
+            //        .ToList();
+            //}
+            //if (ds.Tables.Count > 4)
+            //{
+            //    var earnings = new List<SalaryHead>();
+
+            //    foreach (DataRow row in ds.Tables[4].Rows)
+            //    {
+            //        bool isOld = row.Table.Columns.Contains("PayConfigName");
+
+            //        string name = isOld
+            //            ? row["PayConfigName"].ToString()
+            //            : row["AllowanceName"].ToString();
+
+            //        decimal actual = isOld
+            //            ? Convert.ToDecimal(row["Amount"])
+            //            : Convert.ToDecimal(row["ActualAmount"]);
+
+            //        decimal earned = isOld
+            //            ? Convert.ToDecimal(row["Amount"])
+            //            : Convert.ToDecimal(row["EarnedAmount"]);
+
+            //        // Skip components where earned amount is 0 (or both actual and earned are 0)
+            //        if (earned == 0 && actual == 0)
+            //            continue;
+
+            //        if (earned == 0)
+            //            continue;
+
+            //        if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase))
+            //            continue;
+
+            //        earnings.Add(new SalaryHead
+            //        {
+            //            PayConfigName = ToTitleCase(name),
+            //            ActualAmount = actual,
+            //            Amount = earned
+            //        });
+            //    }
+
+            //    model.Earnings = earnings
+            //        .OrderBy(e =>
+            //            e.PayConfigName.Equals("Basic", StringComparison.OrdinalIgnoreCase) ? 0 :
+            //            e.PayConfigName.Equals("Stipend", StringComparison.OrdinalIgnoreCase) ? 1 : 2)
+            //        .ThenBy(e => e.PayConfigName)
+            //        .ToList();
+            //}
+            if (ds.Tables.Count > 4)
+            {
+                var earnings = new List<SalaryHead>();
+
+                foreach (DataRow row in ds.Tables[4].Rows)
                 {
-                    var earnings = new List<SalaryHead>();
+                    bool isOld = row.Table.Columns.Contains("PayConfigName");
 
-                    foreach (DataRow row in ds.Tables[4].Rows)
+                    string name = isOld
+                        ? row["PayConfigName"].ToString()
+                        : row["AllowanceName"].ToString();
+
+                    decimal actual = isOld
+                        ? Convert.ToDecimal(row["Amount"])
+                        : Convert.ToDecimal(row["ActualAmount"]);
+
+                    decimal earned = isOld
+                        ? Convert.ToDecimal(row["Amount"])
+                        : Convert.ToDecimal(row["EarnedAmount"]);
+
+                    if (earned == 0 && actual == 0)
+                        continue;
+
+                    if (earned == 0)
+                        continue;
+
+                    if (name.Equals(
+                        "Gross Amount",
+                        StringComparison.OrdinalIgnoreCase))
                     {
-                        bool isOld = row.Table.Columns.Contains("PayConfigName");
-
-                        string name = isOld
-                            ? row["PayConfigName"].ToString()
-                            : row["AllowanceName"].ToString();
-
-                        decimal actual = isOld
-                            ? Convert.ToDecimal(row["Amount"])
-                            : Convert.ToDecimal(row["ActualAmount"]);
-
-                        decimal earned = isOld
-                            ? Convert.ToDecimal(row["Amount"])
-                            : Convert.ToDecimal(row["EarnedAmount"]);
-
-                        if (actual == 0 && earned == 0)
-                            continue;
-
-                        if (name.Equals("Gross Amount", StringComparison.OrdinalIgnoreCase))
-                            continue;
-
-                        earnings.Add(new SalaryHead
-                        {
-                            PayConfigName = ToTitleCase(name),
-                            ActualAmount = actual,
-                            Amount = earned
-                        });
+                        continue;
                     }
 
-                    model.Earnings = earnings
-                        .OrderBy(e =>
-                            e.PayConfigName.Equals("Basic", StringComparison.OrdinalIgnoreCase) ? 0 :
-                            e.PayConfigName.Equals("Stipend", StringComparison.OrdinalIgnoreCase) ? 1 : 2)
-                        .ThenBy(e => e.PayConfigName)
-                        .ToList();
+                    // Example:
+                    // "ACTIVITY INCENTIVE (June 2026)"
+                    // becomes
+                    // "ACTIVITY INCENTIVE"
+                    string basePayConfigName = name.Trim();
+
+                    int bracketIndex = basePayConfigName.LastIndexOf(
+                        " (",
+                        StringComparison.Ordinal
+                    );
+
+                    if (bracketIndex > 0 &&
+                        basePayConfigName.EndsWith(")"))
+                    {
+                        basePayConfigName =
+                            basePayConfigName
+                                .Substring(0, bracketIndex)
+                                .Trim();
+                    }
+
+                    int sortOrder = 9999;
+
+                    if (payConfigSortOrder.TryGetValue(
+                        basePayConfigName,
+                        out int configSortOrder))
+                    {
+                        sortOrder = configSortOrder;
+                    }
+
+                    earnings.Add(new SalaryHead
+                    {
+                        PayConfigName = ToTitleCase(name),
+                        ActualAmount = actual,
+                        Amount = earned,
+                        SortOrder = sortOrder
+                    });
                 }
-                // 6. Deductions (Table 5) 
-                //    if (ds.Tables.Count > 5)
-                //{
-                //    foreach (DataRow row in ds.Tables[5].Rows)
-                //    {
-                //        // Adjust column names to match your new Deduction SP output
-                //        decimal configDeduction = row.Table.Columns.Contains("ConfiguredDeduction") ? Convert.ToDecimal(row["ConfiguredDeduction"]) : 0;
-                //        decimal actualDeduction = row.Table.Columns.Contains("ActualDeduction") ? Convert.ToDecimal(row["ActualDeduction"]) : 0;
 
-                //        if (configDeduction == 0 && actualDeduction == 0) continue;
-
-                //        model.Deductions.Add(new SalaryHead
-                //        {
-                //            PayConfigName = ToTitleCase(row["DeductionName"].ToString()),
-                //            ActualAmount = configDeduction, // Standard deduction
-                //            Amount = actualDeduction     // Processed deduction
-                //        });
-                //    }
-                //}
-                if (ds.Tables.Count > 5)
+                model.Earnings = earnings
+                    .OrderBy(x => x.SortOrder)
+                    .ToList();
+            }
+            // 6. Deductions (Table 5) 
+            if (ds.Tables.Count > 5)
                 {
                     foreach (DataRow row in ds.Tables[5].Rows)
                     {
@@ -960,7 +1165,11 @@ namespace MendinePayroll.UI.Controllers
                             ? Convert.ToDecimal(row["Amount"])
                             : Convert.ToDecimal(row["ActualDeduction"]);
 
+                        // Skip deduction components where actual deduction is 0 (or both configured and actual are 0)
                         if (configured == 0 && actual == 0)
+                            continue;
+
+                        if (actual == 0)
                             continue;
 
                         model.Deductions.Add(new SalaryHead
@@ -1030,42 +1239,161 @@ namespace MendinePayroll.UI.Controllers
         return model;
     }
         [HttpPost]
-        public ActionResult DownloadBulk(string empIds, string month, int year)
+        public ActionResult DownloadBulk(string empIds,string month,int year)
         {
-            var empList = empIds.Split(',').Select(int.Parse).ToList();
-
-            using (var zipStream = new MemoryStream())
+            try
             {
-                var pdfService = new PayslipPdfService();
+                if (string.IsNullOrWhiteSpace(empIds))
+                    return Content("No employees selected.");
 
-                using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
+                var empList =
+                    empIds
+                        .Split(',')
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .Select(int.Parse)
+                        .ToList();
+
+                using (var zipStream = new MemoryStream())
                 {
-                    foreach (int empId in empList)
+                    var pdfService =
+                        new PayslipPdfService();
+
+                    using (var archive =
+                        new ZipArchive(
+                            zipStream,
+                            ZipArchiveMode.Create,
+                            true))
                     {
-                        var model = GetPayslipData(empId, month, year, true, 1);
-                        string viewName = GetPayslipViewName(model.TenantId);
-
-                        if (model == null) continue;
-
-                        byte[] pdfBytes = pdfService.GeneratePayslipPdf(
-                            ControllerContext,
-                            viewName,
-                            model,
-                            $"Payslip_{model.EmpCode}_{model.EmpName}_{month}_{year}.pdf");
-
-                        var entry = archive.CreateEntry($"Payslip_{model.EmpCode}_{model.EmpName}_{month}_{year}.pdf",
-                                                        CompressionLevel.Fastest);
-
-                        using (var entryStream = entry.Open())
+                        foreach (int empId in empList)
                         {
-                            entryStream.Write(pdfBytes, 0, pdfBytes.Length);
+                            try
+                            {
+                                // -----------------------------------------
+                                // 1. Get model
+                                // -----------------------------------------
+                                PayslipViewModel model =
+                                    GetPayslipData(
+                                        empId,
+                                        month,
+                                        year,
+                                        true,
+                                        1
+                                    );
+
+                                if (model == null ||
+                                    model.EmpId == 0)
+                                {
+                                    continue;
+                                }
+
+                                model.isPdf = true;
+
+                                // -----------------------------------------
+                                // 2. Get view
+                                // -----------------------------------------
+                                string viewName =
+                                    GetPayslipViewName(
+                                        model.TenantId
+                                    );
+
+                                if (string.IsNullOrWhiteSpace(viewName))
+                                    viewName = "Index";
+
+                                // -----------------------------------------
+                                // 3. Safe file name
+                                // -----------------------------------------
+                                string empCode =
+                                    MakeSafeFileName(
+                                        model.EmpCode
+                                    );
+
+                                string empName =
+                                    MakeSafeFileName(
+                                        model.EmpName
+                                    );
+
+                                string pdfFileName =
+                                    $"Payslip_{empCode}_{empName}_{month}_{year}.pdf";
+
+                                // -----------------------------------------
+                                // 4. Generate using Puppeteer
+                                // -----------------------------------------
+                                byte[] pdfBytes =
+                                    pdfService.GeneratePayslipPdf(
+                                        ControllerContext,
+                                        viewName,
+                                        model,
+                                        pdfFileName
+                                    );
+
+                                if (pdfBytes == null ||
+                                    pdfBytes.Length == 0)
+                                {
+                                    clsDatabase.fnErrorLog(
+                                        "BulkPayslipSkipped",
+                                        $"EmpId={empId}; Reason=Empty PDF"
+                                    );
+
+                                    continue;
+                                }
+
+                                // -----------------------------------------
+                                // 5. Add PDF to ZIP
+                                // -----------------------------------------
+                                var entry =
+                                    archive.CreateEntry(
+                                        pdfFileName,
+                                        CompressionLevel.Fastest
+                                    );
+
+                                using (var entryStream =
+                                    entry.Open())
+                                {
+                                    entryStream.Write(
+                                        pdfBytes,
+                                        0,
+                                        pdfBytes.Length
+                                    );
+                                }
+                            }
+                            catch (Exception empEx)
+                            {
+                                clsDatabase.fnErrorLog(
+                                    "BulkPayslipEmployeeError",
+                                    $"EmpId={empId}; " +
+                                    $"Month={month}; " +
+                                    $"Year={year}; " +
+                                    $"Error={empEx}"
+                                );
+
+                                // Continue with next employee
+                            }
                         }
                     }
-                }
 
-                return File(zipStream.ToArray(),
-                            "application/zip",
-                            $"Payslips_{month}_{year}.zip");
+                    byte[] zipBytes =
+                        zipStream.ToArray();
+
+                    return File(
+                        zipBytes,
+                        "application/zip",
+                        $"Payslips_{month}_{year}.zip"
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                clsDatabase.fnErrorLog(
+                    "BulkPayslipDownloadError",
+                    $"EmpIds={empIds}; " +
+                    $"Month={month}; " +
+                    $"Year={year}; " +
+                    $"Error={ex}"
+                );
+
+                return Content(
+                    "Bulk payslip download failed."
+                );
             }
         }
 

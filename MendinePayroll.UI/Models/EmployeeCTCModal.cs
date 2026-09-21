@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,6 +7,27 @@ namespace MendinePayroll.UI.Models
 {
     public class EmployeeCTCModal
     {
+    }
+
+    public class EmpSalaryConfigRevisionModel
+    {
+        public long EmployeeID { get; set; }
+        public long PayGroupID { get; set; }
+        public DateTime? EffectiveFrom { get; set; }
+        public long EmpSalaryConfigID { get; set; }
+        public bool IsPF { get; set; }
+        public bool IsESIC { get; set; }
+        public bool IsPTAX { get; set; }
+
+        public decimal MonthlyGross { get; set; }
+        public decimal TotalAllowance { get; set; }
+        public decimal TotalDeduction { get; set; }
+        public decimal TotalContribution { get; set; }
+        public decimal NetPay { get; set; }
+        public decimal MonthlyCTC { get; set; }
+        public decimal AnnualCTC { get; set; }
+
+        public List<EmployeeCTCDetailResult> DetailList { get; set; } = new List<EmployeeCTCDetailResult>();
     }
 
     public class SalaryDetailsComponentSaveRequest
@@ -90,6 +111,7 @@ namespace MendinePayroll.UI.Models
 
         public bool IsBasicComponent { get; set; }
         public bool IsGrossComponent { get; set; }
+        public bool IsTaxable { get; set; }
         public bool IsStatutory { get; set; }
         public string StatutoryType { get; set; }
 
@@ -114,6 +136,7 @@ namespace MendinePayroll.UI.Models
 
         public bool IsBasicComponent { get; set; }
         public bool IsGrossComponent { get; set; }
+        public bool IsTaxable { get; set; }
         public bool IsLoanComponent { get; set; }
         public bool IsCalculative { get; set; }
         public bool IsVariableAmt { get; set; }

@@ -1,4 +1,4 @@
-﻿using Common.Utility;
+using Common.Utility;
 using MendinePayroll.Models;
 using MendinePayroll.UI.Models;
 using Newtonsoft.Json;
@@ -168,8 +168,8 @@ namespace MendinePayroll.UI.Controllers
                 calcs[item.PayConfigName.Trim().ToUpper()] = val;
             }
 
-            // 2. Fixed values
-            foreach (var item in configList.Where(x => !x.IsInput && x.LogicType == "FIXED"))
+            // 2. Fixed, Excel Upload and Manual grid values (e.g. Incentive, Fixed allowances/deductions)
+            foreach (var item in configList.Where(x => !x.IsInput && (x.LogicType == "FIXED" || x.LogicType == "EXCEL_UPLOAD" || x.LogicType == "MANUAL_INPUT")))
             {
                 var input = model.Inputs.FirstOrDefault(x => x.PayConfigId == item.PayConfigId);
                 decimal val = input != null ? input.MonthlyAmount : item.ManualRate;
@@ -254,6 +254,8 @@ namespace MendinePayroll.UI.Controllers
 
                     IsBasicComponent = r["IsBasicComponent"] != DBNull.Value && Convert.ToBoolean(r["IsBasicComponent"]),
                     IsGrossComponent = r["IsGrossComponent"] != DBNull.Value && Convert.ToBoolean(r["IsGrossComponent"]),
+                    IsTaxable = (dt.Columns.Contains("IsTaxable") && r["IsTaxable"] != DBNull.Value && (r["IsTaxable"].ToString() == "1" || r["IsTaxable"].ToString().Equals("True", StringComparison.OrdinalIgnoreCase) || (decimal.TryParse(r["IsTaxable"].ToString(), out decimal t1) && t1 > 0)))
+                             || (dt.Columns.Contains("isTaxable") && r["isTaxable"] != DBNull.Value && (r["isTaxable"].ToString() == "1" || r["isTaxable"].ToString().Equals("True", StringComparison.OrdinalIgnoreCase) || (decimal.TryParse(r["isTaxable"].ToString(), out decimal t2) && t2 > 0))),
                     IsLoanComponent = r["IsLoanComponent"] != DBNull.Value && Convert.ToBoolean(r["IsLoanComponent"]),
                     IsCalculative = r["IScalculative"] != DBNull.Value && Convert.ToBoolean(r["IScalculative"]),
                     IsVariableAmt = r["IsVariableAmt"] != DBNull.Value && Convert.ToBoolean(r["IsVariableAmt"]),
@@ -273,7 +275,7 @@ namespace MendinePayroll.UI.Controllers
                 };
 
                 item.IsInput = item.PayType == "Manual" || item.IsGrossComponent;
-                item.IsManualGrid = item.LogicType == "FIXED" && item.PayType != "Manual";
+                item.IsManualGrid = (item.LogicType == "FIXED" || item.LogicType == "EXCEL_UPLOAD" || item.LogicType == "MANUAL_INPUT") && item.PayType != "Manual";
 
                 if (dt.Columns.Contains("PTAXSlabs") && r["PTAXSlabs"] != DBNull.Value)
                 {
@@ -452,9 +454,21 @@ namespace MendinePayroll.UI.Controllers
                         break;
 
                     case "PTAX":
-                        if (model.IsPTAX && grossVal > 0 && item.PTaxSlabs != null && item.PTaxSlabs.Count > 0)
+                        // =========================================================================
+                        // MODIFICATION: Calculate sum of all taxable components (IsTaxable == true)
+                        // PTAX slab matching is now evaluated against this taxable sum instead of grossVal.
+                        // =========================================================================
+                        decimal totalTaxable = configList
+                            .Where(x => x.IsTaxable)
+                            .Sum(x =>
+                            {
+                                string key = (x.PayConfigName ?? "").Trim().ToUpper();
+                                return calcs.TryGetValue(key, out decimal compVal) ? compVal : 0;
+                            });
+
+                        if (model.IsPTAX && totalTaxable > 0 && item.PTaxSlabs != null && item.PTaxSlabs.Count > 0)
                         {
-                            var slab = item.PTaxSlabs.FirstOrDefault(x => grossVal >= x.MinSalary && grossVal <= x.MaxSalary);
+                            var slab = item.PTaxSlabs.FirstOrDefault(x => totalTaxable >= x.MinSalary && totalTaxable <= x.MaxSalary);
                             val = slab != null ? RoundStatutory(slab.PTaxAmount, statType, item.RoundingType) : 0;
                         }
                         break;
@@ -669,6 +683,7 @@ namespace MendinePayroll.UI.Controllers
 
                     IsBasicComponent = item.IsBasicComponent,
                     IsGrossComponent = item.IsGrossComponent,
+                    IsTaxable = item.IsTaxable,
                     IsStatutory = item.IsStatutory,
                     StatutoryType = item.StatutoryType,
 
@@ -774,6 +789,7 @@ namespace MendinePayroll.UI.Controllers
 
         //            IsBasicComponent = item.IsBasicComponent,
         //            IsGrossComponent = item.IsGrossComponent,
+        //            IsTaxable = item.IsTaxable,
         //            IsStatutory = item.IsStatutory,
         //            StatutoryType = item.StatutoryType,
 
@@ -912,7 +928,7 @@ namespace MendinePayroll.UI.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveEmployeeSalaryRevision(EmpSalaryConfigModel model)
+        public JsonResult SaveEmployeeSalaryRevision(EmpSalaryConfigRevisionModel model)
         {
             try
             {

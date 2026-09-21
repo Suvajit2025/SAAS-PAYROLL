@@ -16,6 +16,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -183,7 +184,7 @@ namespace MendinePayroll.UI.Controllers
                    1. VALIDATE STATUSES 
                    Only "Finalized" (Status 2) records can be marked as Paid.
                 ========================================================= */
-                DataTable dtValidation = clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation", payrollProcessEmployeeIds);
+                DataTable dtValidation = clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation", payrollProcessEmployeeIds,TenantId);
 
                 // Identify who is NOT Finalized (Draft or Rejected) to show as skipped
                 var validationSkipped = dtValidation.AsEnumerable()
@@ -212,8 +213,7 @@ namespace MendinePayroll.UI.Controllers
                 /* =========================================================
                    2. EXECUTE MARK PAID PROCESS
                 ========================================================= */
-                DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_MarkPaid",
-                                                    tenantId, month, year, paidDt.Date, userName, finalizedIds);
+                DataSet ds = clsDatabase.fnDataSet("SP_Payroll_SalaryRegister_MarkPaid",tenantId, month, year, paidDt.Date, userName, finalizedIds);
 
                 if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
                     return Json(new { success = false, message = "No response from payment process." });
@@ -271,6 +271,96 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        public JsonResult SendPayslipMail(int month, int year, string payrollProcessEmployeeId)
+        {
+            try
+            {
+                if (Session["UserName"] == null)
+                    return Json(new { success = false, message = "Session expired" });
+
+                if (string.IsNullOrWhiteSpace(payrollProcessEmployeeId))
+                    return Json(new { success = false, message = "No employee selected." });
+
+                var tenantId = TenantId;
+                var applicationBaseUrl = GetApplicationBaseUrl();
+
+                DataTable dtValidation = clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation",payrollProcessEmployeeId,tenantId);
+
+                if (dtValidation == null || dtValidation.Rows.Count == 0)
+                    return Json(new { success = false, message = "Payroll row not found." });
+
+                DataRow row = dtValidation.Rows[0];
+                int status = Convert.ToInt32(row["Status"] == DBNull.Value ? 0 : row["Status"]);
+                int paidStatus = GetIntColumnValue(row, "PaidStatus");
+                if (paidStatus != 1 && !row.Table.Columns.Contains("PaidStatus"))
+                {
+                    paidStatus = GetPaidStatusFromGrid(month, year, payrollProcessEmployeeId);
+                }
+
+                if (status == 3)
+                    return Json(new { success = false, message = "Payslip mail cannot be sent for rejected payroll." });
+
+                if (paidStatus != 1)
+                    return Json(new { success = false, message = "Please mark this salary as paid before sending payslip mail." });
+
+                clsAccessLogInfo info = new clsAccessLogInfo();
+                info.AccessType = "SALARY-PAYSLIP-MAIL";
+                clsAccessLog.AccessLog_Save(info);
+
+                LogBulkPayslipDebug(
+                    "SinglePayslipQueued",
+                    $"Id={payrollProcessEmployeeId}; Month={month}; Year={year}; TenantId={tenantId}; BaseUrl={applicationBaseUrl}");
+
+                System.Web.Hosting.HostingEnvironment.QueueBackgroundWorkItem(ct =>
+                    SendBulkPayslips(payrollProcessEmployeeId, month, year, tenantId, applicationBaseUrl, true)
+                );
+
+                return Json(new { success = true, message = "Payslip mail queued successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private int GetIntColumnValue(DataRow row, string columnName)
+        {
+            if (row == null || !row.Table.Columns.Contains(columnName) || row[columnName] == DBNull.Value)
+                return 0;
+
+            return Convert.ToInt32(row[columnName]);
+        }
+
+        private int GetPaidStatusFromGrid(int month, int year, string payrollProcessEmployeeId)
+        {
+            string userId = Session["UserId"]?.ToString();
+            if (string.IsNullOrWhiteSpace(userId))
+                return 0;
+
+            DataSet ds = clsDatabase.fnDataSet(
+                "SP_Payroll_SalaryRegister_Grid",
+                TenantId,
+                month,
+                year,
+                null,
+                null,
+                null,
+                null,
+                1,
+                999999,
+                userId);
+
+            if (ds == null || ds.Tables.Count < 2)
+                return 0;
+
+            DataRow row = ds.Tables[1].AsEnumerable()
+                .FirstOrDefault(r => r["PayrollProcessEmployeeID"].ToString() == payrollProcessEmployeeId);
+
+            return GetIntColumnValue(row, "PaidStatus");
+        }
+
         [HttpGet]
         public JsonResult GetEmployeeBank(long EmployeeID)
         {
@@ -489,7 +579,7 @@ namespace MendinePayroll.UI.Controllers
                        1. IDENTIFY SKIPPED VS VALID (ONLY STATUS 1 ALLOWED)
                     ========================================================= */
                 DataTable dtValidation = clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation",
-                                                         payrollProcessEmployeeIds);
+                                                         payrollProcessEmployeeIds,TenantId);
 
                 if (dtValidation == null || dtValidation.Rows.Count == 0)
                     return Json(new { success = false, message = "No records found for the selected IDs." });
@@ -648,8 +738,7 @@ namespace MendinePayroll.UI.Controllers
                 /* =========================================================
                    1. VALIDATE STATUSES (Using our same SP)
                 ========================================================= */
-                DataTable dtValidation = clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation",
-                                                                 model.payrollProcessEmployeeIds);
+                DataTable dtValidation = clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation",model.payrollProcessEmployeeIds,TenantId);
 
                 // Identify who to SKIP
                 var skippedEmployees = dtValidation.AsEnumerable()
@@ -868,21 +957,26 @@ namespace MendinePayroll.UI.Controllers
             }
         }
 
-        private void SendBulkPayslips(string payrollProcessEmployeeIds,int month,int year,string tenantId,string applicationBaseUrl)
+        private void SendBulkPayslips(string payrollProcessEmployeeIds,int month,int year,string tenantId,string applicationBaseUrl, bool forceSend = false)
         {
             try
             {
                 LogBulkPayslipDebug(
                     "BulkPayslipStarted",
-                    $"Ids={payrollProcessEmployeeIds}; Month={month}; Year={year}; TenantId={tenantId}; BaseUrl={applicationBaseUrl}");
+                    $"Ids={payrollProcessEmployeeIds}; Month={month}; Year={year}; TenantId={tenantId}; BaseUrl={applicationBaseUrl}; ForceSend={forceSend}");
 
-                DataTable dtValidation =clsDatabase.fnDataTable("SP_Payroll_GetEmployeeStatusesForValidation",payrollProcessEmployeeIds);
+                DataTable dtValidation =
+                    clsDatabase.fnDataTable(
+                        "SP_Payroll_GetEmployeeStatusesForValidation",
+                        payrollProcessEmployeeIds,
+                        tenantId);
 
                 if (dtValidation == null || dtValidation.Rows.Count == 0)
                 {
                     LogBulkPayslipDebug(
                         "BulkPayslipNoRows",
                         $"No employees returned by SP_Payroll_GetEmployeeStatusesForValidation. Ids={payrollProcessEmployeeIds}");
+
                     return;
                 }
 
@@ -891,165 +985,400 @@ namespace MendinePayroll.UI.Controllers
                     $"EmployeeCount={dtValidation.Rows.Count}; Ids={payrollProcessEmployeeIds}");
 
                 string monthName =
-                    CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
+                    CultureInfo.CurrentCulture
+                        .DateTimeFormat
+                        .GetMonthName(month);
 
-                // Create a request context for Rotativa while running outside the original request.
-                var request = new HttpRequest("", applicationBaseUrl, "");
-                var response = new HttpResponse(new StringWriter());
-                var httpContext = new HttpContext(request, response);
+                // ------------------------------------------------------------
+                // Create synthetic HTTP context because this runs in background
+                // ------------------------------------------------------------
 
-                System.Web.HttpContext.Current = httpContext;
+                var request =
+                    new HttpRequest(
+                        "",
+                        applicationBaseUrl,
+                        "");
 
-                var contextWrapper = new HttpContextWrapper(httpContext);
+                var response =
+                    new HttpResponse(
+                        new StringWriter());
 
-                // 🔥 Resolve TenantId safely
-                string resolvedTenantId = tenantId;
+                var httpContext =
+                    new HttpContext(
+                        request,
+                        response);
 
-                // 1️⃣ If not passed explicitly, try Session
+                System.Web.HttpContext.Current =
+                    httpContext;
+
+                var contextWrapper =
+                    new HttpContextWrapper(
+                        httpContext);
+
+
+                // ------------------------------------------------------------
+                // Resolve Tenant
+                // ------------------------------------------------------------
+
+                string resolvedTenantId =
+                    tenantId;
+
                 if (string.IsNullOrWhiteSpace(resolvedTenantId))
                 {
-                    if (System.Web.HttpContext.Current?.Session?["TenantID"] != null)
+                    if (System.Web.HttpContext.Current?
+                            .Session?["TenantID"] != null)
                     {
                         resolvedTenantId =
-                            System.Web.HttpContext.Current.Session["TenantID"].ToString();
+                            System.Web.HttpContext.Current
+                                .Session["TenantID"]
+                                .ToString();
                     }
                 }
 
-                // 2️⃣ Final guard (VERY IMPORTANT)
                 if (string.IsNullOrWhiteSpace(resolvedTenantId))
                 {
                     LogBulkPayslipDebug(
                         "BulkPayslipTenantMissing",
                         $"Ids={payrollProcessEmployeeIds}; Month={month}; Year={year}");
-                    throw new Exception("TenantId not available for payslip generation.");
+
+                    throw new Exception(
+                        "TenantId not available for payslip generation.");
                 }
 
-                // 🔥 Real controller instance (SAFE NOW)
-                var payslipCtrl = new PayslipController
-                {
-                    ManualTenantId = resolvedTenantId,
-                    ViewData = new ViewDataDictionary(),
-                    TempData = new TempDataDictionary()
-                };
+
+                // ------------------------------------------------------------
+                // Create Payslip controller
+                // ------------------------------------------------------------
+
+                var payslipCtrl =
+                    new PayslipController
+                    {
+                        ManualTenantId =
+                            resolvedTenantId,
+
+                        ViewData =
+                            new ViewDataDictionary(),
+
+                        TempData =
+                            new TempDataDictionary()
+                    };
 
 
-                var routeData = new RouteData();
-                routeData.Values["controller"] = "Payslip";
-                routeData.Values["action"] = "Index";
+                var routeData =
+                    new RouteData();
 
-                var controllerContext = new ControllerContext(
-                    contextWrapper,
-                    routeData,
-                    payslipCtrl
-                );
+                routeData.Values["controller"] =
+                    "Payslip";
 
-                payslipCtrl.ControllerContext = controllerContext;
+                routeData.Values["action"] =
+                    "Index";
 
-                // 🔥 Mail service (create once)
-                var mailService = new MailService();
-                var pdfService = new PayslipPdfService();
+
+                var controllerContext =
+                    new ControllerContext(
+                        contextWrapper,
+                        routeData,
+                        payslipCtrl);
+
+                payslipCtrl.ControllerContext =
+                    controllerContext;
+
+
+                // ------------------------------------------------------------
+                // Services
+                // ------------------------------------------------------------
+
+                var mailService =
+                    new MailService();
+
+                var pdfService =
+                    new PayslipPdfService();
+
+
+                // ------------------------------------------------------------
+                // Process each employee SEQUENTIALLY
+                // ------------------------------------------------------------
 
                 foreach (DataRow dr in dtValidation.Rows)
                 {
-                    bool mailReserved = false;
-                    int empId = 0;
-                    string email = string.Empty;
+                    bool mailReserved =
+                        false;
+
+                    int empId =
+                        0;
+
+                    string email =
+                        string.Empty;
+
+
                     try
                     {
-                        empId = Convert.ToInt32(dr["EmployeeId"]);
-                        email = dr["empemail"]?.ToString();
-                        string firstName = dr["empfirstname"]?.ToString();
+                        // ----------------------------------------------------
+                        // Employee details
+                        // ----------------------------------------------------
+
+                        empId =
+                            Convert.ToInt32(
+                                dr["EmployeeId"]);
+
+                        email =
+                            dr["empemail"]?
+                                .ToString();
+
+                        string firstName =
+                            dr["empfirstname"]?
+                                .ToString();
+
 
                         if (string.IsNullOrWhiteSpace(email))
                         {
                             LogBulkPayslipDebug(
                                 "BulkPayslipSkippedNoEmail",
                                 $"EmployeeId={empId}; Month={monthName}; Year={year}");
+
                             continue;
                         }
 
-                        mailReserved = TryReservePayslipMail(resolvedTenantId, empId, month, year, email);
-                        if (!mailReserved)
+
+                        // ----------------------------------------------------
+                        // Reserve email
+                        // ----------------------------------------------------
+
+                        if (!forceSend)
                         {
-                            LogBulkPayslipDebug(
-                                "BulkPayslipMailDuplicateSkipped",
-                                $"EmployeeId={empId}; Email={email}; Month={monthName}; Year={year}; TenantId={resolvedTenantId}");
-                            continue;
+                            mailReserved =
+                                TryReservePayslipMail(
+                                    resolvedTenantId,
+                                    empId,
+                                    month,
+                                    year,
+                                    email);
+
+
+                            if (!mailReserved)
+                            {
+                                LogBulkPayslipDebug(
+                                    "BulkPayslipMailDuplicateSkipped",
+                                    $"EmployeeId={empId}; Email={email}; Month={monthName}; Year={year}; TenantId={resolvedTenantId}");
+
+                                continue;
+                            }
                         }
+                        else
+                        {
+                            mailReserved =
+                                true;
+
+                            LogBulkPayslipDebug(
+                                "BulkPayslipMailForceSend",
+                                $"EmployeeId={empId}; Email={email}; Month={monthName}; Year={year}; TenantId={resolvedTenantId}");
+                        }
+
 
                         LogBulkPayslipDebug(
                             "BulkPayslipEmployeeStart",
                             $"EmployeeId={empId}; Email={email}; Month={monthName}; Year={year}");
 
-                        // 1️⃣ Get payslip data
-                        var model = payslipCtrl.GetPayslipData(
-                            empId,
-                            monthName,
-                            year,
-                            true);
-                        string viewName = payslipCtrl.GetPayslipViewName(model.TenantId);
-                        if (model == null)
+
+                        // ----------------------------------------------------
+                        // 1. Get payslip model
+                        // ----------------------------------------------------
+
+                        PayslipViewModel model =
+                            payslipCtrl.GetPayslipData(
+                                empId,
+                                monthName,
+                                year,
+                                true,
+                                1);
+
+
+                        if (model == null ||
+                            model.EmpId == 0)
                         {
+                            MarkPayslipMailFailed(
+                                resolvedTenantId,
+                                empId,
+                                month,
+                                year,
+                                "Payslip model not available.");
+
                             LogBulkPayslipDebug(
                                 "BulkPayslipSkippedNoModel",
                                 $"EmployeeId={empId}; Email={email}; Month={monthName}; Year={year}");
+
                             continue;
                         }
 
+
+                        model.isPdf =
+                            true;
+
+
+                        // ----------------------------------------------------
+                        // 2. Determine Razor view
+                        // ----------------------------------------------------
+
+                        string viewName =
+                            payslipCtrl.GetPayslipViewName(
+                                model.TenantId);
+
+
+                        if (string.IsNullOrWhiteSpace(viewName))
+                        {
+                            viewName =
+                                "Index";
+                        }
+
+
                         LogBulkPayslipDebug(
                             "BulkPayslipPdfStart",
-                            $"EmployeeId={empId}; Email={email}; EmpCode={model.EmpCode}; Month={monthName}; Year={year}");
+                            $"EmployeeId={empId}; Email={email}; EmpCode={model.EmpCode}; ViewName={viewName}; Month={monthName}; Year={year}");
 
-                        // 2️⃣ Generate PDF using the same formatter as manual payslip download.
-                        byte[] pdfBytes = pdfService.GeneratePayslipPdf(
-                            controllerContext,
-                            viewName,
-                            model,
-                            $"Payslip_{model.EmpCode}_{monthName}_{year}.pdf");
 
-                        if (pdfBytes == null || pdfBytes.Length == 0)
-                            throw new Exception("Rotativa generated empty PDF.");
+                        // ----------------------------------------------------
+                        // 3. Safe PDF filename
+                        // ----------------------------------------------------
+
+                        string safeEmpCode =
+                            MakeSafePayslipFileName(
+                                model.EmpCode);
+
+                        string pdfFileName =
+                            $"Payslip_{safeEmpCode}_{monthName}_{year}.pdf";
+
+
+                        // ----------------------------------------------------
+                        // 4. Generate PDF WITH PUPPETEERSHARP
+                        // ----------------------------------------------------
+
+                        byte[] pdfBytes =
+                            pdfService
+                                .GeneratePayslipPdf(
+                                    controllerContext,
+                                    viewName,
+                                    model,
+                                    pdfFileName);
+
+
+                        if (pdfBytes == null ||
+                            pdfBytes.Length == 0)
+                        {
+                            throw new Exception(
+                                "PuppeteerSharp generated empty PDF.");
+                        }
+
 
                         LogBulkPayslipDebug(
                             "BulkPayslipPdfGenerated",
                             $"EmployeeId={empId}; Email={email}; EmpCode={model.EmpCode}; PdfBytes={pdfBytes.Length}");
 
-                        string subject = GetPayslipMailSubject(model, firstName, email, monthName, year);
-                        string bodyHtml = GetPayslipMailBody(model, firstName, email, monthName, year);
 
-                        // 3️⃣ Send mail
-                        bool sent = mailService.SendMails(
-                            toEmail: email,
-                            fromEmail: "",
-                            bodyHtml: bodyHtml,
-                            subject: subject,
-                            attachmentBytes: pdfBytes,
-                            fileNameWithoutExt: $"Payslip_{monthName}_{year}",
-                            tenantId: resolvedTenantId,
-                            mailPurpose: "Payslip",
-                            profileName: "Payroll",
-                            templateValues: new Dictionary<string, string>
-                            {
-                                { "FirstName", string.IsNullOrWhiteSpace(firstName) ? model.EmpName : firstName },
-                                { "EmployeeName", model.EmpName ?? string.Empty },
-                                { "EmployeeCode", model.EmpCode ?? string.Empty },
-                                { "Email", email ?? string.Empty },
-                                { "MonthName", monthName ?? string.Empty },
-                                { "Year", year.ToString(CultureInfo.InvariantCulture) },
-                                { "MonthYear", $"{monthName} {year}" }
-                            }
-                        );
+                        // ----------------------------------------------------
+                        // 5. Prepare email
+                        // ----------------------------------------------------
+
+                        string subject =
+                            GetPayslipMailSubject(
+                                model,
+                                firstName,
+                                email,
+                                monthName,
+                                year);
+
+
+                        string bodyHtml =
+                            GetPayslipMailBody(
+                                model,
+                                firstName,
+                                email,
+                                monthName,
+                                year);
+
+
+                        // ----------------------------------------------------
+                        // 6. Send email
+                        // ----------------------------------------------------
+
+                        bool sent =
+                            mailService.SendMails(
+                                toEmail: email,
+                                fromEmail: "",
+                                bodyHtml: bodyHtml,
+                                subject: subject,
+                                attachmentBytes: pdfBytes,
+                                fileNameWithoutExt:
+                                    $"Payslip_{monthName}_{year}",
+                                tenantId:
+                                    resolvedTenantId,
+                                mailPurpose:
+                                    "Payslip",
+                                profileName:
+                                    "Payroll",
+                                templateValues:
+                                    new Dictionary<string, string>
+                                    {
+                                {
+                                    "FirstName",
+                                    string.IsNullOrWhiteSpace(firstName)
+                                        ? model.EmpName
+                                        : firstName
+                                },
+                                {
+                                    "EmployeeName",
+                                    model.EmpName ?? string.Empty
+                                },
+                                {
+                                    "EmployeeCode",
+                                    model.EmpCode ?? string.Empty
+                                },
+                                {
+                                    "Email",
+                                    email ?? string.Empty
+                                },
+                                {
+                                    "MonthName",
+                                    monthName ?? string.Empty
+                                },
+                                {
+                                    "Year",
+                                    year.ToString(
+                                        CultureInfo.InvariantCulture)
+                                },
+                                {
+                                    "MonthYear",
+                                    $"{monthName} {year}"
+                                }
+                                    });
+
+
+                        // ----------------------------------------------------
+                        // 7. Handle send result
+                        // ----------------------------------------------------
 
                         if (!sent)
                         {
-                            MarkPayslipMailFailed(resolvedTenantId, empId, month, year, "MailService.SendMails returned false.");
+                            MarkPayslipMailFailed(
+                                resolvedTenantId,
+                                empId,
+                                month,
+                                year,
+                                "MailService.SendMails returned false.");
+
                             LogBulkPayslipDebug(
                                 "BulkPayslipMailFailed",
                                 $"EmployeeId={empId}; Email={email}; Subject={subject}; PdfBytes={pdfBytes.Length}");
+
                             continue;
                         }
 
-                        MarkPayslipMailSent(resolvedTenantId, empId, month, year);
+
+                        MarkPayslipMailSent(
+                            resolvedTenantId,
+                            empId,
+                            month,
+                            year);
+
 
                         LogBulkPayslipDebug(
                             "BulkPayslipMailSent",
@@ -1057,14 +1386,32 @@ namespace MendinePayroll.UI.Controllers
                     }
                     catch (Exception ex)
                     {
-                        if (mailReserved)
-                            MarkPayslipMailFailed(resolvedTenantId, empId, month, year, ex.Message);
+                        if (mailReserved &&
+                            empId > 0)
+                        {
+                            MarkPayslipMailFailed(
+                                resolvedTenantId,
+                                empId,
+                                month,
+                                year,
+                                ex.Message);
+                        }
+
 
                         clsDatabase.fnErrorLog(
                             "BulkPayslipLoopError",
-                            ex.ToString());
+                            $"EmployeeId={empId}; " +
+                            $"Email={email}; " +
+                            $"Month={monthName}; " +
+                            $"Year={year}; " +
+                            $"Error={ex}");
                     }
                 }
+
+
+                LogBulkPayslipDebug(
+                    "BulkPayslipCompleted",
+                    $"Ids={payrollProcessEmployeeIds}; Month={monthName}; Year={year}; TenantId={resolvedTenantId}");
             }
             catch (Exception ex)
             {
@@ -1073,6 +1420,19 @@ namespace MendinePayroll.UI.Controllers
                     ex.ToString());
             }
         }
-        
+
+        private string MakeSafePayslipFileName(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return "Employee";
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                value = value.Replace(c, '_');
+            }
+
+            return value.Trim();
+        }
+
     }
 }

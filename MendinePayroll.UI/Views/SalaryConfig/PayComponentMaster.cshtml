@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Pay Component Master";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -270,6 +270,29 @@
             background: #faffff;
         }
 
+    /* Top Horizontal Quick Flags Bar */
+    .top-toggle-bar {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        background: #f8fafc;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin-bottom: 16px;
+    }
+
+    .top-toggle-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid #edf2f7;
+        border-radius: 6px;
+        padding: 8px 12px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
     /* Toggles */
     .settings-panel {
         background: #fff;
@@ -445,6 +468,31 @@
 
         <div class="modal-body">
             <form id="entryForm">
+                <!-- TOP HORIZONTAL FLAGS SECTION -->
+                <div class="top-toggle-bar">
+                    <div class="top-toggle-item">
+                        <div class="toggle-info">
+                            <strong>Is Basic Component?</strong>
+                            <small>Root for PF/Gratuity</small>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="chkBasic"><span class="slider"></span></label>
+                    </div>
+                    <div class="top-toggle-item">
+                        <div class="toggle-info">
+                            <strong>Is Gross Component?</strong>
+                            <small>Input Driver for CTC</small>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="chkGross"><span class="slider"></span></label>
+                    </div>
+                    <div class="top-toggle-item">
+                        <div class="toggle-info">
+                            <strong>Is Taxable?</strong>
+                            <small>Subject to Income Tax / TDS</small>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="chkTaxable"><span class="slider"></span></label>
+                    </div>
+                </div>
+
                 <div class="form-grid">
                     <div>
                         <h4 style="color:var(--primary); margin-top:0; border-bottom:1px solid #eee; padding-bottom:8px; font-size:13px; font-weight:700;">BASIC DETAILS</h4>
@@ -483,14 +531,6 @@
                         <h4 style="color:var(--primary); margin-top:0; border-bottom:1px solid #eee; padding-bottom:8px; font-size:13px; font-weight:700;">CONFIGURATION RULES</h4>
 
                         <div class="settings-panel">
-                            <div class="toggle-row">
-                                <div class="toggle-info"><strong>Is Basic Component?</strong><small>Root for PF/Gratuity</small></div>
-                                <label class="switch"><input type="checkbox" id="chkBasic"><span class="slider"></span></label>
-                            </div>
-                            <div class="toggle-row">
-                                <div class="toggle-info"><strong>Is Gross Component?</strong><small>Input Driver for CTC</small></div>
-                                <label class="switch"><input type="checkbox" id="chkGross"><span class="slider"></span></label>
-                            </div>
                             <div class="toggle-row">
                                 <div class="toggle-info"><strong>Is Allowance?</strong><small>Tax & Exemption Classification</small></div>
                                 <label class="switch"><input type="checkbox" id="chkAllowance" onchange="toggleAllowancePanel()"><span class="slider"></span></label>
@@ -578,6 +618,7 @@
             var flags = "";
             if (row.isBasic) flags += `<span class='flag-badge bg-green'>BASIC</span>`;
             if (row.isGross) flags += `<span class='flag-badge bg-blue'>GROSS</span>`;
+            if (row.isTaxable) flags += `<span class='flag-badge bg-orange'>TAXABLE</span>`;
             if (!flags) flags = `<span style="color:#ccc; font-size:11px;">-</span>`;
 
             var statHtml = row.statKey
@@ -749,7 +790,7 @@
         }
 
         $("#statPanel, #otherPanel, #allowancePanel").hide();
-        $("#chkStat, #chkOthers, #chkAllowance").prop("checked", false);
+        $("#chkStat, #chkOthers, #chkAllowance, #chkTaxable").prop("checked", false);
 
         $("#entryModal").show();
 
@@ -783,7 +824,7 @@
         $("#statPanel, #otherPanel, #allowancePanel").hide();
 
         // 4️⃣ Reset toggles explicitly
-        $("#chkStat, #chkOthers, #chkAllowance").prop("checked", false);
+        $("#chkStat, #chkOthers, #chkAllowance, #chkTaxable, #chkBasic, #chkGross").prop("checked", false);
 
         // 5️⃣ Reset dropdowns safely
         $("#ddlStatType, #ddlOtherType, #ddlAllowanceType")
@@ -820,6 +861,7 @@
 
                 $("#chkBasic").prop("checked", res.isBasic);
                 $("#chkGross").prop("checked", res.isGross);
+                $("#chkTaxable").prop("checked", res.isTaxable);
                 //$("#chkVar").prop("checked", res.isVar);
                 //$("#chkLoan").prop("checked", res.isLoan);
 
@@ -892,6 +934,7 @@
 
             IsBasicComponent: $("#chkBasic").is(":checked"),
             IsGrossComponent: $("#chkGross").is(":checked"),
+            IsTaxable: $("#chkTaxable").is(":checked"),
             IsVariableAmt: parseInt(0),
             IsLoanComponent: parseInt(0),
 

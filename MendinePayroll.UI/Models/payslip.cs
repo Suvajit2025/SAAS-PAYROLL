@@ -91,6 +91,7 @@ namespace MendinePayroll.UI.Models
         public string PayConfigName { get; set; }
         public decimal ActualAmount { get; set; }
         public decimal Amount { get; set; }
+        public int SortOrder { get; set; }
     }
 
     public class EmployeeSalaryReportModel

@@ -35,6 +35,7 @@ namespace MendinePayroll.Models
         public bool IsGrossComponent { get; set; }
         public bool IsVariableAmt { get; set; }
         public bool IsLoanComponent { get; set; }
+        public bool IsTaxable {get;set;}
 
         public bool IsStatutory { get; set; }
         public string StatutoryType { get; set; }
