@@ -97,8 +97,6 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
-*.sql
-*.html
 # Chutzpah Test files
 _Chutzpah*
 
@@ -391,7 +389,8 @@ tmp/
 
 # Application runtime error logs
 /MendinePayroll.UI/ErrorLog.txt
-/MendinePayroll.UI/CompanyData/ErrorLog/
+/MendinePayroll.UI/CompanyData/ErrorLog/*
+!/MendinePayroll.UI/CompanyData/ErrorLog/.gitkeep
 
 /MendinePayroll.UI/Database/PayrollCycleConfiguration_Procedures.sql
 /MendinePayroll.UI/letter-template-designer.html
