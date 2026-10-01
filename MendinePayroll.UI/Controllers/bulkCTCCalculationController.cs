@@ -192,11 +192,7 @@ namespace MendinePayroll.UI.Controllers
         {
             var list = new List<SalaryComponent>();
 
-            DataTable dt = clsDatabase.fnDataTable(
-                "PRC_GetSalaryConfigByPayGroup",
-                payGroupId,
-                tenantID
-            );
+            DataTable dt = clsDatabase.fnDataTable("PRC_GetSalaryConfigByPayGroup",payGroupId,tenantID);
 
             foreach (DataRow row in dt.Rows)
             {
@@ -210,7 +206,10 @@ namespace MendinePayroll.UI.Controllers
                     LogicType = row["LogicType"]?.ToString(),
                     MappedColumn = row["MappedColumn"]?.ToString(),
 
-                    CalculationFormula = row["CalculationFormula"]?.ToString(),
+                    //CalculationFormula = row["CalculationFormula"]?.ToString(),
+                    CalculationFormula= row.Table.Columns.Contains("CalculationRule") && row["CalculationRule"] != DBNull.Value && string.Equals(row["CalculationRule"].ToString(),"ESIC_BASIC_50_GROSS",StringComparison.OrdinalIgnoreCase)? "MAX(BASIC, 50% GROSS)": row["CalculationFormula"]?.ToString(),
+                    CalculationRule = row.Table.Columns.Contains("CalculationRule") && row["CalculationRule"] != DBNull.Value? row["CalculationRule"].ToString() : null,
+
                     ManualRate = row["ManualRate"] == DBNull.Value ? 0 : Convert.ToDecimal(row["ManualRate"]),
                     ISPercentage = Convert.ToInt32(row["ISPercentage"]) == 1,
 
@@ -295,13 +294,46 @@ namespace MendinePayroll.UI.Controllers
                         );
                         break;
 
+                    //case "ESIC_EE":
+                    //case "ESIC_ER":
+                    //    x.MonthlyAmount = gross <= x.MaxLimit
+                    //        ? ApplyRounding(gross * x.ManualRate / 100, x.RoundingType)
+                    //        : 0;
+                    //    break;
                     case "ESIC_EE":
                     case "ESIC_ER":
-                        x.MonthlyAmount = gross <= x.MaxLimit
-                            ? ApplyRounding(gross * x.ManualRate / 100, x.RoundingType)
-                            : 0;
-                        break;
 
+                        decimal esicBase = gross;
+
+                        // New ESIC rule:
+                        // MAX(BASIC, 50% GROSS)
+                        if (string.Equals(x.CalculationRule,"ESIC_BASIC_50_GROSS",StringComparison.OrdinalIgnoreCase))
+                        {
+                            decimal fiftyPercentGross = gross * 0.50m;
+
+                            esicBase = Math.Max(
+                                basic,
+                                fiftyPercentGross
+                            );
+                        }
+
+                        decimal esicLimit = x.MaxLimit > 0
+                            ? x.MaxLimit
+                            : 21000m;
+
+                        if (esicBase <= esicLimit)
+                        {
+                            x.MonthlyAmount = ApplyRounding(
+                                esicBase * x.ManualRate / 100,
+                                x.RoundingType
+                            );
+                        }
+                        else
+                        {
+                            x.MonthlyAmount = 0;
+                        }
+
+                        break;
                     case "PTAX":
                         // =========================================================================
                         // MODIFICATION: Calculate sum of all taxable components (IsTaxable == true)
@@ -449,6 +481,7 @@ namespace MendinePayroll.UI.Controllers
             public decimal ManualRate { get; set; }
             public bool ISPercentage { get; set; }
 
+            public string CalculationRule { get; set; }
             public bool IsBasicComponent { get; set; }
             public bool IsGrossComponent { get; set; }
             public bool IsTaxable { get; set; }
@@ -462,6 +495,7 @@ namespace MendinePayroll.UI.Controllers
             public string RoundingType { get; set; }
 
             public string PTaxSlabsJson { get; set; }
+
         }
 
         private class SalaryResult

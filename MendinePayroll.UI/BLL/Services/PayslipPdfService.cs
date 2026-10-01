@@ -547,10 +547,7 @@ public class PayslipPdfService
     //    });
     //}
 
-    private void ComposeDefaultHeader(
-    IContainer container,
-    PayslipViewModel model,
-    byte[] logoBytes)
+    private void ComposeDefaultHeader(IContainer container,PayslipViewModel model,byte[] logoBytes)
     {
         container.Column(column =>
         {
@@ -1508,6 +1505,24 @@ public class PayslipPdfService
         PayslipViewModel model,
         byte[] logoBytes)
     {
+        try
+        {
+            string localLogoPath = null;
+            if (HostingEnvironment.IsHosted)
+            {
+                localLogoPath = HostingEnvironment.MapPath("~/Contents/images/inicio_logo.png");
+            }
+            if (string.IsNullOrEmpty(localLogoPath) || !File.Exists(localLogoPath))
+            {
+                localLogoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Contents", "images", "inicio_logo.png");
+            }
+            if (File.Exists(localLogoPath))
+            {
+                logoBytes = File.ReadAllBytes(localLogoPath);
+            }
+        }
+        catch { }
+
         container
             .MinHeight(78)
             .PaddingBottom(6)
@@ -1521,7 +1536,7 @@ public class PayslipPdfService
                 // LOGO
                 // --------------------------------------------
 
-                row.ConstantItem(100)
+                row.ConstantItem(110)
                     .AlignMiddle()
                     .AlignLeft()
                     .Element(c =>
@@ -1529,8 +1544,8 @@ public class PayslipPdfService
                         if (logoBytes != null)
                         {
                             c
-                                .Width(90)
-                                .Height(62)
+                                .Width(105)
+                                .Height(55)
                                 .AlignMiddle()
                                 .AlignLeft()
                                 .Image(logoBytes)
@@ -1551,48 +1566,46 @@ public class PayslipPdfService
 
                         inner.Item()
                             .AlignCenter()
-                            .Text(
-                                model.CompanyName ?? "")
-                            .FontSize(16)
+                            .Text("INICIO LABORATORIES PVT LTD")
+                            .FontSize(13.5f)
                             .Bold();
 
-
-                        if (!string.IsNullOrWhiteSpace(
-                            model.CompanyAddressLine1))
-                        {
-                            inner.Item()
-                                .AlignCenter()
-                                .PaddingHorizontal(2)
-                                .Text(
-                                    CleanAddress(
-                                        model.CompanyAddressLine1))
-                                .FontSize(8.5f)
-                                .Bold()
-                                .LineHeight(1.1f);
-                        }
-
-
-                        if (!string.IsNullOrWhiteSpace(
-                            model.CompanyAddressLine2))
-                        {
-                            inner.Item()
-                                .AlignCenter()
-                                .PaddingHorizontal(2)
-                                .Text(
-                                    CleanAddress(
-                                        model.CompanyAddressLine2))
-                                .FontSize(8.5f)
-                                .Bold()
-                                .LineHeight(1.1f);
-                        }
-
+                        inner.Item()
+                            .AlignCenter()
+                            .Text("Cin No.: U24304GJ2022PTC137549")
+                            .FontSize(7f)
+                            .Bold();
 
                         inner.Item()
-                            .PaddingTop(4)
+                            .AlignCenter()
+                            .PaddingHorizontal(2)
+                            .Text("Regd. Office: 3rd Floor Chinubhai House, 7-B Amrutbaug colony, opp. Sardar Patel Stadium, Near Hindu Colony, Navrangpura Ahmadabad GJ 380014.")
+                            .FontSize(7f)
+                            .Bold()
+                            .LineHeight(1.1f);
+
+                        inner.Item()
+                            .AlignCenter()
+                            .PaddingHorizontal(2)
+                            .Text("Corp. Office: 58/1, Halder Para Lane,Salkia, Howrah- 711106")
+                            .FontSize(7f)
+                            .Bold()
+                            .LineHeight(1.1f);
+
+                        inner.Item()
+                            .AlignCenter()
+                            .PaddingHorizontal(2)
+                            .Text("Mail id: hr@iniciolabs.com Mob: 8637078150 website: www.iniciolabs.com")
+                            .FontSize(7f)
+                            .Bold()
+                            .LineHeight(1.1f);
+
+                        inner.Item()
+                            .PaddingTop(3)
                             .AlignCenter()
                             .Text(
-                                $"Salary Slip for the month of {model.Month}-{model.Year}")
-                            .FontSize(10.5f)
+                                $"Salary Slip for the month of {model?.Month}-{model?.Year}")
+                            .FontSize(9.5f)
                             .Bold();
                     });
 
@@ -1601,7 +1614,7 @@ public class PayslipPdfService
                 // RIGHT BALANCE
                 // --------------------------------------------
 
-                row.ConstantItem(100);
+                row.ConstantItem(110);
             });
     }
 

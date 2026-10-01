@@ -637,7 +637,8 @@
 
             var $tr = $("<tr></tr>");
 
-            $tr.append(`<td>${row.id}</td>`);
+            //$tr.append(`<td>${row.id}</td>`);
+            $tr.append(`<td>${i + 1}</td>`);
             $tr.append(`<td><strong>${row.name}</strong></td>`);
             $tr.append(`<td><span class="type-badge ${typeClass}">${row.type}</span></td>`);
             $tr.append(`<td style="text-align:center;">${calcHtml}</td>`);

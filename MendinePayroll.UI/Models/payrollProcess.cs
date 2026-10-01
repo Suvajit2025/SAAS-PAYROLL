@@ -109,6 +109,7 @@ namespace MendinePayroll.UI.Models
            Audit / Debug (CRITICAL)
         ========================= */
         public string CalculationExpression { get; set; } // Stored DB formula
+        public string CalculationRule { get; set; }
     }
 
     public class EmployeeSalaryHeader

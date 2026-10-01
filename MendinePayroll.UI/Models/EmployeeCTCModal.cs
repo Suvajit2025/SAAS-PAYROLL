@@ -143,7 +143,7 @@ namespace MendinePayroll.UI.Models
 
         public bool IsStatutory { get; set; }
         public string StatutoryType { get; set; }
-
+        public string CalculationRule { get; set; }
         public decimal? MaxLimit { get; set; }
         public string RoundingType { get; set; }
 

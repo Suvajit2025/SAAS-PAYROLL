@@ -751,7 +751,12 @@
             },
 
             columns: [
-                { data: "SalaryConfigureID" },
+                {
+                    data: null,
+                    defaultContent: "",
+                    orderable: false,
+                    searchable: false
+                },
 
                 {
                     data: "SalaryConfigureName",
@@ -798,6 +803,15 @@
             language: {
                 emptyTable: "No Salary Structures found",
                 processing: "Loading...",
+            },
+
+            drawCallback: function () {
+                const table = this.api();
+                const pageStart = table.page.info().start;
+
+                table.column(0, { page: "current" }).nodes().each(function (cell, index) {
+                    cell.textContent = pageStart + index + 1;
+                });
             }
         });
     }

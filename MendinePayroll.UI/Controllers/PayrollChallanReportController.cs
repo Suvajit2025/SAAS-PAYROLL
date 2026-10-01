@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Common.Utility;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using ExcelDataReader;
@@ -179,9 +179,11 @@ namespace MendinePayroll.UI.Controllers
         public JsonResult GetAllEmployeePFChallan(int Month, int Year, int? empParam, string Status, int numberofRow, int pagenumber)
         {
             int? Empid = (empParam == 0 ? (int?)null : empParam);
+            int rowsToFetch = numberofRow > 0 ? numberofRow : 9999;
+            int page = pagenumber > 0 ? pagenumber : 1;
 
             // Call SP
-            var dt = clsDatabase.fnDataTable("SP_GetEmployeePF_ECR_Report", Month, Year, Empid, Status, numberofRow, pagenumber, TenantId);
+            var dt = clsDatabase.fnDataTable("SP_GetEmployeePF_ECR_Report", Month, Year, Empid, Status ?? "1", rowsToFetch, page, TenantId);
 
             // Convert DataTable → List<Dictionary<string, object>>
             var rows = new List<Dictionary<string, object>>();
@@ -277,30 +279,110 @@ namespace MendinePayroll.UI.Controllers
                 return Json(new List<object>(), JsonRequestBehavior.AllowGet);
             }
 
-            string companyFilter = NormalizeMultiSelect(companyIds);
-            string deptFilter = NormalizeMultiSelect(deptIds);
-            string categoryFilter = NormalizeMultiSelect(categoryIds);
+            DataTable dt = clsDatabase.fnDataTable("EmployeeList_Get", TenantId);
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEE_LIST", TenantId);
+            }
 
-            DataTable dt = clsDatabase.fnDataTable(
-                "SP_SAAS_GET_EMPLOYEE_CTC",
-                TenantId,
-                companyFilter,
-                deptFilter,
-                categoryFilter
-            );
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return Json(new List<object>(), JsonRequestBehavior.AllowGet);
+            }
 
             var list = dt.AsEnumerable().Select(r => new
             {
-                EmpID = r["EmpID"]?.ToString(),
-                EmpName = r["EmpName"]?.ToString(),
-                EmpCode = r["EmpCode"]?.ToString(),
-                Empstatus = r["Status"]?.ToString(),
-                CompanyID = r["CompanyID"]?.ToString(),
-                DepartmentID = r["DepartmentID"]?.ToString(),
-                CategoryID = r["CategoryID"]?.ToString()
+                EmpID = r.Table.Columns.Contains("empid") ? r["empid"]?.ToString() : r["EmpID"]?.ToString(),
+                EmpName = (r.Table.Columns.Contains("EmployeeName") ? r["EmployeeName"]?.ToString() : (r["empfirstname"]?.ToString() + " " + r["emplastname"]?.ToString())).Trim(),
+                EmpCode = r.Table.Columns.Contains("empcode") ? r["empcode"]?.ToString() : r["EmpCode"]?.ToString(),
+                Department = r.Table.Columns.Contains("Department") ? r["Department"]?.ToString() : "",
+                Empstatus = "ACTIVE"
             }).ToList();
 
             return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult ExportPFChallanToExcel(int Month, int Year, string empIds = null)
+        {
+            var dt = clsDatabase.fnDataTable("SP_GetEmployeePF_ECR_Report", Month, Year, (int?)null, "1", 9999, 1, TenantId);
+
+            if (dt == null || dt.Rows.Count == 0)
+                return Json("NODATA", JsonRequestBehavior.AllowGet);
+
+            DataTable exportDt = new DataTable("EPF_ECR");
+            exportDt.Columns.Add("UAN NO", typeof(string));
+            exportDt.Columns.Add("MEMBER NAME", typeof(string));
+            exportDt.Columns.Add("GROSS WAGES", typeof(decimal));
+            exportDt.Columns.Add("EPF WAGES", typeof(decimal));
+            exportDt.Columns.Add("EPS WAGES", typeof(decimal));
+            exportDt.Columns.Add("EDLI WAGES", typeof(decimal));
+            exportDt.Columns.Add("EPF CONTRI REMITTED", typeof(decimal));
+            exportDt.Columns.Add("EPS CONTRI REMITTED", typeof(decimal));
+            exportDt.Columns.Add("EPF EPS DIFF REMITTED", typeof(decimal));
+            exportDt.Columns.Add("NCP DAYS", typeof(int));
+            exportDt.Columns.Add("ADVANCES", typeof(decimal));
+
+            HashSet<string> empIdSet = null;
+            if (!string.IsNullOrWhiteSpace(empIds))
+            {
+                empIdSet = new HashSet<string>(empIds.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()));
+            }
+
+            foreach (DataRow row in dt.Rows)
+            {
+                string rowEmpId = row["EmpId"]?.ToString();
+                if (empIdSet != null && !empIdSet.Contains(rowEmpId))
+                {
+                    continue;
+                }
+
+                exportDt.Rows.Add(
+                    row["UAN"] != DBNull.Value ? row["UAN"].ToString() : "",
+                    row["EmployeeName"] != DBNull.Value ? row["EmployeeName"].ToString() : "",
+                    row["GROSS_WAGES"] != DBNull.Value ? Convert.ToDecimal(row["GROSS_WAGES"]) : 0m,
+                    row["EPFWages"] != DBNull.Value ? Convert.ToDecimal(row["EPFWages"]) : 0m,
+                    row["EPSWages"] != DBNull.Value ? Convert.ToDecimal(row["EPSWages"]) : 0m,
+                    row["EDLIWages"] != DBNull.Value ? Convert.ToDecimal(row["EDLIWages"]) : 0m,
+                    row["EPFRemitted"] != DBNull.Value ? Convert.ToDecimal(row["EPFRemitted"]) : 0m,
+                    row["EPSRemitted"] != DBNull.Value ? Convert.ToDecimal(row["EPSRemitted"]) : 0m,
+                    row["EPFEPSDIFF"] != DBNull.Value ? Convert.ToDecimal(row["EPFEPSDIFF"]) : 0m,
+                    row["NCPDays"] != DBNull.Value ? Convert.ToInt32(row["NCPDays"]) : 0,
+                    row["ADVANCES"] != DBNull.Value ? Convert.ToDecimal(row["ADVANCES"]) : 0m
+                );
+            }
+
+            if (exportDt.Rows.Count == 0)
+                return Json("NODATA", JsonRequestBehavior.AllowGet);
+
+            string fileName = $"EPF_ECR_{Month}_{Year}.xlsx";
+            string folderPath = Server.MapPath("~/Downloads/");
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+
+            string filePath = Path.Combine(folderPath, fileName);
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                var sheet = wb.Worksheets.Add(exportDt, "EPF_ECR");
+                sheet.Table("Table1").ShowAutoFilter = false;
+                sheet.Table("Table1").Theme = XLTableTheme.None;
+                sheet.Columns().AdjustToContents();
+                wb.SaveAs(filePath);
+            }
+
+            return Json(fileName, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult DownloadExcel(string fileName)
+        {
+            string fullPath = Path.Combine(Server.MapPath("~/Downloads/"), fileName);
+            if (!System.IO.File.Exists(fullPath))
+                return HttpNotFound();
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
+            System.IO.File.Delete(fullPath);
+            return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
 
 

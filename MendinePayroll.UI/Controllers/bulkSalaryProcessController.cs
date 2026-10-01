@@ -597,11 +597,7 @@ namespace MendinePayroll.UI.Controllers
             foreach (var emp in request.Employees)
             {
                 /* --- Salary Header --- */
-                DataTable dtHeader = clsDatabase.fnDataTable(
-                    "Payroll_SaaS_GetSalaryHeader",
-                    TenantId,
-                    emp.EmployeeId
-                );
+                DataTable dtHeader = clsDatabase.fnDataTable("Payroll_SaaS_GetSalaryHeader",TenantId,emp.EmployeeId);
 
                 if (dtHeader.Rows.Count == 0)
                     continue;
@@ -613,22 +609,22 @@ namespace MendinePayroll.UI.Controllers
                 bool isESIC = Convert.ToBoolean(h["IsESIC_Applicable"]);
                 bool isPTax = Convert.ToBoolean(h["IsPTax_Applicable"]);
                 int PayGroupID = Convert.ToInt32(h["PayGroupID"]);
+                string payGroupName = ResolvePayGroupName(h, PayGroupID);
                 employeePayGroupMap[emp.EmployeeId] = PayGroupID;
 
                 if (attendancePayGroupId <= 0)
                     attendancePayGroupId = PayGroupID;
 
                 /* --- Salary Components --- */
-                DataTable dtComp = clsDatabase.fnDataTable(
-                    "Payroll_SaaS_GetSalaryDetails",
-                    empSalaryConfigId
-                );
+                DataTable dtComp = clsDatabase.fnDataTable("Payroll_SaaS_GetSalaryDetails",empSalaryConfigId,TenantId);
 
                 var components = MapComponents(dtComp, emp.PaidDays, totalDays);
 
                 var salary = CalculateMonthlySalary(
                     components,
                     emp.EmployeeId,
+                    PayGroupID,
+                    payGroupName,
                     request.ProcessMonth.Value,
                     request.ProcessYear.Value,
                     isPF,
@@ -821,7 +817,7 @@ namespace MendinePayroll.UI.Controllers
             return (request.ToDate.Value.Date - request.FromDate.Value.Date).Days + 1;
         }
 
-        public static EmployeeSalaryResponse CalculateMonthlySalary(List<SalaryComponentResult> components, int employeeId, int processMonth, int processYear,
+        public static EmployeeSalaryResponse CalculateMonthlySalary(List<SalaryComponentResult> components, int employeeId, int payGroupId, string payGroupName, int processMonth, int processYear,
                                                                bool isPFApplicable, bool isESICApplicable, bool isPTaxApplicable, ComponentValueResolver valueResolver)
         {
             if (components == null || components.Count == 0)
@@ -829,6 +825,11 @@ namespace MendinePayroll.UI.Controllers
 
             // Determine total days in month for proration
             decimal totalDays = components.First().TotalDays > 0 ? components.First().TotalDays: DateTime.DaysInMonth(processYear, processMonth);
+            // Keep a separate map for ESIC eligibility. This map represents a
+            // full-attendance month and is not changed by payroll proration.
+            // Formula components are added to it during PASS 2 after their
+            // dependencies have been added in PASS 1.
+            var fullMonthValueMap = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
 
             decimal totalEarnings = 0;
             decimal totalDeductions = 0;
@@ -844,13 +845,14 @@ namespace MendinePayroll.UI.Controllers
                 if (c.LogicType == "EXCEL_UPLOAD" || (c.IsStatutory && c.StatutoryType == "TDS") || (c.IsOther && c.OtherType == "LOANRECOVERY"))
                 {
                     // 1. Fetch raw value from DB (e.g., OT hours or Bonus amount)
-                    decimal rawVal = valueResolver(employeeId, c.PayConfigId, processMonth, processYear, c);
+                    decimal rawVal = valueResolver(employeeId, payGroupId, payGroupName, c.PayConfigId, processMonth, processYear, c);
 
                     c.BaseAmount = rawVal;
                     c.OriginalAmount = rawVal;
                     c.Rate = c.Amount; // Keep master rate in Rate field
                     c.Amount = ApplyRounding(c.BaseAmount, "");
                     valueMap[c.PayConfigName] = c.Amount;
+                    fullMonthValueMap[c.PayConfigName] = c.Amount;
 
                     // Store absent days for Production Bonus formula
                     if (c.OtherType == "CONT_ATTND")
@@ -870,73 +872,10 @@ namespace MendinePayroll.UI.Controllers
 
                 valueMap[c.PayConfigName] = c.Amount;
 
-                //c.BaseAmount = c.Amount;
-                //decimal prorated = Prorate(c.BaseAmount, c.PaidDays, totalDays);
-                //c.OriginalAmount = prorated;
-                //c.Amount = ApplyRounding(prorated, c.RoundingType);
-                //valueMap[c.PayConfigName] = c.Amount;
+                // Eligibility must use the configured monthly value, not the
+                // amount reduced because of PaidDays.
+                fullMonthValueMap[c.PayConfigName] = ApplyRounding(c.BaseAmount, c.RoundingType);
             }
-
-            ///* ============================================================
-            //    PASS 2 : FORMULA & EXCEL LOGIC
-            //   ============================================================ */
-            //foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD"))
-            //{
-            //    decimal baseValue = 0;
-            //    bool formulaEvaluated = false;
-
-            //    if (c.LogicType == "EXCEL_UPLOAD")
-            //    {
-            //        if (!string.IsNullOrEmpty(c.CalculationExpression))
-            //        {
-            //            valueMap["{VAL}"] = c.BaseAmount;
-            //            valueMap["{RATE}"] = c.Rate;
-            //            valueMap["{PAIDDAYS}"] = c.PaidDays;
-            //            valueMap["{WORKING_DAYS}"] = totalDays;
-
-            //            baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
-            //            formulaEvaluated = true;
-            //        }
-            //        else
-            //        {
-            //            baseValue = c.BaseAmount;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        // Standard [BASIC]+[DA] formulas
-            //        baseValue = EvaluateDynamicFormula(c.CalculationExpression, valueMap);
-            //    }
-
-            //    c.BaseAmount = baseValue;
-            //    decimal calculated = 0;
-
-            //    if (c.LogicType == "EXCEL_UPLOAD" && formulaEvaluated)
-            //    {
-            //        calculated = baseValue;
-            //    }
-            //    else
-            //    {
-            //        calculated = c.IsPercentage ? baseValue * (c.Rate / 100) : baseValue;
-            //    }
-
-            //// Apply Max Limit
-            //if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && calculated > c.MaxLimit.Value)
-            //    calculated = c.MaxLimit.Value;
-
-            //if (c.LogicType == "EXCEL_UPLOAD")
-            //{
-            //    c.OriginalAmount = calculated;
-            //    c.Amount = ApplyRounding(calculated, c.RoundingType);
-            //}
-            //else
-            //{
-            //    decimal proratedFormula = Prorate(calculated, c.PaidDays, totalDays);
-            //    c.OriginalAmount = proratedFormula;
-            //    c.Amount = ApplyRounding(proratedFormula, c.RoundingType);
-            //}
-
-            //valueMap[c.PayConfigName] = c.Amount;
 
             /* ============================================================
                 PASS 2 : FORMULA & EXCEL LOGIC
@@ -944,6 +883,7 @@ namespace MendinePayroll.UI.Controllers
             foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD"))
             {
                 decimal baseValue = 0;
+                decimal fullMonthBaseValue = 0;
                 bool formulaEvaluated = false;
 
                 if (c.LogicType == "EXCEL_UPLOAD")
@@ -959,17 +899,32 @@ namespace MendinePayroll.UI.Controllers
                             valueMap["{ABSENT_DAYS}"] = 0;
                         }
                         baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
+
+                        // Evaluate the same expression for a full-attendance
+                        // month. This prevents low attendance from making an
+                        // otherwise ineligible employee newly ESIC-eligible.
+                        fullMonthValueMap["{VAL}"] = c.BaseAmount;
+                        fullMonthValueMap["{RATE}"] = c.Rate;
+                        fullMonthValueMap["{PAIDDAYS}"] = totalDays;
+                        fullMonthValueMap["{WORKING_DAYS}"] = totalDays;
+                        fullMonthValueMap["{ABSENT_DAYS}"] = 0;
+                        fullMonthBaseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, fullMonthValueMap);
                         formulaEvaluated = true;
                     }
                     else
                     {
                         baseValue = c.BaseAmount;
+                        fullMonthBaseValue = c.BaseAmount;
                     }
                 }
                 else
                 {
                     // Formula uses already-prorated values from valueMap
                     baseValue = EvaluateDynamicFormula(c.CalculationExpression, valueMap);
+
+                    // The full-month formula uses the unprorated values of all
+                    // components calculated before this component.
+                    fullMonthBaseValue = EvaluateDynamicFormula(c.CalculationExpression, fullMonthValueMap);
                 }
 
                 c.BaseAmount = baseValue;
@@ -982,9 +937,7 @@ namespace MendinePayroll.UI.Controllers
                 }
                 else
                 {
-                    calculated = c.IsPercentage
-                        ? baseValue * (c.Rate / 100)
-                        : baseValue;
+                    calculated = c.IsPercentage ? baseValue * (c.Rate / 100) : baseValue;
                 }
 
                 // Apply Max Limit on final calculated value
@@ -997,41 +950,21 @@ namespace MendinePayroll.UI.Controllers
                 c.Amount = ApplyRounding(calculated, c.RoundingType);
 
                 valueMap[c.PayConfigName] = c.Amount;
+
+                decimal fullMonthCalculated = c.LogicType == "EXCEL_UPLOAD" && formulaEvaluated
+                    ? fullMonthBaseValue
+                    : (c.IsPercentage ? fullMonthBaseValue * (c.Rate / 100m) : fullMonthBaseValue);
+
+                if (c.MaxLimit.HasValue
+                    && c.MaxLimit.Value > 0
+                    && fullMonthCalculated > c.MaxLimit.Value)
+                {
+                    fullMonthCalculated = c.MaxLimit.Value;
+                }
+
+                fullMonthValueMap[c.PayConfigName] = ApplyRounding(fullMonthCalculated, c.RoundingType);
             }
-            ///* ============================================================
-            //    DYNAMIC GROSS CALCULATION (For Factory Employees & Variable Components)
-            //   ============================================================ */
-            //// Sum of all allowances (Fixed, Formula, Manual, etc.) excluding the Gross summary component itself
-            //decimal calculatedGrossSum = components
-            //    .Where(x => ((x.PayType ?? "").Trim().ToUpperInvariant() == "ALLOWANCES" || x.IsAllowance) && !x.IsGrossComponent)
-            //    .Sum(x => x.Amount);
 
-            //// 🔑 Sum of LogicType == "EXCEL_UPLOAD" allowance/earning components to add into Gross
-            //decimal excelUploadGrossSum = components
-            //    .Where(x => x.LogicType == "EXCEL_UPLOAD" && ((x.PayType ?? "").Trim().ToUpperInvariant() == "ALLOWANCES" || x.IsAllowance) && !x.IsGrossComponent)
-            //    .Sum(x => x.Amount);
-
-            //var grossComp = components.FirstOrDefault(x => x.IsGrossComponent);
-            //if (grossComp != null)
-            //{
-            //    if (grossComp.Amount == 0)
-            //    {
-            //        // If Gross is dynamic/zero in master, assign full sum of allowances (including EXCEL_UPLOAD)
-            //        grossComp.Amount = calculatedGrossSum;
-            //        grossComp.OriginalAmount = calculatedGrossSum;
-            //        grossComp.BaseAmount = calculatedGrossSum;
-            //        valueMap[grossComp.PayConfigName] = calculatedGrossSum;
-            //    }
-            //    else if (excelUploadGrossSum > 0)
-            //    {
-            //        // 🔑 ADD EXCEL_UPLOAD FIELD VALUES TO FIXED GROSS:
-            //        // If Gross has a fixed master amount, add the variable LogicType == "EXCEL_UPLOAD" allowance values to Gross
-            //        grossComp.Amount += excelUploadGrossSum;
-            //        grossComp.OriginalAmount += excelUploadGrossSum;
-            //        grossComp.BaseAmount += excelUploadGrossSum;
-            //        valueMap[grossComp.PayConfigName] = grossComp.Amount;
-            //    }
-            //}
             /* ============================================================
                GROSS CALCULATION
                ------------------------------------------------------------
@@ -1106,6 +1039,13 @@ namespace MendinePayroll.UI.Controllers
             decimal grossAmount = (grossComp != null && grossComp.Amount > 0) ? grossComp.Amount : calculatedGrossSum;
             decimal actualMonthlyGross = (grossComp != null && grossComp.BaseAmount > 0) ? grossComp.BaseAmount : grossAmount;
 
+            // ESIC employee and employer components are calculated separately.
+            // Defer the contribution-period expiry update until both components
+            // are complete so the first component cannot change the slab state
+            // seen by the second component.
+            bool shouldExpireEsicTag = false;
+            int esicTagIdToExpire = 0;
+
             foreach (var c in components.Where(x => x.IsStatutory))
             {
                 decimal dynamicBaseValue = ApplyRounding(EvaluateDynamicFormula(c.CalculationExpression, valueMap), c.RoundingType);
@@ -1144,12 +1084,91 @@ namespace MendinePayroll.UI.Controllers
                         else isInActiveWindow = (processMonth >= slabStart || processMonth <= slabEnd);
                     }
 
+                    if (isInActiveWindow && processMonth == slabEnd && currentID > 0)
+                    {
+                        shouldExpireEsicTag = true;
+                        esicTagIdToExpire = currentID;
+                    }
+
                     decimal esicLimit = c.MaxLimit ?? 21000;
-                    // GROSS for ESIC = only taxable components
-                    // Non-taxable monthly-expense components are excluded.
-                    //decimal esicTaxableGross = components
-                    //   .Where(x => x.IsTaxable && !x.IsOther)
-                    //    .Sum(x => x.Amount);
+                    /* ============================================================
+                       NEW ESIC CALCULATION RULE: ESIC_BASIC_50_GROSS
+
+                       Eligibility uses a separately calculated full-attendance
+                       salary, including formula components. The contribution
+                       uses the current payroll amounts after proration.
+                       ============================================================ */
+
+                    if (string.Equals(c.CalculationRule, "ESIC_BASIC_50_GROSS", StringComparison.OrdinalIgnoreCase))
+                    {
+                        decimal esicMonthlyBasic = components
+                            .Where(x => x.IsBasicComponent)
+                            .Sum(x => fullMonthValueMap.TryGetValue(
+                                x.PayConfigName,
+                                out decimal fullMonthAmount)
+                                    ? fullMonthAmount
+                                    : 0m);
+
+                        decimal esicMonthlyGross = components
+                            .Where(x =>
+                                !x.IsGrossComponent
+                                && ((x.PayType ?? "").Trim().Equals(
+                                        "ALLOWANCES",
+                                        StringComparison.OrdinalIgnoreCase)
+                                    || x.IsAllowance)
+                                && (x.IsIncludedInGross == true
+                                    || x.IsIncludedInGross == null))
+                            .Sum(x => fullMonthValueMap.TryGetValue(
+                                x.PayConfigName,
+                                out decimal fullMonthAmount)
+                                    ? fullMonthAmount
+                                    : 0m);
+
+                        decimal esicEligibilityBasis = Math.Max(
+                            esicMonthlyBasic,
+                            esicMonthlyGross * 0.50m);
+
+                        bool currentRuleEligible = esicEligibilityBasis <= esicLimit;
+
+                        // The employee-level database flag is the master switch.
+                        // Within that switch, either current salary eligibility
+                        // or an existing active contribution period can continue
+                        // ESIC coverage.
+                        bool finalESICApplicable =
+                            isESICApplicable
+                            && (currentRuleEligible || isInActiveWindow);
+
+                        if (!finalESICApplicable)
+                        {
+                            c.BaseAmount = 0;
+                            c.OriginalAmount = 0;
+                            c.Amount = 0;
+                        }
+                        else
+                        {
+                            decimal currentBasic = components
+                                .Where(x => x.IsBasicComponent)
+                                .Sum(x => x.Amount);
+
+                            decimal currentESICBasis = Math.Max(
+                                currentBasic,
+                                grossAmount * 0.50m);
+
+                            c.BaseAmount = currentESICBasis;
+
+                            c.OriginalAmount =
+                                currentESICBasis * (c.Rate / 100m);
+
+                            // ESIC rounds UP
+                            c.Amount = Math.Ceiling(c.OriginalAmount);
+                        }
+
+                        valueMap[c.PayConfigName] = c.Amount;
+
+                        continue;
+                    }
+
+
                     /* ============================================================
                        ESIC BASE
 
@@ -1195,7 +1214,6 @@ namespace MendinePayroll.UI.Controllers
                         c.OriginalAmount =esicTaxableGross * (c.Rate / 100); 
                         // ESIC rounds UP
                         c.Amount = Math.Ceiling(c.OriginalAmount);
-                        if (processMonth == slabEnd) clsDatabase.fnDataTable("SP_UPDATE_ESIC_TAG", employeeId, currentID);
                     }
                     valueMap[c.PayConfigName] = c.Amount;
                 }
@@ -1228,6 +1246,11 @@ namespace MendinePayroll.UI.Controllers
                 }
             }
 
+            if (shouldExpireEsicTag)
+            {
+                clsDatabase.fnDataTable("SP_UPDATE_ESIC_TAG", employeeId, esicTagIdToExpire);
+            }
+
             /* ============================================================
                 TOTALS & RESPONSE
                ============================================================ */
@@ -1254,322 +1277,7 @@ namespace MendinePayroll.UI.Controllers
                 Components = components
             };
 
-            //return new EmployeeSalaryResponse
-            //{
-            //    TotalEarnings = Math.Round(totalEarnings, 0),
-            //    TotalDeductions = Math.Round(totalDeductions, 0),
-            //    //NetPay = Math.Round(totalEarnings - totalDeductions, 0),
-            //    NetPay = (decimal)Math.Floor(totalEarnings - totalDeductions),
-            //    EmployerContribution = Math.Round(totalEmployerCC, 0),
-            //    MonthlyCTC = Math.Round(totalEarnings + totalEmployerCC, 0),
-            //    Components = components
-            //};
-
         }
-
-        //public static EmployeeSalaryResponse CalculateMonthlySalary(List<SalaryComponentResult> components, int employeeId, int processMonth, int processYear,
-        //                                                             bool isPFApplicable, bool isESICApplicable, bool isPTaxApplicable, ComponentValueResolver valueResolver)
-        //{
-        //    if (components == null || components.Count == 0)
-        //        return null;
-
-        //    decimal totalDays = components.First().TotalDays > 0
-        //        ? components.First().TotalDays
-        //        : DateTime.DaysInMonth(processYear, processMonth);
-
-        //    //decimal totalDays = 30;
-
-        //    decimal totalEarnings = 0;
-        //    decimal totalDeductions = 0;
-
-        //    // Used ONLY for FORMULA evaluation
-        //    Dictionary<string, decimal> valueMap = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
-
-        //    /* ============================================================
-        //       PASS 1: FIXED / MANUAL / EXCEL RAW DATA
-        //       ============================================================ */
-        //    foreach (var c in components.Where(x => x.LogicType == "FIXED" ||
-        //                                           x.LogicType == "MANUAL_INPUT" ||
-        //                                           x.LogicType == "EXCEL_UPLOAD" ||
-        //                                           (x.IsOther && x.OtherType == "LOANRECOVERY")))
-        //    {
-        //        if (c.LogicType == "EXCEL_UPLOAD" || (c.IsStatutory && c.StatutoryType == "TDS") || (c.IsOther && c.OtherType == "LOANRECOVERY"))
-        //        {
-        //            // 1. Fetch raw value from DB (e.g., 2.1 for OT or 1.0 for Attendance)
-        //            decimal rawVal = valueResolver(employeeId, c.PayConfigId, processMonth, processYear, c);
-
-        //            // 2. Store it in the component object for Pass 2
-        //            c.BaseAmount = rawVal;
-
-        //            // 3. Map the component name so OTHER formulas can use this result
-        //            // We DON'T set {VAL} or {RATE} here because they will get overwritten in the loop.
-        //            c.OriginalAmount = rawVal;
-        //            c.Rate = c.Amount;
-        //            c.Amount = ApplyRounding(c.BaseAmount, "");
-        //            valueMap[c.PayConfigName] = c.Amount;
-
-        //            continue;
-        //        } 
-        //        // Normal Fixed/Manual Logic
-        //        c.BaseAmount = c.Amount;
-        //        c.OriginalAmount = Prorate(c.BaseAmount, c.PaidDays, totalDays);
-        //        c.Amount = ApplyRounding(Prorate(c.BaseAmount, c.PaidDays, totalDays), c.RoundingType);
-        //        valueMap[c.PayConfigName] = c.Amount;
-        //    }
-
-        //    /* ============================================================
-        //        PASS 2 : FORMULA & EXCEL LOGIC (Handles Fixed & Formula)
-        //       ============================================================ */
-        //    foreach (var c in components.Where(x => x.LogicType == "FORMULA" || x.LogicType == "EXCEL_UPLOAD" ))
-        //    {
-        //        decimal baseValue = 0;
-        //        bool formulaEvaluated = false;
-        //        if (c.LogicType == "EXCEL_UPLOAD")
-        //        {
-        //            // 1. If there IS a formula (like Attendance Bonus or OT)
-        //            if (!string.IsNullOrEmpty(c.CalculationExpression))
-        //            {
-        //                valueMap["{VAL}"] = c.BaseAmount;
-        //                valueMap["{RATE}"] = c.Rate;
-        //                valueMap["{PAIDDAYS}"] = c.PaidDays;
-        //                valueMap["{WORKING_DAYS}"] = totalDays;
-
-        //                baseValue = EvaluateDynamicFormulaEXCEL(c.CalculationExpression, valueMap);
-        //                formulaEvaluated = true;
-        //            }
-        //            else
-        //            {
-        //                // 2. If there is NO formula (e.g., a simple Incentive upload)
-        //                // Just use the raw value collected in Pass 1
-        //                baseValue = c.BaseAmount;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            // Standard [BASIC]+[DA] formulas
-        //            baseValue = EvaluateDynamicFormula(c.CalculationExpression, valueMap);
-        //        }
-
-        //        c.BaseAmount = baseValue;
-
-        //        //// Apply Percentage logic (usually 100% for fixed uploads)
-        //        //decimal calculated = c.IsPercentage ? baseValue * (c.Rate / 100) : baseValue;
-        //        // --- LOGIC UPDATE STARTS HERE ---
-        //        decimal calculated = 0;
-
-        //        // If it's an Excel Upload with a formula, we assume the formula 
-        //        // result (baseValue) is the final amount.
-        //        if (c.LogicType == "EXCEL_UPLOAD" && formulaEvaluated)
-        //        {
-        //            calculated = baseValue;
-        //        }
-        //        else
-        //        {
-        //            // Standard behavior: Apply Percentage/Rate logic
-        //            calculated = c.IsPercentage ? baseValue * (c.Rate / 100) : baseValue;
-        //        }
-        //        // --- LOGIC UPDATE ENDS HERE ---
-        //        // Apply Max Limit
-        //        if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && calculated > c.MaxLimit.Value)
-        //            calculated = c.MaxLimit.Value;
-
-        //        if (c.LogicType == "EXCEL_UPLOAD")
-        //        {
-        //            // No proration for manual Excel uploads
-        //            c.OriginalAmount = calculated;
-        //            c.Amount = ApplyRounding(calculated, c.RoundingType);
-        //        }
-        //        else
-        //        {
-        //            // Standard formula proration
-        //            c.OriginalAmount = Prorate(calculated, c.PaidDays, totalDays);
-        //            c.Amount = ApplyRounding(Prorate(calculated, c.PaidDays, totalDays), c.RoundingType);
-        //        }
-
-        //        // Update the map for next components
-        //        valueMap[c.PayConfigName] = c.Amount;
-        //    }
-
-        //    /* =========================
-        //       PASS 3 : STATUTORY (DYNAMIC VIA FORMULA)
-        //       ========================= */
-        //    decimal basicAmount = components
-        //        .Where(x => x.IsBasicComponent)
-        //        .Sum(x => x.Amount);
-
-        //    decimal grossAmount = components
-        //        .Where(x => x.IsGrossComponent)
-        //        .Sum(x => x.Amount);
-
-        //    decimal actualMonthlyGross = components
-        //        .Where(x => x.IsGrossComponent)
-        //        .Select(x => x.BaseAmount)
-        //        .FirstOrDefault();
-        //    foreach (var c in components.Where(x => x.IsStatutory))
-        //    {
-        //        // 1. DYNAMIC BASE CALCULATION
-        //        // Use the stored formula (CalculationExpression) to find the Base (e.g., "[BASIC]+[DA]")
-        //        decimal dynamicBaseValue = ApplyRounding(EvaluateDynamicFormula(
-        //            c.CalculationExpression,
-        //            valueMap
-        //        ), c.RoundingType);
-
-        //        // 🔹 PF CALCULATION
-        //        if (c.StatutoryType.StartsWith("PF"))
-        //        {
-        //            if (!isPFApplicable) { c.Amount = 0; continue; }
-
-        //            decimal pfBase = dynamicBaseValue;
-
-        //            // Apply Statutory Ceiling (e.g., 15,000)
-        //            if (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && pfBase > c.MaxLimit.Value)
-        //                pfBase = c.MaxLimit.Value;
-
-        //            c.BaseAmount = pfBase;
-        //            // Calculation on already-prorated base
-        //            c.OriginalAmount = pfBase * (c.Rate / 100);
-        //            c.Amount = ApplyRounding(pfBase * (c.Rate / 100), c.RoundingType);
-
-        //            valueMap[c.PayConfigName] = c.Amount;
-        //        }
-
-        //        //// 🔹 ESIC CALCULATION
-        //        //else if (c.StatutoryType.StartsWith("ESIC"))
-        //        //{
-        //        //    // Eligibility check usually remains against the MASTER Gross (Fixed)
-        //        //    // You can use actualMonthlyGross calculated earlier for this.
-        //        //    if (!isESICApplicable || (c.MaxLimit.HasValue && c.MaxLimit.Value > 0 && actualMonthlyGross > c.MaxLimit.Value))
-        //        //    {
-        //        //        c.Amount = 0;
-        //        //        continue;
-        //        //    }
-
-        //        //    c.BaseAmount = dynamicBaseValue; // Based on formula like "[GROSS]"
-        //        //    c.Amount = ApplyRounding(dynamicBaseValue * (c.Rate / 100), c.RoundingType);
-
-        //        //    valueMap[c.PayConfigName] = c.Amount;
-        //        //}
-
-        //        // 🔹 ESIC CALCULATION (Integrated with Slab Logic)
-        //        else if (c.StatutoryType.StartsWith("ESIC"))
-        //        {
-        //            bool isSlabEligible = false;
-        //            int slabStart = 0;
-        //            int slabEnd = 0;
-        //            int currentID = 0;
-
-        //            // 1. Fetch the Slab Status from your stored procedure
-        //            DataTable esidt = clsDatabase.fnDataTable("SP_Check_ESIC_SLAB", employeeId);
-
-        //            if (esidt != null && esidt.Rows.Count > 0)
-        //            {
-        //                slabStart = Convert.ToInt32(esidt.Rows[0]["SlabStartMonth"]);
-        //                slabEnd = Convert.ToInt32(esidt.Rows[0]["SlabEndMonth"]);
-        //                isSlabEligible = Convert.ToBoolean(esidt.Rows[0]["IsEligible"]);
-        //                currentID = Convert.ToInt32(esidt.Rows[0]["ID"]);
-        //            }
-
-        //            // 2. Cross-Year Window Logic
-        //            // If slabStart is 10 (Oct) and slabEnd is 3 (March), then months 10,11,12 OR 1,2,3 are valid.
-        //            bool isInActiveWindow = false;
-        //            if (isSlabEligible)
-        //            {
-        //                if (slabStart <= slabEnd) // Normal window (e.g., 4 to 9)
-        //                    isInActiveWindow = (processMonth >= slabStart && processMonth <= slabEnd);
-        //                else // Crossing New Year window (e.g., 10 to 3)
-        //                    isInActiveWindow = (processMonth >= slabStart || processMonth <= slabEnd);
-        //            }
-
-        //            // 3. Eligibility Check: Apply ESIC if in Window OR if Gross <= Limit
-        //            // (ActualMonthlyGross is the fixed master gross used for entry-level eligibility)
-        //            decimal esicLimit = c.MaxLimit ?? 21000;
-
-        //            if (!isESICApplicable || (!isInActiveWindow && actualMonthlyGross > esicLimit))
-        //            {
-        //                c.OriginalAmount = 0;
-        //                c.Amount = 0;
-        //                valueMap[c.PayConfigName] = 0;
-        //            }
-        //            else
-        //            {
-        //                // 4. Calculate based on dynamicBaseValue (the earned gross/formula result)
-        //                c.BaseAmount = dynamicBaseValue;
-
-        //                // ESIC Rule: Round UP to the next higher rupee (Ceiling)
-        //                c.OriginalAmount = dynamicBaseValue * (c.Rate / 100);
-        //                c.Amount = Math.Ceiling(dynamicBaseValue * (c.Rate / 100));
-
-        //                valueMap[c.PayConfigName] = c.Amount;
-
-        //                // 5. Update the Tag if we've hit the end of the contribution period
-        //                if (processMonth == slabEnd)
-        //                {
-        //                    clsDatabase.fnDataTable("SP_UPDATE_ESIC_TAG", employeeId, currentID);
-        //                }
-        //            }
-        //        }
-        //        // 🔹 PTAX CALCULATION
-        //        else if (c.StatutoryType == "PTAX")
-        //        {
-        //            if (!isPTaxApplicable) { c.Amount = 0; continue; }
-
-        //            // Use formula result (Actual Earned Gross) for slab check
-        //            decimal slabAmount = CalculatePTaxFromJson(grossAmount, c.PTaxSlabsJson);
-
-        //            c.BaseAmount = dynamicBaseValue;
-        //            c.OriginalAmount = slabAmount;
-        //            c.Amount = ApplyRounding(slabAmount, c.RoundingType);
-
-        //            valueMap[c.PayConfigName] = c.Amount;
-        //        }
-        //        // 🔹 PTAX CALCULATION
-        //        else if (c.StatutoryType == "GRATUITY")
-        //        { 
-        //            c.BaseAmount = dynamicBaseValue;
-        //            c.OriginalAmount = dynamicBaseValue * (c.Rate / 100);
-        //            c.Amount = ApplyRounding(dynamicBaseValue * (c.Rate / 100), c.RoundingType);
-
-        //            valueMap[c.PayConfigName] = c.Amount;
-        //        }
-        //    }
-        //    /* =========================
-        //       TOTALS
-        //    ========================= */
-        //    decimal totalEmployerCC = 0;        // Employer contributions (CTC part, NOT net)
-
-        //    foreach (var c in components)
-        //    {
-        //        var pt = (c.PayType ?? "").Trim().ToUpperInvariant();
-
-        //        if (pt == "ALLOWANCES")
-        //        {
-        //            totalEarnings += c.OriginalAmount;
-        //        }
-        //        else if (pt == "DEDUCTION")
-        //        {
-        //            totalDeductions += c.OriginalAmount;
-        //        }
-        //        else if (pt == "CC")
-        //        {
-        //            totalEmployerCC += c.OriginalAmount;   // employer cost only
-        //        }
-        //    }
-
-        //    var netPay = totalEarnings - totalDeductions;          // ✅ CC excluded
-        //    var monthlyCTC = totalEarnings + totalEmployerCC;      // ✅ optional for pivot use
-
-
-        //    return new EmployeeSalaryResponse
-        //    {
-        //        TotalEarnings = Math.Round(totalEarnings, 0),
-        //        TotalDeductions = Math.Round(totalDeductions, 0),
-        //        NetPay = Math.Round(netPay, 0),
-        //        EmployerContribution = Math.Round(totalEmployerCC, 0), // ✅ add this property (recommended)
-        //        MonthlyCTC = Math.Round(monthlyCTC, 0),                // ✅ add this property (recommended)
-        //        Components = components
-        //    };
-
-        //}
         private static decimal EvaluateDynamicFormulaEXCEL(string formula, Dictionary<string, decimal> valueMap)
         {
             if (string.IsNullOrWhiteSpace(formula)) return 0;
@@ -1624,7 +1332,12 @@ namespace MendinePayroll.UI.Controllers
         {
             if (string.IsNullOrWhiteSpace(formula))
                 return 0;
-
+            if (formula.Trim().Equals(
+                "MAX(BASIC, 50% GROSS)",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                formula = "GROSS AMOUNT";
+            }
             var tokens = Regex
                 .Split(formula, @"([\+\-\*\/\%\(\)])")
                 .Select(t => t.Trim())
@@ -1671,7 +1384,29 @@ namespace MendinePayroll.UI.Controllers
 
             return 0;
         }
-        private decimal PayrollValueResolver(int employeeId, int payConfigId, int month, int year, SalaryComponentResult component)
+
+        private string ResolvePayGroupName(DataRow salaryHeader, int payGroupId)
+        {
+            if (salaryHeader != null
+                && salaryHeader.Table.Columns.Contains("PayGroupName")
+                && salaryHeader["PayGroupName"] != DBNull.Value)
+            {
+                return salaryHeader["PayGroupName"].ToString();
+            }
+
+            string userId = Session["UserId"]?.ToString();
+            if (string.IsNullOrWhiteSpace(userId))
+                return string.Empty;
+
+            DataTable payGroups = clsDatabase.fnDataTable("Payroll_SaaS_PayGroup_GET", TenantId, userId);
+            DataRow payGroup = payGroups?.AsEnumerable()
+                .FirstOrDefault(row => row["PayGroupID"] != DBNull.Value
+                    && Convert.ToInt32(row["PayGroupID"]) == payGroupId);
+
+            return payGroup?["PayGroupName"]?.ToString() ?? string.Empty;
+        }
+
+        private decimal PayrollValueResolver(int employeeId, int payGroupId, string payGroupName, int payConfigId, int month, int year, SalaryComponentResult component)
         {
            
             if (component.IsOther && component.OtherType == "LOANRECOVERY")
@@ -1690,7 +1425,7 @@ namespace MendinePayroll.UI.Controllers
                 return GetEmployeeTDS(employeeId, month, year);
 
             if (component.LogicType == "EXCEL_UPLOAD")
-                return GetExcelUploadedAmount(employeeId, payConfigId, month, year);
+                return GetExcelUploadedAmount(employeeId, payGroupId, payGroupName, payConfigId, month, year);
 
             return component.Amount;
         } 
@@ -1743,7 +1478,7 @@ namespace MendinePayroll.UI.Controllers
 
             return 0m;
         }
-        private decimal GetExcelUploadedAmount(int employeeId, int payConfigId, int month, int year)
+        private decimal GetExcelUploadedAmount(int employeeId, int payGroupId, string payGroupName, int payConfigId, int month, int year)
         {
             try
             {
@@ -1755,7 +1490,7 @@ namespace MendinePayroll.UI.Controllers
                 int expenseYear = isPrevMonth ? (month == 1 ? year - 1 : year) : year;
 
                 // Calling the SP
-                object result = clsDatabase.fnDBOperation("SP_Payroll_GetVariableComponentInput", employeeId, payConfigId, expenseMonth, expenseYear, TenantId);
+                object result = clsDatabase.fnDBOperation("SP_Payroll_GetVariableComponentInput",employeeId,payConfigId,expenseMonth,expenseYear,TenantId,payGroupId,payGroupName);
 
                 // If result is null, return 0; otherwise convert to decimal
                 return result != null ? Convert.ToDecimal(result) : 0m;
@@ -2759,6 +2494,10 @@ namespace MendinePayroll.UI.Controllers
                     ========================= */
                     CalculationExpression = row.Table.Columns.Contains("CalculationFormula")
                                 ? row["CalculationFormula"]?.ToString()
+                                : null,
+
+                    CalculationRule = row.Table.Columns.Contains("CalculationRule")
+                                ? row["CalculationRule"]?.ToString()
                                 : null
                 });
             }
@@ -2979,13 +2718,15 @@ namespace MendinePayroll.UI.Controllers
 
             DataRow h = dtHeader.Rows[0];
             int empSalaryConfigId = Convert.ToInt32(h["EmpSalaryConfigID"]);
+            int payGroupId = Convert.ToInt32(h["PayGroupID"]);
+            string payGroupName = ResolvePayGroupName(h, payGroupId);
             bool isPF = Convert.ToBoolean(h["IsPF_Applicable"]);
             bool isESIC = Convert.ToBoolean(h["IsESIC_Applicable"]);
             bool isPTax = Convert.ToBoolean(h["IsPTax_Applicable"]);
 
-            DataTable dtComp = clsDatabase.fnDataTable("Payroll_SaaS_GetSalaryDetails", empSalaryConfigId);
+            DataTable dtComp = clsDatabase.fnDataTable("Payroll_SaaS_GetSalaryDetails", empSalaryConfigId,TenantId);
             var components = MapComponents(dtComp, paidDays, totalDays);
-            var salary = CalculateMonthlySalary(components, req.EmployeeID, processMonth, processYear, isPF, isESIC, isPTax, PayrollValueResolver);
+            var salary = CalculateMonthlySalary(components, req.EmployeeID, payGroupId, payGroupName, processMonth, processYear, isPF, isESIC, isPTax, PayrollValueResolver);
 
             if (salary == null) return Json(new { Success = false, Message = "Salary calculation failed" });
 
@@ -2999,8 +2740,6 @@ namespace MendinePayroll.UI.Controllers
             var patchedDetails = salary.Components.Select(c => {
                 var existingRow = dtExisting.AsEnumerable().FirstOrDefault(r => Convert.ToInt32(r["PayConfigId"]) == c.PayConfigId);
                 string refIds = existingRow != null ? existingRow["ReferenceIds"]?.ToString() : "";
-                //bool wasWaived = existingRow != null && existingRow["IsWaived"] != DBNull.Value && Convert.ToBoolean(existingRow["IsWaived"]);
-
                 decimal amount = c.Amount;
                 decimal masterEMI = c.Amount;
 
@@ -3117,6 +2856,7 @@ namespace MendinePayroll.UI.Controllers
                 DataRow h = dtHeader.Rows[0];
                 int empSalaryConfigId = Convert.ToInt32(h["EmpSalaryConfigID"]);
                 int payGroupId = Convert.ToInt32(h["PayGroupID"]);
+                string payGroupName = ResolvePayGroupName(h, payGroupId);
                 bool isPF = Convert.ToBoolean(h["IsPF_Applicable"]);
                 bool isESIC = Convert.ToBoolean(h["IsESIC_Applicable"]);
                 bool isPTax = Convert.ToBoolean(h["IsPTax_Applicable"]);
@@ -3161,16 +2901,20 @@ namespace MendinePayroll.UI.Controllers
                     dtHeader = clsDatabase.fnDataTable("Payroll_SaaS_GetSalaryHeader", TenantId, employeeId);
                     h = dtHeader.Rows[0];
                     empSalaryConfigId = Convert.ToInt32(h["EmpSalaryConfigID"]);
+                    payGroupId = Convert.ToInt32(h["PayGroupID"]);
+                    payGroupName = ResolvePayGroupName(h, payGroupId);
                     isPF = Convert.ToBoolean(h["IsPF_Applicable"]);
                     isESIC = Convert.ToBoolean(h["IsESIC_Applicable"]);
                     isPTax = Convert.ToBoolean(h["IsPTax_Applicable"]);
                 }
 
-                DataTable dtComp = clsDatabase.fnDataTable("Payroll_SaaS_GetSalaryDetails", empSalaryConfigId);
+                DataTable dtComp = clsDatabase.fnDataTable("Payroll_SaaS_GetSalaryDetails", empSalaryConfigId,TenantId);
                 var recalculatedComponents = MapComponents(dtComp, paidDays, totalDays);
                 var recalculatedSalary = CalculateMonthlySalary(
                     recalculatedComponents,
                     employeeId,
+                    payGroupId,
+                    payGroupName,
                     processMonth,
                     processYear,
                     isPF,
@@ -3453,8 +3197,6 @@ namespace MendinePayroll.UI.Controllers
                     Status = r["Status"].ToString()
                 }).ToList();
 
-                //// 3. Find the Current Month Index in the schedule
-                //int currentIndex = allScheduleRows.FindIndex(r => r.MonthNo == ProcessMonth && r.YearNo == ProcessYear);
                 // 1. Calculate Previous Month and Year
                 int prevMonth = (ProcessMonth == 1) ? 12 : ProcessMonth - 1;
                 int prevYear = (ProcessMonth == 1) ? ProcessYear - 1 : ProcessYear;

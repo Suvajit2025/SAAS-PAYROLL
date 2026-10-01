@@ -851,7 +851,7 @@ namespace MendinePayroll.UI.Controllers
                 return model;
 
             //Sortorder Pay component 
-            DataTable dtPayConfigSortOrder =clsDatabase.fnDataTable("PRC_Get_PayConfig_SortOrder");
+            DataTable dtPayConfigSortOrder =clsDatabase.fnDataTable("PRC_Get_PayConfig_SortOrder",TenantId);
 
             // Create lookup: PayConfigName -> SortOrder
             var payConfigSortOrder = dtPayConfigSortOrder

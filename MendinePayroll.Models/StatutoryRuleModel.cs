@@ -25,6 +25,7 @@ namespace MendinePayroll.Models
         // ==========================
         public decimal? MaxLimit { get; set; }        // PF, ESIC only
         public string RoundingType { get; set; }      // Round / Floor / Ceil / No Rounding
+        public string CalculationRule { get; set; }=null;
 
         // ==========================
         // LWF

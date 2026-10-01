@@ -63,21 +63,21 @@ namespace MendinePayroll.UI.Controllers
             {
                 //return Redirect("https://iehrms.iecsl.in/Account/ChoosePortal.aspx");
                 //Development
-                //SetPayrollSession(
-                //    "10195",
-                //    "suvajit.das@iecsl.co.in",
-                //    "476",
-                //    "101450",
-                //    "suvajit.das@iecsl.co.in",
-                //    "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14");
-                ////Development
                 SetPayrollSession(
-                    "10345",
-                    "iniciolab@iecsl.co.in",
-                    "3542",
-                    "13500001",
-                    "iniciolab@iecsl.co.in",
-                    "808E0AC6-94CE-4887-AD9D-85AF318ED335");
+                    "10195",
+                    "suvajit.das@iecsl.co.in",
+                    "476",
+                    "101450",
+                    "suvajit.das@iecsl.co.in",
+                    "6B1B6590-C5CA-4FD6-A0BB-FEBA6DB8FB14");
+                ////Development
+                //SetPayrollSession(
+                //    "10345",
+                //    "iniciolab@iecsl.co.in",
+                //    "3542",
+                //    "13500001",
+                //    "iniciolab@iecsl.co.in",
+                //    "808E0AC6-94CE-4887-AD9D-85AF318ED335");
 
                 //SetPayrollSession(
                 //    "10198",

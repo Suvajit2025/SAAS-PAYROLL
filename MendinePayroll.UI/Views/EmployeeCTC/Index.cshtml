@@ -751,6 +751,41 @@
         min-width: 120px;
     }
 
+    /* Multiselect Dropdown - Remove row selection color in saas-filter-bar */
+    .saas-filter-bar .multiselect-container > li.active > a,
+    .saas-filter-bar .multiselect-container > li.active > a:hover,
+    .saas-filter-bar .multiselect-container > li.active > a:focus,
+    .saas-filter-bar .multiselect-container li.active a,
+    .saas-filter-bar .multiselect-container li.active {
+        background-color: transparent !important;
+        background: transparent !important;
+        color: #1e293b !important;
+        outline: none !important;
+    }
+
+    .saas-filter-bar .multiselect-container > li.active > a > label,
+    .saas-filter-bar .multiselect-container > li.active > a:hover > label,
+    .saas-filter-bar .multiselect-container > li.active > a:focus > label,
+    .saas-filter-bar .multiselect-container li.active label {
+        color: #1e293b !important;
+    }
+
+    /* Subtle neutral hover effect for readability */
+    .saas-filter-bar .multiselect-container > li > a:hover,
+    .saas-filter-bar .multiselect-container > li > a:focus,
+    .saas-filter-bar .multiselect-container > li.active > a:hover,
+    .saas-filter-bar .multiselect-container > li.active > a:focus {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+    }
+
+    .saas-filter-bar .multiselect-container > li > a:hover > label,
+    .saas-filter-bar .multiselect-container > li > a:focus > label,
+    .saas-filter-bar .multiselect-container > li.active > a:hover > label,
+    .saas-filter-bar .multiselect-container > li.active > a:focus > label {
+        color: #0f172a !important;
+    }
+
     /*.btn-saas {
         height: 34px;
         background: #0E7777;
@@ -2022,27 +2057,13 @@
     ================================ */
     function shouldOpenConfigureButton(emp) {
 
-        const payGroupId =
-            parseInt(
-                emp.PayGroupID || 0,
-                10
-            );
+        const payGroupId = parseInt(emp.PayGroupID || 0, 10);
+        
+        const isExistingConfigurePayGroup = payGroupId === 83 || payGroupId === 85 || payGroupId === 108 || payGroupId === 109 || payGroupId === 110 || payGroupId === 114 || payGroupId === 115 || payGroupId === 116;
 
-        const isExistingConfigurePayGroup =
-            payGroupId === 83 ||
-            payGroupId === 85 ||
-            payGroupId === 108 ||
-            payGroupId === 109;
+        const isNetToGrossTenant =String(currentTenantId || '').toUpperCase() === netToGrossTenantId;
 
-        const isNetToGrossTenant =
-            String(currentTenantId || '').toUpperCase() ===
-            netToGrossTenantId;
-
-        return isExistingConfigurePayGroup ||
-            (
-                isNetToGrossTenant &&
-                isFirstEmployeeTableLoad
-            );
+        return isExistingConfigurePayGroup ||(isNetToGrossTenant && isFirstEmployeeTableLoad );
     }
 
     function renderTable(data) {
@@ -2850,7 +2871,7 @@
 
             let inp = "";
 
-            if (x.isManual || x.logic === "EXCEL_UPLOAD") {
+            if (x.isManual) { //|| x.logic === "EXCEL_UPLOAD"
                 inp = `<input type="number"
                           id="val_${x.id}"
                           class="inp-manual form-control text-end"

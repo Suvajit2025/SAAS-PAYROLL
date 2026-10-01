@@ -1,4 +1,5 @@
 using Common.Utility;
+using DocumentFormat.OpenXml.Spreadsheet;
 using MendinePayroll.Models;
 using MendinePayroll.UI.Models;
 using Newtonsoft.Json;
@@ -35,12 +36,7 @@ namespace MendinePayroll.UI.Controllers
         }
 
         [HttpGet]
-        public ActionResult ExportEmployeeCTCExcel(
-            List<string> companyIds,
-            List<string> deptIds,
-            List<string> categoryIds,
-            List<string> payGroupIds,
-            string status)
+        public ActionResult ExportEmployeeCTCExcel(List<string> companyIds,List<string> deptIds,List<string> categoryIds,List<string> payGroupIds,string status)
         {
             string userId = Session["UserId"]?.ToString();
             string companyFilter = NormalizeMultiSelect(companyIds);
@@ -49,14 +45,7 @@ namespace MendinePayroll.UI.Controllers
             var payGroups = NormalizeMultiSelectList(payGroupIds);
             string statusFilter = string.IsNullOrWhiteSpace(status) ? "ACTIVE" : status;
 
-            DataTable dt = clsDatabase.fnDataTable(
-                "SP_SAAS_GET_EMPLOYEE_CTC",
-                tenantID,
-                companyFilter,
-                deptFilter,
-                categoryFilter,
-                userId
-            );
+            DataTable dt = clsDatabase.fnDataTable("SP_SAAS_GET_EMPLOYEE_CTC",tenantID,companyFilter,deptFilter,categoryFilter,userId);
 
             var rows = dt.AsEnumerable()
                 .Where(r =>
@@ -262,7 +251,7 @@ namespace MendinePayroll.UI.Controllers
 
                     IsStatutory = r["IsStatutory"] != DBNull.Value && Convert.ToBoolean(r["IsStatutory"]),
                     StatutoryType = Convert.ToString(r["StatutoryType"]),
-
+                    CalculationRule = dt.Columns.Contains("CalculationRule") &&  r["CalculationRule"] != DBNull.Value? Convert.ToString(r["CalculationRule"]) : null,
                     MaxLimit = r["MaxLimit"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(r["MaxLimit"]),
                     RoundingType = Convert.ToString(r["RoundingType"]),
 
@@ -270,8 +259,16 @@ namespace MendinePayroll.UI.Controllers
                     OtherType = Convert.ToString(r["OtherType"]),
 
                     MappedColumn = Convert.ToString(r["MappedColumn"]),
-                    CalculationFormula = Convert.ToString(r["CalculationFormula"])
+                    //CalculationFormula = Convert.ToString(r["CalculationFormula"])
                     //CalculationFormula = GetFormattedFormula(r["CalculationFormula"],r["ManualRate"],r["ISPercentage"],r["LogicType"])
+                    CalculationFormula = dt.Columns.Contains("CalculationRule") && 
+                     r["CalculationRule"] != DBNull.Value &&
+                     string.Equals(
+                         Convert.ToString(r["CalculationRule"]),
+                         "ESIC_BASIC_50_GROSS",
+                         StringComparison.OrdinalIgnoreCase)
+                    ? "MAX(BASIC, 50% GROSS)"
+                    : Convert.ToString(r["CalculationFormula"]),
                 };
 
                 item.IsInput = item.PayType == "Manual" || item.IsGrossComponent;
@@ -440,6 +437,18 @@ namespace MendinePayroll.UI.Controllers
                         }
                         break;
 
+                    //case "ESIC_EE":
+                    //case "ESIC_ER":
+                    //    if (model.IsESIC)
+                    //    {
+                    //        decimal esicCap = item.MaxLimit.HasValue && item.MaxLimit.Value > 0
+                    //            ? item.MaxLimit.Value
+                    //            : 21000;
+
+                    //        if (baseVal <= esicCap)
+                    //            val = RoundStatutory((baseVal * item.ManualRate) / 100, statType, item.RoundingType);
+                    //    }
+                    //    break;
                     case "ESIC_EE":
                     case "ESIC_ER":
                         if (model.IsESIC)
@@ -448,11 +457,46 @@ namespace MendinePayroll.UI.Controllers
                                 ? item.MaxLimit.Value
                                 : 21000;
 
-                            if (baseVal <= esicCap)
-                                val = RoundStatutory((baseVal * item.ManualRate) / 100, statType, item.RoundingType);
+                            decimal esicBase = baseVal;
+
+                            // New ESIC rule:
+                            // MAX(BASIC, 50% GROSS)
+                            if (string.Equals(
+                                    item.CalculationRule,
+                                    "ESIC_BASIC_50_GROSS",
+                                    StringComparison.OrdinalIgnoreCase))
+                            {
+                                decimal basicAmount = configList
+                                    .Where(x => x.IsBasicComponent)
+                                    .Sum(x =>
+                                    {
+                                        string key = (x.PayConfigName ?? "").Trim().ToUpper();
+
+                                        return calcs.TryGetValue(key, out decimal basicVal)
+                                            ? basicVal
+                                            : 0;
+                                    });
+
+                                decimal fiftyPercentGross = grossVal * 0.50m;
+
+                                esicBase = Math.Max(
+                                    basicAmount,
+                                    fiftyPercentGross
+                                );
+                            }
+
+                            // Legacy ESIC behavior
+                            // CalculationRule is NULL / LEGACY
+                            if (esicBase <= esicCap)
+                            {
+                                val = RoundStatutory(
+                                    (esicBase * item.ManualRate) / 100,
+                                    statType,
+                                    item.RoundingType
+                                );
+                            }
                         }
                         break;
-
                     case "PTAX":
                         // =========================================================================
                         // MODIFICATION: Calculate sum of all taxable components (IsTaxable == true)

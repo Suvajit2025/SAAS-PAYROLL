@@ -117,63 +117,99 @@
                 <!-- PF -->
                 <div id="modalPfBox" class="hidden">
                     <div class="section-title">PF Rules</div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label>Max Limit</label>
+                            <input id="modalPfMax" class="form-control" type="number" step="0.01" />
 
-                    <label>Max Limit</label>
-                    <input id="modalPfMax" class="form-control" type="number" />
-
-                    <label>Rounding</label>
-                    <select id="modalPfRound" class="form-control"></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Rounding</label>
+                            <select id="modalPfRound" class="form-control"></select>
+                        </div>
+                     </div>
                 </div>
+                    <!-- ESIC -->
+                    @*<div id="modalEsicBox" class="hidden">
+            <div class="section-title">ESIC Rules</div>
 
-                <!-- ESIC -->
-                <div id="modalEsicBox" class="hidden">
-                    <div class="section-title">ESIC Rules</div>
+            <label>Max Limit</label>
+            <input id="modalEsicMax" class="form-control" type="number" />
 
-                    <label>Max Limit</label>
-                    <input id="modalEsicMax" class="form-control" type="number" />
+            <label>Rounding</label>
+            <select id="modalEsicRound" class="form-control"></select>
+        </div>*@
+                    <div id="modalEsicBox" class="hidden">
+                        <div class="section-title">ESIC Rules</div>
 
-                    <label>Rounding</label>
-                    <select id="modalEsicRound" class="form-control"></select>
+                        <div class="row g-2">
+                            <!-- Max Limit -->
+                            <div class="col-md-4">
+                                <label for="modalEsicMax">Max Limit</label>
+                                <input id="modalEsicMax"
+                                       class="form-control"
+                                       type="number"
+                                       step="0.01" />
+                            </div>
+
+                            <!-- Rounding -->
+                            <div class="col-md-4">
+                                <label for="modalEsicRound">Rounding</label>
+                                <select id="modalEsicRound"
+                                        class="form-control"></select>
+                            </div>
+
+                            <!-- Calculation Rule -->
+                            <div class="col-md-4">
+                                <label for="modalEsicCalculationRule">Calculation Basis</label>
+                                <select id="modalEsicCalculationRule"
+                                        class="form-control">
+                                    <option value="LEGACY">Standard / Gross Amount</option>
+                                    <option value="ESIC_BASIC_50_GROSS">
+                                        Basic + 50% of Gross
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- LWF -->
+                    <div id="modalLwfBox" class="hidden">
+                        <div class="section-title">LWF Rules</div>
+
+                        <label>Month</label>
+                        <select id="modalLwfMonth" class="form-control">
+                            <option value="January">January</option>
+                            <option value="June">June</option>
+                            <option value="December">December</option>
+                        </select>
+
+                        <label>Amount</label>
+                        <input id="modalLwfAmt" class="form-control" type="number" />
+                    </div>
+
+                    <!-- PTAX -->
+                    <div id="modalPtaxBox" class="hidden">
+                        <div class="section-title">PTAX Slabs</div>
+
+                        <label>State</label>
+                        <select id="modalPtaxState" class="form-control"></select>
+
+                        <button class="btn-add mt-2 mb-2" onclick="addModalPTAXRow()">+ Add Slab</button>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Min</th>
+                                    <th>Max</th>
+                                    <th>PTAX</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalPtaxSlabBody"></tbody>
+                        </table>
+                    </div>
+
                 </div>
-
-                <!-- LWF -->
-                <div id="modalLwfBox" class="hidden">
-                    <div class="section-title">LWF Rules</div>
-
-                    <label>Month</label>
-                    <select id="modalLwfMonth" class="form-control">
-                        <option value="January">January</option>
-                        <option value="June">June</option>
-                        <option value="December">December</option>
-                    </select>
-
-                    <label>Amount</label>
-                    <input id="modalLwfAmt" class="form-control" type="number" />
-                </div>
-
-                <!-- PTAX -->
-                <div id="modalPtaxBox" class="hidden">
-                    <div class="section-title">PTAX Slabs</div>
-
-                    <label>State</label>
-                    <select id="modalPtaxState" class="form-control"></select>
-
-                    <button class="btn-add mt-2 mb-2" onclick="addModalPTAXRow()">+ Add Slab</button>
-
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Min</th>
-                                <th>Max</th>
-                                <th>PTAX</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="modalPtaxSlabBody"></tbody>
-                    </table>
-                </div>
-
-            </div>
 
             <div class="modal-footer">
                 <button class="btn btn-default" data-dismiss="modal">Close</button>
@@ -291,6 +327,9 @@
             if (m.StatutoryType.indexOf("ESIC") >= 0) {
                 $("#modalEsicMax").val(m.MaxLimit);
                 $("#modalEsicRound").val(m.RoundingType);
+                $("#modalEsicCalculationRule").val(
+                    m.CalculationRule || "LEGACY"
+                );
             }
 
             // LWF
@@ -381,6 +420,7 @@
             EffectiveDate: $("#modalEffective").val(),
             MaxLimit: null,
             RoundingType: null,
+            CalculationRule: null, 
             LWFMonth: null,
             LWFAmount: null,
             StateId: null,
@@ -394,6 +434,7 @@
         else if (stType.includes("ESIC")) {
             model.MaxLimit = $("#modalEsicMax").val();
             model.RoundingType = $("#modalEsicRound").val();
+            model.CalculationRule = $("#modalEsicCalculationRule").val();
         }
         else if (stType === "LWF") {
             model.LWFMonth = $("#modalLwfMonth").val();
@@ -440,6 +481,7 @@
         $("#modalPfRound,#modalEsicRound").val("");
         $("#modalLwfMonth").val("January");
         $("#modalPtaxSlabBody").empty();
+        $("#modalEsicCalculationRule").val("LEGACY");
 
         $("#modalPfBox,#modalEsicBox,#modalLwfBox,#modalPtaxBox").addClass("hidden");
     }

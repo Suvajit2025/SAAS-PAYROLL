@@ -113,7 +113,7 @@ namespace MendinePayroll.UI.Controllers
                                : model.StatutoryRuleId;
                 // Call Stored Procedure (Correct Parameter Order)
                 DataTable dt = clsDatabase.fnDataTable( "SP_Save_PayrollStatutoryRules", StatutoryRuleID, TenantId,model.PayConfigId,model.StatutoryType,
-                    model.MaxLimit,model.RoundingType,model.LWFMonth,model.LWFAmount,model.StateId,model.EffectiveDate,EntryUser,model.SlabJson);
+                    model.MaxLimit,model.RoundingType, model.CalculationRule, model.LWFMonth,model.LWFAmount,model.StateId,model.EffectiveDate,EntryUser,model.SlabJson);
 
                 // ===== READ RETURNED VALUES =====
                 if (dt.Rows.Count > 0)
@@ -151,6 +151,7 @@ namespace MendinePayroll.UI.Controllers
                     StatutoryType = r["StatutoryType"].ToString(),
                     MaxLimit = r["MaxLimit"] == DBNull.Value ? null : r["MaxLimit"].ToString(),
                     RoundingType = r["RoundingType"].ToString(),
+                    CalculationRule = r["CalculationRule"].ToString(),
                     LWFMonth = r["LWFMonth"].ToString(),
                     LWFAmount = r["LWFAmount"].ToString(),
                     StateId = r["StateId"] == DBNull.Value ? null : r["StateId"].ToString(),
@@ -196,7 +197,7 @@ namespace MendinePayroll.UI.Controllers
 
                     MaxLimit = row["MaxLimit"] != DBNull.Value ? Convert.ToDecimal(row["MaxLimit"]) : (decimal?)null,
                     RoundingType = row["RoundingType"]?.ToString(),
-
+                    CalculationRule = row["CalculationRule"].ToString(),
                     LWFMonth = row["LWFMonth"]?.ToString(),
                     LWFAmount = row["LWFAmount"] != DBNull.Value ? Convert.ToDecimal(row["LWFAmount"]) : (decimal?)null,
 

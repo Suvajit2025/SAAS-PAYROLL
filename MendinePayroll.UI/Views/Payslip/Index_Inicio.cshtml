@@ -1,4 +1,4 @@
-﻿@inherits System.Web.Mvc.WebViewPage<MendinePayroll.UI.Models.PayslipViewModel>
+@inherits System.Web.Mvc.WebViewPage<MendinePayroll.UI.Models.PayslipViewModel>
 @{
     Layout = null;
 }
@@ -70,19 +70,19 @@
 */
         .header {
             position: relative;
-            min-height: 120px;
+            min-height: 115px;
             text-align: center;
             border-bottom: 1.5px solid #000;
-            padding: 10px 155px 12px;
+            padding: 8px 85px 10px;
             margin-bottom: 8px;
         }
 
         .header-logo {
             position: absolute;
-            left: 10px;
+            left: 8px;
             top: 50%;
-            width: 140px;
-            height: 100px;
+            width: 105px;
+            height: 75px;
             display: flex;
             align-items: center;
             justify-content: flex-start;
@@ -90,8 +90,8 @@
         }
 
             .header-logo img {
-                max-width: 135px;
-                max-height: 100px;
+                max-width: 100px;
+                max-height: 56px;
                 width: auto;
                 height: auto;
                 object-fit: contain;
@@ -106,16 +106,17 @@
         }
 
         .company-details {
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: bold;
             line-height: 1.4;
-            margin: 0;
+            margin: 0 auto;
+            max-width: 490px;
         }
 
         .slip-title {
             font-size: 13px;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 8px;
         }
 
         table.infoTable {
@@ -287,15 +288,14 @@
             <div class="outerBorder">
 
                 <div class="header">
-                    @if (!string.IsNullOrWhiteSpace(Model.CompanyLogoUrl))
-                    {
-                        <div class="header-logo">
-                            <img src="@Model.CompanyLogoUrl" alt="Company Logo" />
-                        </div>
-                    }
-                    <div class="company-name">@Model.CompanyName</div>
-                    <div class="company-details">@Model.CompanyAddressLine1</div>
-                    <div class="company-details">@Model.CompanyAddressLine2</div>
+                    <div class="header-logo">
+                        <img src="@Url.Content("~/Contents/images/inicio_logo.png")" alt="INICIO LABORATORIES PVT LTD" />
+                    </div>
+                    <div class="company-name">INICIO LABORATORIES PVT LTD</div>
+                    <div class="company-details">Cin No.: U24304GJ2022PTC137549</div>
+                    <div class="company-details">Regd. Office: 3rd Floor Chinubhai House, 7-B Amrutbaug colony, opp. Sardar Patel Stadium, Near Hindu Colony, Navrangpura Ahmadabad GJ 380014.</div>
+                    <div class="company-details">Corp. Office: 58/1, Halder Para Lane,Salkia, Howrah- 711106</div>
+                    <div class="company-details">Mail id: hr@iniciolabs.com Mob: 8637078150 website: www.iniciolabs.com</div>
                     <div class="slip-title">Salary Slip for the month of @Model.Month-@Model.Year</div>
                 </div>
 

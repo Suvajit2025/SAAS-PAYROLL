@@ -1,4 +1,4 @@
-﻿@model MendinePayroll.Models.EmployeeSalaryModel
+@model MendinePayroll.Models.EmployeeSalaryModel
 @{
     ViewBag.Title = "EpfEcrChallanReport";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -84,12 +84,21 @@
             z-index: 5;
         }
 
-        tbody tr:nth-child(even) {
-            background: #fafafa;
+        tbody tr,
+        tbody tr td,
+        tbody tr:nth-child(even),
+        tbody tr:nth-child(odd) {
+            background: #ffffff !important;
         }
 
-        tbody tr:hover {
-            background: #f0fdfa;
+        tbody tr:hover,
+        .table tbody tr:hover,
+        .table tbody tr:hover td,
+        tbody tr:hover > td,
+        .table tbody tr.active td,
+        .table tbody tr.selected td {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
         }
 
         td {
@@ -271,10 +280,7 @@
             color: #0E7777;
         }
 
-        /* Hover stays subtle */
-        .table tbody tr:hover {
-            background: #f0fdfa;
-        }
+
 
         /* Reduce table border noise */
         .table td,
@@ -300,6 +306,46 @@
 
         .multiselect-container label {
             font-weight: 500;
+        }
+
+        /* ===== Remove full row select color in multiselect dropdown ===== */
+        .multiselect-container > li.active > a,
+        .multiselect-container > li.active > a:hover,
+        .multiselect-container > li.active > a:focus,
+        .multiselect-container > li.active > a:active,
+        .dropdown-menu > li.active > a,
+        .dropdown-menu > li.active > a:hover,
+        .dropdown-menu > li.active > a:focus {
+            background-color: transparent !important;
+            background: transparent !important;
+            color: #334155 !important;
+        }
+
+        .multiselect-container > li.active > a label,
+        .dropdown-menu > li.active > a label {
+            color: #334155 !important;
+        }
+
+        .multiselect-container > li > a:hover,
+        .multiselect-container > li > a:focus,
+        .multiselect-container > li:hover > a {
+            background-color: #f1f5f9 !important;
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        .multiselect-container label.checkbox {
+            color: inherit !important;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 0;
+        }
+
+        .select2-results__option[aria-selected="true"],
+        .select2-container--default .select2-results__option--highlighted[aria-selected],
+        .select2-container--default .select2-results__option[aria-selected="true"] {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
         }
 
 
@@ -424,14 +470,8 @@
                 </div>
                 <div class="col-sm-6 text-right">
                     <div class="btn-group">
-                        @*<button class="btn btn-default btn-sm" onclick="toggleFilterPanel()">
-                    <i class="fa fa-filter mr-xs"></i> Filter <span id="filterCount" class="badge">3</span>
-                </button>*@
-                        <button class="btn btn-default btn-sm" onclick="exportExcel()">
+                        <button type="button" class="btn btn-default btn-sm" onclick="exportExcel()">
                             <i class="fa fa-file-excel-o mr-xs" style="color:#16a34a;"></i> Export
-                        </button>
-                        <button class="btn btn-default btn-sm" onclick="refreshGrid()">
-                            <i class="fa fa-refresh"></i>
                         </button>
                     </div>
                 </div>
@@ -467,8 +507,8 @@
                 </div>
                 <div class="col-md-2 filter-btn">
                     <label>&nbsp;</label>
-                    <button id="btnClearFilters" class="btn btn-default btn-block btn-sm">
-                        Reset
+                    <button type="button" id="btnClearFilters" class="btn btn-default btn-block btn-sm">
+                        <i class="fa fa-undo mr-xs"></i> Reset
                     </button>
                 </div>
             </div>
@@ -548,12 +588,6 @@
     let isPaginationInitialized = false;
 
     const $pagination = $('#pagination');
-        totalRecords = 0,
-        recPerPage = 10,
-        totalPages = 0,
-        currentPage = 1,
-        pageSize = 10,
-        isPaginationInitialized = false;
 
     $(document).ready(function () {
         $("#d1").hide();
@@ -562,9 +596,17 @@
         initMultiSelects();
         loadFilters();
         //loadCTCReport();
-        $('#searchInput').on('keyup', applyFilters);
-        $('.multi-select').on('change', applyFilters);
-        $('#btnClearFilters').on('click', clearFilters);
+        $('#searchInput').on('input keyup', applyFilters);
+        $('#ddlCompany, #ddlDepartment').on('change', function () {
+            loadEmployeeByFilters(function () {
+                applyFilters();
+            });
+        });
+        $('#ddlEmployee').on('change', applyFilters);
+        $('#btnClearFilters').on('click', function (e) {
+            e.preventDefault();
+            clearFilters();
+        });
 
 
         if ($pagination.data('twbs-pagination')) {
@@ -615,13 +657,11 @@
     //    });
     //}
 
-    function loadEmployeeByFilters() {
+    function loadEmployeeByFilters(callback) {
 
-        const companyIds = $('#ddlCompany').val() || [];
-        const deptIds = $('#ddlDepartment').val() || [];
-        const categoryIds = ['1'];   // MUST be array
+        const companyIds = ($('#ddlCompany').val() || []).filter(v => v && v !== 'multiselect-all');
+        const deptIds = ($('#ddlDepartment').val() || []).filter(v => v && v !== 'multiselect-all');
 
-        
         $.ajax({
             url: '/PayrollChallanReport/GetEmployeeList',
             type: 'GET',
@@ -629,36 +669,51 @@
             data: {
                 companyIds: companyIds && companyIds.length ? companyIds : [''],
                 deptIds: deptIds && deptIds.length ? deptIds : [''],
-                categoryIds: ['1']
+                categoryIds: ['']
             },
             success: function (res) {
-
 
                 const $ddl = $('#ddlEmployee');
                 $ddl.empty();
 
-                if (!Array.isArray(res)) {
-                    console.error(res);
-                    return;
-                }
-
-                res
-                    .filter(x => x.Empstatus === 'ACTIVE')
-                    .forEach(x => {
+                if (Array.isArray(res) && res.length > 0) {
+                    res.forEach(x => {
                         $ddl.append(
                             `<option value="${x.EmpID}">
                             ${x.EmpName} (${x.EmpCode})
                          </option>`
                         );
                     });
+                } else if (ctcData && ctcData.length > 0) {
+                    populateEmployeeDropdownFromData(ctcData);
+                }
 
                 $ddl.multiselect('rebuild');
+                if (typeof callback === 'function') callback();
             },
             error: function (xhr) {
                 console.error("Server Error:", xhr.responseText);
-                alert("Failed to load employee list");
+                if (ctcData && ctcData.length > 0) {
+                    populateEmployeeDropdownFromData(ctcData);
+                }
+                if (typeof callback === 'function') callback();
             }
         });
+    }
+
+    function populateEmployeeDropdownFromData(data) {
+        const $ddl = $('#ddlEmployee');
+        const seen = new Set();
+        $ddl.empty();
+        data.forEach(r => {
+            const empId = r.EmpId || r.empid || r.EmployeeID;
+            const empName = r.EmployeeName || r.EmpName;
+            if (empId && !seen.has(empId.toString())) {
+                seen.add(empId.toString());
+                $ddl.append(`<option value="${empId}">${empName}</option>`);
+            }
+        });
+        $ddl.multiselect('rebuild');
     }
 
 
@@ -685,12 +740,15 @@
     }
     function clearFilters() {
         $('#searchInput').val('');
-        $('.multi-select').multiselect('deselectAll', false)
-            .multiselect('updateButtonText');
+        $('#ddlCompany').multiselect('deselectAll', false).multiselect('updateButtonText');
+        $('#ddlDepartment').multiselect('deselectAll', false).multiselect('updateButtonText');
 
-        filteredData = [...ctcData];
-        currentPage = 1;
-        renderGrid();
+        loadEmployeeByFilters(function () {
+            $('#ddlEmployee').multiselect('deselectAll', false).multiselect('updateButtonText');
+            filteredData = [...ctcData];
+            currentPage = 1;
+            renderGrid();
+        });
     }
 
 
@@ -747,30 +805,32 @@
 
     function applyFilters() {
 
-        const search = $('#searchInput').val().toLowerCase();
-        const companies = $('#ddlCompany').val() || [];
-        const departments = $('#ddlDepartment').val() || [];
-        const employees = $('#ddlEmployee').val() || [];
+        const search = ($('#searchInput').val() || '').toLowerCase().trim();
+        const companies = ($('#ddlCompany').val() || []).filter(v => v && v !== 'multiselect-all');
+        const departments = ($('#ddlDepartment').val() || []).filter(v => v && v !== 'multiselect-all');
+        const employees = ($('#ddlEmployee').val() || []).filter(v => v && v !== 'multiselect-all');
 
-        
         filteredData = ctcData.filter(x => {
 
-              const textMatch =
-                !search ||
-                  `${x.EmpId} ${x.CompanyName} ${x.DepartmentName}`
-                    .toLowerCase()
-                    .includes(search);
+            const empName = (x.EmployeeName || '').toLowerCase();
+            const uan = (x.UAN || '').toString().toLowerCase();
+            const deptName = (x.DepartmentName || '').toLowerCase();
+            const compName = (x.CompanyName || '').toLowerCase();
 
-            const companyMatch =
-                !companies.length || companies.includes(x.CompanyId.toString());
+            const textMatch = !search ||
+                empName.includes(search) ||
+                uan.includes(search) ||
+                deptName.includes(search) ||
+                compName.includes(search);
 
-            const departmentMatch =
-                !departments.length || departments.includes(x.DepartmentID.toString());
+            const companyMatch = !companies.length ||
+                (x.CompanyId != null && companies.includes(x.CompanyId.toString()));
 
-            const employeeMatch =
-                !employees.length || employees.includes(x.EmpId);
+            const departmentMatch = !departments.length ||
+                (x.DepartmentID != null && departments.includes(x.DepartmentID.toString()));
 
-            console.log(employeeMatch);
+            const employeeMatch = !employees.length ||
+                (x.EmpId != null && employees.includes(x.EmpId.toString()));
 
             return textMatch && companyMatch && departmentMatch && employeeMatch;
         });
@@ -869,11 +929,11 @@
     // -------------------------------------------------------
     function reloadPFChallan(page) {
 
-        currentPage = page;
+        currentPage = page || 1;
 
         let month = $("#ddlmonth").val();
         let year = $("#ddlyear").val();
-        pageSize = parseInt($("#Pagrow").val());
+        pageSize = parseInt($("#Pagrow").val()) || 10;
 
         $.ajax({
             type: "POST",
@@ -881,8 +941,8 @@
             data: {
                 Month: month,
                 Year: year,
-                numberofRow: pageSize,
-                pagenumber: page
+                numberofRow: 9999,
+                pagenumber: 1
             },
             beforeSend: () => $("#progress").show(),
             success: function (data) {
@@ -896,6 +956,9 @@
                 }
 
                 ctcData = data;
+                if ($('#ddlEmployee option').length === 0 && data.length > 0) {
+                    populateEmployeeDropdownFromData(data);
+                }
                 applyFilters();   // dynamic filtering
             },
             error: () => {
@@ -929,23 +992,15 @@
     }
 
 
-    function clearFilters() {
-        $('.multi-select').multiselect('deselectAll', false).multiselect('updateButtonText');
-        $('#searchInput').val('');
-        filteredData = [...ctcData];
-        currentPage = 1;
-        paginate();
-    }
+
 
     // -------------------------------------------------------
     // When user changes number of rows per page
     // -------------------------------------------------------
     function GetSearchbypagenumberResult(page) {
-        if ($pagination.data('twbs-pagination')) {
-            $pagination.twbsPagination('destroy');
-            isPaginationInitialized = false;
-        }
-        reloadPFChallan(page);
+        pageSize = parseInt($("#Pagrow").val()) || 10;
+        currentPage = 1;
+        renderGrid();
     }
 
     // -------------------------------------------------------
@@ -1025,6 +1080,52 @@
     // -------------------------------------------------------
     function BacktoEmpList() {
         window.location.href = "/PayrollChallanReport/EpfEcrChallanReport";
+    }
+    function exportExcel() {
+        if (!filteredData || !filteredData.length) {
+            alert("No data found to export for the selected filters.");
+            return;
+        }
+
+        var month = $("#ddlmonth").val();
+        var year = $("#ddlyear").val();
+        var empIds = filteredData.map(x => x.EmpId).filter(id => id !== undefined && id !== null && id !== '').join(',');
+
+        $("#progress").show();
+
+        $.ajax({
+            type: "POST",
+            url: '/PayrollChallanReport/ExportPFChallanToExcel',
+            data: {
+                Month: month,
+                Year: year,
+                empIds: empIds
+            },
+            success: function (fileName) {
+
+                $("#progress").hide();
+
+                if (fileName === "NODATA") {
+                    alert("No data found for the selected filters.");
+                    return;
+                }
+
+                const link = document.createElement("a");
+                link.href = '/PayrollChallanReport/DownloadExcel?fileName=' + encodeURIComponent(fileName);
+                link.download = fileName;
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            },
+            error: function (xhr, status, error) {
+
+                $("#progress").hide();
+
+                alert("Error exporting Excel: " + error);
+                console.error(xhr.responseText);
+            }
+        });
     }
 </script>
 
