@@ -635,6 +635,31 @@
         justify-content: space-between;
     }
 
+    #genModal .active-employees-header {
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    #genModal .active-employees-select-all {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin: 0 0 0 auto;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    #genModal .active-employees-select-all input {
+        margin: 0;
+        accent-color: #166534;
+    }
+
+    #genModal .active-employees-select-all input:disabled {
+        cursor: not-allowed;
+    }
+
     .emp-list-scroll {
         flex: 1;
         overflow-y: auto;
@@ -3912,6 +3937,7 @@
         // Clear selection state
         $(".chk-emp").prop("checked", false);
         selectedEmployees = [];
+        syncActiveEmployeeSelectAll();
     }
 
     function setLastMonthRange() {
@@ -4427,6 +4453,38 @@
     }
 
 
+    function syncActiveEmployeeSelectAll() {
+        const $employees = $("#genModal #listActive .chk-emp:not(:disabled)");
+        const selectedCount = $employees.filter(":checked").length;
+
+        $("#selectAllActiveEmployees").prop({
+            disabled: $employees.length === 0,
+            checked: $employees.length > 0 && selectedCount === $employees.length,
+            indeterminate: selectedCount > 0 && selectedCount < $employees.length
+        });
+    }
+
+    $(function () {
+        const $header = $("#genModal #listActive").siblings(".col-header");
+        $header.addClass("active-employees-header");
+        $("<label>", {
+            class: "active-employees-select-all",
+            for: "selectAllActiveEmployees"
+        }).append($("<input>", {
+            type: "checkbox",
+            id: "selectAllActiveEmployees",
+            disabled: true
+        }), document.createTextNode("Select All")).insertBefore($header.find("#cntActive"));
+
+        $("#selectAllActiveEmployees").on("change", function () {
+            $("#genModal #listActive .chk-emp:not(:disabled)").prop("checked", this.checked);
+            syncActiveEmployeeSelectAll();
+        });
+
+        $("#genModal #listActive").on("change", ".chk-emp", syncActiveEmployeeSelectAll);
+        syncActiveEmployeeSelectAll();
+    });
+
     function renderList(containerId, list, isActive) {
         let html = '';
 
@@ -4467,6 +4525,9 @@
         $(`#${containerId}`).html(
             html || '<div style="padding:10px; color:#ccc;">No employees</div>'
         );
+        if (containerId === 'listActive') {
+            syncActiveEmployeeSelectAll();
+        }
     }
 
     /*==============Process Final Payroll================*/

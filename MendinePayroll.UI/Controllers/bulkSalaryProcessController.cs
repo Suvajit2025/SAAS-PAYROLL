@@ -872,9 +872,13 @@ namespace MendinePayroll.UI.Controllers
 
                 valueMap[c.PayConfigName] = c.Amount;
 
-                // Eligibility must use the configured monthly value, not the
-                // amount reduced because of PaidDays.
-                fullMonthValueMap[c.PayConfigName] = ApplyRounding(c.BaseAmount, c.RoundingType);
+                // Use full attendance with the same precision and rounding as
+                // payroll. Rounding the raw base directly can add a rupee for
+                // CEIL components that payroll first rounds to two decimals.
+                decimal fullMonthAmount = c.IsProratable
+                    ? Prorate(c.BaseAmount, totalDays, totalDays)
+                    : c.BaseAmount;
+                fullMonthValueMap[c.PayConfigName] = ApplyRounding(fullMonthAmount, c.RoundingType);
             }
 
             /* ============================================================
@@ -1124,6 +1128,32 @@ namespace MendinePayroll.UI.Controllers
                                     ? fullMonthAmount
                                     : 0m);
 
+                        // Match payroll's configured-Gross precedence. A fixed
+                        // Gross must not be rebuilt from independently rounded
+                        // allowances. Use its full-month value for eligibility.
+                        if (grossComp != null
+                            && fullMonthValueMap.TryGetValue(grossComp.PayConfigName, out decimal configuredMonthlyGross)
+                            && configuredMonthlyGross > 0)
+                        {
+                            esicMonthlyGross = configuredMonthlyGross;
+
+                            // Preserve the existing additions to configured Gross
+                            // using full-month values rather than paid-day values.
+                            decimal fullMonthExcelGrossSum = components
+                                .Where(x =>
+                                    x.LogicType == "EXCEL_UPLOAD"
+                                    && !x.IsGrossComponent
+                                    && ((x.PayType ?? "").Trim().Equals("ALLOWANCES", StringComparison.OrdinalIgnoreCase)
+                                        || x.IsAllowance)
+                                    && (x.IsIncludedInGross == true || x.IsIncludedInGross == null))
+                                .Sum(x => fullMonthValueMap.TryGetValue(x.PayConfigName, out decimal fullMonthAmount)
+                                    ? fullMonthAmount
+                                    : 0m);
+
+                            if (fullMonthExcelGrossSum > 0)
+                                esicMonthlyGross += fullMonthExcelGrossSum;
+                        }
+
                         decimal esicEligibilityBasis = Math.Max(
                             esicMonthlyBasic,
                             esicMonthlyGross * 0.50m);
@@ -1367,6 +1397,7 @@ namespace MendinePayroll.UI.Controllers
         private static decimal Prorate(decimal amount, decimal paidDays, decimal totalDays)
         {
             if (totalDays <= 0 || paidDays <= 0) return 0;
+            if (paidDays == totalDays) return Math.Round(amount, 2);
             return Math.Round((amount / totalDays) * paidDays, 2);
         }
         private static decimal CalculatePTaxFromJson(decimal gross, string json)

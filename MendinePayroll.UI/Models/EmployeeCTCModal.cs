@@ -58,7 +58,7 @@ namespace MendinePayroll.UI.Models
         public bool IsPTAX { get; set; }
 
         public long EmpSalaryConfigID { get; set; }
-
+        public int CalculationMode { get; set; }
         public List<EmployeeCTCInputValue> Inputs { get; set; } = new List<EmployeeCTCInputValue>();
     }
 
@@ -90,7 +90,7 @@ namespace MendinePayroll.UI.Models
         public decimal TotalContribution { get; set; }
         public decimal NetPay { get; set; }
         public decimal MonthlyCTC { get; set; }
-        public decimal AnnualCTC { get; set; }
+        public decimal AnnualCTC { get; set; } 
     }
 
     public class EmployeeCTCDetailResult
@@ -156,6 +156,7 @@ namespace MendinePayroll.UI.Models
         public bool IsInput { get; set; }
         public bool IsManualGrid { get; set; }
 
+        public int CalculationMode { get; set; }
         public List<PTaxSlabModelCTC> PTaxSlabs { get; set; } = new List<PTaxSlabModelCTC>();
     }
 

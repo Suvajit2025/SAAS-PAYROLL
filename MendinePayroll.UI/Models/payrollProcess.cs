@@ -359,6 +359,7 @@ namespace MendinePayroll.UI.Models
     public class RejectRequest
     {
         public string payrollProcessEmployeeIds { get; set; }
+        public string employeeIds { get; set; }
         public string reason { get; set; }
         public int month { get; set; }
         public int year { get; set; }

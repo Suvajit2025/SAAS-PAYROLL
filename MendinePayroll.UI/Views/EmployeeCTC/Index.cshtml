@@ -2871,7 +2871,7 @@
 
             let inp = "";
 
-            if (x.isManual) { //|| x.logic === "EXCEL_UPLOAD"
+            if (x.isManual || x.logic === "EXCEL_UPLOAD") {
                 inp = `<input type="number"
                           id="val_${x.id}"
                           class="inp-manual form-control text-end"
