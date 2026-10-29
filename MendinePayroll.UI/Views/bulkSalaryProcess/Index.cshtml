@@ -4754,7 +4754,8 @@
         const rows = pivot.Rows;
         //const columns = pivot.Columns;
         const columns = pivot.Columns.filter(c =>
-            (c.PayType || '').toUpperCase() !== 'CC'
+            (c.PayType || '').toUpperCase() !== 'CC' &&
+            (c.OtherType || '').trim().toUpperCase() !== 'MONTHLY_CTC'
         );
         //console.log(pivot);
         // 🔹 Find indexes
@@ -6010,6 +6011,9 @@
         let loanEmiToDisplay = 0;
         let isCurrentlyWaived = false;
         details.forEach(c => {
+            // Keep Monthly CTC in the calculation data, but hide its component row.
+            if ((c.OtherType || '').trim().toUpperCase() === 'MONTHLY_CTC') return;
+
             let val = Number(c.Amount || 0);
             let origVal = Number(c.OriginalAmount || 0); // 👈 From our C# logic
             let type = (c.PayType || "").trim();

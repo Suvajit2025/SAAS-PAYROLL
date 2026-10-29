@@ -51,8 +51,8 @@ namespace MendinePayroll.UI.Models
         public int PayConfigId { get; set; }
         public string PayConfigName { get; set; }
         public string ReferenceIds { get; set; } = string.Empty;// 🔑 Store the LoanId here
-        public int SortOrder { get; set; }
-        public int OrderBy { get; set; }
+        public decimal SortOrder { get; set; }
+        public decimal OrderBy { get; set; }
         /* =========================
            Classification
         ========================= */
@@ -158,8 +158,8 @@ namespace MendinePayroll.UI.Models
         public bool IsEditable { get; set; }       // UI rule: MANUAL_INPUT / EXCEL_UPLOAD / OtherType etc
         public bool IsWaivable { get; set; }       // Loan waive
         public int DisplayOrder { get; set; }
-        public int SortOrder { get; set; }
-        public int OrderBy { get; set; }
+        public decimal SortOrder { get; set; }
+        public decimal OrderBy { get; set; }
 
         public bool IsBasicComponent { get; set; } // Used for PF base
         public bool IsGrossComponent { get; set; } // Used for ESIC base

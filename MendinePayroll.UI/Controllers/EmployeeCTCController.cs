@@ -164,22 +164,9 @@ namespace MendinePayroll.UI.Controllers
             }
 
             // 3. Load the tenant-specific Gross component.
-            DataTable grossDt = clsDatabase.fnDataTable("PRC_GetGrossPayConfig",tenantID);
-
-            if (grossDt == null ||grossDt.Rows.Count == 0 ||!grossDt.Columns.Contains("PayConfigName") ||!grossDt.Columns.Contains("PayConfigId"))
-            {
-                throw new InvalidOperationException(
-                    "Gross Pay Component is not configured for this tenant.");
-            }
-
-            int grossPayConfigId = Convert.ToInt32(grossDt.Rows[0]["PayConfigId"]);
-
-            string grossKey = Convert.ToString(grossDt.Rows[0]["PayConfigName"])?.Trim();
-
-            if (string.IsNullOrWhiteSpace(grossKey))
-            {
-                throw new InvalidOperationException("Gross Pay Component name is empty for this tenant.");
-            }
+            var tenantGross = GetTenantGrossComponent();
+            long grossPayConfigId = tenantGross.PayConfigId;
+            string grossKey = tenantGross.PayConfigName;
 
             // The dictionary key is the tenant's actual component name.
             if (!calcs.ContainsKey(grossKey)) calcs[grossKey] = 0m;
@@ -250,7 +237,8 @@ namespace MendinePayroll.UI.Controllers
                         configList,
                         calcs,
                         model,
-                        grossKey);
+                        grossKey,
+                        grossPayConfigId);
                 }
 
                 calcs[ctcItem.PayConfigName.Trim()] = monthlyCTC;
@@ -279,9 +267,7 @@ namespace MendinePayroll.UI.Controllers
                     calcs[basicItem.PayConfigName.Trim()] = basicVal;
                 }
 
-                // 7. Calculate employer-cost components.
-                // The existing statutory engine must still enforce the
-                // tenant's eligibility, limits, slabs and rounding rules.
+                // 7. Calculate employer-cost components, applying statutory rules.
                 decimal totalEmployerCost = 0m;
 
                 foreach (var item in configList.Where(x =>
@@ -290,35 +276,139 @@ namespace MendinePayroll.UI.Controllers
                         "CC",
                         StringComparison.OrdinalIgnoreCase)))
                 {
-                    decimal baseVal = 0m;
+                    string statutoryType = (item.StatutoryType ?? string.Empty)
+                        .Trim()
+                        .ToUpperInvariant();
 
-                    if (item.LogicType == "FORMULA" &&
-                        !string.IsNullOrWhiteSpace(item.CalculationFormula))
-                    {
-                        baseVal = EvaluateFormula(
-                            item.CalculationFormula,
-                            calcs);
-                    }
-                    else if (item.LogicType == "FIXED")
-                    {
-                        baseVal = item.ManualRate;
-                    }
-
-                    decimal amount = item.ISPercentage
-                        ? baseVal * item.ManualRate / 100m
-                        : baseVal;
-
+                    decimal amount = 0m;
                     decimal maxLimit = item.MaxLimit ?? 0m;
 
-                    if (maxLimit > 0m && amount > maxLimit)
+                    // Statutory employer contributions.
+                    if (item.IsStatutory)
                     {
-                        amount = maxLimit;
+                        switch (statutoryType)
+                        {
+                            case "PF_ER":
+                                {
+                                    if (!model.IsPF)
+                                        break;
+
+                                    // PF is calculated on Basic, capped at MaxLimit.
+                                    decimal pfBase = basicItem != null
+                                        ? calcs[basicItem.PayConfigName.Trim()]
+                                        : 0m;
+
+                                    if (maxLimit > 0m)
+                                        pfBase = Math.Min(pfBase, maxLimit);
+
+                                    amount = ApplyRounding(
+                                        pfBase * item.ManualRate / 100m,
+                                        item.RoundingType);
+
+                                    break;
+                                }
+
+                            case "ESIC_ER":
+                                {
+                                    if (!model.IsESIC)
+                                        break;
+
+                                    decimal basic = basicItem != null
+                                        ? calcs[basicItem.PayConfigName.Trim()]
+                                        : 0m;
+
+                                    // Gross is not calculated yet. Derive the ESIC base
+                                    // from the currently known salary values.
+                                    decimal esicBase = basic;
+
+                                    if (string.Equals(
+                                        item.CalculationRule,
+                                        "ESIC_BASIC_50_GROSS",
+                                        StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        // This rule requires Gross, which is not yet known.
+                                        // Use the statutory engine after Gross is derived.
+                                        amount = 0m;
+                                        calcs[item.PayConfigName.Trim()] = amount;
+                                        continue;
+                                    }
+
+                                    decimal esicLimit = maxLimit > 0m
+                                        ? maxLimit
+                                        : 21000m;
+
+                                    amount = esicBase <= esicLimit
+                                        ? ApplyRounding(
+                                            esicBase * item.ManualRate / 100m,
+                                            item.RoundingType)
+                                        : 0m;
+
+                                    break;
+                                }
+
+                            case "GRATUITY":
+                                {
+                                    decimal basic = basicItem != null
+                                        ? calcs[basicItem.PayConfigName.Trim()]
+                                        : 0m;
+
+                                    amount = ApplyRounding(
+                                        basic * item.ManualRate / 100m,
+                                        item.RoundingType);
+
+                                    break;
+                                }
+
+                            default:
+                                {
+                                    // Other statutory contribution types should be handled
+                                    // by their own explicit rule.
+                                    amount = 0m;
+                                    break;
+                                }
+                        }
+                    }
+                    else
+                    {
+                        // Non-statutory employer costs, such as Ex Gratia.
+                        decimal baseVal = 0m;
+
+                        if (item.LogicType == "FORMULA" &&
+                            !string.IsNullOrWhiteSpace(item.CalculationFormula))
+                        {
+                            baseVal = EvaluateFormula(
+                                item.CalculationFormula,
+                                calcs );
+                        }
+                        else if (item.LogicType == "FIXED")
+                        {
+                            baseVal = item.ManualRate;
+                        }
+
+                        amount = item.ISPercentage
+                            ? baseVal * item.ManualRate / 100m
+                            : baseVal;
+
+                        if (maxLimit > 0m && amount > maxLimit)
+                            amount = maxLimit;
+
+                        amount = ApplyRounding(amount, item.RoundingType);
                     }
 
                     calcs[item.PayConfigName.Trim()] = amount;
-
-                    totalEmployerCost += amount;
+                    totalEmployerCost += RoundRupee(amount);
                 }
+
+                // 8. Derive Gross from Monthly CTC.
+                grossVal = monthlyCTC - totalEmployerCost;
+
+                if (grossVal < 0m)
+                {
+                    throw new InvalidOperationException(
+                        "Employer costs exceed the entered Monthly CTC.");
+                }
+
+                calcs[grossKey.Trim()] = grossVal;
 
                 // 8. Gross = Monthly CTC - employer costs.
                 grossVal = monthlyCTC - totalEmployerCost;
@@ -391,14 +481,10 @@ namespace MendinePayroll.UI.Controllers
             }
 
             // 10. Apply statutory calculations.
-            ApplyStatutoryCalculation(
-                configList,
-                calcs,
-                model,
-                grossVal);
+            ApplyStatutoryCalculation(configList,calcs,model,grossVal);
 
             // 11. Build the response.
-            return BuildCalculatedResponse(configList, calcs, model, grossKey);
+            return BuildCalculatedResponse(configList, calcs, model, grossKey, grossPayConfigId);
         }
         //private EmployeeCTCCalculateResponse CalculateSalaryOnBackend(EmployeeCTCCalculateRequest model)
         //{
@@ -760,12 +846,20 @@ namespace MendinePayroll.UI.Controllers
                         }
                         break;
                     case "PTAX":
-                        // =========================================================================
-                        // MODIFICATION: Calculate sum of all taxable components (IsTaxable == true)
-                        // PTAX slab matching is now evaluated against this taxable sum instead of grossVal.
-                        // =========================================================================
+                        // Match PTAX slabs against taxable allowances, excluding summary rows.
                         decimal totalTaxable = configList
-                            .Where(x => x.IsTaxable)
+                            .Where(x =>
+                            {
+                                string payType = (x.PayType ?? string.Empty).Trim().ToUpperInvariant();
+                                string componentName = (x.PayConfigName ?? string.Empty).Trim().ToUpperInvariant();
+                                string otherType = (x.OtherType ?? string.Empty).Trim().ToUpperInvariant();
+
+                                return x.IsTaxable &&
+                                    (payType == "ALLOWANCE" || payType == "ALLOWANCES") &&
+                                    !x.IsGrossComponent &&
+                                    componentName != "MONTHLY_CTC" && componentName != "MONTHLY_NET" &&
+                                    otherType != "MONTHLY_CTC" && otherType != "MONTHLY_NET";
+                            })
                             .Sum(x =>
                             {
                                 string key = (x.PayConfigName ?? "").Trim().ToUpper();
@@ -1010,7 +1104,64 @@ namespace MendinePayroll.UI.Controllers
 
         //    return response;
         //}
-        private EmployeeCTCCalculateResponse BuildCalculatedResponse(List<SalaryComponentConfig> configList,Dictionary<string, decimal> calcs,EmployeeCTCCalculateRequest model,string grossKey)
+        private SalaryComponentConfig GetTenantGrossComponent()
+        {
+            DataTable grossDt = clsDatabase.fnDataTable("PRC_GetGrossPayConfig", tenantID);
+
+            if (grossDt == null || grossDt.Rows.Count == 0 ||
+                !grossDt.Columns.Contains("PayConfigId") ||
+                !grossDt.Columns.Contains("PayConfigName") ||
+                grossDt.Rows[0]["PayConfigId"] == DBNull.Value)
+            {
+                throw new InvalidOperationException("Gross Pay Component is not configured for this tenant.");
+            }
+
+            long grossPayConfigId = Convert.ToInt64(grossDt.Rows[0]["PayConfigId"]);
+            string grossKey = Convert.ToString(grossDt.Rows[0]["PayConfigName"])?.Trim();
+
+            if (grossPayConfigId <= 0 || string.IsNullOrWhiteSpace(grossKey))
+            {
+                throw new InvalidOperationException("Gross Pay Component ID or name is invalid for this tenant.");
+            }
+
+            return new SalaryComponentConfig
+            {
+                PayConfigId = grossPayConfigId,
+                PayConfigName = grossKey,
+                IsGrossComponent = true
+            };
+        }
+
+        private void EnsureGrossDetail(List<EmployeeCTCDetailResult> details, long grossPayConfigId,
+            string grossKey, decimal monthlyGross)
+        {
+            var grossDetail = details.FirstOrDefault(x => x.PayConfigId == grossPayConfigId)
+                ?? details.FirstOrDefault(x => string.Equals(
+                    x.PayConfigName?.Trim(), grossKey, StringComparison.OrdinalIgnoreCase));
+
+            if (grossDetail == null)
+            {
+                grossDetail = new EmployeeCTCDetailResult
+                {
+                    PayType = "Manual",
+                    TimeBasis = "MONTHLY",
+                    LogicType = "FIXED"
+                };
+                details.Add(grossDetail);
+            }
+
+            grossDetail.PayConfigId = grossPayConfigId;
+            grossDetail.PayConfigName = grossKey;
+            grossDetail.IsGrossComponent = true;
+            if (string.IsNullOrWhiteSpace(grossDetail.RoundingType))
+            {
+                grossDetail.RoundingType = "Round";
+            }
+            grossDetail.MonthlyAmount = monthlyGross;
+            grossDetail.YearlyAmount = RoundMoney(monthlyGross * 12m);
+        }
+
+        private EmployeeCTCCalculateResponse BuildCalculatedResponse(List<SalaryComponentConfig> configList,Dictionary<string, decimal> calcs,EmployeeCTCCalculateRequest model,string grossKey,long grossPayConfigId)
         {
             decimal totalAllowance = 0m;
             decimal totalDeduction = 0m;
@@ -1217,6 +1368,9 @@ namespace MendinePayroll.UI.Controllers
                 });
             }
 
+            // Gross may be absent from the Pay Group in CTC-input mode, but must be saved.
+            EnsureGrossDetail(response.DetailList, grossPayConfigId, grossKey, response.Header.MonthlyGross);
+
             return response;
         }
         [HttpPost]
@@ -1368,6 +1522,14 @@ namespace MendinePayroll.UI.Controllers
                         .Trim()
                         .ToUpperInvariant();
                 }
+
+                var tenantGross = GetTenantGrossComponent();
+                var existingGross = model.DetailList.FirstOrDefault(x => x.PayConfigId == tenantGross.PayConfigId)
+                    ?? model.DetailList.FirstOrDefault(x => string.Equals(
+                        x.PayConfigName?.Trim(), tenantGross.PayConfigName, StringComparison.OrdinalIgnoreCase));
+
+                EnsureGrossDetail(model.DetailList, tenantGross.PayConfigId, tenantGross.PayConfigName,
+                    existingGross?.MonthlyAmount ?? model.MonthlyGross);
                 /*
                 * Sum all monthly earning/allowance components.
                 * Exclude GROSS because it is a summary component.
@@ -1415,9 +1577,7 @@ namespace MendinePayroll.UI.Controllers
                     .Sum(x => x.MonthlyAmount);
 
                 var grossItem = model.DetailList
-                    .FirstOrDefault(x =>
-                        x.IsGrossComponent ||
-                        Normalize(x.PayConfigName) == "GROSS");
+                    .FirstOrDefault(x => x.PayConfigId == tenantGross.PayConfigId);
 
                 decimal monthlyGross = grossItem != null
                     ? grossItem.MonthlyAmount

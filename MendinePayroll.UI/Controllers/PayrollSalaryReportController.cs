@@ -421,6 +421,28 @@ namespace MendinePayroll.UI.Controllers
             DataTable dt = clsDatabase.fnDataTable("SP_Payroll_SalaryReport_Export", TenantId, month, year, selectedIds);
             if (dt == null || dt.Rows.Count == 0) return Content("No data found.");
 
+            if (Guid.Parse(TenantId) == new Guid("808E0AC6-94CE-4887-AD9D-85AF318ED335"))
+            {
+                DataTable selectedEmployees = clsDatabase.fnDataTable(
+                    "SP_Payroll_GetEmployeeStatusesForValidation", selectedIds, TenantId);
+                if (selectedEmployees == null || selectedEmployees.Rows.Count == 0)
+                    return Content("No selected payroll records found.");
+
+                string selectedEmployeesJson = JsonConvert.SerializeObject(
+                    selectedEmployees.AsEnumerable().Select(r => new
+                    {
+                        RequestedID = Convert.ToInt64(r["RequestedID"]),
+                        EmployeeId = Convert.ToInt32(r["EmployeeId"]),
+                        Status = Convert.ToInt32(r["Status"])
+                    }));
+
+                DataTable ctcDetails = clsDatabase.fnDataTable(
+                    "SP_Payroll_SalaryReport_Export_CTCDetails", TenantId, month, year, selectedEmployeesJson);
+
+                return File(BuildCtcSalaryExport(dt, ctcDetails, month, year),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SalaryReport.xlsx");
+            }
+
             using (var wb = new ClosedXML.Excel.XLWorkbook())
             {
                 var ws = wb.Worksheets.Add("Salary Sheet");
@@ -503,6 +525,141 @@ namespace MendinePayroll.UI.Controllers
                 {
                     wb.SaveAs(stream);
                     return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SalaryReport.xlsx");
+                }
+            }
+        }
+
+        private static byte[] BuildCtcSalaryExport(DataTable salaryReport, DataTable ctcDetails, int month, int year)
+        {
+            if (ctcDetails == null || ctcDetails.Rows.Count == 0)
+                throw new InvalidOperationException("CTC and employer contribution data was not found for this payroll period.");
+
+            Tuple<string, string, string> GetKey(DataRow row)
+            {
+                string Normalize(string column) => Convert.ToString(row[column]).Trim().ToUpperInvariant();
+                return Tuple.Create(Normalize("EmpCode"), Normalize("Salary Format"), Normalize("Status"));
+            }
+
+            decimal GetAmount(DataRow row, params string[] columnNames)
+            {
+                foreach (string column in columnNames)
+                {
+                    if (row.Table.Columns.Contains(column) && row[column] != DBNull.Value)
+                        return Convert.ToDecimal(row[column], CultureInfo.InvariantCulture);
+                }
+                return 0m;
+            }
+
+            var ctcByEmployee = ctcDetails.AsEnumerable().ToDictionary(GetKey);
+            var employees = salaryReport.AsEnumerable()
+                .OrderBy(r => Convert.ToString(r["Department"]))
+                .ThenBy(r => Convert.ToString(r["EmployeeName"]))
+                .ThenBy(r => Convert.ToString(r["EmpCode"]))
+                .ToList();
+
+            string[] headers =
+            {
+                "Sl No", "Emp ID", "Employee Name", "Type", "Paid Days", "Monthly CTC", "Annual CTC",
+                "Basic", "HRA", "Conveyance", "Gross Salary", "ACTIVITY INCENTIVE",
+                "VARIABLE INCENTIVE", "Employer PF", "Employer ESIC", "Gratuity", "Ex Gratia",
+                "Total Employer Contrib.", "Employee PF", "Employee ESIC", "Professional Tax",
+                "Total Deductions", "Monthly Expense", "Net Take Home"
+            };
+
+            using (var workbook = new XLWorkbook())
+            {
+                var sheet = workbook.Worksheets.Add("Salary Sheet");
+                var title = sheet.Range(1, 1, 1, headers.Length).Merge();
+                title.Value = $"Salary Sheet Report for the Month of - {new DateTime(year, month, 1):MMMM yyyy}";
+                title.Style.Font.Bold = true;
+                title.Style.Font.FontSize = 14;
+                title.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                const int headerRow = 4;
+                for (int i = 0; i < headers.Length; i++)
+                    sheet.Cell(headerRow, i + 1).Value = headers[i];
+
+                var header = sheet.Range(headerRow, 1, headerRow, headers.Length);
+                header.Style.Font.Bold = true;
+                header.Style.Font.FontColor = XLColor.White;
+                header.Style.Fill.BackgroundColor = XLColor.FromHtml("#0E7777");
+                header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                header.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                header.Style.Alignment.WrapText = true;
+                sheet.Row(headerRow).Height = 34;
+
+                int currentRow = headerRow + 1;
+                foreach (DataRow employee in employees)
+                {
+                    if (!ctcByEmployee.TryGetValue(GetKey(employee), out DataRow ctc))
+                        throw new InvalidOperationException($"CTC data was not found for employee {employee["EmpCode"]} in this payroll period.");
+                    if (ctc["MonthlyCTC"] == DBNull.Value || ctc["AnnualCTC"] == DBNull.Value)
+                        throw new InvalidOperationException($"Monthly or Annual CTC is missing from the active salary configuration for employee {employee["EmpCode"]}.");
+
+                    sheet.Cell(currentRow, 1).Value = currentRow - headerRow;
+                    sheet.Cell(currentRow, 2).SetValue<string>(Convert.ToString(employee["EmpCode"]));
+                    sheet.Cell(currentRow, 3).SetValue<string>(Convert.ToString(employee["EmployeeName"]));
+                    sheet.Cell(currentRow, 4).SetValue<string>(Convert.ToString(employee["Status"]));
+                    sheet.Cell(currentRow, 5).Value = GetAmount(employee, "TotalPaidDays");
+
+                    decimal monthlyCtc = GetAmount(ctc, "MonthlyCTC");
+                    decimal[] amounts =
+                    {
+                        monthlyCtc,
+                        GetAmount(ctc, "AnnualCTC"),
+                        GetAmount(employee, "BASIC"),
+                        GetAmount(employee, "HRA"),
+                        GetAmount(employee, "CONVEYANCE"),
+                        GetAmount(employee, "GROSS"),
+                        GetAmount(employee, "ACTIVITY INCENTIVE"),
+                        GetAmount(employee, "VARIABLE INCENTIVE"),
+                        GetAmount(ctc, "EmployerPF"),
+                        GetAmount(ctc, "EmployerESIC"),
+                        GetAmount(ctc, "Gratuity"),
+                        GetAmount(ctc, "ExGratia"),
+                        GetAmount(ctc, "TotalEmployerContribution"),
+                        GetAmount(employee, "EMPLOYEE PF"),
+                        GetAmount(employee, "EMPLOYEE ESI", "EMPLOYEE ESIC"),
+                        GetAmount(employee, "P TAX", "PTAX", "PROFESSIONAL TAX"),
+                        GetAmount(employee, "TOTAL_DEDUCTION"),
+                        GetAmount(employee, "MONTHLY EXPENCE", "MONTHLY EXPENSE"),
+                        GetAmount(employee, "NET_PAY")
+                    };
+                    for (int i = 0; i < amounts.Length; i++)
+                        sheet.Cell(currentRow, i + 6).Value = amounts[i];
+                    currentRow++;
+                }
+
+                sheet.Range(currentRow, 1, currentRow, 4).Merge().Value = "GRAND TOTAL";
+                for (int column = 5; column <= headers.Length; column++)
+                {
+                    sheet.Cell(currentRow, column).FormulaA1 =
+                        $"SUM({sheet.Cell(headerRow + 1, column).Address}:{sheet.Cell(currentRow - 1, column).Address})";
+                }
+                var totals = sheet.Range(currentRow, 1, currentRow, headers.Length);
+                totals.Style.Font.Bold = true;
+                totals.Style.Fill.BackgroundColor = XLColor.LightGreen;
+
+                sheet.Range(headerRow + 1, 5, currentRow, 5).Style.NumberFormat.Format = "0.##";
+                sheet.Range(headerRow + 1, 6, currentRow, headers.Length).Style.NumberFormat.Format = "#,##0.00";
+                var used = sheet.Range(headerRow, 1, currentRow, headers.Length);
+                used.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                used.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                sheet.Range(headerRow, 1, currentRow - 1, headers.Length).SetAutoFilter();
+                sheet.SheetView.FreezeRows(headerRow);
+                sheet.SheetView.FreezeColumns(3);
+                sheet.Column(1).Width = 8;
+                sheet.Column(2).Width = 18;
+                sheet.Column(3).Width = 32;
+                sheet.Columns(4, headers.Length).Width = 18;
+                sheet.PageSetup.PageOrientation = XLPageOrientation.Landscape;
+                sheet.PageSetup.FitToPages(1, 0);
+                sheet.PageSetup.SetRowsToRepeatAtTop(headerRow, headerRow);
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    return stream.ToArray();
                 }
             }
         }

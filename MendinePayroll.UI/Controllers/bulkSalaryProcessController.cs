@@ -659,7 +659,9 @@ namespace MendinePayroll.UI.Controllers
                    4️⃣ SAVE PREVIEW COMPONENTS (JSON)
                 ============================= */
                 string componentJson = JsonConvert.SerializeObject(
-                    salary.Components.Select(c => new
+                    salary.Components
+                    .Where(c => !string.Equals(c.OtherType?.Trim(), "MONTHLY_CTC", StringComparison.OrdinalIgnoreCase))
+                    .Select(c => new
                     {
                         c.PayConfigId,
                         c.PayConfigName,
@@ -817,8 +819,7 @@ namespace MendinePayroll.UI.Controllers
             return (request.ToDate.Value.Date - request.FromDate.Value.Date).Days + 1;
         }
 
-        public static EmployeeSalaryResponse CalculateMonthlySalary(List<SalaryComponentResult> components, int employeeId, int payGroupId, string payGroupName, int processMonth, int processYear,
-                                                               bool isPFApplicable, bool isESICApplicable, bool isPTaxApplicable, ComponentValueResolver valueResolver)
+        public static EmployeeSalaryResponse CalculateMonthlySalary(List<SalaryComponentResult> components, int employeeId, int payGroupId, string payGroupName, int processMonth, int processYear,bool isPFApplicable, bool isESICApplicable, bool isPTaxApplicable, ComponentValueResolver valueResolver)
         {
             if (components == null || components.Count == 0)
                 return null;
@@ -1199,39 +1200,10 @@ namespace MendinePayroll.UI.Controllers
                     }
 
 
-                    /* ============================================================
-                       ESIC BASE
-
-                       New configuration:
-                           IsIncludedInGross = 1  -> include
-                           IsIncludedInGross = 0  -> exclude
-
-                       Legacy configuration:
-                           IsIncludedInGross = NULL
-                           -> preserve previous ESIC behavior
-                       ============================================================ */
-
-                    decimal esicTaxableGross = components
-                        .Where(x =>
-                            (
-                                x.IsIncludedInGross == true
-                                ||
-                                (
-                                    x.IsIncludedInGross == null
-                                    && x.IsTaxable 
-                                )
-                            )
-                            && !x.IsGrossComponent
-                        )
-                        .Sum(x => x.Amount);
-                    // If no IsTaxable components are configured,
-                    // use the original dynamic ESIC formula.
-                    if (esicTaxableGross <= 0)
-                    {
-                        esicTaxableGross = dynamicBaseValue;
-                    }
-                    // ESIC eligibility is checked against taxable Gross
-                    if (!isESICApplicable || (!isInActiveWindow && esicTaxableGross > esicLimit))
+                    // LEGACY uses the configured expression (e.g. BASIC) directly.
+                    // Other rules retain their existing included/taxable component base.
+                    decimal esicBase = GetEsicContributionBase(c, components, dynamicBaseValue);
+                    if (!isESICApplicable || (!isInActiveWindow && esicBase > esicLimit))
                     {
                         c.BaseAmount = 0;
                         c.OriginalAmount = 0;
@@ -1240,8 +1212,8 @@ namespace MendinePayroll.UI.Controllers
                     else
                     {
 
-                        c.BaseAmount = esicTaxableGross;
-                        c.OriginalAmount =esicTaxableGross * (c.Rate / 100); 
+                        c.BaseAmount = esicBase;
+                        c.OriginalAmount = esicBase * (c.Rate / 100);
                         // ESIC rounds UP
                         c.Amount = Math.Ceiling(c.OriginalAmount);
                     }
@@ -1307,6 +1279,38 @@ namespace MendinePayroll.UI.Controllers
                 Components = components
             };
 
+        }
+        //private static decimal GetEsicContributionBase(SalaryComponentResult component,
+        //    List<SalaryComponentResult> components, decimal dynamicBaseValue)
+        //{
+        //    if (string.Equals(component.CalculationRule?.Trim(), "LEGACY", StringComparison.OrdinalIgnoreCase))
+        //        return dynamicBaseValue;
+
+        //    decimal includedBase = components
+        //        .Where(x => !x.IsGrossComponent &&
+        //            (x.IsIncludedInGross == true ||
+        //             (x.IsIncludedInGross == null && x.IsTaxable)))
+        //        .Sum(x => x.Amount);
+
+        //    return includedBase > 0m ? includedBase : dynamicBaseValue;
+        //}
+        private static decimal GetEsicContributionBase(SalaryComponentResult component,List<SalaryComponentResult> components,    decimal dynamicBaseValue)
+        {
+            string calculationRule = component.CalculationRule?.Trim() ?? string.Empty;
+
+            if (string.Equals(calculationRule, "LEGACY", StringComparison.OrdinalIgnoreCase)
+                || string.IsNullOrEmpty(calculationRule))
+            {
+                return dynamicBaseValue;
+            }
+
+            decimal includedBase = components
+                .Where(x => !x.IsGrossComponent &&
+                    (x.IsIncludedInGross == true ||
+                     (x.IsIncludedInGross == null && x.IsTaxable)))
+                .Sum(x => x.Amount);
+
+            return includedBase > 0m ? includedBase : dynamicBaseValue;
         }
         private static decimal EvaluateDynamicFormulaEXCEL(string formula, Dictionary<string, decimal> valueMap)
         {
@@ -1547,93 +1551,26 @@ namespace MendinePayroll.UI.Controllers
             return 0;
         }
 
-        private Dictionary<int, int> GetPayConfigSortOrderMap()
+        private Dictionary<int, decimal> GetPayConfigSortOrderMap()
         {
-            var map = new Dictionary<int, int>();
-            string[] possibleQueries = new[]
-            {
-                "SELECT * FROM Payroll_SaaS_PayConfig",
-                "SELECT * FROM PayConfig",
-                "SELECT * FROM tbl_PayConfig",
-                "SELECT * FROM Mst_PayConfig",
-                "SELECT * FROM PayConfigMaster"
-            };
+            var map = new Dictionary<int, decimal>();
+            DataTable dt = clsDatabase.fnDataTable("SP_GetAllPayConfig", TenantId);
 
-            try
-            {
-                string connStr = System.Configuration.ConfigurationManager.ConnectionStrings["Admin"]?.ConnectionString;
-                if (!string.IsNullOrEmpty(connStr))
-                {
-                    using (SqlConnection con = new SqlConnection(connStr))
-                    {
-                        con.Open();
-                        foreach (var q in possibleQueries)
-                        {
-                            try
-                            {
-                                using (SqlCommand cmd = new SqlCommand(q, con))
-                                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
-                                {
-                                    DataTable dt = new DataTable();
-                                    da.Fill(dt);
-                                    if (dt.Rows.Count > 0)
-                                    {
-                                        foreach (DataRow row in dt.Rows)
-                                        {
-                                            int id = GetPayConfigIdFromRow(row);
-                                            if (id > 0)
-                                            {
-                                                int order = GetSortOrderFromDataRow(row);
-                                                if (order > 0)
-                                                {
-                                                    map[id] = order;
-                                                }
-                                            }
-                                        }
-                                        if (map.Count > 0) break;
-                                    }
-                                }
-                            }
-                            catch { }
-                        }
-                    }
-                }
-            }
-            catch { }
+            if (dt == null)
+                return map;
 
-            // Stored procedure fallbacks
-            if (map.Count == 0)
+            foreach (DataRow row in dt.Rows)
             {
-                string[] spNames = new[] { "SP_GetAllPayConfig", "SP_GetPayConfigMaster", "PayConfig_GetAll_New", "SP_GetPayConfig" };
-                foreach (var sp in spNames)
+                int id = GetPayConfigIdFromRow(row);
+                decimal order = GetSortOrderFromDataRow(row);
+                if (id > 0 && order > 0m)
                 {
-                    try
-                    {
-                        DataTable dt = clsDatabase.fnDataTable(sp, TenantId);
-                        if (dt != null && dt.Rows.Count > 0)
-                        {
-                            foreach (DataRow row in dt.Rows)
-                            {
-                                int id = GetPayConfigIdFromRow(row);
-                                if (id > 0)
-                                {
-                                    int order = GetSortOrderFromDataRow(row);
-                                    if (order > 0)
-                                    {
-                                        map[id] = order;
-                                    }
-                                }
-                            }
-                            if (map.Count > 0) break;
-                        }
-                    }
-                    catch { }
+                    map[id] = order;
                 }
             }
 
             return map;
         }
-
         private PayrollPivotResponse BuildPivot(PayrollProcessRequest request, List<EmployeeSalaryResponse> results)
         {
             /* =========================
@@ -1661,8 +1598,8 @@ namespace MendinePayroll.UI.Controllers
                         && c.IsOther
                         && (c.OtherType ?? "").Equals("LOANRECOVERY", StringComparison.OrdinalIgnoreCase);
 
-                    int sortOrder = c.SortOrder > 0 ? c.SortOrder : (c.OrderBy > 0 ? c.OrderBy : 0);
-                    if (sortOrder <= 0 && payConfigOrderMap.TryGetValue(c.PayConfigId, out int mappedOrder) && mappedOrder > 0)
+                    decimal sortOrder = c.SortOrder > 0 ? c.SortOrder : (c.OrderBy > 0 ? c.OrderBy : 0m);
+                    if (sortOrder <= 0 && payConfigOrderMap.TryGetValue(c.PayConfigId, out decimal mappedOrder) && mappedOrder > 0)
                     {
                         sortOrder = mappedOrder;
                     }
@@ -1702,11 +1639,14 @@ namespace MendinePayroll.UI.Controllers
                         DisplayOrder = GetDisplayOrder(c)
                     };
                 })
+                //.OrderBy(c => c.DisplayOrder)
+                //.ThenBy(c => c.SortOrder > 0 ? c.SortOrder : 9999)
+                //.ThenBy(c => c.PayConfigId)
+                //.ToList();
                 .OrderBy(c => c.DisplayOrder)
-                .ThenBy(c => c.SortOrder > 0 ? c.SortOrder : 9999)
+                .ThenBy(c => GetComponentOrder(c))
                 .ThenBy(c => c.PayConfigId)
                 .ToList();
-
             /* =========================
                3. Build Pivot Rows
                (EMPLOYEE-AWARE)
@@ -1815,6 +1755,17 @@ namespace MendinePayroll.UI.Controllers
 
             /* fallback */
             return 99;
+        }
+        private decimal GetComponentOrder(PivotColumnDto c)
+        {
+            // Basic component always first within allowances
+            if (c.IsBasicComponent)
+                return 1;
+
+            // Preserve configured order for remaining components
+            return c.SortOrder > 0
+                ? c.SortOrder
+                : (c.OrderBy > 0 ? c.OrderBy : 9999);
         }
         private static decimal ApplyRounding(decimal value, string roundingType)
         {
@@ -2392,7 +2343,7 @@ namespace MendinePayroll.UI.Controllers
          => r[col] == DBNull.Value ? "" : Convert.ToString(r[col]);
 
 
-        private static int GetSortOrderFromDataRow(DataRow row)
+        private static decimal GetSortOrderFromDataRow(DataRow row)
         {
             if (row == null) return 0;
             string[] orderColNames = new[] { "SortOrder", "sort", "OrderBy", "OrderByField", "Order_By", "OrderNo", "OrderByNo", "DisplayOrder", "OrderIndex", "ComponentOrder" };
@@ -2400,7 +2351,8 @@ namespace MendinePayroll.UI.Controllers
             {
                 if (row.Table.Columns.Contains(colName) && row[colName] != DBNull.Value)
                 {
-                    if (int.TryParse(row[colName].ToString(), out int parsedOrder) && parsedOrder > 0)
+                    if (decimal.TryParse(Convert.ToString(row[colName], CultureInfo.InvariantCulture),
+                        NumberStyles.Number, CultureInfo.InvariantCulture, out decimal parsedOrder) && parsedOrder > 0m)
                     {
                         return parsedOrder;
                     }
@@ -2418,7 +2370,7 @@ namespace MendinePayroll.UI.Controllers
 
             foreach (DataRow row in dtComponents.Rows)
             {
-                int sortOrder = GetSortOrderFromDataRow(row);
+                decimal sortOrder = GetSortOrderFromDataRow(row);
 
                 components.Add(new SalaryComponentResult
                 {
