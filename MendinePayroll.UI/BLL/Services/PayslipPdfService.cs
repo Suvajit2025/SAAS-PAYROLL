@@ -820,9 +820,7 @@ public class PayslipPdfService
     //            model.ESICNo);
     //    });
     //}
-    private void DefaultEmployeeDetailsTable(
-    IContainer container,
-    PayslipViewModel model)
+    private void DefaultEmployeeDetailsTable(IContainer container,PayslipViewModel model)
     {
         container.Table(table =>
         {
@@ -835,15 +833,9 @@ public class PayslipPdfService
                 columns.RelativeColumn(1.75f);
             });
 
-            AddDefaultRow(
-                table,
-                "Employee Name",
-                model.EmpName,
-                "Employee Code",
-                model.EmpCode);
+            AddDefaultRow(table,"Employee Name",model.EmpName,"Employee Code",model.EmpCode);
 
-            AddDefaultRow(
-                table,
+            AddDefaultRow(table,
                 "Designation",
                 model.Designation,
                 "Department",
